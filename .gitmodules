@@ -1,0 +1,3 @@
+[submodule "game24"]
+	path = game24
+	url = https://github.com/LiaoMengqi/LLM4Game24.git
