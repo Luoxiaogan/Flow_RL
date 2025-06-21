@@ -1,0 +1,1802 @@
+[
+    {
+        "input": {
+            "p": 41,
+            "initial_value": 17,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 41, an initial value x = 17, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 10
+    },
+    {
+        "input": {
+            "p": 89,
+            "initial_value": 28,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 89, an initial value x = 28, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 2
+    },
+    {
+        "input": {
+            "p": 43,
+            "initial_value": 36,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 43, an initial value x = 36, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 36
+    },
+    {
+        "input": {
+            "p": 179,
+            "initial_value": 42,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 179, an initial value x = 42, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 142
+    },
+    {
+        "input": {
+            "p": 109,
+            "initial_value": 29,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 109, an initial value x = 29, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 97
+    },
+    {
+        "input": {
+            "p": 193,
+            "initial_value": 65,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 193, an initial value x = 65, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 84
+    },
+    {
+        "input": {
+            "p": 151,
+            "initial_value": 137,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 151, an initial value x = 137, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 62
+    },
+    {
+        "input": {
+            "p": 101,
+            "initial_value": 28,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 101, an initial value x = 28, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 16
+    },
+    {
+        "input": {
+            "p": 59,
+            "initial_value": 9,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 59, an initial value x = 9, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 27
+    },
+    {
+        "input": {
+            "p": 139,
+            "initial_value": 28,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 139, an initial value x = 28, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 4
+    },
+    {
+        "input": {
+            "p": 11,
+            "initial_value": 2,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 11, an initial value x = 2, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 4
+    },
+    {
+        "input": {
+            "p": 97,
+            "initial_value": 68,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 97, an initial value x = 68, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 36
+    },
+    {
+        "input": {
+            "p": 193,
+            "initial_value": 185,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 193, an initial value x = 185, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 192
+    },
+    {
+        "input": {
+            "p": 199,
+            "initial_value": 149,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 199, an initial value x = 149, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 49
+    },
+    {
+        "input": {
+            "p": 23,
+            "initial_value": 12,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 23, an initial value x = 12, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 4
+    },
+    {
+        "input": {
+            "p": 83,
+            "initial_value": 33,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 83, an initial value x = 33, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 40
+    },
+    {
+        "input": {
+            "p": 149,
+            "initial_value": 89,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 149, an initial value x = 89, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 123
+    },
+    {
+        "input": {
+            "p": 137,
+            "initial_value": 3,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 137, an initial value x = 3, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 88
+    },
+    {
+        "input": {
+            "p": 101,
+            "initial_value": 21,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 101, an initial value x = 21, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 5
+    },
+    {
+        "input": {
+            "p": 109,
+            "initial_value": 55,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 109, an initial value x = 55, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 66
+    },
+    {
+        "input": {
+            "p": 197,
+            "initial_value": 44,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 197, an initial value x = 44, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 105
+    },
+    {
+        "input": {
+            "p": 13,
+            "initial_value": 2,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 13, an initial value x = 2, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 9
+    },
+    {
+        "input": {
+            "p": 109,
+            "initial_value": 100,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 109, an initial value x = 100, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 81
+    },
+    {
+        "input": {
+            "p": 103,
+            "initial_value": 52,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 103, an initial value x = 52, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 68
+    },
+    {
+        "input": {
+            "p": 181,
+            "initial_value": 155,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 181, an initial value x = 155, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 48
+    },
+    {
+        "input": {
+            "p": 149,
+            "initial_value": 29,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 149, an initial value x = 29, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 39
+    },
+    {
+        "input": {
+            "p": 167,
+            "initial_value": 157,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 167, an initial value x = 157, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 66
+    },
+    {
+        "input": {
+            "p": 53,
+            "initial_value": 17,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 53, an initial value x = 17, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 44
+    },
+    {
+        "input": {
+            "p": 61,
+            "initial_value": 16,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 61, an initial value x = 16, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 22
+    },
+    {
+        "input": {
+            "p": 113,
+            "initial_value": 54,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 113, an initial value x = 54, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 91
+    },
+    {
+        "input": {
+            "p": 109,
+            "initial_value": 87,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 109, an initial value x = 87, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 9
+    },
+    {
+        "input": {
+            "p": 23,
+            "initial_value": 7,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 23, an initial value x = 7, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 3
+    },
+    {
+        "input": {
+            "p": 71,
+            "initial_value": 43,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 71, an initial value x = 43, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 9
+    },
+    {
+        "input": {
+            "p": 197,
+            "initial_value": 45,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 197, an initial value x = 45, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 55
+    },
+    {
+        "input": {
+            "p": 131,
+            "initial_value": 16,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 131, an initial value x = 16, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 117
+    },
+    {
+        "input": {
+            "p": 103,
+            "initial_value": 3,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 103, an initial value x = 3, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 14
+    },
+    {
+        "input": {
+            "p": 103,
+            "initial_value": 21,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 103, an initial value x = 21, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 83
+    },
+    {
+        "input": {
+            "p": 197,
+            "initial_value": 51,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 197, an initial value x = 51, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 182
+    },
+    {
+        "input": {
+            "p": 59,
+            "initial_value": 18,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 59, an initial value x = 18, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 15
+    },
+    {
+        "input": {
+            "p": 11,
+            "initial_value": 1,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 11, an initial value x = 1, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 163,
+            "initial_value": 105,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 163, an initial value x = 105, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 104
+    },
+    {
+        "input": {
+            "p": 89,
+            "initial_value": 29,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 89, an initial value x = 29, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 87
+    },
+    {
+        "input": {
+            "p": 41,
+            "initial_value": 9,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 41, an initial value x = 9, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 181,
+            "initial_value": 6,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 181, an initial value x = 6, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 145
+    },
+    {
+        "input": {
+            "p": 181,
+            "initial_value": 65,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 181, an initial value x = 65, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 39
+    },
+    {
+        "input": {
+            "p": 173,
+            "initial_value": 117,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 173, an initial value x = 117, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 10
+    },
+    {
+        "input": {
+            "p": 113,
+            "initial_value": 76,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 113, an initial value x = 76, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 13
+    },
+    {
+        "input": {
+            "p": 47,
+            "initial_value": 2,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 47, an initial value x = 2, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 25
+    },
+    {
+        "input": {
+            "p": 13,
+            "initial_value": 10,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 13, an initial value x = 10, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 3
+    },
+    {
+        "input": {
+            "p": 109,
+            "initial_value": 74,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 109, an initial value x = 74, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 49
+    },
+    {
+        "input": {
+            "p": 113,
+            "initial_value": 19,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 113, an initial value x = 19, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 22
+    },
+    {
+        "input": {
+            "p": 197,
+            "initial_value": 2,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 197, an initial value x = 2, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 4
+    },
+    {
+        "input": {
+            "p": 109,
+            "initial_value": 100,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 109, an initial value x = 100, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 78
+    },
+    {
+        "input": {
+            "p": 151,
+            "initial_value": 21,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 151, an initial value x = 21, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 136
+    },
+    {
+        "input": {
+            "p": 181,
+            "initial_value": 18,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 181, an initial value x = 18, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 14
+    },
+    {
+        "input": {
+            "p": 173,
+            "initial_value": 32,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 173, an initial value x = 32, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 159
+    },
+    {
+        "input": {
+            "p": 13,
+            "initial_value": 2,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 13, an initial value x = 2, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 3
+    },
+    {
+        "input": {
+            "p": 179,
+            "initial_value": 94,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 179, an initial value x = 94, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 125
+    },
+    {
+        "input": {
+            "p": 47,
+            "initial_value": 22,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 47, an initial value x = 22, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 2
+    },
+    {
+        "input": {
+            "p": 127,
+            "initial_value": 14,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 127, an initial value x = 14, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 34
+    },
+    {
+        "input": {
+            "p": 103,
+            "initial_value": 62,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 103, an initial value x = 62, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 82
+    },
+    {
+        "input": {
+            "p": 47,
+            "initial_value": 31,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 47, an initial value x = 31, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 14
+    },
+    {
+        "input": {
+            "p": 31,
+            "initial_value": 26,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 31, an initial value x = 26, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 5
+    },
+    {
+        "input": {
+            "p": 89,
+            "initial_value": 51,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 89, an initial value x = 51, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 64
+    },
+    {
+        "input": {
+            "p": 151,
+            "initial_value": 10,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 151, an initial value x = 10, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 100
+    },
+    {
+        "input": {
+            "p": 61,
+            "initial_value": 25,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 61, an initial value x = 25, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 42
+    },
+    {
+        "input": {
+            "p": 107,
+            "initial_value": 16,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 107, an initial value x = 16, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 11
+    },
+    {
+        "input": {
+            "p": 139,
+            "initial_value": 127,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 139, an initial value x = 127, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 5
+    },
+    {
+        "input": {
+            "p": 17,
+            "initial_value": 2,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 17, an initial value x = 2, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 4
+    },
+    {
+        "input": {
+            "p": 167,
+            "initial_value": 58,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 167, an initial value x = 58, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 137
+    },
+    {
+        "input": {
+            "p": 73,
+            "initial_value": 52,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 73, an initial value x = 52, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 64
+    },
+    {
+        "input": {
+            "p": 11,
+            "initial_value": 8,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 11, an initial value x = 8, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 4
+    },
+    {
+        "input": {
+            "p": 67,
+            "initial_value": 48,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 67, an initial value x = 48, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 49
+    },
+    {
+        "input": {
+            "p": 191,
+            "initial_value": 141,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 191, an initial value x = 141, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 172
+    },
+    {
+        "input": {
+            "p": 137,
+            "initial_value": 86,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 137, an initial value x = 86, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 34
+    },
+    {
+        "input": {
+            "p": 107,
+            "initial_value": 47,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 107, an initial value x = 47, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 79
+    },
+    {
+        "input": {
+            "p": 173,
+            "initial_value": 135,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 173, an initial value x = 135, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 36
+    },
+    {
+        "input": {
+            "p": 157,
+            "initial_value": 96,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 157, an initial value x = 96, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 115
+    },
+    {
+        "input": {
+            "p": 137,
+            "initial_value": 39,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 137, an initial value x = 39, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 59
+    },
+    {
+        "input": {
+            "p": 97,
+            "initial_value": 35,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 97, an initial value x = 35, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 61
+    },
+    {
+        "input": {
+            "p": 83,
+            "initial_value": 21,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 83, an initial value x = 21, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 69
+    },
+    {
+        "input": {
+            "p": 73,
+            "initial_value": 25,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 73, an initial value x = 25, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 37
+    },
+    {
+        "input": {
+            "p": 19,
+            "initial_value": 1,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 19, an initial value x = 1, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 101,
+            "initial_value": 22,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 101, an initial value x = 22, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 37
+    },
+    {
+        "input": {
+            "p": 97,
+            "initial_value": 49,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 97, an initial value x = 49, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 35
+    },
+    {
+        "input": {
+            "p": 41,
+            "initial_value": 32,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 41, an initial value x = 32, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 47,
+            "initial_value": 20,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 47, an initial value x = 20, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 28
+    },
+    {
+        "input": {
+            "p": 167,
+            "initial_value": 3,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 167, an initial value x = 3, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 154
+    },
+    {
+        "input": {
+            "p": 31,
+            "initial_value": 2,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 31, an initial value x = 2, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 4
+    },
+    {
+        "input": {
+            "p": 103,
+            "initial_value": 83,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 103, an initial value x = 83, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 91
+    },
+    {
+        "input": {
+            "p": 103,
+            "initial_value": 69,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 103, an initial value x = 69, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 9
+    },
+    {
+        "input": {
+            "p": 11,
+            "initial_value": 5,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 11, an initial value x = 5, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 3
+    },
+    {
+        "input": {
+            "p": 29,
+            "initial_value": 14,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 29, an initial value x = 14, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 23
+    },
+    {
+        "input": {
+            "p": 23,
+            "initial_value": 11,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 23, an initial value x = 11, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 13
+    },
+    {
+        "input": {
+            "p": 199,
+            "initial_value": 74,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 199, an initial value x = 74, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 63
+    },
+    {
+        "input": {
+            "p": 43,
+            "initial_value": 31,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 43, an initial value x = 31, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 10
+    },
+    {
+        "input": {
+            "p": 13,
+            "initial_value": 8,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 13, an initial value x = 8, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 181,
+            "initial_value": 155,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 181, an initial value x = 155, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 132
+    },
+    {
+        "input": {
+            "p": 61,
+            "initial_value": 39,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 61, an initial value x = 39, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 16
+    },
+    {
+        "input": {
+            "p": 31,
+            "initial_value": 21,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 31, an initial value x = 21, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 7
+    },
+    {
+        "input": {
+            "p": 13,
+            "initial_value": 8,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 13, an initial value x = 8, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 79,
+            "initial_value": 71,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 79, an initial value x = 71, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 67
+    },
+    {
+        "input": {
+            "p": 53,
+            "initial_value": 1,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 53, an initial value x = 1, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 23,
+            "initial_value": 3,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 23, an initial value x = 3, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 9
+    },
+    {
+        "input": {
+            "p": 179,
+            "initial_value": 137,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 179, an initial value x = 137, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 121
+    },
+    {
+        "input": {
+            "p": 181,
+            "initial_value": 106,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 181, an initial value x = 106, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 170
+    },
+    {
+        "input": {
+            "p": 101,
+            "initial_value": 47,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 101, an initial value x = 47, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 56
+    },
+    {
+        "input": {
+            "p": 163,
+            "initial_value": 33,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 163, an initial value x = 33, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 88
+    },
+    {
+        "input": {
+            "p": 61,
+            "initial_value": 55,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 61, an initial value x = 55, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 42
+    },
+    {
+        "input": {
+            "p": 19,
+            "initial_value": 11,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 19, an initial value x = 11, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 11
+    },
+    {
+        "input": {
+            "p": 47,
+            "initial_value": 5,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 47, an initial value x = 5, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 25
+    },
+    {
+        "input": {
+            "p": 113,
+            "initial_value": 99,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 113, an initial value x = 99, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 109
+    },
+    {
+        "input": {
+            "p": 41,
+            "initial_value": 33,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 41, an initial value x = 33, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 37
+    },
+    {
+        "input": {
+            "p": 23,
+            "initial_value": 7,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 23, an initial value x = 7, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 12
+    },
+    {
+        "input": {
+            "p": 139,
+            "initial_value": 69,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 139, an initial value x = 69, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 35
+    },
+    {
+        "input": {
+            "p": 127,
+            "initial_value": 105,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 127, an initial value x = 105, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 37
+    },
+    {
+        "input": {
+            "p": 73,
+            "initial_value": 51,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 73, an initial value x = 51, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 173,
+            "initial_value": 100,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 173, an initial value x = 100, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 118
+    },
+    {
+        "input": {
+            "p": 19,
+            "initial_value": 17,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 19, an initial value x = 17, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 16
+    },
+    {
+        "input": {
+            "p": 19,
+            "initial_value": 16,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 19, an initial value x = 16, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 17
+    },
+    {
+        "input": {
+            "p": 17,
+            "initial_value": 7,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 17, an initial value x = 7, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 15
+    },
+    {
+        "input": {
+            "p": 23,
+            "initial_value": 17,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 23, an initial value x = 17, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 16
+    },
+    {
+        "input": {
+            "p": 193,
+            "initial_value": 178,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 193, an initial value x = 178, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 84
+    },
+    {
+        "input": {
+            "p": 29,
+            "initial_value": 28,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 29, an initial value x = 28, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 139,
+            "initial_value": 92,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 139, an initial value x = 92, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 7
+    },
+    {
+        "input": {
+            "p": 97,
+            "initial_value": 14,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 97, an initial value x = 14, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 35
+    },
+    {
+        "input": {
+            "p": 37,
+            "initial_value": 4,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 37, an initial value x = 4, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 33
+    },
+    {
+        "input": {
+            "p": 67,
+            "initial_value": 29,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 67, an initial value x = 29, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 29
+    },
+    {
+        "input": {
+            "p": 19,
+            "initial_value": 17,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 19, an initial value x = 17, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 4
+    },
+    {
+        "input": {
+            "p": 37,
+            "initial_value": 3,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 37, an initial value x = 3, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 7
+    },
+    {
+        "input": {
+            "p": 109,
+            "initial_value": 23,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 109, an initial value x = 23, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 93
+    },
+    {
+        "input": {
+            "p": 47,
+            "initial_value": 16,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 47, an initial value x = 16, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 25
+    },
+    {
+        "input": {
+            "p": 23,
+            "initial_value": 5,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 23, an initial value x = 5, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 3
+    },
+    {
+        "input": {
+            "p": 127,
+            "initial_value": 86,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 127, an initial value x = 86, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 121
+    },
+    {
+        "input": {
+            "p": 103,
+            "initial_value": 59,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 103, an initial value x = 59, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 29
+    },
+    {
+        "input": {
+            "p": 71,
+            "initial_value": 51,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 71, an initial value x = 51, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 37
+    },
+    {
+        "input": {
+            "p": 73,
+            "initial_value": 45,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 73, an initial value x = 45, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 32
+    },
+    {
+        "input": {
+            "p": 41,
+            "initial_value": 29,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 41, an initial value x = 29, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 18
+    },
+    {
+        "input": {
+            "p": 113,
+            "initial_value": 49,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 113, an initial value x = 49, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 106
+    },
+    {
+        "input": {
+            "p": 149,
+            "initial_value": 138,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 149, an initial value x = 138, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 121
+    },
+    {
+        "input": {
+            "p": 19,
+            "initial_value": 3,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 19, an initial value x = 3, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 16
+    },
+    {
+        "input": {
+            "p": 139,
+            "initial_value": 44,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 139, an initial value x = 44, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 65
+    },
+    {
+        "input": {
+            "p": 191,
+            "initial_value": 62,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 191, an initial value x = 62, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 67
+    },
+    {
+        "input": {
+            "p": 103,
+            "initial_value": 73,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 103, an initial value x = 73, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 76
+    },
+    {
+        "input": {
+            "p": 29,
+            "initial_value": 4,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 29, an initial value x = 4, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 16
+    },
+    {
+        "input": {
+            "p": 79,
+            "initial_value": 62,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 79, an initial value x = 62, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 67
+    },
+    {
+        "input": {
+            "p": 167,
+            "initial_value": 161,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 167, an initial value x = 161, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 36
+    },
+    {
+        "input": {
+            "p": 13,
+            "initial_value": 4,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 13, an initial value x = 4, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 9
+    },
+    {
+        "input": {
+            "p": 29,
+            "initial_value": 8,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 29, an initial value x = 8, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 7
+    },
+    {
+        "input": {
+            "p": 29,
+            "initial_value": 1,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 29, an initial value x = 1, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 71,
+            "initial_value": 29,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 71, an initial value x = 29, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 50
+    },
+    {
+        "input": {
+            "p": 113,
+            "initial_value": 110,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 113, an initial value x = 110, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 106
+    },
+    {
+        "input": {
+            "p": 61,
+            "initial_value": 15,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 61, an initial value x = 15, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 56
+    },
+    {
+        "input": {
+            "p": 127,
+            "initial_value": 114,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 127, an initial value x = 114, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 34
+    },
+    {
+        "input": {
+            "p": 61,
+            "initial_value": 14,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 61, an initial value x = 14, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 47
+    },
+    {
+        "input": {
+            "p": 43,
+            "initial_value": 17,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 43, an initial value x = 17, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 31
+    },
+    {
+        "input": {
+            "p": 41,
+            "initial_value": 34,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 41, an initial value x = 34, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 16
+    },
+    {
+        "input": {
+            "p": 157,
+            "initial_value": 88,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 157, an initial value x = 88, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 89
+    },
+    {
+        "input": {
+            "p": 17,
+            "initial_value": 7,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 17, an initial value x = 7, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 53,
+            "initial_value": 22,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 53, an initial value x = 22, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 28
+    },
+    {
+        "input": {
+            "p": 199,
+            "initial_value": 166,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 199, an initial value x = 166, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 80
+    },
+    {
+        "input": {
+            "p": 131,
+            "initial_value": 94,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 131, an initial value x = 94, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 123
+    },
+    {
+        "input": {
+            "p": 59,
+            "initial_value": 29,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 59, an initial value x = 29, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 22
+    },
+    {
+        "input": {
+            "p": 47,
+            "initial_value": 5,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 47, an initial value x = 5, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 17
+    },
+    {
+        "input": {
+            "p": 59,
+            "initial_value": 49,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 59, an initial value x = 49, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 3
+    },
+    {
+        "input": {
+            "p": 29,
+            "initial_value": 9,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 29, an initial value x = 9, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 7
+    },
+    {
+        "input": {
+            "p": 43,
+            "initial_value": 16,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 43, an initial value x = 16, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 4
+    },
+    {
+        "input": {
+            "p": 137,
+            "initial_value": 61,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 137, an initial value x = 61, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 123
+    },
+    {
+        "input": {
+            "p": 19,
+            "initial_value": 10,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 19, an initial value x = 10, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 6
+    },
+    {
+        "input": {
+            "p": 193,
+            "initial_value": 108,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 193, an initial value x = 108, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 108
+    },
+    {
+        "input": {
+            "p": 191,
+            "initial_value": 106,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 191, an initial value x = 106, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 134
+    },
+    {
+        "input": {
+            "p": 181,
+            "initial_value": 8,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 181, an initial value x = 8, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 114
+    },
+    {
+        "input": {
+            "p": 17,
+            "initial_value": 13,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 17, an initial value x = 13, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 71,
+            "initial_value": 3,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 71, an initial value x = 3, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 29
+    },
+    {
+        "input": {
+            "p": 127,
+            "initial_value": 111,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 127, an initial value x = 111, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 16
+    },
+    {
+        "input": {
+            "p": 163,
+            "initial_value": 83,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 163, an initial value x = 83, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 56
+    },
+    {
+        "input": {
+            "p": 53,
+            "initial_value": 51,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 53, an initial value x = 51, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 16
+    },
+    {
+        "input": {
+            "p": 53,
+            "initial_value": 40,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 53, an initial value x = 40, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 36
+    },
+    {
+        "input": {
+            "p": 103,
+            "initial_value": 26,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 103, an initial value x = 26, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 58
+    },
+    {
+        "input": {
+            "p": 157,
+            "initial_value": 146,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 157, an initial value x = 146, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 40
+    },
+    {
+        "input": {
+            "p": 149,
+            "initial_value": 35,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 149, an initial value x = 35, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 30
+    },
+    {
+        "input": {
+            "p": 37,
+            "initial_value": 5,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 37, an initial value x = 5, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 33
+    },
+    {
+        "input": {
+            "p": 199,
+            "initial_value": 55,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 199, an initial value x = 55, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 40
+    },
+    {
+        "input": {
+            "p": 197,
+            "initial_value": 124,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 197, an initial value x = 124, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 188
+    },
+    {
+        "input": {
+            "p": 53,
+            "initial_value": 44,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 53, an initial value x = 44, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 15
+    },
+    {
+        "input": {
+            "p": 79,
+            "initial_value": 23,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 79, an initial value x = 23, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 23
+    },
+    {
+        "input": {
+            "p": 41,
+            "initial_value": 38,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 41, an initial value x = 38, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 109,
+            "initial_value": 80,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 109, an initial value x = 80, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 78
+    },
+    {
+        "input": {
+            "p": 71,
+            "initial_value": 51,
+            "iterations": 5
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 71, an initial value x = 51, and a number of squaring iterations n = 5. Your task is to calculate the final result of x^(2^5) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 37
+    },
+    {
+        "input": {
+            "p": 13,
+            "initial_value": 4,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 13, an initial value x = 4, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 3
+    },
+    {
+        "input": {
+            "p": 157,
+            "initial_value": 73,
+            "iterations": 6
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 157, an initial value x = 73, and a number of squaring iterations n = 6. Your task is to calculate the final result of x^(2^6) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 109
+    },
+    {
+        "input": {
+            "p": 149,
+            "initial_value": 65,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 149, an initial value x = 65, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 37
+    },
+    {
+        "input": {
+            "p": 31,
+            "initial_value": 25,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 31, an initial value x = 25, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 25
+    },
+    {
+        "input": {
+            "p": 97,
+            "initial_value": 21,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 97, an initial value x = 21, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 16
+    },
+    {
+        "input": {
+            "p": 101,
+            "initial_value": 15,
+            "iterations": 1
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 101, an initial value x = 15, and a number of squaring iterations n = 1. Your task is to calculate the final result of x^(2^1) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 23
+    },
+    {
+        "input": {
+            "p": 61,
+            "initial_value": 21,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 61, an initial value x = 21, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 13
+    },
+    {
+        "input": {
+            "p": 43,
+            "initial_value": 16,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 43, an initial value x = 16, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 16
+    },
+    {
+        "input": {
+            "p": 101,
+            "initial_value": 37,
+            "iterations": 3
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 101, an initial value x = 37, and a number of squaring iterations n = 3. Your task is to calculate the final result of x^(2^3) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 25
+    },
+    {
+        "input": {
+            "p": 47,
+            "initial_value": 46,
+            "iterations": 4
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 47, an initial value x = 46, and a number of squaring iterations n = 4. Your task is to calculate the final result of x^(2^4) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 1
+    },
+    {
+        "input": {
+            "p": 107,
+            "initial_value": 16,
+            "iterations": 2
+        },
+        "prompt": "The problem is to compute x raised to the power of 2^n, modulo p. This is also known as iterative squaring. You are given a prime modulus p = 107, an initial value x = 16, and a number of squaring iterations n = 2. Your task is to calculate the final result of x^(2^2) mod p. Please provide a step-by-step calculation. Start with the initial value x. In each step i (from 1 to n), square the result from the previous step and take the modulo p. Clearly show each intermediate squaring and modulo operation.",
+        "answer": 52
+    }
+]
