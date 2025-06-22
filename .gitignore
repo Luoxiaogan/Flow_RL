@@ -1,0 +1,4 @@
+*.txt
+Test_FILE/metagpt/
+Test_FILE/logs/
+Test_FILE/workspace/
