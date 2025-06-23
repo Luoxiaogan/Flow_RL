@@ -11,5 +11,6 @@ conda activate workflow
 
 所以需要在`/home/lg/workflow_tooluse/Flow_RL/Test_FILE`下启动
 ```bash
+cd /home/lg/workflow_tooluse/Flow_RL/Test_FILE
 python /home/lg/workflow_tooluse/Flow_RL/Test_FILE/new_test.py
 ```
