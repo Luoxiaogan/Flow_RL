@@ -2,18 +2,16 @@ import os
 import sys
 import asyncio
 import importlib
+import argparse
+import json
 from typing import Dict, List, Any, Tuple
 from dataclasses import dataclass
 import logging
 import time
 from openai import AsyncOpenAI
 
-# --- 配置日志 ---
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
 # --- 设置Python路径 ---
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-# 假设 ScoreFlow 位于项目根目录，如果不是，请调整此路径
 SCOREFLOW_PATH = os.path.join(os.path.dirname(CURRENT_DIR))
 sys.path.append(SCOREFLOW_PATH)
 
@@ -22,6 +20,113 @@ try:
 except ImportError as e:
     logging.error(f"无法导入 metagpt 模块: {e}。请确保 'metagpt' 和 'ScoreFlow' 在Python路径中。")
     sys.exit(1)
+
+# --- 配置解析 ---
+def parse_arguments():
+    """解析命令行参数"""
+    parser = argparse.ArgumentParser(description='工作流编排器 V5')
+    
+    # API池配置
+    parser.add_argument('--api-pool', type=str, required=True,
+                       help='API配置池，JSON格式的字符串，例如: \'[{"provider":"openai","model":"gpt-4","api_key":"sk-xxx","base_url":"https://api.openai.com/v1"}]\'')
+    
+    # 执行LLM配置
+    parser.add_argument('--exec-llm', type=str, required=True,
+                       help='执行LLM配置，JSON格式，例如: \'{"provider":"openai","model":"gpt-4","api_key":"sk-xxx","base_url":"https://api.openai.com/v1"}\'')
+    
+    # 路径配置
+    parser.add_argument('--workspace-path', type=str, default=os.path.join(CURRENT_DIR, "workspace_v5"),
+                       help='工作空间路径')
+    parser.add_argument('--dataset-base-path', type=str, default=os.path.join(CURRENT_DIR, 'ScoreFlow', 'benchmark', 'datasets'),
+                       help='数据集基础路径')
+    parser.add_argument('--gsm8k-dataset-path', type=str,
+                       help='GSM8K数据集路径（如果不指定，使用dataset-base-path/gsm8k.jsonl）')
+    
+    # 任务配置
+    parser.add_argument('--generation-tasks', type=str, default='GSM8K:0,5,10-11',
+                       help='生成任务配置，格式: BENCHMARK1:task1,task2;BENCHMARK2:task1,task2')
+    
+    # 系统配置
+    parser.add_argument('--log-level', type=str, default='INFO', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
+                       help='日志级别')
+    parser.add_argument('--max-concurrent-tasks', type=int, default=10,
+                       help='最大并发任务数')
+    parser.add_argument('--workflow-timeout', type=int, default=120,
+                       help='工作流超时时间(秒)')
+    
+    return parser.parse_args()
+
+def parse_api_pool(api_pool_str: str) -> List[Dict]:
+    """解析API池字符串"""
+    try:
+        return json.loads(api_pool_str)
+    except json.JSONDecodeError as e:
+        logging.error(f"API池配置解析失败: {e}")
+        sys.exit(1)
+
+def parse_exec_llm(exec_llm_str: str) -> Dict:
+    """解析执行LLM配置字符串"""
+    try:
+        return json.loads(exec_llm_str)
+    except json.JSONDecodeError as e:
+        logging.error(f"执行LLM配置解析失败: {e}")
+        sys.exit(1)
+
+def parse_generation_tasks(tasks_str: str) -> Dict[str, List[List[int]]]:
+    """解析生成任务配置"""
+    tasks = {}
+    for benchmark_task in tasks_str.split(';'):
+        if ':' in benchmark_task:
+            benchmark, indices_str = benchmark_task.split(':', 1)
+            benchmark = benchmark.strip()
+            indices_list = []
+            
+            for task in indices_str.split(','):
+                task = task.strip()
+                if '-' in task:
+                    # 处理范围，如 "10-11"
+                    start, end = map(int, task.split('-'))
+                    indices_list.append(list(range(start, end + 1)))
+                else:
+                    # 单个索引
+                    indices_list.append([int(task)])
+            
+            tasks[benchmark] = indices_list
+    return tasks
+
+def get_dataset_path(benchmark_name: str, dataset_base_path: str, custom_paths: Dict[str, str]) -> str:
+    """获取数据集路径"""
+    # 优先使用自定义路径
+    if benchmark_name.upper() in custom_paths:
+        return custom_paths[benchmark_name.upper()]
+    
+    # 使用默认路径
+    return os.path.join(dataset_base_path, f'{benchmark_name.lower()}.jsonl')
+
+def print_config(args, api_pool, exec_llm_config, generation_tasks):
+    """打印当前配置"""
+    print("=== 当前工作流配置 ===")
+    print(f"工作空间路径: {args.workspace_path}")
+    print(f"数据集基础路径: {args.dataset_base_path}")
+    print(f"日志级别: {args.log_level}")
+    print(f"最大并发任务数: {args.max_concurrent_tasks}")
+    print(f"工作流超时时间: {args.workflow_timeout}秒")
+    
+    print(f"\nAPI配置池 ({len(api_pool)} 个API):")
+    for i, api in enumerate(api_pool):
+        print(f"  API {i+1}: {api['provider']} - {api['model']}")
+        print(f"    Base URL: {api['base_url']}")
+        print(f"    API Key: {'***' + api['api_key'][-4:] if api['api_key'] else 'Not Set'}")
+    
+    print(f"\n执行LLM配置:")
+    print(f"  Provider: {exec_llm_config['provider']}")
+    print(f"  Model: {exec_llm_config['model']}")
+    
+    print(f"\n生成任务配置:")
+    for benchmark, tasks in generation_tasks.items():
+        print(f"  {benchmark}: {tasks}")
+    
+    print("=" * 50)
 
 # --- 数据模型 (V5) ---
 @dataclass
@@ -64,12 +169,18 @@ class WorkflowOrchestrator:
     """
     一个通用的、由配置驱动的AI工作流编排引擎 (V5).
     """
-    def __init__(self, generation_api_configs: List[Dict], execution_llm_config: Dict, workspace_path: str):
+    def __init__(self, generation_api_configs: List[Dict], execution_llm_config: Dict, workspace_path: str,
+                 max_concurrent_tasks: int = 10, workflow_timeout: int = 120,
+                 dataset_base_path: str = None, custom_dataset_paths: Dict[str, str] = None):
         if not generation_api_configs:
             raise ValueError("生成API配置列表不能为空。")
         self.generation_api_configs = generation_api_configs
         self.execution_llm_config = execution_llm_config
         self.workspace_path = workspace_path
+        self.max_concurrent_tasks = max_concurrent_tasks
+        self.workflow_timeout = workflow_timeout
+        self.dataset_base_path = dataset_base_path or os.path.join(CURRENT_DIR, 'ScoreFlow', 'benchmark', 'datasets')
+        self.custom_dataset_paths = custom_dataset_paths or {}
         self.workflows: List[Workflow] = []
         os.makedirs(os.path.join(self.workspace_path, "generated_workflows"), exist_ok=True)
 
@@ -94,8 +205,8 @@ class WorkflowOrchestrator:
         
         # 1. 加载Benchmark类以获取数据
         BenchmarkClass = self._get_benchmark_class(benchmark_name)
-        # 假设数据集路径，您可能需要根据实际情况调整
-        dataset_path = os.path.join(CURRENT_DIR, 'ScoreFlow', 'benchmark', 'datasets', f'{benchmark_name.lower()}.jsonl')
+        # 使用配置中的数据集路径
+        dataset_path = get_dataset_path(benchmark_name, self.dataset_base_path, self.custom_dataset_paths)
         benchmark_instance = BenchmarkClass(name=benchmark_name, file_path=dataset_path, log_path="")
         
         # 2. 根据data_indices加载一个或多个问题
@@ -181,7 +292,7 @@ class WorkflowOrchestrator:
             # 1. 动态加载模板和数据
             python_start, python_end, start_prompt, end_prompt = self._load_script_parts(benchmark_name)
             BenchmarkClass = self._get_benchmark_class(benchmark_name)
-            dataset_path = os.path.join(CURRENT_DIR, 'ScoreFlow', 'benchmark', 'datasets', f'{benchmark_name.lower()}.jsonl')
+            dataset_path = get_dataset_path(benchmark_name, self.dataset_base_path, self.custom_dataset_paths)
             benchmark_instance = BenchmarkClass(name=benchmark_name, file_path=dataset_path, log_path="")
             
             # 使用data_indices中的第一个索引来获取验证用的问题
@@ -192,7 +303,7 @@ class WorkflowOrchestrator:
 
             # 2. 包装并执行代码
             logging.info(f"[{workflow.id}] 正在包装并执行 (验证问题索引: {verification_index})...")
-            full_script_code = python_start + "\n" + workflow.code + "\n" + python_end.format(time=120)
+            full_script_code = python_start + "\n" + workflow.code + "\n" + python_end.format(time=self.workflow_timeout)
 
             execution_namespace = {}
             exec(full_script_code, globals(), execution_namespace)
@@ -225,7 +336,16 @@ class WorkflowOrchestrator:
         """并行地执行和验证所有已生成的工作流。"""
         logging.info("开始并行执行和验证所有工作流...")
         verification_tasks = [self._execute_and_verify_one_workflow(wf) for wf in self.workflows if wf.status == 'generated']
-        await asyncio.gather(*verification_tasks)
+        
+        # 使用配置的并发限制
+        semaphore = asyncio.Semaphore(self.max_concurrent_tasks)
+        
+        async def sem_execute(task):
+            async with semaphore:
+                return await task
+        
+        tasks_with_semaphore = [sem_execute(task) for task in verification_tasks]
+        await asyncio.gather(*tasks_with_semaphore)
         logging.info("工作流执行和验证阶段完成。")
 
     def print_summary(self):
@@ -246,40 +366,44 @@ class WorkflowOrchestrator:
 
 async def main():
     """主函数入口"""
-    # --- 配置区域 ---
-    GENERATION_API_CONFIGS = [
-        {
-            "provider": "aliyun_dashscope",
-            "model": "qwen-plus",
-            "api_key": os.getenv("DASHSCOPE_API_KEY"),
-            "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-        },
-    ]
+    # 解析命令行参数
+    args = parse_arguments()
     
-    EXECUTION_LLM_CONFIG = { "provider": "openai", "model": "gpt-4-turbo" }
-
-    WORKSPACE_PATH = os.path.join(CURRENT_DIR, "workspace_v5")
-
-    # V5: 定义生成任务，基于数据索引
-    GENERATION_TASKS_BY_BENCHMARK = {
-        "GSM8K": [
-            [0],          # 任务1: 基于gsm8k.jsonl的第0行问题生成一个工作流
-            [5],          # 任务2: 基于gsm8k.jsonl的第5行问题生成一个工作流
-            [10, 11],     # 任务3: 基于第10和11行问题共同生成一个工作流
-        ],
-        # "MBPP": [ [0], [1] ], # 也可以为其他benchmark定义任务
-    }
-
+    # 配置日志
+    logging.basicConfig(level=getattr(logging, args.log_level), format='%(asctime)s - %(levelname)s - %(message)s')
+    
+    # 解析配置
+    api_pool = parse_api_pool(args.api_pool)
+    exec_llm_config = parse_exec_llm(args.exec_llm)
+    generation_tasks = parse_generation_tasks(args.generation_tasks)
+    
+    # 创建自定义路径字典
+    custom_dataset_paths = {}
+    if args.gsm8k_dataset_path:
+        custom_dataset_paths['GSM8K'] = args.gsm8k_dataset_path
+    
+    # 打印当前配置
+    print_config(args, api_pool, exec_llm_config, generation_tasks)
+    
+    # 检查必要的API配置
+    if not api_pool:
+        logging.error("错误: 未找到任何可用的API配置！请检查环境变量。")
+        return
+    
     # --- 执行 ---
     orchestrator = WorkflowOrchestrator(
-        generation_api_configs=GENERATION_API_CONFIGS,
-        execution_llm_config=EXECUTION_LLM_CONFIG,
-        workspace_path=WORKSPACE_PATH
+        generation_api_configs=api_pool,
+        execution_llm_config=exec_llm_config,
+        workspace_path=args.workspace_path,
+        max_concurrent_tasks=args.max_concurrent_tasks,
+        workflow_timeout=args.workflow_timeout,
+        dataset_base_path=args.dataset_base_path,
+        custom_dataset_paths=custom_dataset_paths
     )
     
-    # 调用run方法时传入新的任务定义
-    await orchestrator.run(GENERATION_TASKS_BY_BENCHMARK)
+    # 调用run方法时传入配置中的任务定义
+    await orchestrator.run(generation_tasks)
 
 if __name__ == "__main__":
-    # ... (确保环境变量和路径设置正确)
+    # 确保环境变量和路径设置正确
     asyncio.run(main())
