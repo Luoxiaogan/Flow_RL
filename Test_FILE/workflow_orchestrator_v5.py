@@ -103,6 +103,50 @@ def get_dataset_path(benchmark_name: str, dataset_base_path: str, custom_paths: 
     # 使用默认路径
     return os.path.join(dataset_base_path, f'{benchmark_name.lower()}.jsonl')
 
+def convert_config_for_metagpt(config_dict: Dict) -> object:
+    """将我们的配置字典转换为 MetaGPT 期望的配置对象"""
+    from metagpt.provider.llm_provider_registry import LLMType
+    from metagpt.configs.llm_config import LLMConfig
+    
+    # 将 provider 映射到 api_type (使用LLMType枚举)
+    provider = config_dict.get('provider', 'openai')
+    if provider in ['openai', 'dashscope']:
+        # 通义千问API使用OpenAI兼容格式，所以使用OPENAI类型
+        api_type = LLMType.OPENAI
+    elif provider == 'dashscope_native':
+        # 如果需要原生dashscope支持
+        api_type = LLMType.DASHSCOPE
+    else:
+        # 尝试匹配其他提供商
+        provider_mapping = {
+            'anthropic': LLMType.ANTHROPIC,
+            'claude': LLMType.CLAUDE,
+            'azure': LLMType.AZURE,
+            'gemini': LLMType.GEMINI,
+            'moonshot': LLMType.MOONSHOT,
+            'qianfan': LLMType.QIANFAN,
+            'zhipuai': LLMType.ZHIPUAI,
+        }
+        api_type = provider_mapping.get(provider, LLMType.OPENAI)
+    
+    # 创建 LLMConfig 实例
+    llm_config = LLMConfig(
+        api_type=api_type,
+        model=config_dict.get('model'),
+        api_key=config_dict.get('api_key'),
+        base_url=config_dict.get('base_url'),
+        # 可选属性
+        temperature=config_dict.get('temperature', 0.7),
+        max_token=config_dict.get('max_tokens', 4096),
+        timeout=config_dict.get('timeout', 60),
+        calc_usage=config_dict.get('calc_usage', True),
+        use_system_prompt=config_dict.get('use_system_prompt', True),
+        proxy=config_dict.get('proxy', None),
+        pricing_plan=config_dict.get('pricing_plan', None),
+    )
+    
+    return llm_config
+
 def print_config(args, api_pool, exec_llm_config, generation_tasks):
     """打印当前配置"""
     print("=== 当前工作流配置 ===")
@@ -305,12 +349,36 @@ class WorkflowOrchestrator:
             logging.info(f"[{workflow.id}] 正在包装并执行 (验证问题索引: {verification_index})...")
             full_script_code = python_start + "\n" + workflow.code + "\n" + python_end.format(time=self.workflow_timeout)
 
+            # 创建执行命名空间，包含必要的导入和模块
+            execution_globals = dict(globals())
+            
+            # 预先导入必要的模块到执行环境
+            try:
+                # 导入 asyncio 和 typing
+                execution_globals['asyncio'] = asyncio
+                
+                # 导入 operator 模块
+                operator_module = importlib.import_module(f"ScoreFlow.scripts.{benchmark_name}.operator")
+                execution_globals['operator'] = operator_module
+                
+                # 导入 create 函数
+                execution_globals['create'] = create_llm_instance
+                
+                # 添加其他可能需要的模块
+                from typing import Literal
+                execution_globals['Literal'] = Literal
+                
+            except ImportError as e:
+                logging.warning(f"导入模块时警告: {e}")
+            
             execution_namespace = {}
-            exec(full_script_code, globals(), execution_namespace)
+            
+            # 执行完整的脚本代码（包含所有导入）
+            exec(full_script_code, execution_globals, execution_namespace)
             WorkflowClass = execution_namespace.get('Workflow')
             if not WorkflowClass: raise ValueError("在执行的代码中未找到 'Workflow' 类。")
 
-            workflow_instance = WorkflowClass(config=self.execution_llm_config, problem=question)
+            workflow_instance = WorkflowClass(config=convert_config_for_metagpt(self.execution_llm_config), problem=question)
             workflow.execution_result = await workflow_instance()
             logging.info(f"[{workflow.id}] 执行完毕")
 

@@ -18,16 +18,16 @@ class Workflow:
         """
         This is a workflow graph.
         """
-        # Step 1: Break down the problem into detailed steps and explain reasoning
-        step_by_step_explanation = await self.custom(instruction="Can you solve this problem by breaking it down into detailed steps and explaining the reasoning behind each step?")
+        # Step 1: Break down the problem into detailed steps with reasoning
+        step_by_step_analysis = await self.custom(instruction="Can you solve this problem by breaking it down into detailed steps and explaining the reasoning behind each step?")
 
-        # Step 2: Use the explanation to generate a programmatic solution
-        program_solution = await self.programmer(analysis=step_by_step_explanation)
+        # Step 2: Use the analysis to generate code for solving the problem
+        code_solution = await self.programmer(analysis=step_by_step_analysis)
 
         # Step 3: Review the generated solution for accuracy and clarity
-        reviewed_solution = await self.review(pre_solution=program_solution)
+        reviewed_solution = await self.review(pre_solution=code_solution)
 
-        # Step 4: Ensemble multiple solutions if available (not used in this case)
+        # Step 4: Ensemble multiple solutions (if available) to select the best one
         final_solution = await self.sc_ensemble(solutions=[reviewed_solution])
 
         return final_solution

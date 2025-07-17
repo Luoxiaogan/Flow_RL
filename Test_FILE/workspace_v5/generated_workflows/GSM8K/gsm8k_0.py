@@ -27,7 +27,7 @@ class Workflow:
         # Step 3: Review the generated solution for correctness and clarity
         reviewed_solution = await self.review(pre_solution=code_solution)
 
-        # Step 4: Ensemble the best solution (if multiple solutions exist)
+        # Step 4: Ensemble the best solution (if multiple solutions are available)
         final_solution = await self.sc_ensemble(solutions=[reviewed_solution])
 
         return final_solution

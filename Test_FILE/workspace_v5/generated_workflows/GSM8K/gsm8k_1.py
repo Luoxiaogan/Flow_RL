@@ -22,6 +22,10 @@ class Workflow:
 
         code_solution = await self.programmer(analysis=step_by_step_analysis)
 
-        final_solution = await self.review(pre_solution=code_solution)
+        # Optional: Review the solution for accuracy or clarity
+        reviewed_solution = await self.review(pre_solution=code_solution)
+
+        # Optional: Ensemble multiple solutions if available
+        final_solution = await self.sc_ensemble(solutions=[code_solution, reviewed_solution])
 
         return final_solution

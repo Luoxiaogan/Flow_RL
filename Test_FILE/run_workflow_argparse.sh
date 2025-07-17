@@ -11,25 +11,19 @@ cd "$(dirname "$0")"
 # API池配置 (JSON格式)
 API_POOL='[
     {
-        "provider": "dashscope",
-        "model": "qwen-max-latest",
-        "api_key": "'$DASHSCOPE_API_KEY'",
-        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    },
-    {
         "provider": "openai",
-        "model": "gpt-4o-mini",
-        "api_key": "'$OPENAI_API_KEY'",
-        "base_url": "https://api.openai.com/v1"
+        "model": "qwen-turbo",
+        "api_key": "sk-70e93be8280d4cd08526438db5441bae",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
     }
 ]'
 
 # 执行LLM配置 (JSON格式)
 EXEC_LLM='{
-    "provider": "dashscope",
-    "model": "qwen-max-latest",
-    "api_key": "'$DASHSCOPE_API_KEY'",
-    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        "provider": "openai",
+        "model": "qwen-turbo",
+        "api_key": "sk-70e93be8280d4cd08526438db5441bae",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
 }'
 
 # 任务配置
@@ -46,13 +40,13 @@ MAX_CONCURRENT_TASKS=10
 WORKFLOW_TIMEOUT=120
 
 # === 验证环境变量 ===
-if [ -z "$DASHSCOPE_API_KEY" ] && [ -z "$OPENAI_API_KEY" ]; then
-    echo "错误: 没有设置任何API密钥环境变量。"
-    echo "请设置以下环境变量之一:"
-    echo "  export DASHSCOPE_API_KEY='your-dashscope-key'"
-    echo "  export OPENAI_API_KEY='your-openai-key'"
-    exit 1
-fi
+# if [ -z "$DASHSCOPE_API_KEY" ] && [ -z "$OPENAI_API_KEY" ]; then
+#     echo "错误: 没有设置任何API密钥环境变量。"
+#     echo "请设置以下环境变量之一:"
+#     echo "  export DASHSCOPE_API_KEY='your-dashscope-key'"
+#     echo "  export OPENAI_API_KEY='your-openai-key'"
+#     exit 1
+# fi
 
 echo "=== 工作流编排器 V5 启动 ==="
 echo "执行时间: $(date)"
