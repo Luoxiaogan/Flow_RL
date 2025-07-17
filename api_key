@@ -1,0 +1,42 @@
+阿里免费
+{
+    "provider": "openai",
+    "model": "qwen-turbo",
+    "api_key": "sk-70e93be8280d4cd08526438db5441bae",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+}
+
+50r限额
+{
+    "provider": "openai",
+    "model": "gemini-2.5-pro",
+    "api_key": "sk-gTy3WuoxbM69TDB2jef0l8HTmO71R0lesdVvRFPOpisBW6pz",
+    "base_url": "https://api.openai-proxy.org/google"
+}
+
+350r限额
+{
+    "provider": "openai",
+    "model": "gemini-2.5-pro",
+    "api_key": "sk-D15YnLhTtgfvi4Ovzj583jkkJI1BtLqpOLXL3sZjptRl5m5x",
+    "base_url": "https://api.openai-proxy.org/google"
+}
+
+``````````````````````````````````````````````````````````````````````
+# API池配置 (JSON格式)
+API_POOL='[
+    {
+        "provider": "openai",
+        "model": "qwen-turbo",
+        "api_key": "sk-70e93be8280d4cd08526438db5441bae",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    }
+]'
+
+# 执行LLM配置 (JSON格式)
+EXEC_LLM='{
+        "provider": "openai",
+        "model": "qwen-turbo",
+        "api_key": "sk-70e93be8280d4cd08526438db5441bae",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+}'

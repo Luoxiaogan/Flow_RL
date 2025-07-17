@@ -1,0 +1,94 @@
+{
+  "execution_time": "2025-07-17 22:43:02",
+  "total_workflows": 6,
+  "summary_by_status": {
+    "verified_incorrect": 1,
+    "verified_correct": 5
+  },
+  "workflows": [
+    {
+      "id": "gsm8k_0",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        30,
+        31,
+        32
+      ],
+      "status": "verified_correct",
+      "code_length": 1429,
+      "execution_result_preview": "We are given that the ratio of Darrell's age to Allen's age is 7:11, and their total current age is 162. We are asked to find Allen’s age **10 years from now**.\n\n---\n\n### Step 1: Understand the Ratio\n",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_0.py"
+    },
+    {
+      "id": "gsm8k_1",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        40,
+        41,
+        42
+      ],
+      "status": "verified_correct",
+      "code_length": 1367,
+      "execution_result_preview": "Let's solve the problem **step-by-step** with a focus on clarity and addressing potential ambiguities.\n\n---\n\n### Step 1: Identify the given relationships\n\nWe are told:\n\n1. **Brandon's iPhone is four t",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_1.py"
+    },
+    {
+      "id": "gsm8k_2",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        50,
+        51,
+        52
+      ],
+      "status": "verified_correct",
+      "code_length": 1158,
+      "execution_result_preview": "Let's solve the problem step by step.\n\n### **Step 1: Determine how many eggs Lloyd sells per day.**\nLloyd's chickens produce **252 eggs per day**, and we assume all eggs are sold.\n\n### **Step 2: Conve",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_2.py"
+    },
+    {
+      "id": "gsm8k_3",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        60,
+        61,
+        62
+      ],
+      "status": "verified_correct",
+      "code_length": 1706,
+      "execution_result_preview": "Let's solve the problem again, incorporating the insights from the reflection to ensure clarity, simplicity, and accuracy.\n\n---\n\n### **Problem Recap:**\n\nA basket contains **25 oranges**.  \n- **1 is ba",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_3.py"
+    },
+    {
+      "id": "gsm8k_4",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        70,
+        71,
+        72
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1841,
+      "execution_result_preview": "### **Problem:**\nJudy teaches 5 dance classes every day on the weekdays (Monday through Friday) and 8 classes on Saturday. Each class has 15 students, and she charges $15 per student. How much money d",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_4.py"
+    },
+    {
+      "id": "gsm8k_5",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        80,
+        81,
+        82
+      ],
+      "status": "verified_correct",
+      "code_length": 1561,
+      "execution_result_preview": "Let's solve this step-by-step:\n\n### **Step 1: Understand the total amount of water**\nThe total amount of water available is:\n$$\n24 \\text{ liters}\n$$\n\n---\n\n### **Step 2: Calculate how much each girl go",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_5.py"
+    }
+  ]
+}

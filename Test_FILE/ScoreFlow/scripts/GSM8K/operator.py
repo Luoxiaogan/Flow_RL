@@ -2,15 +2,21 @@ import concurrent
 import sys
 import traceback
 from typing import List
+import logging
+import asyncio
 
 from tenacity import retry, stop_after_attempt, wait_fixed
 
-from ScoreFlow.scripts.GSM8K.operator_an import *
-from ScoreFlow.scripts.GSM8K.op_prompt import *
+from ScoreFlow.scripts.GSM8K.operator_an import (
+    GenerateOp, CodeGenerateOp, ScEnsembleOp, ReviewOp, ReflectOp
+)
+from ScoreFlow.scripts.GSM8K.op_prompt import (
+    SC_ENSEMBLE_PROMPT, REVIEW_PROMPT, PYTHON_CODE_VERIFIER_PROMPT, REFLECT_PROMPT
+)
 from metagpt.actions.action_node import ActionNode
 from metagpt.llm import LLM
-import asyncio
-import logging
+
+logger = logging.getLogger(__name__)
 
 class Operator:
     def __init__(self, llm: LLM):
@@ -53,6 +59,21 @@ class Review(Operator):
         answer = response.get("revised_solution", "")
         
         return answer
+
+
+class Reflect(Operator):
+    def __init__(self, llm: LLM, problem: str = None):
+        super().__init__(llm)
+        self.problem = problem
+
+    async def __call__(self, pre_solution: str):
+        
+        prompt = REFLECT_PROMPT.format(problem=self.problem, solution=pre_solution)
+        response = await self._fill_node(ReflectOp, prompt, mode="xml_fill")
+        reflection = response.get("reflection_text", "")
+        
+        return reflection
+
 
 def run_code(code):
     try:

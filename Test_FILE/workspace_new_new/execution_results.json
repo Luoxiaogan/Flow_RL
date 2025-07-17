@@ -1,0 +1,750 @@
+{
+  "execution_time": "2025-07-17T21:06:34.697491",
+  "total_workflows": 48,
+  "summary_by_status": {
+    "verified_incorrect": 14,
+    "verified_correct": 33,
+    "execution_failed": 1
+  },
+  "summary_by_benchmark": {
+    "GSM8K": {
+      "total": 48,
+      "generated": 0,
+      "verified_correct": 33,
+      "verified_incorrect": 14,
+      "execution_failed": 1,
+      "generation_failed": 0,
+      "accuracy_rate": 70.2127659574468
+    }
+  },
+  "performance_metrics": {
+    "successful_generations": 48,
+    "successful_executions": 47,
+    "verified_correct": 33,
+    "verified_incorrect": 14,
+    "execution_failures": 1,
+    "generation_failures": 0
+  },
+  "workflows": [
+    {
+      "id": "gsm8k_0",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        30,
+        31,
+        32
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1575,
+      "has_execution_result": true,
+      "execution_result_preview": "**Problem:**  \nDarrell and Allen's ages are in the ratio of 7:11. If their total age now is 162, calculate Allen's age 10 years from now.\n\n**Solution:**\n\n1. **Understand the Ratio:**  \n   Darrell’s ag...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_0.py"
+    },
+    {
+      "id": "gsm8k_1",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        40,
+        41,
+        42
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1600,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Problem Statement:**\n\n- Suzy’s iPhone is **1 year old**.\n- Ben’s iPhone is **two times older** than Suzy’s iPhone.\n- Brandon’s iPhone is **four times as old** as Ben’s iPhone.\n\nWe are asked to f...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_1.py"
+    },
+    {
+      "id": "gsm8k_2",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        50,
+        51,
+        52
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1481,
+      "has_execution_result": true,
+      "execution_result_preview": "Lloyd's chickens produce **252 eggs per day**, and he sells them at **$2 per dozen**. To determine his weekly earnings:\n\n1. **Convert eggs to dozens:**  \n   Since 1 dozen = 12 eggs, we divide the tota...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_2.py"
+    },
+    {
+      "id": "gsm8k_3",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        60,
+        61,
+        62
+      ],
+      "status": "verified_correct",
+      "code_length": 1781,
+      "has_execution_result": true,
+      "execution_result_preview": "Let's improve the solution by making it more concise, clarifying assumptions, and ensuring logical precision.\n\n---\n\n### **Problem Statement:**\n\nA basket contains 25 oranges.  \n- 1 is bad,  \n- 20% are ...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_3.py"
+    },
+    {
+      "id": "gsm8k_4",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        70,
+        71,
+        72
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1588,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Revised Solution: Judy's Weekly Earnings**\n\nJudy teaches dance classes on **weekdays (Monday to Friday)** and **Saturday**, with the following schedule:\n\n- **Weekdays (Monday to Friday):** 5 cla...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_4.py"
+    },
+    {
+      "id": "gsm8k_5",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        80,
+        81,
+        82
+      ],
+      "status": "verified_correct",
+      "code_length": 1676,
+      "has_execution_result": true,
+      "execution_result_preview": "Two girls each received $\\frac{1}{6}$ of the 24 liters of water.  \nTo find how much each girl received:  \n$$\n\\frac{1}{6} \\times 24 = 4 \\text{ liters per girl}\n$$\n\nSince there are two girls, together t...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_5.py"
+    },
+    {
+      "id": "gsm8k_6",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        90,
+        91,
+        92
+      ],
+      "status": "verified_correct",
+      "code_length": 2221,
+      "has_execution_result": true,
+      "execution_result_preview": "Let's solve this step by step.\n\n### Step 1: Understand the problem\nTed needs to calculate how many pounds of potato salad he should bring to feed both adults and children at the picnic. We are told:\n\n...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_6.py"
+    },
+    {
+      "id": "gsm8k_7",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        100,
+        101,
+        102
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1788,
+      "has_execution_result": true,
+      "execution_result_preview": "Let's solve the problem from a **different perspective** — instead of calculating each friend's doorbell presses individually, we can approach it by **grouping and analyzing relationships** between th...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_7.py"
+    },
+    {
+      "id": "gsm8k_8",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        110,
+        111,
+        112
+      ],
+      "status": "verified_correct",
+      "code_length": 1537,
+      "has_execution_result": true,
+      "execution_result_preview": "To solve the problem clearly and precisely, we must first clarify the meaning of the terms used.\n\n---\n\n### **Understanding the Problem**\n\nWe are told:\n\n- **Beatrice's** fruit roll-up was **2 roll-ups ...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_8.py"
+    },
+    {
+      "id": "gsm8k_9",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        120,
+        121,
+        122
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1554,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Problem:**\nMiguel uses 2 pads of paper a week for his drawing. If there are 30 sheets of paper on a pad of paper, how many sheets of paper does he use every month?\n\n---\n\n### **Step-by-Step Solut...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_9.py"
+    },
+    {
+      "id": "gsm8k_10",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        130,
+        131,
+        132
+      ],
+      "status": "verified_correct",
+      "code_length": 1625,
+      "has_execution_result": true,
+      "execution_result_preview": "Nissa hires 60 seasonal workers to play elves. A third of them quit after children vomit on them, and then 10 more quit after kids kick their shins. To find how many elves are left:\n\n- A third of 60 i...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_10.py"
+    },
+    {
+      "id": "gsm8k_11",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        140,
+        141,
+        142
+      ],
+      "status": "verified_correct",
+      "code_length": 1446,
+      "has_execution_result": true,
+      "execution_result_preview": "**Question:**  \nOf the 20 available cars for rent, 12 are automatic, 4 are manual, and the rest are semi-automatic. What percentage of the cars are semi-automatic?\n\n**Solution:**\n\nThere are 20 cars in...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_11.py"
+    },
+    {
+      "id": "gsm8k_12",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        150,
+        151,
+        152
+      ],
+      "status": "verified_correct",
+      "code_length": 1891,
+      "has_execution_result": true,
+      "execution_result_preview": "Let's solve this problem from a **different perspective** — instead of focusing on who gets home first, let's think about **how much time each person takes**, and then **how long the winner has to wai...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_12.py"
+    },
+    {
+      "id": "gsm8k_13",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        160,
+        161,
+        162
+      ],
+      "status": "verified_correct",
+      "code_length": 1591,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Problem Statement:**\n\nA tank of water has a depth of **17 feet on Monday**.  \nOn **Tuesday**, the tank had **7 feet more water**.  \nOn **Wednesday**, the depth of the water is **two-thirds of wh...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_13.py"
+    },
+    {
+      "id": "gsm8k_14",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        170,
+        171,
+        172
+      ],
+      "status": "verified_correct",
+      "code_length": 1472,
+      "has_execution_result": true,
+      "execution_result_preview": "Each uniform consists of a hat, a jacket, and pants. The costs are as follows:\n\n- The **hat** costs **$25**.\n- The **jacket** costs **three times** the cost of the hat:  \n  $ 3 \\times 25 = 75 $\n- The ...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_14.py"
+    },
+    {
+      "id": "gsm8k_15",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        180,
+        181,
+        182
+      ],
+      "status": "verified_correct",
+      "code_length": 1500,
+      "has_execution_result": true,
+      "execution_result_preview": "We are told that the winner received **3/4** of the total votes, and the total number of students who voted is **80**.\n\nSince there are only two candidates, all the votes must have been distributed be...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_15.py"
+    },
+    {
+      "id": "gsm8k_16",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        190,
+        191,
+        192
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1540,
+      "has_execution_result": true,
+      "execution_result_preview": "**Problem:**  \nJohn collects peaches for 3 hours. He can collect 2 peaches per minute. How many peaches does he collect?\n\n---\n\n**Step-by-Step Reasoning:**\n\n1. **Convert time to minutes:**  \n   Since t...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_16.py"
+    },
+    {
+      "id": "gsm8k_17",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        200,
+        201,
+        202
+      ],
+      "status": "verified_incorrect",
+      "code_length": 2284,
+      "has_execution_result": true,
+      "execution_result_preview": "Here's an improved and more accurate solution based on the feedback:\n\n---\n\n**Problem:**  \nBaldur gets 5 pails of water every morning and 6 pails of water every afternoon. Each pail contains 5 liters o...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_17.py"
+    },
+    {
+      "id": "gsm8k_18",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        210,
+        211,
+        212
+      ],
+      "status": "verified_correct",
+      "code_length": 1532,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Problem Summary**\n\nSara wants to buy:\n- A jacket: $30  \n- 2 pairs of shoes: $20 each → $20 × 2 = $40  \n\n**Total cost:**  \n$$\n30 + 40 = 70 \\text{ dollars}\n$$\n\nSara already has:\n- $10 saved  \n- Ea...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_18.py"
+    },
+    {
+      "id": "gsm8k_19",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        220,
+        221,
+        222
+      ],
+      "status": "verified_correct",
+      "code_length": 1491,
+      "has_execution_result": true,
+      "execution_result_preview": "**Problem:**  \nIt takes Carmen 10 minutes to finish a crossword puzzle and 5 minutes to finish a sudoku puzzle. Over the weekend, she solved 3 crossword puzzles and 8 sudoku puzzles. How much time did...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_19.py"
+    },
+    {
+      "id": "gsm8k_20",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        230,
+        231,
+        232
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1764,
+      "has_execution_result": true,
+      "execution_result_preview": "Let's solve this step-by-step to find out how much Mark pays for everything.\n\n---\n\n### **Step 1: Calculate the total cost of the cars before tax and registration**\n\nMark buys **12 cars**, and each car...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_20.py"
+    },
+    {
+      "id": "gsm8k_21",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        240,
+        241,
+        242
+      ],
+      "status": "verified_correct",
+      "code_length": 1518,
+      "has_execution_result": true,
+      "execution_result_preview": "To solve the problem, let's break it down step by step with a clear and simplified approach.\n\n**Step 1: Determine how many candies Robert has.**  \nWe are told that John has twice as many candies as Ro...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_21.py"
+    },
+    {
+      "id": "gsm8k_22",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        250,
+        251,
+        252
+      ],
+      "status": "verified_correct",
+      "code_length": 1511,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Problem Recap:**\n\n- Each class has **20 students**.\n- There are **3 classes** in total.\n- The **school as a whole** is **50% boys and 50% girls**, meaning the total number of **girls** is equal ...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_22.py"
+    },
+    {
+      "id": "gsm8k_23",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        260,
+        261,
+        262
+      ],
+      "status": "verified_correct",
+      "code_length": 1397,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Revised Solution with Improved Clarity and Accuracy**\n\nWe are given the following information:\n\n- **2 cups of flour** are needed to make **1 dozen cookies**.\n- Carla is making **36 cookies today...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_23.py"
+    },
+    {
+      "id": "gsm8k_24",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        270,
+        271,
+        272
+      ],
+      "status": "verified_correct",
+      "code_length": 1533,
+      "has_execution_result": true,
+      "execution_result_preview": "Mary buys 3 bags of M&Ms. The first bag contains 300 M&Ms. The second bag has 12 more M&Ms than the first, so it contains $ 300 + 12 = 312 $ M&Ms. The third bag has a hole and only contains half the n...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_24.py"
+    },
+    {
+      "id": "gsm8k_25",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        280,
+        281,
+        282
+      ],
+      "status": "verified_correct",
+      "code_length": 1496,
+      "has_execution_result": true,
+      "execution_result_preview": "Peter purchased 20 popsicles at $0.25 each and 4 ice cream bars at $0.50 each. To find the total cost:\n\n1. Calculate the cost of the popsicles:  \n   $ 20 \\times 0.25 = 5.00 $\n\n2. Calculate the cost of...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_25.py"
+    },
+    {
+      "id": "gsm8k_26",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        290,
+        291,
+        292
+      ],
+      "status": "verified_correct",
+      "code_length": 1310,
+      "has_execution_result": true,
+      "execution_result_preview": "Ali has won 22 medals for counting super fast. Izzy has 5 fewer medals than Ali, so Izzy has:\n\n$$\n22 - 5 = 17 \\text{ medals}\n$$\n\nTogether, Ali and Izzy have:\n\n$$\n22 + 17 = 39 \\text{ medals}\n$$\n\nThe pr...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_26.py"
+    },
+    {
+      "id": "gsm8k_27",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        300,
+        301,
+        302
+      ],
+      "status": "verified_correct",
+      "code_length": 1898,
+      "has_execution_result": true,
+      "execution_result_preview": "**Problem:**  \nOn Tuesday, Peter wants to exercise for twice the amount of time he did on Monday and Sunday combined. On Sunday, he exercised for 23 minutes. On Monday, he exercised for 16 minutes. Ho...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_27.py"
+    },
+    {
+      "id": "gsm8k_28",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        310,
+        311,
+        312
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1504,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Step 1: Understand the Problem**\n\nTheo has a total of **$6000** to spend on his business trip. He plans to:\n\n- Buy **6 business suits** at **$100 each**\n- Buy **3 suitcases** at **$50 each**\n- P...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_28.py"
+    },
+    {
+      "id": "gsm8k_29",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        320,
+        321,
+        322
+      ],
+      "status": "verified_correct",
+      "code_length": 1439,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Revised Solution:**\n\nAt the beginning of the party, there were:\n- 25 men  \n- 15 women  \n**Total = 25 + 15 = 40 people**\n\nAfter one hour, **1/4 of the total number of people left**:\n$$\n\\frac{1}{4...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_29.py"
+    },
+    {
+      "id": "gsm8k_30",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        330,
+        331,
+        332
+      ],
+      "status": "verified_correct",
+      "code_length": 1986,
+      "has_execution_result": true,
+      "execution_result_preview": "Let's solve this problem by carefully analyzing the rewards and discounts step by step.\n\n---\n\n### Step 1: Understand the Rewards System\n\n- For every **$20 spent**, the customer earns **$1 off** their ...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_30.py"
+    },
+    {
+      "id": "gsm8k_31",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        340,
+        341,
+        342
+      ],
+      "status": "verified_correct",
+      "code_length": 1347,
+      "has_execution_result": true,
+      "execution_result_preview": "Here's a **revised and more accurate solution** to the problem, incorporating clarity, addressing assumptions, and presenting an alternative method for better understanding:\n\n---\n\n### **Problem Recap:...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_31.py"
+    },
+    {
+      "id": "gsm8k_32",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        350,
+        351,
+        352
+      ],
+      "status": "verified_correct",
+      "code_length": 1466,
+      "has_execution_result": true,
+      "execution_result_preview": "To solve the problem, we will calculate the total time Peyton spends on after-work activities by analyzing each day's event step by step.\n\n---\n\n### **Step-by-Step Breakdown**\n\n1. **Monday – Yoga Class...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_32.py"
+    },
+    {
+      "id": "gsm8k_33",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        360,
+        361,
+        362
+      ],
+      "status": "verified_correct",
+      "code_length": 1433,
+      "has_execution_result": true,
+      "execution_result_preview": "Let's solve the problem step by step with clarity and precision.\n\n---\n\n### **Problem Statement:**\n\nCarver just turned 45 years old, which makes him **5 years less than twice the age of his son**. How ...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_33.py"
+    },
+    {
+      "id": "gsm8k_34",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        370,
+        371,
+        372
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1410,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Problem Statement:**\n\nA hand-painted wallpaper costs $400 at the market. A DIY (do-it-yourself) approach saves 20% after considering the materials cost. If Ethan made his own hand-painted wallpa...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_34.py"
+    },
+    {
+      "id": "gsm8k_35",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        380,
+        381,
+        382
+      ],
+      "status": "execution_failed",
+      "code_length": 2053,
+      "has_execution_result": false,
+      "execution_result_preview": "None",
+      "error": "AttributeError: 'OpenAILLM' object has no attribute 'get'",
+      "code_file": "generated_workflows/GSM8K/gsm8k_35.py"
+    },
+    {
+      "id": "gsm8k_36",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        390,
+        391,
+        392
+      ],
+      "status": "verified_correct",
+      "code_length": 1442,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Problem Statement:**\n\nMonica is wrapping Christmas gifts. She has:\n\n- 6 gifts for her family  \n- 4 gifts for her friends  \n- 2 gifts for her teachers  \n\nThat’s a total of:\n\n$$\n6 + 4 + 2 = 12 \\te...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_36.py"
+    },
+    {
+      "id": "gsm8k_37",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        400,
+        401,
+        402
+      ],
+      "status": "verified_correct",
+      "code_length": 1973,
+      "has_execution_result": true,
+      "execution_result_preview": "Let's solve the problem step-by-step:\n\n---\n\n### **Step 1: Understand how much milk John drank**\n- One glass of milk is **8 ounces**.\n- John drinks **2 glasses** of milk.\n\nSo, the total amount of milk ...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_37.py"
+    },
+    {
+      "id": "gsm8k_38",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        410,
+        411,
+        412
+      ],
+      "status": "verified_correct",
+      "code_length": 1482,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Problem Recap:**\n\nSally had **$10**.  \nShe bought:\n- **2 pounds of taffy** on sale: \"Buy 1 pound at $3, get 1 pound 1/2 off.\"\n- A **mixed bag of seashells** for **$1.50**\n- **4 magnets** at **$0...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_38.py"
+    },
+    {
+      "id": "gsm8k_39",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        420,
+        421,
+        422
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1832,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Given:**\n- Mr. Josue initially had **$5000** in capital.\n- The **first bank** gave him **$4000**.\n- The **second bank** gave him **twice as much** as the first bank.\n\n---\n\n### **Step-by-step Cal...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_39.py"
+    },
+    {
+      "id": "gsm8k_40",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        430,
+        431,
+        432
+      ],
+      "status": "verified_incorrect",
+      "code_length": 2195,
+      "has_execution_result": true,
+      "execution_result_preview": "Let's solve the problem by **breaking it into parts** and then combining the results.\n\n---\n\n### **Step 1: Calculate the total cost before the discount**\n\nCharlotte wants:\n- 1 set of pots and pans: **$...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_40.py"
+    },
+    {
+      "id": "gsm8k_41",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        440,
+        441,
+        442
+      ],
+      "status": "verified_correct",
+      "code_length": 1582,
+      "has_execution_result": true,
+      "execution_result_preview": "Certainly! Let's provide a **more accurate and detailed solution** to the problem:\n\n---\n\n### **Problem Statement:**\n\nBillie's rectangular bedroom has an area of 360 square feet. The length of the room...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_41.py"
+    },
+    {
+      "id": "gsm8k_42",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        450,
+        451,
+        452
+      ],
+      "status": "verified_correct",
+      "code_length": 1485,
+      "has_execution_result": true,
+      "execution_result_preview": "**Problem:**  \nYou can buy a movie super ticket for $20 that includes rights to watch any movie and you get one popcorn with a soda for only $1 extra. Or you can buy a movie ticket for $12 and buy one...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_42.py"
+    },
+    {
+      "id": "gsm8k_43",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        460,
+        461,
+        462
+      ],
+      "status": "verified_correct",
+      "code_length": 1356,
+      "has_execution_result": true,
+      "execution_result_preview": "**Problem:**  \nGrayson recycles aluminum cans and plastic bottles for money. Each aluminum can is worth 2 cents, and each plastic bottle is worth 3 cents. She drinks 3 cans and 5 bottles per week. How...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_43.py"
+    },
+    {
+      "id": "gsm8k_44",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        470,
+        471,
+        472
+      ],
+      "status": "verified_correct",
+      "code_length": 1781,
+      "has_execution_result": true,
+      "execution_result_preview": "**Improved Solution:**\n\nTheo bought a pen for **$2** and a piece of paper that cost **$1 less than three times the price of the pen**. She gave the cashier **$10**. We need to find out how much change...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_44.py"
+    },
+    {
+      "id": "gsm8k_45",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        480,
+        481,
+        482
+      ],
+      "status": "verified_correct",
+      "code_length": 1532,
+      "has_execution_result": true,
+      "execution_result_preview": "Certainly! Here's a revised and refined version of the solution:\n\n---\n\n**Problem Statement:**\n\nBen has 4 tubes of blue paint and 3 tubes of yellow paint. Jasper has half as many tubes of blue paint as...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_45.py"
+    },
+    {
+      "id": "gsm8k_46",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        490,
+        491,
+        492
+      ],
+      "status": "verified_incorrect",
+      "code_length": 1532,
+      "has_execution_result": true,
+      "execution_result_preview": "**Problem:**  \nAn 8-year-old child wants to buy a toy car that costs $12. He already has $4 in savings. If he saves $2 every day from his allowance, how many days will it take him to save enough money...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_46.py"
+    },
+    {
+      "id": "gsm8k_47",
+      "benchmark": "GSM8K",
+      "data_indices": [
+        500,
+        501,
+        502
+      ],
+      "status": "verified_correct",
+      "code_length": 1784,
+      "has_execution_result": true,
+      "execution_result_preview": "### **Problem Statement**  \nLily, David, and Bodhi collected a total of 43 insects. Lily found 7 more insects than David, and David found half as many insects as Bodhi. How many insects did Lily find?...",
+      "error": "",
+      "code_file": "generated_workflows/GSM8K/gsm8k_47.py"
+    }
+  ]
+}

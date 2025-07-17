@@ -17,4 +17,8 @@ class ScEnsembleOp(BaseModel):
 class ReviewOp(BaseModel):
     thought: str = Field(default="", description="The thought in the process of review.")
     revised_solution: str = Field(default="", description="The revised solution.")
-    
+
+
+class ReflectOp(BaseModel):
+    thought: str = Field(default="", description="My thought process for reflecting on the provided solution. I will analyze its strengths and weaknesses.")
+    reflection_text: str = Field(default="", description="A critical reflection on the solution, highlighting potential errors, unstated assumptions, or alternative perspectives.")

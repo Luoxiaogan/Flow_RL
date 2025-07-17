@@ -27,12 +27,15 @@ EXEC_LLM='{
 }'
 
 # 任务配置
-GENERATION_TASKS="GSM8K:0,5,10-11"
+GENERATION_TASKS="GSM8K:30-32,40-42,50-52,60-62,70-72,80-82"
 
 # 路径配置
-WORKSPACE_PATH="./workspace_v5"
+WORKSPACE_PATH="./workspace_new_test"
 DATASET_BASE_PATH="./ScoreFlow/benchmark/datasets"
 GSM8K_DATASET_PATH="./ScoreFlow/benchmark/datasets/gsm8k.jsonl"
+
+# 训练数据输出
+TRAINING_DATA_OUTPUT="./training_data_output_new_test.jsonl"
 
 # 系统配置
 LOG_LEVEL="INFO"
@@ -61,6 +64,7 @@ python3 workflow_orchestrator_v5.py \
     --workspace-path "$WORKSPACE_PATH" \
     --dataset-base-path "$DATASET_BASE_PATH" \
     --gsm8k-dataset-path "$GSM8K_DATASET_PATH" \
+    --training-data-output "$TRAINING_DATA_OUTPUT" \
     --log-level "$LOG_LEVEL" \
     --max-concurrent-tasks $MAX_CONCURRENT_TASKS \
     --workflow-timeout $WORKFLOW_TIMEOUT

@@ -1,5 +1,9 @@
 # Benchmark: GSM8K
-# Generated from data indices: [0]
+# Workflow ID: gsm8k_0
+# Data Indices: [30, 31, 32]
+# Generation Time: 2025-07-17 19:31:16
+# Status: generated
+# ==================================================
 
 class Workflow:
     def __init__(
@@ -11,23 +15,15 @@ class Workflow:
         self.config = create(config)
         self.custom = operator.Custom(self.config, self.problem)
         self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
-        self.programmer = operator.Programmer(self.config, self.problem)
         self.review = operator.Review(self.config, self.problem)
 
     async def run_workflow(self):
         """
         This is a workflow graph.
         """
-        # Step 1: Break down the problem into detailed steps with reasoning
-        step_by_step_analysis = await self.custom(instruction="Can you solve this problem by breaking it down into detailed steps and explaining the reasoning behind each step?")
+        solution_1 = await self.custom(instruction="Can you solve this problem by breaking it down into detailed steps and explaining the reasoning behind each step?")
+        solution_2 = await self.review(pre_solution=solution_1)
+        solution_3 = await self.custom(instruction="Can you evaluate the previous solution and provide an improved version?")
+        ensembled_solution = await self.sc_ensemble(solutions=[solution_1, solution_2, solution_3])
 
-        # Step 2: Use the analysis to generate code for solving the problem
-        code_solution = await self.programmer(analysis=step_by_step_analysis)
-
-        # Step 3: Review the generated solution for correctness and clarity
-        reviewed_solution = await self.review(pre_solution=code_solution)
-
-        # Step 4: Ensemble the best solution (if multiple solutions are available)
-        final_solution = await self.sc_ensemble(solutions=[reviewed_solution])
-
-        return final_solution
+        return ensembled_solution
