@@ -1,0 +1,13 @@
+# accelerate_config.yaml
+compute_environment: LOCAL_MACHINE
+distributed_type: DEEPSPEED
+num_processes: 2
+num_machines: 1
+machine_rank: 0
+main_process_ip: null
+main_process_port: null
+deepspeed_config:
+  deepspeed_config_file: ./configs/deepspeed_config_z3.json # 指向我们的deepspeed配置
+  zero3_init_flag: true
+use_cpu: false
+mixed_precision: 'bf16'
