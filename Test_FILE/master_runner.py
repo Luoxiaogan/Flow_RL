@@ -5,6 +5,7 @@ import math
 import os
 import json
 import time
+import glob
 
 def create_generation_tasks(total_problems: int, min_sample: int, max_sample: int) -> list[list[int]]:
     """
@@ -31,25 +32,27 @@ def create_generation_tasks(total_problems: int, min_sample: int, max_sample: in
     return tasks
 
 def main():
-    parser = argparse.ArgumentParser(description="大规模工作流生成调度器")
+    parser = argparse.ArgumentParser(description="大规模工作流生成与执行调度器 V2")
     
-    # 调度器配置
-    parser.add_argument('--benchmark', type=str, required=True, help='要处理的基准测试名称，例如: GSM8K')
+    # === 调度器配置 ===
+    parser.add_argument('--benchmark', type=str, required=True, help='要处理的基准测试名称，例如: gsm8k')
     parser.add_argument('--total-problems', type=int, required=True, help='数据集中问题的总数')
     parser.add_argument('--min-sample-size', type=int, default=2, help='每个工作流最少使用的问题样本数')
     parser.add_argument('--max-sample-size', type=int, default=4, help='每个工作流最多使用的问题样本数')
-    parser.add_argument('--batch-size', type=int, default=15, help='每批次并行处理的工作流数量')
+    parser.add_argument('--batch-size', type=int, default=15, help='每批次并行生成的工作流数量')
 
-    # --- 以下参数将直接传递给 workflow_orchestrator_v5.py ---
+    # === 传递给子脚本的通用参数 ===
     parser.add_argument('--api-pool', type=str, required=True, help='API配置池 (JSON string)')
     parser.add_argument('--exec-llm', type=str, required=True, help='执行LLM配置 (JSON string)')
     parser.add_argument('--workspace-path', type=str, required=True, help='工作空间路径')
-    parser.add_argument('--dataset-base-path', type=str, required=True, help='数据集基础路径')
-    parser.add_argument('--gsm8k-dataset-path', type=str, help='特定数据集路径')
-    parser.add_argument('--training-data-output', type=str, required=True, help='训练数据输出文件路径 (JSONL)')
+    
+    # --- 参数修改：使用统一的数据集路径 ---
+    parser.add_argument('--dataset-path', type=str, required=True, help='数据集文件的完整路径，例如 /path/to/data.jsonl')
+    
+    parser.add_argument('--training-data-output', type=str, help='训练数据输出文件路径 (JSONL)')
     parser.add_argument('--log-level', type=str, default='INFO', help='日志级别')
-    parser.add_argument('--max-concurrent-tasks', type=int, default=10, help='最大并发任务数')
-    parser.add_argument('--workflow-timeout', type=int, default=120, help='工作流超时时间(秒)')
+    parser.add_argument('--max-concurrent-tasks', type=int, default=10, help='生成器内部的最大并发任务数')
+    parser.add_argument('--workflow-timeout', type=int, default=120, help='执行器的工作流超时时间(秒)')
     
     args = parser.parse_args()
 
@@ -60,49 +63,107 @@ def main():
     num_batches = math.ceil(len(all_tasks) / args.batch_size)
     print(f"任务将被分为 {num_batches} 个批次进行处理，每批次最多 {args.batch_size} 个任务。")
     
+    total_processed_workflows = 0
     for i in range(num_batches):
-        start_time = time.time()
+        batch_start_time = time.time()
         print("\n" + "="*80)
         print(f"正在处理批次 {i+1}/{num_batches}...")
         
         batch_tasks = all_tasks[i * args.batch_size : (i + 1) * args.batch_size]
-        
-        # 将任务块格式化为 orchestrator 可接受的字符串
+        if not batch_tasks:
+            continue
+
+        # 将任务块格式化为 generator 可接受的字符串
         # e.g., [[1,2], [5,8,9]] -> "1_2,5_8_9"
         task_strings = [ "_".join(map(str, task)) for task in batch_tasks ]
-        generation_tasks_arg = f"{args.benchmark}:{','.join(task_strings)}"
+        generation_tasks_arg = ','.join(task_strings)
+
+        # =================================================================
+        # 阶段一：调用 workflow_generator.py
+        # =================================================================
+        print(f"--- 阶段 1: 为批次 {i+1} 生成 {len(batch_tasks)} 个工作流 ---")
         
-        # 3. 构建并执行子进程命令
-        command = [
-            'python3', 'workflow_orchestrator_v5.py',
+        ### 修改点: 计算当前批次的起始索引，并将其传递给生成器 ###
+        start_index = i * args.batch_size
+        
+        gen_command = [
+            'python3', 'workflow_generator.py',
             '--api-pool', args.api_pool,
-            '--exec-llm', args.exec_llm,
+            '--benchmark', args.benchmark,
+            '--dataset-path', args.dataset_path,
             '--generation-tasks', generation_tasks_arg,
             '--workspace-path', args.workspace_path,
-            '--dataset-base-path', args.dataset_base_path,
-            '--training-data-output', args.training_data_output,
             '--log-level', args.log_level,
             '--max-concurrent-tasks', str(args.max_concurrent_tasks),
-            '--workflow-timeout', str(args.workflow_timeout),
-            '--no-save-workflows' # <--- 关键：禁用单个py文件保存
+            # 新增参数传递
+            '--id-start-index', str(start_index)
         ]
-        if args.gsm8k_dataset_path:
-            command.extend(['--gsm8k-dataset-path', args.gsm8k_dataset_path])
+        
+        if args.training_data_output:
+            gen_command.extend(['--training-data-output', args.training_data_output])
             
         try:
-            print(f"执行命令: {' '.join(command)}")
-            subprocess.run(command, check=True, text=True)
-            end_time = time.time()
-            print(f"批次 {i+1} 处理完成，耗时: {end_time - start_time:.2f} 秒。")
+            print(f"执行生成命令: {' '.join(gen_command)}")
+            subprocess.run(gen_command, check=True, text=True)
+            print("生成阶段成功。")
         except subprocess.CalledProcessError as e:
-            print(f"批次 {i+1} 执行失败! 错误: {e}")
-            print("将继续处理下一个批次...")
+            print(f"批次 {i+1} 的生成阶段失败! 错误: {e}\n跳过此批次。")
+            continue
         except FileNotFoundError:
             print("错误: 'python3' 命令未找到。请确保Python3已安装并在您的PATH中。")
             break
 
+        # =================================================================
+        # 阶段二：调用 workflow_executor.py
+        # =================================================================
+        print(f"--- 阶段 2: 逐个执行并验证新生成的工作流 ---")
+
+        # 构造此次批次生成的工作流ID，并找到对应的 .py 文件
+        # 注意：这里的逻辑现在与 generator 的新逻辑完全匹配了。
+        
+        generated_files_to_execute = []
+        for j in range(len(batch_tasks)):
+            # ID 从0开始，但我们是从总任务数中分批的，所以ID需要全局唯一
+            workflow_index = i * args.batch_size + j
+            workflow_id = f"{args.benchmark.lower()}_{workflow_index}"
+            
+            # 构造 .py 文件路径
+            py_file_path = os.path.join(args.workspace_path, "generated_workflows", args.benchmark, f"{workflow_id}.py")
+            
+            if os.path.exists(py_file_path):
+                generated_files_to_execute.append(py_file_path)
+            else:
+                print(f"警告: 未找到预期生成的文件 {py_file_path}，可能该工作流生成失败，将跳过。")
+
+        for py_file in generated_files_to_execute:
+            exec_command = [
+                'python3', 'workflow_executor.py',
+                '--workflow-path', py_file,
+                '--exec-llm', args.exec_llm,
+                '--workspace-path', args.workspace_path,
+                '--workflow-timeout', str(args.workflow_timeout),
+                '--log-level', args.log_level
+            ]
+
+            try:
+                # 串行执行每个工作流验证，以便观察日志
+                print(f"\n执行验证命令: {' '.join(exec_command)}")
+                subprocess.run(exec_command, check=True, text=True)
+            except subprocess.CalledProcessError as e:
+                # executor 内部已经处理并记录了失败，这里只打印提示
+                print(f"工作流 {os.path.basename(py_file)} 执行失败或验证未通过。详情请查看日志和CSV结果。")
+            except Exception as e:
+                print(f"调用执行器时发生未知错误: {e}")
+        
+        total_processed_workflows += len(generated_files_to_execute)
+        batch_end_time = time.time()
+        print(f"批次 {i+1} 处理完成，耗时: {batch_end_time - batch_start_time:.2f} 秒。")
+
     print("\n" + "="*80)
-    print("所有批次处理完毕！")
+    print(f"所有批次处理完毕！总共处理了 {total_processed_workflows} 个工作流。")
+    print(f"所有结果保存在: {os.path.join(args.workspace_path, 'execution_results.csv')}")
+    if args.training_data_output:
+        print(f"训练数据保存在: {args.training_data_output}")
 
 if __name__ == "__main__":
     main()

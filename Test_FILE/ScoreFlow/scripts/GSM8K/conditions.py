@@ -19,7 +19,7 @@ SYSTEM_PROMPT = "You are an expert at creating Python workflow graphs to solve m
 
 PYTHON_START = '''import asyncio
 from typing import Literal
-import ScoreFlow.scripts.GSM8K.operator as operator
+import ScoreFlow.scripts.gsm8k.operator as operator
 from metagpt.provider.llm_provider_registry import create_llm_instance as create
 
 '''
@@ -31,7 +31,7 @@ PYTHON_END = '''
         return await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)'''
 
 
-START_PORMPT = '''You objective is to generate a diverse and effective workflow graph for solving mathematical problems. Instead of generating the same simple graph every time, you should explore different reasoning structures.
+START_PROMPT = '''You objective is to generate a diverse and effective workflow graph for solving mathematical problems. Instead of generating the same simple graph every time, you should explore different reasoning structures.
 
 **Workflow Design Patterns (for inspiration):**
 

@@ -7,3 +7,4 @@ Processed_dataset/drop
 Processed_dataset/hotpotqa
 wandb/
 *.log
+.DS_Store
