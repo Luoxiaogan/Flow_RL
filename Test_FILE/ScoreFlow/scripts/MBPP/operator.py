@@ -1,87 +1,27 @@
-import ast
-import random
+# ScoreFlow/scripts/mbpp/operator.py
+
 import sys
 import traceback
-from collections import Counter
-from typing import Dict, List, Tuple
+from typing import List, Dict, Any
+# ### 修改点 1: 增加从共享 utils 模块的导入 ###
 import multiprocessing
-from ScoreFlow.scripts.MBPP.operator_an import *
-from ScoreFlow.scripts.MBPP.op_prompt import *
+from ScoreFlow.scripts.utils.code_executor import unsafe_execute
+
 from metagpt.actions.action_node import ActionNode
 from metagpt.llm import LLM
 from metagpt.logs import logger
-import re
-from enum import Enum
-import json
-import threading
 
-class CodeDataset(Enum):
-    HUMAN_EVAL = "HumanEval"
-    MBPP = "MBPP"
-
-def extract_test_cases_from_jsonl(entry_point: str, dataset: CodeDataset = CodeDataset.HUMAN_EVAL):
-    if dataset == CodeDataset.HUMAN_EVAL.value:
-        file_path = "data/humaneval_public_test.jsonl"
-        # Retain the original hardcoded test cases
-        hardcoded_cases = {
-            "find_zero": "",
-            "decode_cyclic": "",
-            "decode_shift": "",
-            "by_length": "",
-            "add": "",
-            "triangle_area": "",
-            "correct_bracketing": "",
-            "solve": "",
-            "sum_squares": "",
-            "starts_one_ends": "",
-        }
-    elif dataset == CodeDataset.MBPP.value:
-        file_path = "data/mbpp_public_test.jsonl"
-        hardcoded_cases = {
-            "remove_odd": "",
-            "replace_spaces": "",
-            "snake_to_camel": "",
-            "Split": "",
-            "swap_List": "",
-            "square_Sum": "",
-            "sort_sublists": "",
-            "unique_sublists": "",
-        }
-    # Check if there are hardcoded test cases
-    if entry_point in hardcoded_cases:
-        return hardcoded_cases[entry_point]
-
-    # If there are no hardcoded test cases, read from the file
-    with open(file_path, "r") as file:
-        for line in file:
-            data = json.loads(line)
-            if data.get("entry_point") == entry_point:
-                return data.get("test")
-
-    return None
-
-
-
-def test_case_2_test_function(solution: str, test_case: str, entry_point: str):
-    tester_function = f"""
-{solution}
-
-
-def check(candidate):
-    {test_case}
-
-def test_check():
-    check({entry_point})
-
-test_check()
-"""
-    return tester_function
-
-
+# 从同一目录导入新的 Pydantic 模型和 Prompt 模板
+from .operator_an import CodeGenerateOp, ScEnsembleOp, CodeFixOp, CodeRunnerResult
+from .op_prompt import SC_ENSEMBLE_PROMPT, CODE_FIX_PROMPT, CUSTOM_CODE_GENERATE_INSTRUCTION
 
 class Operator:
-    def __init__(self, llm: LLM):
+    """
+    所有 Operator 的基类，与 metagpt ActionNode 集成。
+    """
+    def __init__(self, llm: LLM, problem: Dict[str, Any] = None):
         self.llm = llm
+        self.problem = problem or {} # 确保 problem 是一个字典
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError
@@ -95,144 +35,154 @@ class Operator:
         return node.instruct_content.model_dump()
 
 
-class Custom(Operator):
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.problem = "You have the following task: " + problem["prompt"]
-
-    async def __call__(self, instruction):
-        
-        prompt = instruction + self.problem
-        response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
-        
-        return response["response"]
-    
 class CustomCodeGenerate(Operator):
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.problem = "You have the following task: " + problem["prompt"]
-        self.entry_point = problem["entry_point"]
+    """
+    根据指令生成 Python 代码。
+    """
+    def __init__(self, llm: LLM, problem: Dict[str, Any] = None):
+        super().__init__(llm, problem)
+        self.entry_point = self.problem.get("entry_point", "")
 
-    async def __call__(self, instruction):
-        prompt = instruction + self.problem + CustomCodeGenerate_PROMPT
-        response = await self._fill_node(GenerateOp, prompt, mode="code_fill", function_name=self.entry_point)
-        return response['response']
-
-class Review(Operator):
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.problem = problem["prompt"]
-        self.entry_point = problem["entry_point"]
-
-    async def __call__(self, pre_solution):
+    async def __call__(self, instruction: str) -> str:
+        """
+        :param instruction: 鼓励模型思考的指令, e.g., "Solve the problem step-by-step..."
+        :return: 生成的纯 Python 代码字符串。
+        """
+        # problem["text"] 包含问题描述
+        problem_description = self.problem.get("text", "")
+        # 将用户指令、问题描述和补充提示拼接在一起
+        prompt = f"{instruction}\n\n### Problem Description\n{problem_description}\n\n{CUSTOM_CODE_GENERATE_INSTRUCTION}"
         
-        prompt = REVIEW_PROMPT.format(problem=self.problem, entry_point=self.entry_point, solution=pre_solution)
-        response = await self._fill_node(ReviewOp, prompt, mode="xml_fill")
-        answer = response.get("final_code", "")
-        
-        return answer
+        # 使用 code_fill 模式让 metagpt 更好地生成代码
+        response = await self._fill_node(CodeGenerateOp, prompt, mode="code_fill", function_name=self.entry_point)
+        return response.get("code", "")
 
 
 class ScEnsemble(Operator):
+    """
+    从多个代码解决方案中选择最好的一个。
+    """
+    def __init__(self, llm: LLM, problem: Dict[str, Any] = None):
+        super().__init__(llm, problem)
 
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.problem = "You have the following task: " + problem["prompt"]
+    async def __call__(self, solutions: List[str]) -> str:
+        if not solutions:
+            return ""
+        if len(solutions) == 1:
+            return solutions[0]
 
-    async def __call__(self, solutions: List[str]):
-        answer_mapping = {}
-        solution_text = ""
-        for index, solution in enumerate(solutions):
-            answer_mapping[chr(65 + index)] = index
-            solution_text += f"{chr(65 + index)}: \n{str(solution)}\n\n\n"
-
-        prompt = SC_ENSEMBLE_PROMPT.format(problem=self.problem, solutions=solution_text)
+        answer_mapping = {chr(65 + i): i for i, _ in enumerate(solutions)}
+        solution_text = "\n\n".join(
+            f"### Solution {chr(65 + i)}\n```python\n{s}\n```" for i, s in enumerate(solutions)
+        )
+        
+        problem_description = self.problem.get("text", "")
+        prompt = SC_ENSEMBLE_PROMPT.format(problem=problem_description, solutions=solution_text)
+        
         response = await self._fill_node(ScEnsembleOp, prompt, mode="xml_fill")
-        answer = response.get("solution_letter", "")
-        answer = answer.strip().upper()
+        selected_letter = response.get("solution_letter", "").strip().upper()
         
-        return solutions[answer_mapping[answer]]
+        if selected_letter in answer_mapping:
+            return solutions[answer_mapping[selected_letter]]
+        
+        # 如果LLM返回了无效字母，则默认返回第一个
+        logger.warning(f"ScEnsemble returned an invalid letter '{selected_letter}'. Defaulting to the first solution.")
+        return solutions[0]
 
-class Test(Operator):
-    # use the public test set to test the code, then revise the code based on the test result. Once reach the max iteration while still not pass, try generate again.
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.code_generate = CustomCodeGenerate(llm, problem)
-        self.problem = "You have the following task: " + problem["prompt"]
-        self.entry_point = problem["entry_point"]
-    
-    
-    def exec_code(self, solution):
 
-        test_cases = extract_test_cases_from_jsonl(self.entry_point, dataset="MBPP")
-                
-        fail_cases = []
-        for test_case in test_cases:
-            test_code = test_case_2_test_function(solution, test_case, self.entry_point)
-            print("test_code:\n\n", test_code)
+class CodeFix(Operator):
+    """
+    根据测试失败的错误信息，反思并修复代码。
+    """
+    def __init__(self, llm: LLM, problem: Dict[str, Any] = None):
+        super().__init__(llm, problem)
+
+    async def __call__(self, code: str, error_message: str) -> str:
+        """
+        :param code: 失败的代码。
+        :param error_message: 来自 CodeRunner 的错误信息。
+        :return: 修复后的代码字符串。
+        """
+        problem_description = self.problem.get("text", "")
+        prompt = CODE_FIX_PROMPT.format(
+            problem=problem_description,
+            code=code,
+            error_message=error_message
+        )
+        
+        response = await self._fill_node(CodeFixOp, prompt, mode="xml_fill")
+        return response.get("fixed_code", "")
+
+
+# ----------------- 这是拆分出的新 Operator -----------------
+
+class CodeRunner(Operator):
+    """
+    执行代码并根据测试用例进行验证。
+    这个 Operator 不调用 LLM，只执行本地代码。
+    """
+    def __init__(self, llm: LLM = None, problem: Dict[str, Any] = None):
+        # 注意：这个 operator 理论上不需要 LLM，但为保持接口一致性而保留。
+        super().__init__(llm, problem)
+
+    async def __call__(self, code_to_test: str) -> CodeRunnerResult:
+        """
+        执行代码并返回结构化的测试结果。
+        :param code_to_test: 需要被测试的 Python 代码字符串。
+        :return: 一个包含测试结果的 CodeRunnerResult 对象。
+        """
+        # 从 self.problem (完整的MBPP数据条目) 中获取测试列表
+        test_list = self.problem.get("test_list")
+        
+        if not code_to_test or not test_list:
+            return CodeRunnerResult(
+                is_correct=False, 
+                error_message="Generated code or test list is empty."
+            )
+        
+        ### 修改点 2: 移除本地和临时的导入语句 ###
+        # 旧代码: from ScoreFlow.scripts.mbpp.handler import unsafe_execute
+        # 旧代码: import multiprocessing
+
+        result_queue = multiprocessing.Queue()
+        # 直接使用在文件顶部导入的 unsafe_execute 和 multiprocessing
+        process = multiprocessing.Process(
+            target=unsafe_execute,
+            args=(code_to_test, test_list, result_queue)
+        )
+        
+        timeout = 10 # 执行超时时间
+        process.start()
+        process.join(timeout=timeout)
+
+        if process.is_alive():
+            process.terminate()
+            process.join()
+            return CodeRunnerResult(
+                is_correct=False,
+                error_message=f"Execution timed out after {timeout} seconds."
+            )
+
+        if process.exitcode != 0:
+            # 尝试从队列中获取更详细的错误
             try:
-                exec(test_code, globals())
-            except AssertionError as e:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb_str = traceback.format_exception(exc_type, exc_value, exc_traceback)
-                with open("tester.txt", "a") as f:
-                    f.write("test_error of " + self.entry_point + "\n")
-                error_infomation = {
-                    "test_fail_case": {
-                        "test_case": test_case,
-                        "error_type": "AssertionError",
-                        "error_message": str(e),
-                        "traceback": tb_str,
-                    }
-                }
-                fail_cases.append(error_infomation)
-            except Exception as e:
-                with open("tester.txt", "a") as f:
-                    f.write(self.entry_point + " " + str(e) + "\n")
-                return {"exec_fail_case": str(e)}
-        if fail_cases != []:
-            return fail_cases
-        else:
-            return "no error"
-    
-    async def __call__(
-        self, solution, test_loop: int = 6
-    ):
-        for _ in range(test_loop):
-            result = self.exec_code(solution)
-            if result == "no error":
-                print("NO ERROR\n\n")
-                return solution
-            elif "exec_fail_case" in result:
-                print("fail1:\n", result)
-                result = result["exec_fail_case"]
-                prompt = REFLECTION_ON_PUBLIC_TEST_PROMPT.format(
-                    problem=self.problem,
-                    solution=solution,
-                    exec_pass=f"executed unsuccessfully, error: \n {result}",
-                    test_fail="executed unsucessfully",
-                    entry_point=self.entry_point
+                status, message = result_queue.get_nowait()
+                return CodeRunnerResult(is_correct=False, error_message=message)
+            except multiprocessing.queues.Empty:
+                return CodeRunnerResult(
+                    is_correct=False,
+                    error_message=f"Execution process exited with non-zero code: {process.exitcode}."
                 )
-                response = await self._fill_node(ReflectionTestOp, prompt, mode="code_fill")
-                solution = response["reflection_and_solution"]
-            else:
-                print("fail2:\n", result)
-                prompt = REFLECTION_ON_PUBLIC_TEST_PROMPT.format(
-                    problem=self.problem,
-                    solution=solution,
-                    exec_pass="executed successfully",
-                    test_fail=result,
-                    entry_point=self.entry_point
-                )
-                response = await self._fill_node(ReflectionTestOp, prompt, mode="code_fill")
-                solution = response["reflection_and_solution"]
         
-        result = self.exec_code(solution)
-        if result == "no error":
-            return solution
-        else:
-            solution = await self.code_generate(instruction="Can you analyze this problem step by step and generate the code?")
-            return solution
-
-
-
+        try:
+            status, message = result_queue.get_nowait()
+            is_correct = (status == "success")
+            return CodeRunnerResult(
+                is_correct=is_correct,
+                error_message=None if is_correct else message
+            )
+        except multiprocessing.queues.Empty:
+            return CodeRunnerResult(
+                is_correct=False, 
+                error_message="Result queue was empty despite process success. Unknown execution error."
+            )

@@ -23,6 +23,22 @@ Now you need to evaluate this solution very carefully, then give the revised sol
 Provide a critique for each dimension in the "thought" field, and provide the revised answer in your "revised_solution" field.
 """
 
+REFLECT_PROMPT = """
+Given the question described as follows: {problem}
+And a proposed solution:
+{solution}
+
+Your task is to act as a critical but constructive reviewer. Do not solve the problem or rewrite the solution. Instead, provide a critical reflection on the given solution.
+
+Consider the following aspects in your reflection:
+- **Clarity and Simplicity**: Is the solution easy to understand? Could it be explained more simply?
+- **Hidden Assumptions**: Does the solution make any unstated assumptions? Are these assumptions valid?
+- **Potential Pitfalls**: Are there any edge cases or scenarios where this solution might fail?
+- **Alternative Methods**: Can you think of a completely different way to approach this problem? Briefly describe it.
+
+In the "thought" field, explain your reasoning. In the "reflection_text" field, provide your structured reflection.
+"""
+
 PYTHON_CODE_VERIFIER_PROMPT = """
 You are a professional Python programmer. Your task is to write complete, self-contained code based on a given mathematical problem and output the answer. The code should include all necessary imports and dependencies, and be ready to run without additional setup or environment configuration.
 

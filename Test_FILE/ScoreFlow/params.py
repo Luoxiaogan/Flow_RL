@@ -1,6 +1,6 @@
 bench_dic = {
-    "GSM8K": {
-        "module_name": "GSM8KBenchmark",
+    "gsm8k": {
+        "module_name": "gsm8kBenchmark",
         "benchmark_name": "gsm8k"
     },
     "HotpotQA": {

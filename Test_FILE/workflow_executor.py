@@ -1,0 +1,214 @@
+import os
+import sys
+import asyncio
+import importlib
+import argparse
+import json
+import logging
+import csv
+from typing import Dict, Any, List # 增加 List 导入
+
+# --- 设置Python路径 (如果需要) ---
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCOREFLOW_PATH = os.path.dirname(CURRENT_DIR)
+if SCOREFLOW_PATH not in sys.path:
+    sys.path.append(SCOREFLOW_PATH)
+
+# 这两个导入对于执行工作流至关重要
+from metagpt.provider.llm_provider_registry import create_llm_instance, LLMType
+from metagpt.configs.llm_config import LLMConfig
+
+from ScoreFlow.scripts.base_handler import BenchmarkHandler
+
+# --- 配置解析 ---
+def parse_arguments():
+    """解析命令行参数"""
+    parser = argparse.ArgumentParser(description='工作流执行与验证器 (V2 - 修复版)')
+    
+    # === 核心输入 ===
+    parser.add_argument('--workflow-path', type=str, required=True, help='要执行的工作流 .py 文件的路径')
+    parser.add_argument('--exec-llm', type=str, required=True, help='执行LLM配置 (JSON string)')
+    parser.add_argument('--workspace-path', type=str, required=True, help='主工作空间路径，用于保存CSV结果')
+    
+    # === 其他配置 ===
+    parser.add_argument('--workflow-timeout', type=int, default=120, help='单个工作流的执行超时时间(秒)')
+    parser.add_argument('--log-level', type=str, default='INFO', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'], help='日志级别')
+
+    return parser.parse_args()
+
+def parse_exec_llm(exec_llm_str: str) -> Dict:
+    try:
+        return json.loads(exec_llm_str)
+    except json.JSONDecodeError as e:
+        logging.error(f"执行LLM配置解析失败: {e}")
+        sys.exit(1)
+
+def get_benchmark_handler(benchmark_name: str, dataset_path: str) -> BenchmarkHandler:
+    """与 generator 中相同的函数，用于动态加载处理器。"""
+    try:
+        handler_module_path = f"ScoreFlow.scripts.{benchmark_name.lower()}.handler"
+        handler_module = importlib.import_module(handler_module_path)
+        handler_class_name = f"{benchmark_name.capitalize()}Handler"
+        handler_class = getattr(handler_module, handler_class_name)
+        return handler_class(dataset_path=dataset_path)
+    except (ModuleNotFoundError, AttributeError, ValueError) as e:
+        logging.error(f"无法为 benchmark '{benchmark_name}' 加载处理器: {e}")
+        raise
+
+def convert_config_for_metagpt(config_dict: Dict) -> LLMConfig:
+    """将字典格式的LLM配置转换为metagpt的LLMConfig对象。"""
+    provider = config_dict.get('provider', 'openai')
+    api_type_map = {
+        'openai': LLMType.OPENAI, 'azure': LLMType.AZURE, 'gemini': LLMType.GEMINI,
+        'claude': LLMType.CLAUDE, 'moonshot': LLMType.MOONSHOT,
+        'zhipuai': LLMType.ZHIPUAI, 'qianfan': LLMType.QIANFAN,
+        # ... 可以添加更多映射
+    }
+    api_type = api_type_map.get(provider.lower(), LLMType.OPENAI)
+    
+    return LLMConfig(
+        api_type=api_type,
+        model=config_dict.get('model'),
+        api_key=config_dict.get('api_key'),
+        base_url=config_dict.get('base_url')
+    )
+
+def save_result_to_csv(workspace_path: str, result_data: Dict[str, Any]):
+    """以线程安全的方式将单条执行结果追加到CSV文件。"""
+    csv_file = os.path.join(workspace_path, "execution_results.csv")
+    file_exists = os.path.exists(csv_file)
+    
+    # 确保主工作区目录存在
+    os.makedirs(workspace_path, exist_ok=True)
+    
+    # 使用 'a' 模式追加写入
+    with open(csv_file, 'a', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        # 如果文件是新创建的，则写入表头
+        if not file_exists:
+            writer.writerow(["ID", "Benchmark", "Data_Indices", "Status", "Error_Type"])
+        
+        writer.writerow([
+            result_data["id"],
+            result_data["benchmark"],
+            '_'.join(map(str, result_data["data_indices"])),
+            result_data["status"],
+            result_data["error"].split(':')[0] if result_data.get("error") else ""
+        ])
+    logging.info(f"结果已记录到: {csv_file}")
+
+async def execute_and_verify(args: argparse.Namespace):
+    """主执行和验证逻辑。"""
+    workflow_id, benchmark_name, status, error_msg = "unknown", "unknown", "initialization_failed", ""
+    data_indices = []
+
+    try:
+        # 1. 加载元数据
+        meta_path = args.workflow_path.replace('.py', '.meta.json')
+        if not os.path.exists(meta_path):
+            raise FileNotFoundError(f"元数据文件未找到: {meta_path}")
+        with open(meta_path, 'r', encoding='utf-8') as f:
+            meta = json.load(f)
+        
+        workflow_id = meta['id']
+        benchmark_name = meta['benchmark']
+        dataset_path = meta['dataset_path']
+        data_indices = meta['data_indices']
+        verification_index = data_indices[0] 
+
+        logging.info(f"开始处理工作流 {workflow_id} (Benchmark: {benchmark_name})...")
+
+        # 2. 初始化 Handler 并获取验证所需数据
+        handler = get_benchmark_handler(benchmark_name, dataset_path)
+        verification_data = handler.get_verification_data(verification_index)
+        
+        # 3. 加载工作流代码
+        with open(args.workflow_path, 'r', encoding='utf-8') as f:
+            workflow_code = f.read()
+        
+        # 4. 使用 Handler 构建完整的可执行脚本
+        full_script_code = handler.build_executable_script(workflow_code, args.workflow_timeout)
+        
+        # 5. 准备执行环境并执行脚本
+        execution_namespace = {}
+        
+        ### --- 修改点：重构执行环境的准备过程 --- ###
+
+        # 动态加载主 operator 模块
+        operator_module = importlib.import_module(f"ScoreFlow.scripts.{benchmark_name}.operator")
+        
+        # 准备一个基础的全局命名空间
+        exec_globals = {
+            'asyncio': asyncio,
+            'create': create_llm_instance,
+            'operator': operator_module,
+            'Literal': getattr(__import__('typing'), 'Literal'),
+            'List': List, # 明确提供 List 类型，因为模板中会用到
+        }
+
+        # 动态检查并注入可选的 operator_an 模块及其内容
+        # 这是为了支持像 MBPP 这样有额外 Pydantic 模型的 benchmark
+        try:
+            an_module_path = f"ScoreFlow.scripts.{benchmark_name}.operator_an"
+            operator_an_module = importlib.import_module(an_module_path)
+            
+            # 遍历 operator_an 模块中的所有公共成员 (如 CodeRunnerResult 类)
+            for attr_name in dir(operator_an_module):
+                if not attr_name.startswith('_'):
+                    # 将其直接注入到全局命名空间中
+                    # 这使得工作流代码可以直接使用 `CodeRunnerResult` 而无需导入
+                    exec_globals[attr_name] = getattr(operator_an_module, attr_name)
+            logging.debug(f"成功注入模块 '{an_module_path}' 的内容到执行环境。")
+            
+        except ModuleNotFoundError:
+            # 如果 benchmark 没有 operator_an.py 文件，则静默处理
+            logging.debug(f"未找到可选的 'operator_an.py' 模块，跳过注入。")
+            pass
+
+        exec(full_script_code, exec_globals, execution_namespace)
+        
+        WorkflowClass = execution_namespace.get('Workflow')
+        if not WorkflowClass:
+            raise ValueError("在执行的脚本中未找到 'Workflow' 类。")
+        
+        exec_llm_config_dict = parse_exec_llm(args.exec_llm)
+        metagpt_llm_config = convert_config_for_metagpt(exec_llm_config_dict)
+        
+        # 实例化并运行工作流，传入完整的 verification_data 字典
+        workflow_instance = WorkflowClass(config=metagpt_llm_config, problem=verification_data)
+        
+        execution_result = await workflow_instance()
+        
+        # 6. 使用 Handler 进行验证
+        logging.info(f"[{workflow_id}] 执行完毕，开始验证...")
+        is_correct = handler.judge(execution_result, verification_data)
+        status = "verified_correct" if is_correct else "verified_incorrect"
+        logging.info(f"工作流 {workflow_id} 验证结果: {status}")
+        
+    except Exception as e:
+        status = "execution_failed"
+        error_msg = f"{type(e).__name__}: {e}"
+        logging.error(f"处理工作流 {workflow_id} 时出错: {e}", exc_info=True)
+
+    # 7. 无论成功与否，都记录结果
+    result_data = {
+        "id": workflow_id,
+        "benchmark": benchmark_name,
+        "data_indices": data_indices,
+        "status": status,
+        "error": error_msg
+    }
+    save_result_to_csv(args.workspace_path, result_data)
+
+async def main():
+    args = parse_arguments()
+    logging.basicConfig(level=getattr(logging, args.log_level.upper()), format='%(asctime)s - %(levelname)s - [%(funcName)s] %(message)s')
+
+    try:
+        await execute_and_verify(args)
+    except Exception as e:
+        logging.critical(f"执行器发生无法恢复的严重错误: {e}", exc_info=True)
+        sys.exit(1)
+
+if __name__ == "__main__":
+    asyncio.run(main())

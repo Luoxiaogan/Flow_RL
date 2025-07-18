@@ -1,28 +1,46 @@
+# ScoreFlow/scripts/mbpp/op_prompt.py
+
+# 这个 Prompt 保持不变，因为它在不同任务中是通用的。
 SC_ENSEMBLE_PROMPT = """
-Given the question described as follows: {problem}
-Several solutions have been generated to address the given question. Carefully go through every solutions, then determine the most accurate answer. They are as follows:
+You are an expert code reviewer. Given a code generation task and several Python code solutions, your job is to determine the best one.
+The code generation task is: {problem}
+
+Here are the proposed solutions:
 {solutions}
 
-In the "thought" field, provide a detailed explanation of your thought process. In the "solution_letter" field, output only the single letter ID (A, B, C, etc.) corresponding to the most accurate solution. Do not include any additional text or explanation in the "solution_letter" field.
+Carefully evaluate each solution based on correctness (passes all edge cases), efficiency (algorithmic complexity), and clarity (readability and Pythonic style).
+
+In the "thought" field, provide a detailed explanation of your evaluation process and justify your choice.
+In the "solution_letter" field, output only the single letter ID (A, B, C, etc.) corresponding to the best code solution. Do not include any other text.
 """
+# ----------------- 以下是新增/修改的内容 -----------------
 
-CustomCodeGenerate_PROMPT = """Note that you should think carefully based on four dimensions: "Logical correctness", "Consideration of all situations", "Potential misunderstanding of the problem", and "If the function name is the given entry_point"."""
-
-REFLECTION_ON_PUBLIC_TEST_PROMPT = """
-Given a code problem and a python code solution which failed to pass test or execute, you need to analyze the reason for the failure and propose a better code solution.: 
-### problem
+# 用于 CodeFixOperator 的新 Prompt
+CODE_FIX_PROMPT = """
+You are an expert Python debugger. You are given a programming problem, a piece of code that failed to solve it, and the error message from the test execution. Your task is to analyze the error, identify the bug, and provide a corrected version of the code.
+### Programming Problem
 {problem}
 
-### Code Solution
-{solution}
+### Flawed Code
+```python
+{code}
+```
 
-### Execution Result
-{exec_pass}
+### Execution Error
+```
+{error_message}
+```
 
-#### Failed Test Case
-{test_fail}
+### Your Task
+1. In the "thought" field, provide a step-by-step analysis of the bug. Explain what caused the error and how your proposed fix will solve it.
 
-Please provide a reflection on the failed test cases and code solution, followed by a better code solution without any additional text or test cases. Remember to keep the entry_point function name: {entry_point}. You MUST NOT give a code with dead loop!
+2. In the "fixed_code" field, provide the complete, corrected Python code. The code must be a drop-in replacement for the original, containing only the function definition and necessary imports. Do not include any test cases or example usage.
+
+Remember to maintain the original function name and signature.
 """
 
-
+CUSTOM_CODE_GENERATE_INSTRUCTION = """
+Please provide a complete and correct Python code solution.
+Ensure the function name matches the problem's entry point.
+Think step-by-step about potential edge cases and requirements.
+"""
