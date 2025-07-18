@@ -11,7 +11,7 @@ cd "$(dirname "$0")"
 
 # -- 调度器配置 --
 BENCHMARK="GSM8K"
-TOTAL_PROBLEMS=30   # 数据集中的问题总数
+TOTAL_PROBLEMS=7473   # 数据集中的问题总数
 MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
 MAX_SAMPLE_SIZE=4     # 每个工作流最多使用的问题样本数
 BATCH_SIZE=15         # 每批次并行处理的工作流数量
@@ -37,11 +37,11 @@ EXEC_LLM='{
 # -- 路径配置 --
 WORKSPACE_PATH="./workspace_large_scale"
 DATASET_BASE_PATH="./ScoreFlow/benchmark/datasets"
-GSM8K_DATASET_PATH="./ScoreFlow/benchmark/datasets/gsm8k.jsonl" # 可选，如果为空则使用默认
+GSM8K_DATASET_PATH="/home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/train.jsonl" # 可选，如果为空则使用默认
 
 # -- 输出配置 --
-TRAINING_DATA_OUTPUT="./training_data_large_scale.jsonl" # 训练数据总输出文件
-SUMMARY_CSV_OUTPUT="${WORKSPACE_PATH}/execution_results.csv" # 结果CSV总输出文件
+TRAINING_DATA_OUTPUT="./training_data_gsm8k.jsonl" # 训练数据总输出文件
+SUMMARY_CSV_OUTPUT="${WORKSPACE_PATH}/gsm8k.csv" # 结果CSV总输出文件
 
 # -- 系统配置 --
 LOG_LEVEL="INFO"
@@ -51,10 +51,10 @@ WORKFLOW_TIMEOUT=120
 # === 脚本执行 ===
 
 # 启动前清空旧的输出文件，以确保从头开始
-echo "正在清空旧的输出文件..."
-rm -f "$TRAINING_DATA_OUTPUT"
-rm -f "$SUMMARY_CSV_OUTPUT"
-echo "旧文件已清空。"
+# echo "正在清空旧的输出文件..."
+# rm -f "$TRAINING_DATA_OUTPUT"
+# rm -f "$SUMMARY_CSV_OUTPUT"
+# echo "旧文件已清空。"
 
 echo
 echo "=== 大规模工作流调度器启动 ==="
