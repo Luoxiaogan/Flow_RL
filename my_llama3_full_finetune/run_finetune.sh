@@ -1,20 +1,34 @@
 #!/bin/bash
 
+# # 创建新的tmux会话
+# tmux new-session -d -s llama_training
+# tmux kill-session -t llama_training
+
+# # 在tmux会话中运行训练
+# tmux send-keys -t llama_training "cd /home/lg/workflow_tooluse/Flow_RL_luogan/my_llama3_full_finetune" Enter
+# tmux send-keys -t llama_training "conda activate qzh" Enter
+# tmux send-keys -t llama_training "bash /home/lg/workflow_tooluse/Flow_RL_luogan/my_llama3_full_finetune/run_finetune.sh" Enter
+
+# # 查看训练状态
+# tmux attach -t llama_training
+
+# 忽略SIGHUP信号
+trap '' HUP
 # 确保脚本在任何命令失败时退出
 set -e
 
 # --- 可配置参数 ---
 export WANDB_PROJECT="llama3-8b-workflow-full-sft"
-MODEL_NAME="meta-llama/Meta-Llama-3-8B-Instruct"
-DATASET_PATH="./data/train_data.jsonl"
-OUTPUT_DIR="./results/Llama-3-8B-Instruct-Workflow-Expert-Full"
-DEEPSPEED_CONFIG="./configs/deepspeed_config_z3.json"
+MODEL_NAME="/data/pretrained_models/Meta-Llama-3-8B-Instruct"
+DATASET_PATH="/home/lg/workflow_tooluse/Flow_RL_luogan/training_data/gsm8k/jsonl1_verified_correct.jsonl"
+OUTPUT_DIR="/data/datasets/lg/Llama-3-8B-Instruct-Workflow-Expert-Full"
+DEEPSPEED_CONFIG="/home/lg/workflow_tooluse/Flow_RL_luogan/my_llama3_full_finetune/configs/deepspeed_config_z3.json"
 
 NUM_GPUS=2
 # 全局批大小 = NUM_GPUS * GRAD_ACCUM_STEPS * PER_DEVICE_BATCH_SIZE
 # 假设我们想要一个64的全局批大小
-PER_DEVICE_BATCH_SIZE=4
-GRAD_ACCUM_STEPS=8 # 64 / 2 / 4 = 8
+PER_DEVICE_BATCH_SIZE=2
+GRAD_ACCUM_STEPS=8 # 32 / 2 / 2 = 8
 
 # (可选) 张量并行配置
 # 对于8B模型在2张A800上，TP不是必须的，但可以开启以观察效果
@@ -26,24 +40,27 @@ GRAD_ACCUM_STEPS=8 # 64 / 2 / 4 = 8
 # --- Accelerate 启动命令 ---
 
 # 使用 accelerate launch 来启动，它会自动处理分布式环境
-accelerate launch --config_file ./accelerate_config.yaml src/train.py \
+accelerate launch --config_file /home/lg/workflow_tooluse/Flow_RL_luogan/my_llama3_full_finetune/accelerate_config.yaml /home/lg/workflow_tooluse/Flow_RL_luogan/my_llama3_full_finetune/src/train.py \
     --model_name_or_path $MODEL_NAME \
     --dataset_path $DATASET_PATH \
     --output_dir $OUTPUT_DIR \
-    --num_train_epochs 1 \
+    --num_train_epochs 3 \
     --per_device_train_batch_size $PER_DEVICE_BATCH_SIZE \
     --per_device_eval_batch_size 1 \
     --gradient_accumulation_steps $GRAD_ACCUM_STEPS \
     --learning_rate 2e-5 \
     --lr_scheduler_type "cosine" \
     --warmup_ratio 0.03 \
-    --logging_steps 5 \
+    --logging_steps 1 \
     --save_steps 50 \
-    --save_total_limit 2 \
+    --save_total_limit 10 \
     --bf16 True \
     --tf32 True \
     --gradient_checkpointing True \
     --report_to "wandb" \
     --deepspeed $DEEPSPEED_CONFIG \
-    --max_seq_length 2048 \
+    --max_seq_length 4096 \
     --use_flash_attention_2 True
+
+
+# nohup bash /home/lg/workflow_tooluse/Flow_RL_luogan/my_llama3_full_finetune/run_finetune.sh > output.log 2>&1 &

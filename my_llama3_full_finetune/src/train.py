@@ -25,57 +25,87 @@ class DataArguments:
     dataset_path: str = field(metadata={"help": "Path to the training data."})
     max_seq_length: Optional[int] = field(default=2048)
 
+def formatting_prompts_func(examples):
+    """格式化数据集中的聊天数据"""
+    output_texts = []
+    for i in range(len(examples['messages'])):
+        # 应用聊天模板
+        text = tokenizer.apply_chat_template(
+            examples['messages'][i], 
+            tokenize=False, 
+            add_generation_prompt=False
+        )
+        output_texts.append(text)
+    return {"text": output_texts}
+
 # --- 主函数 ---
 def train():
+    global tokenizer  # 需要在formatting_prompts_func中使用
+    
     # --- 解析参数 ---
     parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
     # --- 设置 W&B ---
     if training_args.report_to == "wandb":
-        os.environ["WANDB_PROJECT"] = "llama3-8b-full-finetune"
         os.environ["WANDB_LOG_MODEL"] = "checkpoint"
 
     # --- 加载 Tokenizer ---
     tokenizer = AutoTokenizer.from_pretrained(model_args.model_name_or_path, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token
-    # Llama 3 没有 pad_token_id, 我们需要设置一个，但也要确保 attention_mask 正确
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = tokenizer.eos_token_id
 
     # --- 加载模型 ---
     print(f"Loading model from {model_args.model_name_or_path}...")
+    model_kwargs = {
+        "torch_dtype": torch.bfloat16,
+    }
+    # 只有在支持时才添加 Flash Attention 2
+    if model_args.use_flash_attention_2:
+        model_kwargs["attn_implementation"] = "flash_attention_2"
+    
     model = AutoModelForCausalLM.from_pretrained(
         model_args.model_name_or_path,
-        torch_dtype=torch.bfloat16, # 使用 bfloat16
-        use_flash_attention_2=model_args.use_flash_attention_2,
-        # device_map 不再需要，DeepSpeed会处理
+        **model_kwargs
     )
     
     # --- 加载和处理数据集 ---
     raw_dataset = load_dataset('json', data_files=data_args.dataset_path, split="train")
-
-    def formatting_prompts_func(examples):
-        # SFTTrainer的 apply_chat_template 效果更好，这里手动模拟
-        # 这个函数将 'messages' 列表转换为单个文本字符串
-        output_texts = []
-        for i in range(len(examples['messages'])):
-            text = tokenizer.apply_chat_template(examples['messages'][i], tokenize=False, add_generation_prompt=False)
-            output_texts.append(text)
-        return output_texts
-
-    # 使用 Trainer 的内置功能来处理聊天模板
-    # 这确保了数据在被模型看到之前被正确格式化
+    
+    # 应用聊天模板格式化
+    formatted_dataset = raw_dataset.map(
+        formatting_prompts_func,
+        batched=True,
+        remove_columns=raw_dataset.column_names
+    )
+    
+    # 对文本进行tokenization
+    def tokenize_function(examples):
+        return tokenizer(
+            examples["text"],
+            truncation=True,
+            padding=False,
+            max_length=data_args.max_seq_length,
+            return_overflowing_tokens=False,
+        )
+    
+    tokenized_dataset = formatted_dataset.map(
+        tokenize_function,
+        batched=True,
+        remove_columns=["text"]
+    )
     
     # --- 初始化 Trainer ---
     trainer = Trainer(
         model=model,
         tokenizer=tokenizer,
         args=training_args,
-        train_dataset=raw_dataset,
-        # 我们让 Trainer 在内部处理聊天模板格式化
-        # Trainer 会自动寻找 'messages' 列并应用模板
-        data_collator=transformers.DataCollatorForSFT(tokenizer=tokenizer, max_seq_length=data_args.max_seq_length),
+        train_dataset=tokenized_dataset,
+        data_collator=DataCollatorForLanguageModeling(
+            tokenizer=tokenizer, 
+            mlm=False,  # 因果语言建模，不是掩码语言建模
+        ),
     )
     
     # 禁用缓存以提高训练效率
@@ -87,8 +117,6 @@ def train():
     trainer.train()
 
     # --- 保存模型 ---
-    # DeepSpeed ZeRO-3 需要特殊方式保存，Trainer会自动处理
-    # 它会收集所有分片的权重，然后在 rank 0 上保存完整模型
     print("Training finished. Saving model...")
     trainer.save_model(training_args.output_dir)
     tokenizer.save_pretrained(training_args.output_dir)

@@ -7,7 +7,6 @@ machine_rank: 0
 main_process_ip: null
 main_process_port: null
 deepspeed_config:
-  deepspeed_config_file: ./configs/deepspeed_config_z3.json # 指向我们的deepspeed配置
+  deepspeed_config_file: /home/lg/workflow_tooluse/Flow_RL_luogan/my_llama3_full_finetune/configs/deepspeed_config_z3.json
   zero3_init_flag: true
 use_cpu: false
-mixed_precision: 'bf16'
