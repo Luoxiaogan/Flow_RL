@@ -6,7 +6,6 @@ Datasets/
 Processed_dataset/drop
 Processed_dataset/hotpotqa
 wandb/
-*.log
 *.DS_Store
 Test_FILE/ScoreFlow/scripts/.DS_Store
 setup_env.sh
