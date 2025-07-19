@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # =====================================================================================
-# Llama-3 8B 微调脚本 (专为 6x V100 流水线并行优化 - 修正版)
-#
-# 该脚本使用 deepspeed 原生启动器来运行为流水线并行设计的 train_pp.py
+# Llama-3 8B 微调脚本 (专为 6x V100 流水线并行优化 - 最终版)
 # =====================================================================================
 
 set -e
@@ -23,25 +21,20 @@ OUTPUT_DIR="/mnt/mydisk/luogan/Llama-3-8B-PP-Expert-V100-6gpu"
 
 # --- 分布式与硬件配置 ---
 NUM_GPUS=6
-# 注意: 使用 deepspeed 启动器时，它会自己处理 CUDA_VISIBLE_DEVICES，我们不需要手动设置。
-# 如果需要指定卡，可以使用 --include "localhost:2,3,4,5,6,7"
 
 # --- 显存与批量大小配置 ---
-# 在流水线并行中，全局批大小 = 数据并行度 * 梯度累积 * 微批次大小
-# 假设PP=3(自动), 则DP=6/3=2. 全局批大小 = 2 * 8 * 1 = 16
 MICRO_BATCH_SIZE=1
 GRAD_ACCUM_STEPS=8 
 
 # --- DeepSpeed 配置文件路径 ---
-DEEPSPEED_CONFIG="${PROJECT_DIR}/configs/deepspeed_config_z3_pp.json"
+# 通过环境变量传递这个配置，deepspeed.initialize 会自动读取
+export DEEPSPEED_CONFIG="${PROJECT_DIR}/configs/deepspeed_config_z3_pp.json"
 
 # --- DeepSpeed 原生启动命令 ---
-# <-- 核心修改点: 从 accelerate launch 更换为 deepspeed -->
 echo "Starting training on $NUM_GPUS V100 GPUs using DeepSpeed launcher..."
 
-deepspeed --num_gpus $NUM_GPUS ${PROJECT_DIR}/src/train_pp.py \
-    --deepspeed \
-    --deepspeed_config $DEEPSPEED_CONFIG \
+# 使用 --include 指定要使用的GPU卡号
+deepspeed --include="localhost:2,3,4,5,6,7" ${PROJECT_DIR}/src/train_pp.py \
     --model_name_or_path $MODEL_NAME \
     --dataset_path $DATASET_PATH \
     --output_dir $OUTPUT_DIR \
