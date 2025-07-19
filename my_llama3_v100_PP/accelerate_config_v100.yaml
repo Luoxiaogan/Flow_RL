@@ -12,5 +12,5 @@ deepspeed_config:
   # <-- 修改点: 指向为V100环境创建的新DeepSpeed配置文件
   # 注意: 路径应为服务器上的绝对路径。这里使用占位符，请在实际部署时替换。
   deepspeed_config_file: /root/lg/Flow_RL_luogan/my_llama3_v100/configs/deepspeed_config_z3_pp.json
-  zero3_init_flag: true
+  zero3_init_flag: false
 use_cpu: false

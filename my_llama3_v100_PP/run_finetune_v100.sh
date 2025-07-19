@@ -20,7 +20,7 @@ export WANDB_PROJECT="llama3-8b-workflow-full-sft-v100"
 
 # --- 核心路径配置 (重要: 请根据您的服务器环境修改以下路径) ---
 # 建议使用绝对路径以避免潜在的路径问题
-PROJECT_DIR="/root/lg/Flow_RL_luogan/my_llama3_v100" # <--- 修改点: 请替换为您的项目根目录
+PROJECT_DIR="/root/lg/Flow_RL_luogan/my_llama3_v100_PP" # <--- 修改点: 请替换为您的项目根目录
 MODEL_NAME="/mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa"
 DATASET_PATH="/root/lg/Flow_RL_luogan/training_data/gsm8k/jsonl1_verified_correct.jsonl" # <--- 修改点: 请替换为您的数据集路径
 OUTPUT_DIR="/mnt/mydisk/luogan/Llama-3-8B-Instruct-Workflow-Expert-Full-V100"
@@ -46,7 +46,7 @@ DEEPSPEED_CONFIG="${PROJECT_DIR}/configs/deepspeed_config_z3_pp.json"
 # 使用 `python -m accelerate.commands.launch` 以确保使用当前conda环境的包
 echo "Starting training on $NUM_GPUS V100 GPUs..."
 
-python -m accelerate.commands.launch --config_file $ACCELERATE_CONFIG ${PROJECT_DIR}/src/train.py \
+python -m accelerate.commands.launch --config_file $ACCELERATE_CONFIG ${PROJECT_DIR}/src/train_pp.py \
     --model_name_or_path $MODEL_NAME \
     --dataset_path $DATASET_PATH \
     --output_dir $OUTPUT_DIR \
