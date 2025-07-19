@@ -8,3 +8,4 @@ Processed_dataset/hotpotqa
 wandb/
 *.log
 .DS_Store
+setup_env.sh
