@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =====================================================================================
-# Llama-3 8B 微调脚本 (专为 6x V100 流水线并行优化 - 最终版)
+# Llama-3 8B 微调脚本 (专为 6x V100 流水线并行优化 - 最终修正版)
 # =====================================================================================
 
 set -e
@@ -27,14 +27,16 @@ MICRO_BATCH_SIZE=1
 GRAD_ACCUM_STEPS=8 
 
 # --- DeepSpeed 配置文件路径 ---
-# 通过环境变量传递这个配置，deepspeed.initialize 会自动读取
-export DEEPSPEED_CONFIG="${PROJECT_DIR}/configs/deepspeed_config_z3_pp.json"
+DEEPSPEED_CONFIG="${PROJECT_DIR}/configs/deepspeed_config_z3_pp.json"
 
 # --- DeepSpeed 原生启动命令 ---
 echo "Starting training on $NUM_GPUS V100 GPUs using DeepSpeed launcher..."
 
 # 使用 --include 指定要使用的GPU卡号
+# 核心修改点: 将 --deepspeed <config_path> 作为参数传递给 train_pp.py
+# 这样 HfArgumentParser 就能正确解析，deepspeed.initialize() 也能找到配置。
 deepspeed --include="localhost:2,3,4,5,6,7" ${PROJECT_DIR}/src/train_pp.py \
+    --deepspeed $DEEPSPEED_CONFIG \
     --model_name_or_path $MODEL_NAME \
     --dataset_path $DATASET_PATH \
     --output_dir $OUTPUT_DIR \
