@@ -1,0 +1,16 @@
+# /Users/luogan/Code/workflow_generation/Flow_RL/my_llama3_v100/accelerate_config_v100.yaml
+# 专为在4张V100上进行分布式训练的Accelerate配置文件
+
+compute_environment: LOCAL_MACHINE
+distributed_type: DEEPSPEED
+num_processes: 6  # <-- 修改点: 6张V100 GPU
+num_machines: 1
+machine_rank: 0
+main_process_ip: null
+main_process_port: null
+deepspeed_config:
+  # <-- 修改点: 指向为V100环境创建的新DeepSpeed配置文件
+  # 注意: 路径应为服务器上的绝对路径。这里使用占位符，请在实际部署时替换。
+  deepspeed_config_file: /root/lg/Flow_RL_luogan/my_llama3_v100/configs/deepspeed_config_z3_pp.json
+  zero3_init_flag: true
+use_cpu: false
