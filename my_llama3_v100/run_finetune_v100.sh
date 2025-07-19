@@ -12,32 +12,25 @@ set -e
 
 # --- 基础环境配置 ---
 # 显式初始化conda环境，请根据您的服务器环境修改路径
-source /opt/miniconda3/etc/profile.d/conda.sh
-conda activate qzh
+source /mnt/mydisk/miniconda3/etc/profile.d/conda.sh
+conda activate lg_workflow
 
 # --- W&B (Weights & Biases) 项目配置 ---
 export WANDB_PROJECT="llama3-8b-workflow-full-sft-v100"
 
 # --- 核心路径配置 (重要: 请根据您的服务器环境修改以下路径) ---
 # 建议使用绝对路径以避免潜在的路径问题
-PROJECT_DIR="/path/to/your/project/my_llama3_v100" # <--- 修改点: 请替换为您的项目根目录
-MODEL_NAME="/data/pretrained_models/Meta-Llama-3-8B-Instruct"
-DATASET_PATH="/path/to/your/training_data/gsm8k/jsonl1_verified_correct.jsonl" # <--- 修改点: 请替换为您的数据集路径
-OUTPUT_DIR="/data/datasets/lg/Llama-3-8B-Instruct-Workflow-Expert-Full-V100"
+PROJECT_DIR="/root/lg/Flow_RL_luogan/my_llama3_v100" # <--- 修改点: 请替换为您的项目根目录
+MODEL_NAME="/mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa"
+DATASET_PATH="/root/lg/Flow_RL_luogan/training_data/gsm8k/jsonl1_verified_correct.jsonl" # <--- 修改点: 请替换为您的数据集路径
+OUTPUT_DIR="/mnt/mydisk/luogan/Llama-3-8B-Instruct-Workflow-Expert-Full-V100"
 
 # --- 分布式训练及硬件配置 (V100 适配) ---
-NUM_GPUS=4 # <-- 修改点: 设置为4, 对应V100 GPU数量
-export CUDA_VISIBLE_DEVICES=0,1,2,3 # <-- 修改点: 使用0,1,2,3号GPU
-
-# --- 显存与批量大小配置 ---
-# V100显存 (通常16G/32G) 远小于A800 (80G)，因此 max_seq_length 和 batch_size 是关键调优参数。
+NUM_GPUS=6 
+export CUDA_VISIBLE_DEVICES=2,3,4,5,6,7
 #
-# 全局批量大小 (Global Batch Size) = NUM_GPUS * GRAD_ACCUM_STEPS * PER_DEVICE_BATCH_SIZE
-# 目标全局批量大小 32: 4 (GPUs) * 4 (Accum) * 2 (Batch) = 32
-#
-PER_DEVICE_BATCH_SIZE=2
-GRAD_ACCUM_STEPS=4 # <-- 修改点: 从 8 改为 4, 以在4卡上保持全局批大小32
-
+PER_DEVICE_BATCH_SIZE=1
+GRAD_ACCUM_STEPS=6 
 # --- OOM (Out of Memory) 备忘录 ---
 # 如果在训练开始时遇到显存不足错误:
 # 1. 首选策略: 降低 PER_DEVICE_BATCH_SIZE 到 1, 并将 GRAD_ACCUM_STEPS 加倍到 8。
@@ -67,7 +60,7 @@ python -m accelerate.commands.launch --config_file $ACCELERATE_CONFIG ${PROJECT_
     --save_total_limit 10 \
     --gradient_checkpointing True \
     --report_to "wandb" \
-    --max_seq_length 4096 \
+    --max_seq_length 1024 \
     --deepspeed $DEEPSPEED_CONFIG \
     --fp16 True \
     --use_flash_attention_2 False
