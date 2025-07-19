@@ -1,4 +1,4 @@
-# src/train.py
+# /Users/luogan/Code/workflow_generation/Flow_RL/my_llama3_v100/src/train.py
 import os
 import torch
 import transformers
@@ -15,10 +15,11 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 # --- 定义参数类 ---
+# 这些 dataclass 与原始文件保持一致
 @dataclass
 class ModelArguments:
     model_name_or_path: str = field(metadata={"help": "Path to pretrained model or model identifier from huggingface.co/models"})
-    #use_flash_attention_2: bool = field(default=True, metadata={"help": "Enable Flash Attention 2."})
+    use_flash_attention_2: bool = field(default=True, metadata={"help": "Enable Flash Attention 2."})
 
 @dataclass
 class DataArguments:
@@ -29,7 +30,6 @@ def formatting_prompts_func(examples):
     """格式化数据集中的聊天数据"""
     output_texts = []
     for i in range(len(examples['messages'])):
-        # 应用聊天模板
         text = tokenizer.apply_chat_template(
             examples['messages'][i], 
             tokenize=False, 
@@ -40,7 +40,7 @@ def formatting_prompts_func(examples):
 
 # --- 主函数 ---
 def train():
-    global tokenizer  # 需要在formatting_prompts_func中使用
+    global tokenizer
     
     # --- 解析参数 ---
     parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
@@ -58,33 +58,47 @@ def train():
 
     # --- 加载模型 ---
     print(f"Loading model from {model_args.model_name_or_path}...")
-    # model_kwargs = {
-    #     "torch_dtype": torch.float16,
-    #     # "attn_implementation": "sdpa",  # 默认使用 SDPA 注意力实现, for V100, 无法使用flash attention
-    # }
-    # 只有在支持时才添加 Flash Attention 2
-    # if model_args.use_flash_attention_2:
-    #     model_kwargs["attn_implementation"] = "flash_attention_2"
     
+    # ========================== [核心修改点] ==========================
+    # 动态确定模型加载时的数据类型(torch_dtype)
+    # 这使得代码可以根据传入的 --fp16 或 --bf16 参数自动适应V100或A800
+    if training_args.fp16:
+        torch_dtype = torch.float16
+        print("Data type for model loading set to: torch.float16 (FP16)")
+    elif training_args.bf16:
+        torch_dtype = torch.bfloat16
+        print("Data type for model loading set to: torch.bfloat16 (BF16)")
+    else:
+        # 如果未指定混合精度，则默认为全精度
+        torch_dtype = torch.float32
+        print("No mixed precision specified. Data type for model loading set to: torch.float32")
+
+    model_kwargs = {
+        "torch_dtype": torch_dtype,
+    }
+    
+    # 根据命令行参数动态决定是否使用 Flash Attention 2
+    if model_args.use_flash_attention_2:
+        print("Enabling Flash Attention 2.")
+        model_kwargs["attn_implementation"] = "flash_attention_2"
+    else:
+        print("Flash Attention 2 is disabled.")
+    # =================================================================
+
     model = AutoModelForCausalLM.from_pretrained(
         model_args.model_name_or_path,
-        attn_implementation="sdpa",
-        torch_dtype=torch.float16,
-        trust_remote_code=True,
-        use_cache=False if training_args.gradient_checkpointing else True,
+        **model_kwargs
     )
     
     # --- 加载和处理数据集 ---
     raw_dataset = load_dataset('json', data_files=data_args.dataset_path, split="train")
     
-    # 应用聊天模板格式化
     formatted_dataset = raw_dataset.map(
         formatting_prompts_func,
         batched=True,
         remove_columns=raw_dataset.column_names
     )
     
-    # 对文本进行tokenization
     def tokenize_function(examples):
         return tokenizer(
             examples["text"],
@@ -108,11 +122,10 @@ def train():
         train_dataset=tokenized_dataset,
         data_collator=DataCollatorForLanguageModeling(
             tokenizer=tokenizer, 
-            mlm=False,  # 因果语言建模，不是掩码语言建模
+            mlm=False,
         ),
     )
     
-    # 禁用缓存以提高训练效率
     if hasattr(model.config, "use_cache"):
         model.config.use_cache = False
 
