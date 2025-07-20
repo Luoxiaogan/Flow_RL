@@ -174,7 +174,16 @@ class CodeFix(Operator):
             entry_point=self.entry_point
         )
         response = await self._fill_node(CodeFixOp, prompt, mode="xml_fill")
-        return response.get("fixed_code", "")
+        fixed_code = response.get("fixed_code", "")
+        
+        # Clean up XML tags if present
+        if "</fixed_code>" in fixed_code:
+            fixed_code = fixed_code.replace("</fixed_code>", "").strip()
+        if "<fixed_code>" in fixed_code:
+            start = fixed_code.find("<fixed_code>") + len("<fixed_code>")
+            fixed_code = fixed_code[start:].strip()
+        
+        return fixed_code
 
 class Review(Operator):
     def __init__(self, llm: LLM, problem: str = None):
@@ -187,6 +196,13 @@ class Review(Operator):
         prompt = REVIEW_PROMPT.format(problem=self.problem, entry_point=self.entry_point, solution=solution)
         response = await self._fill_node(ReviewOp, prompt, mode="xml_fill")
         answer = response.get("final_code", "")
+        
+        # Clean up XML tags if present
+        if "</final_code>" in answer:
+            answer = answer.replace("</final_code>", "").strip()
+        if "<final_code>" in answer:
+            start = answer.find("<final_code>") + len("<final_code>")
+            answer = answer[start:].strip()
         
         return answer
 

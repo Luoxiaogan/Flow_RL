@@ -62,6 +62,7 @@ LOG_LEVEL="INFO"
 # 修改变量名以匹配Python参数，提高一致性
 MAX_CONCURRENT_TASKS=10  # 生成器内部的最大并发任务数
 WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
+MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
 
 # ============================ 任务配置 =======================================
 # 说明: 一次只取消注释一个任务块来运行。
@@ -127,7 +128,8 @@ python3 master_runner.py \
     --training-data-output "$TRAINING_DATA_OUTPUT" \
     --log-level "$LOG_LEVEL" \
     --max-concurrent-tasks "$MAX_CONCURRENT_TASKS" \
-    --workflow-timeout "$WORKFLOW_TIMEOUT"
+    --workflow-timeout "$WORKFLOW_TIMEOUT" \
+    --max-concurrent-executions "$MAX_CONCURRENT_EXECUTIONS"
 
 # 检查上一个命令的退出状态
 if [ $? -eq 0 ]; then

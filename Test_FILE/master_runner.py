@@ -6,6 +6,41 @@ import os
 import json
 import time
 import glob
+import asyncio
+from typing import List
+
+async def execute_workflow_async(exec_command: List[str], py_file: str) -> None:
+    """异步执行单个工作流"""
+    try:
+        print(f"\n执行验证命令: {' '.join(exec_command)}")
+        # 使用 asyncio.create_subprocess_exec 执行命令
+        process = await asyncio.create_subprocess_exec(
+            *exec_command,
+            stdout=None,  # 不捕获stdout，让其直接输出到终端
+            stderr=None   # 不捕获stderr，让其直接输出到终端
+        )
+        # 等待进程完成
+        returncode = await process.wait()
+        
+        if returncode != 0:
+            print(f"工作流 {os.path.basename(py_file)} 执行失败或验证未通过。详情请查看日志和CSV结果。")
+    except Exception as e:
+        print(f"调用执行器时发生未知错误: {e}")
+
+async def execute_workflows_parallel(exec_commands_and_files: List[tuple], max_concurrent: int = 5) -> None:
+    """并行执行多个工作流，限制最大并发数"""
+    semaphore = asyncio.Semaphore(max_concurrent)
+    
+    async def execute_with_semaphore(exec_command, py_file):
+        async with semaphore:
+            await execute_workflow_async(exec_command, py_file)
+    
+    tasks = []
+    for exec_command, py_file in exec_commands_and_files:
+        task = asyncio.create_task(execute_with_semaphore(exec_command, py_file))
+        tasks.append(task)
+    
+    await asyncio.gather(*tasks)
 
 def create_generation_tasks(total_problems: int, min_sample: int, max_sample: int) -> list[list[int]]:
     """
@@ -53,6 +88,7 @@ def main():
     parser.add_argument('--log-level', type=str, default='INFO', help='日志级别')
     parser.add_argument('--max-concurrent-tasks', type=int, default=10, help='生成器内部的最大并发任务数')
     parser.add_argument('--workflow-timeout', type=int, default=120, help='执行器的工作流超时时间(秒)')
+    parser.add_argument('--max-concurrent-executions', type=int, default=5, help='并行执行工作流的最大并发数')
     
     args = parser.parse_args()
 
@@ -135,6 +171,8 @@ def main():
             else:
                 print(f"警告: 未找到预期生成的文件 {py_file_path}，可能该工作流生成失败，将跳过。")
 
+        # 准备所有执行命令
+        exec_commands_and_files = []
         for py_file in generated_files_to_execute:
             exec_command = [
                 'python3', 'workflow_executor.py',
@@ -144,16 +182,11 @@ def main():
                 '--workflow-timeout', str(args.workflow_timeout),
                 '--log-level', args.log_level
             ]
-
-            try:
-                # 串行执行每个工作流验证，以便观察日志
-                print(f"\n执行验证命令: {' '.join(exec_command)}")
-                subprocess.run(exec_command, check=True, text=True)
-            except subprocess.CalledProcessError as e:
-                # executor 内部已经处理并记录了失败，这里只打印提示
-                print(f"工作流 {os.path.basename(py_file)} 执行失败或验证未通过。详情请查看日志和CSV结果。")
-            except Exception as e:
-                print(f"调用执行器时发生未知错误: {e}")
+            exec_commands_and_files.append((exec_command, py_file))
+        
+        # 并行执行所有工作流验证
+        print(f"并行执行 {len(exec_commands_and_files)} 个工作流验证（最多 {args.max_concurrent_executions} 个并发）...")
+        asyncio.run(execute_workflows_parallel(exec_commands_and_files, max_concurrent=args.max_concurrent_executions))
         
         total_processed_workflows += len(generated_files_to_execute)
         batch_end_time = time.time()
