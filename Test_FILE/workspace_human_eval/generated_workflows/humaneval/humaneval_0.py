@@ -20,19 +20,20 @@ class Workflow:
         """
         This is a workflow graph.
         """
-        solution1 = await self.code_generate(instruction="Can you analyze this problem step by step and generate the code?")
-        solution2 = await self.code_generate(instruction="Can you analyze this problem step by step and generate the code?")
-        solution3 = await self.code_generate(instruction="Can you analyze this problem step by step and generate the code?")
+        solution1 = await self.code_generate("Can you analyze this problem step by step and generate the code?")
+        solution2 = await self.code_generate("Can you analyze this problem step by step and generate the code?")
+        solution3 = await self.code_generate("Can you analyze this problem step by step and generate the code?")
 
-        solutions = [solution1, solution2, solution3]
-        ensembled_solution = await self.sc_ensemble(solutions=solutions)
+        reviewed_solution1 = await self.review(solution1)
+        reviewed_solution2 = await self.review(solution2)
+        reviewed_solution3 = await self.review(solution3)
 
-        test_result = await self.code_runner(solution=ensembled_solution)
+        solutions = [reviewed_solution1, reviewed_solution2, reviewed_solution3]
+        ensemble_solution = await self.sc_ensemble(solutions)
+
+        test_result = await self.code_runner(ensemble_solution)
         if test_result == "PASSED":
-            final_solution = await self.review(solution=ensembled_solution)
-            return final_solution
+            return ensemble_solution
         else:
-            error_message = test_result
-            fixed_solution = await self.code_fix(solution=ensembled_solution, error_message=error_message)
-            final_solution = await self.review(solution=fixed_solution)
-            return final_solution
+            fixed_solution = await self.code_fix(ensemble_solution, test_result)
+            return fixed_solution

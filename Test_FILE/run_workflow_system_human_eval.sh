@@ -40,7 +40,7 @@ API_POOL='[
     {
         "provider": "openai",
         "model": "qwen-turbo",
-        "api_key": "sk-2df74af0570a42059c10a3f24de1b9df",
+        "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
     }
 ]'
@@ -49,7 +49,7 @@ API_POOL='[
 EXEC_LLM='{
     "provider": "openai",
     "model": "qwen-turbo",
-    "api_key": "sk-2df74af0570a42059c10a3f24de1b9df",
+    "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
     "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
 }'
 

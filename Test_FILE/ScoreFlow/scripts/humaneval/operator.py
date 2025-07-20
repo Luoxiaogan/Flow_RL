@@ -182,9 +182,9 @@ class Review(Operator):
         self.problem = problem["prompt"]
         self.entry_point = problem["entry_point"]
 
-    async def __call__(self, pre_solution):
+    async def __call__(self, solution):
         
-        prompt = REVIEW_PROMPT.format(problem=self.problem, entry_point=self.entry_point, solution=pre_solution)
+        prompt = REVIEW_PROMPT.format(problem=self.problem, entry_point=self.entry_point, solution=solution)
         response = await self._fill_node(ReviewOp, prompt, mode="xml_fill")
         answer = response.get("final_code", "")
         

@@ -40,35 +40,38 @@ class Workflow:
 
 
 Here's an introduction to operators you can use: (these are all you can use, do not create new operators)
+IMPORTANT: All operators accept POSITIONAL arguments only. Do NOT use keyword arguments like 'solution=' or 'instruction='. Use positional arguments directly.
 1. CustomCodeGenerate:
 Usage: Generates Python code based on customized input instruction.
-Format MUST follow: code_generate(instruction: str) -> str
+Format MUST follow: code_generate(instruction) -> str
+Call it like: await self.code_generate("your instruction here")
 The instruction should encourage operator to think step by step and understand the problem, do not add the specific information of the task into the input instruction.
 The output can serve as the input of next operators or the final output.
 
 2. CodeRunner:
 Usage: Executes the provided code solution against test cases and returns the results.
 Format MUST follow: code_runner(solution) -> str
+Call it like: await self.code_runner(generated_code)
 Returns either "PASSED" if all tests pass, or detailed error information if tests fail.
-Example: test_result = await self.code_runner(generated_code)
 
 3. CodeFix:
 Usage: Analyzes failed code and error messages to generate a corrected version.
 Format MUST follow: code_fix(solution, error_message) -> str
+Call it like: await self.code_fix(failed_code, error_info)
 Takes the failed code and error details, returns an improved solution.
-Example: fixed_code = await self.code_fix(failed_code, error_info)
 
 4. ScEnsemble:
 Usage: Evaluates multiple solutions and selects the best one based on quality and correctness.
-Format MUST follow: sc_ensemble(solutions: List[str]) -> str
-You can ensemble multiple solutions, for example:
-ensembled_solution = await self.sc_ensemble(solutions=[solution1, solution2, solution3])
+Format MUST follow: sc_ensemble(solutions) -> str where solutions is a List[str]
+Call it like: await self.sc_ensemble([solution1, solution2, solution3])
+Note: Pass the list directly as a positional argument, not as solutions=
 The output can serve as the input of next operators or the final output.
 
 5. Review:
 Usage: Reviews and improves existing code solution for better quality, readability, and efficiency.
 Format MUST follow: review(solution) -> str
-Example: reviewed_solution = await self.review(working_code)
+Call it like: await self.review(working_code)
+Note: Pass the solution directly as a positional argument, not as solution=
 
 We have the task input as follow. But your output graph can not contain any specific information of the give task.
 TASK: '''
