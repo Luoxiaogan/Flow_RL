@@ -69,13 +69,13 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 # ------------------------- 任务 1: GSM8K (数学推理) -------------------------
 #
 BENCHMARK="MBPP"
-TOTAL_PROBLEMS=20   # GSM8K 训练集中的问题总数7473
-MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
-MAX_SAMPLE_SIZE=4     # 每个工作流最多使用的问题样本数
-BATCH_SIZE=10         # 每批次生成的工作流数量
+TOTAL_PROBLEMS=1      # Testing with just 1 problem
+MIN_SAMPLE_SIZE=1     # 每个工作流最少使用的问题样本数
+MAX_SAMPLE_SIZE=1     # 每个工作流最多使用的问题样本数
+BATCH_SIZE=1          # 每批次生成的工作流数量
 # 数据集文件的路径 (推荐使用相对路径)
 # 假设数据存放在项目根目录下的 'data' 文件夹中
-DATASET_PATH="/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/mbpp/train.jsonl"
+DATASET_PATH="../Processed_dataset/mbpp/train.jsonl"
 # 训练数据输出文件
 TRAINING_DATA_OUTPUT="${WORKSPACE_PATH}/training_data_${BENCHMARK}.jsonl"
 
