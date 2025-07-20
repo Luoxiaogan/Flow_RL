@@ -12,7 +12,7 @@ PYTHON_END = '''
         return await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)'''
 
 
-START_PORMPT = '''You objective is to output a workflow graph, based on the following template:
+START_PROMPT = '''Your objective is to output a workflow graph, based on the following template:
 
 <graph>
 class Workflow:
@@ -24,8 +24,10 @@ class Workflow:
         self.problem = problem
         self.config = create(config)
         self.code_generate = operator.CustomCodeGenerate(self.config, self.problem)
+        self.code_runner = operator.CodeRunner(self.config, self.problem)
+        self.code_fix = operator.CodeFix(self.config, self.problem)
         self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
-        self.test = operator.Test(self.config, self.problem)
+        self.review = operator.Review(self.config, self.problem)
 
     async def run_workflow(self):
         """
@@ -39,20 +41,34 @@ class Workflow:
 
 Here's an introduction to operators you can use: (these are all you can use, do not create new operators)
 1. CustomCodeGenerate:
-Usage: Generates code based on customized input instruction.
+Usage: Generates Python code based on customized input instruction.
 Format MUST follow: code_generate(instruction: str) -> str
-The instruction should encourage operator to think step by step, do not add the specific information of the task into the input instruction.
+The instruction should encourage operator to think step by step and understand the problem, do not add the specific information of the task into the input instruction.
 The output can serve as the input of next operators or the final output.
-2. ScEnsemble:
-Usage: Evaluate every solutions, then select the best solution in the solution list.
+
+2. CodeRunner:
+Usage: Executes the provided code solution against test cases and returns the results.
+Format MUST follow: code_runner(solution: str) -> str
+Returns either "PASSED" if all tests pass, or detailed error information if tests fail.
+Example: test_result = await self.code_runner(solution=generated_code)
+
+3. CodeFix:
+Usage: Analyzes failed code and error messages to generate a corrected version.
+Format MUST follow: code_fix(solution: str, error_message: str) -> str
+Takes the failed code and error details, returns an improved solution.
+Example: fixed_code = await self.code_fix(solution=failed_code, error_message=error_info)
+
+4. ScEnsemble:
+Usage: Evaluates multiple solutions and selects the best one based on quality and correctness.
 Format MUST follow: sc_ensemble(solutions: List[str]) -> str
-You can ensemble few solutions, for example:
-ensembled_solution = await self.sc_ensemble(solutions=solution_list)
+You can ensemble multiple solutions, for example:
+ensembled_solution = await self.sc_ensemble(solutions=[solution1, solution2, solution3])
 The output can serve as the input of next operators or the final output.
-3. Test:
-Usage: Modify the input solution by testing the solution using public test cases.
-Format MUST follow: test(solution: str) -> str
-tested_solution = await self.test(solution=pre_solution)
+
+5. Review:
+Usage: Reviews and improves existing code solution for better quality, readability, and efficiency.
+Format MUST follow: review(solution: str) -> str
+Example: reviewed_solution = await self.review(solution=working_code)
 
 We have the task input as follow. But your output graph can not contain any specific information of the give task.
 TASK: '''
@@ -86,8 +102,10 @@ TEMP_AVOID = '''class Workflow:
         self.problem = problem
         self.config = create(config)
         self.code_generate = operator.CustomCodeGenerate(self.config, self.problem)
+        self.code_runner = operator.CodeRunner(self.config, self.problem)
+        self.code_fix = operator.CodeFix(self.config, self.problem)
         self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
-        self.test = operator.Test(self.config, self.problem)
+        self.review = operator.Review(self.config, self.problem)
 
     async def run_workflow(self):
         """
@@ -98,11 +116,13 @@ TEMP_AVOID = '''class Workflow:
         return solution'''
 
 META_PROMPTS = [
-    "Your objective is to design a workflow that sequentially processes problems through code generation and testing cycles.",
-    "Your objective is to create a workflow that implements iterative test-fix loops for code generation.",
-    "Your objective is to develop a workflow that uses ensemble methods to generate and select the best code solution.",
-    "Your objective is to build a workflow that combines generation, testing, and refinement operators for robust code creation.",
-    "Your objective is to construct a workflow that emphasizes correctness through repeated testing and fixing cycles."
+    "Your objective is to design a workflow that generates correct Python code through iterative testing and refinement cycles. The workflow should emphasize code correctness by running tests and fixing errors systematically.",
+    "Your objective is to create a robust workflow that implements test-driven development patterns. The workflow should generate code, test it thoroughly, fix any failures, and possibly ensemble multiple solutions for the best result.",
+    "Your objective is to develop a workflow that uses parallel generation and ensemble methods. Generate multiple code solutions independently, test them all, and select the best working solution through ensemble evaluation.",
+    "Your objective is to build a workflow that combines thoughtful code generation with comprehensive testing. Use review operators to improve code quality and ensure the final solution is both correct and well-written.",
+    "Your objective is to construct an efficient workflow that balances thoroughness with simplicity. Focus on generating high-quality code on the first attempt, with targeted fix cycles only when necessary.",
+    "Your objective is to design a creative workflow that explores different problem-solving approaches. Use branching logic to try alternative strategies when initial attempts fail, ensuring robustness.",
+    "Your objective is to create a workflow emphasizing code quality through peer review patterns. Generate initial solutions, review them for improvements, test thoroughly, and refine based on both test results and code review feedback."
 ]
 
 SYSTEM_PROMPT = "You are a helpful AI assistant expert in solving programming challenges. Please think step by step."
@@ -114,4 +134,3 @@ NO_EXCEPTION_LIST = ['''.split(' ')''', '''int(''']
 TIME_LIMIT_TEST = 120
 TIME_LIMIT = 180
 sim_threshold = 1.1
-

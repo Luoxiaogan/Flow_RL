@@ -30,6 +30,29 @@ Analyze the solution across multiple dimensions:
 Provide your thought process and then the improved code.
 """
 
+CODE_FIX_PROMPT = """
+Given a code problem, a failed solution, and the error message from testing, analyze what went wrong and provide a corrected solution.
+
+### Problem
+{problem}
+
+### Entry Point
+The solution must use the function name: {entry_point}
+
+### Failed Solution
+{solution}
+
+### Error Message
+{error_message}
+
+Please analyze:
+1. What caused the error/test failure
+2. What specific part of the code needs to be fixed
+3. Any edge cases that weren't handled properly
+
+Provide your analysis in the "analysis" field, and the corrected code in the "fixed_code" field. The fixed code should address all identified issues and pass the tests.
+"""
+
 REFLECTION_ON_PUBLIC_TEST_PROMPT = """
 Given a code problem and a python code solution which failed to pass test or execute, you need to analyze the reason for the failure and propose a better code solution.: 
 ### problem
@@ -46,5 +69,3 @@ Given a code problem and a python code solution which failed to pass test or exe
 
 Please provide a reflection on the failed test cases and code solution, followed by a better code solution without any additional text or test cases. Remember to keep the entry_point function name: {entry_point}. You MUST NOT give a code with dead loop!
 """
-
-

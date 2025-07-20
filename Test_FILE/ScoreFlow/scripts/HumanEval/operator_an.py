@@ -16,3 +16,7 @@ class ReflectionTestOp(BaseModel):
 class ReviewOp(BaseModel):
     thought: str = Field(default="", description="The thought in the process of review.")
     final_code: str = Field(default="", description="The revised code.")
+
+class CodeFixOp(BaseModel):
+    analysis: str = Field(default="", description="Analysis of the error and what needs to be fixed.")
+    fixed_code: str = Field(default="", description="The corrected code that addresses the error.")

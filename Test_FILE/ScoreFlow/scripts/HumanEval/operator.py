@@ -106,6 +106,76 @@ class CustomCodeGenerate(Operator):
         response = await self._fill_node(GenerateOp, prompt, mode="code_fill", function_name=self.entry_point)
         return response['response']
 
+class CodeRunner(Operator):
+    """Executes code against test cases and returns results."""
+    def __init__(self, llm: LLM, problem: str = None):
+        super().__init__(llm)
+        self.test_code = problem.get("test", "")
+        self.entry_point = problem["entry_point"]
+
+    def exec_code(self, solution, test_code):
+        # Use the shared unsafe_execute function from utils
+        from ScoreFlow.scripts.utils.code_executor import unsafe_execute
+        import multiprocessing
+        
+        # Extract test assertions from the test code
+        test_lines = test_code.strip().split('\n')
+        test_assertions = [line.strip() for line in test_lines if line.strip().startswith('assert')]
+        
+        if not test_assertions:
+            return {"error": "No test assertions found", "status": "failed"}
+        
+        result_queue = multiprocessing.Queue()
+        process = multiprocessing.Process(
+            target=unsafe_execute,
+            args=(solution, test_assertions, result_queue)
+        )
+        
+        process.start()
+        process.join(timeout=30)  # 30 second timeout
+        
+        if process.is_alive():
+            process.terminate()
+            process.join()
+            return {"error": "Execution timed out", "status": "failed"}
+        
+        if process.exitcode != 0:
+            return {"error": f"Process exited with code {process.exitcode}", "status": "failed"}
+        
+        try:
+            status, message = result_queue.get_nowait()
+            if status == "success":
+                return {"status": "passed", "message": "All tests passed"}
+            else:
+                return {"error": message, "status": "failed"}
+        except multiprocessing.queues.Empty:
+            return {"error": "No result from execution", "status": "failed"}
+    
+    async def __call__(self, solution):
+        result = self.exec_code(solution, self.test_code)
+        if result["status"] == "passed":
+            return "PASSED"
+        else:
+            # Return detailed error information for CodeFix to use
+            return f"FAILED: {result['error']}"
+
+class CodeFix(Operator):
+    """Analyzes failed code and error messages to generate a corrected version."""
+    def __init__(self, llm: LLM, problem: str = None):
+        super().__init__(llm)
+        self.problem = "You have the following task: " + problem["prompt"]
+        self.entry_point = problem["entry_point"]
+
+    async def __call__(self, solution, error_message):
+        prompt = CODE_FIX_PROMPT.format(
+            problem=self.problem,
+            solution=solution,
+            error_message=error_message,
+            entry_point=self.entry_point
+        )
+        response = await self._fill_node(CodeFixOp, prompt, mode="code_fill", function_name=self.entry_point)
+        return response["fixed_code"]
+
 class Review(Operator):
     def __init__(self, llm: LLM, problem: str = None):
         super().__init__(llm)
@@ -139,93 +209,3 @@ class ScEnsemble(Operator):
         answer = answer.strip().upper()
         
         return solutions[answer_mapping[answer]]
-
-class Test(Operator):
-    # use the public test set to test the code, then revise the code based on the test result. Once reach the max iteration while still not pass, try generate again.
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.code_generate = CustomCodeGenerate(llm, problem)
-        self.problem = "You have the following task: " + problem["prompt"]
-        self.entry_point = problem["entry_point"]
-        self.test_code = problem.get("test", "")
-
-    def exec_code(self, solution, test_code):
-        # Use the shared unsafe_execute function from utils
-        from ScoreFlow.scripts.utils.code_executor import unsafe_execute
-        import multiprocessing
-        
-        # Extract test assertions from the test code
-        test_lines = test_code.strip().split('\n')
-        test_assertions = [line.strip() for line in test_lines if line.strip().startswith('assert')]
-        
-        if not test_assertions:
-            return {"exec_fail_case": "No test assertions found"}
-        
-        result_queue = multiprocessing.Queue()
-        process = multiprocessing.Process(
-            target=unsafe_execute,
-            args=(solution, test_assertions, result_queue)
-        )
-        
-        process.start()
-        process.join(timeout=30)  # 30 second timeout
-        
-        if process.is_alive():
-            process.terminate()
-            process.join()
-            return {"exec_fail_case": "Execution timed out"}
-        
-        if process.exitcode != 0:
-            return {"exec_fail_case": f"Process exited with code {process.exitcode}"}
-        
-        try:
-            status, message = result_queue.get_nowait()
-            if status == "success":
-                return "no error"
-            else:
-                return {"exec_fail_case": message}
-        except multiprocessing.queues.Empty:
-            return {"exec_fail_case": "No result from execution"}
-    
-    async def __call__(
-        self, solution, test_loop: int = 10
-    ):
-        
-        for _ in range(test_loop):
-            result = self.exec_code(solution, self.test_code)
-            if result == "no error":
-                print("NO ERROR\n\n")
-                return solution
-            elif "exec_fail_case" in result:
-                print("fail1:\n", result)
-                result = result["exec_fail_case"]
-                prompt = REFLECTION_ON_PUBLIC_TEST_PROMPT.format(
-                    problem=self.problem,
-                    solution=solution,
-                    exec_pass=f"executed unsuccessfully, error: \n {result}",
-                    test_fail="executed unsucessfully",
-                    entry_point=self.entry_point
-                )
-                response = await self._fill_node(ReflectionTestOp, prompt, mode="code_fill")
-                solution = response["reflection_and_solution"]
-            else:
-                print("fail2:\n", result)
-                prompt = REFLECTION_ON_PUBLIC_TEST_PROMPT.format(
-                    problem=self.problem,
-                    solution=solution,
-                    exec_pass="executed successfully",
-                    test_fail=result,
-                    entry_point=self.entry_point
-                )
-                response = await self._fill_node(ReflectionTestOp, prompt, mode="code_fill")
-                solution = response["reflection_and_solution"]
-        
-        result = self.exec_code(solution, self.test_code)
-        if result == "no error":
-            return solution
-        else:
-            solution = await self.code_generate(instruction="Can you analyze this problem step by step and generate the code?")
-            return solution
-
-
-
