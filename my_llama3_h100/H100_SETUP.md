@@ -1,5 +1,8 @@
 # H100/L20Z Training Configuration
 
+unset WANDB_API_KEY 才行!
+wandb api: 6d73f146a264e1dd556fc16529a88c3871ec4af3
+
 This directory contains the configuration for training LLaMA-3-8B on the H100 server with 8x NVIDIA L20Z GPUs (80GB each).
 
 ## Key Configuration Changes from A100:
@@ -35,6 +38,7 @@ bash /nas/ganluo/Flow_RL/my_llama3_h100/run_finetune.sh
 
 # Or with tmux
 tmux new-session -d -s llama_h100_training
+tmux kill-session -t llama_h100_training
 tmux send-keys -t llama_h100_training "cd /nas/ganluo/Flow_RL/my_llama3_h100" Enter
 tmux send-keys -t llama_h100_training "conda activate qzh" Enter
 tmux send-keys -t llama_h100_training "bash run_finetune.sh" Enter

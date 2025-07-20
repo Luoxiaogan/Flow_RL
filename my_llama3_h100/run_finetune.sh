@@ -13,8 +13,8 @@
 # tmux attach -t llama_h100_training
 
 # 显式初始化conda环境 - 使用正确的miniconda路径
-source /opt/miniconda3/etc/profile.d/conda.sh
-conda activate qzh
+# source /opt/miniconda3/etc/profile.d/conda.sh
+# conda activate qzh
 
 # 忽略SIGHUP信号
 trap '' HUP
@@ -69,4 +69,4 @@ python -m accelerate.commands.launch \
     --use_flash_attention_2 True
 
 # 后台运行命令
-# nohup bash /nas/ganluo/Flow_RL/my_llama3_h100/run_finetune.sh > /nas/ganluo/sft_output/training_h100.log 2>&1 &
+# nohup bash run_finetune.sh > training_h100.log 2>&1 &
