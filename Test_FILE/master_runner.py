@@ -89,6 +89,7 @@ def main():
     parser.add_argument('--max-concurrent-tasks', type=int, default=10, help='生成器内部的最大并发任务数')
     parser.add_argument('--workflow-timeout', type=int, default=120, help='执行器的工作流超时时间(秒)')
     parser.add_argument('--max-concurrent-executions', type=int, default=5, help='并行执行工作流的最大并发数')
+    parser.add_argument('--parallelism', type=int, default=2, help='每个数据组合生成的工作流并行度')
     
     args = parser.parse_args()
 
@@ -132,7 +133,8 @@ def main():
             '--log-level', args.log_level,
             '--max-concurrent-tasks', str(args.max_concurrent_tasks),
             # 新增参数传递
-            '--id-start-index', str(start_index)
+            '--id-start-index', str(start_index),
+            '--parallelism', str(args.parallelism)
         ]
         
         if args.training_data_output:
@@ -161,15 +163,18 @@ def main():
         for j in range(len(batch_tasks)):
             # ID 从0开始，但我们是从总任务数中分批的，所以ID需要全局唯一
             workflow_index = i * args.batch_size + j
-            workflow_id = f"{args.benchmark.lower()}_{workflow_index}"
             
-            # 构造 .py 文件路径
-            py_file_path = os.path.join(args.workspace_path, "generated_workflows", args.benchmark, f"{workflow_id}.py")
-            
-            if os.path.exists(py_file_path):
-                generated_files_to_execute.append(py_file_path)
-            else:
-                print(f"警告: 未找到预期生成的文件 {py_file_path}，可能该工作流生成失败，将跳过。")
+            # 对于每个数据组合，现在有多个版本的工作流
+            for k in range(args.parallelism):
+                workflow_id = f"{args.benchmark.lower()}_{workflow_index}_{k}"
+                
+                # 构造 .py 文件路径
+                py_file_path = os.path.join(args.workspace_path, "generated_workflows", args.benchmark, f"{workflow_id}.py")
+                
+                if os.path.exists(py_file_path):
+                    generated_files_to_execute.append(py_file_path)
+                else:
+                    print(f"警告: 未找到预期生成的文件 {py_file_path}，可能该工作流生成失败，将跳过。")
 
         # 准备所有执行命令
         exec_commands_and_files = []

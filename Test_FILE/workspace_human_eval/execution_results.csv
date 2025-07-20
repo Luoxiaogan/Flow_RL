@@ -1,4 +1,3 @@
 ID,Benchmark,Data_Indices,Status,Error_Type
-humaneval_0,humaneval,0,execution_failed,ValidationError
-humaneval_0,humaneval,0,execution_failed,TypeError
-humaneval_0,humaneval,0,execution_failed,TypeError
+humaneval_0,humaneval,2_0,verified_correct,
+humaneval_1,humaneval,1_3,verified_incorrect,

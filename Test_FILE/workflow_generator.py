@@ -38,6 +38,7 @@ def parse_arguments():
     
     ### 修改点 1: 增加新的命令行参数 --id-start-index ###
     parser.add_argument('--id-start-index', type=int, default=0, help='生成工作流ID的起始索引')
+    parser.add_argument('--parallelism', type=int, default=2, help='每个数据组合生成的工作流并行度')
     
     return parser.parse_args()
 
@@ -126,7 +127,7 @@ class WorkflowGenerator:
             logging.error(f"无法为 benchmark '{self.benchmark_name}' 加载脚本模板: {e}")
             raise e
 
-    def _construct_generation_prompt(self, data_indices: List[int]) -> Tuple[List[Dict], str]:
+    def _construct_generation_prompt(self, data_indices: List[int], existing_workflow: str = None) -> Tuple[List[Dict], str]:
         """使用 Handler 构建生成请求的 Prompt。"""
         start_prompt, end_prompt, system_prompt, meta_prompts = self._load_prompt_templates()
         
@@ -136,7 +137,13 @@ class WorkflowGenerator:
         # 2. 构建 Prompt
         selected_meta_prompt = random.choice(meta_prompts) if meta_prompts else ""
         final_end_prompt = f"\n**CRITICAL INSTRUCTION FOR THIS SPECIFIC TASK:**\n{selected_meta_prompt}\n\n" + end_prompt
-        user_prompt_str = start_prompt + f"{problem_text}" + final_end_prompt
+        
+        # 3. 如果有已存在的工作流，添加指示生成不同逻辑的工作流
+        if existing_workflow:
+            diversity_prompt = f"\n\n**IMPORTANT**: Here is an existing workflow solution:\n<existing_workflow>\n{existing_workflow}\n</existing_workflow>\n\nPlease generate a workflow that uses DIFFERENT LOGIC and APPROACH from the above. Try different operator combinations, different control flow patterns, or different strategies to solve the same problem.\n\n"
+            user_prompt_str = start_prompt + f"{problem_text}" + diversity_prompt + final_end_prompt
+        else:
+            user_prompt_str = start_prompt + f"{problem_text}" + final_end_prompt
 
         messages = [
             {'role': 'system', 'content': system_prompt},
@@ -145,11 +152,11 @@ class WorkflowGenerator:
         
         return messages, problem_text
 
-    async def _generate_one_workflow(self, workflow_id: str, data_indices: List[int], api_config: Dict):
+    async def _generate_one_workflow(self, workflow_id: str, data_indices: List[int], api_config: Dict, existing_workflow: str = None):
         """生成单个工作流并保存文件。"""
         try:
             # 1. 构建 Prompt
-            messages, problem_text = self._construct_generation_prompt(data_indices)
+            messages, problem_text = self._construct_generation_prompt(data_indices, existing_workflow)
             
             # 2. 调用 API
             logging.info(f"向 {api_config.get('provider', 'api')} 发送生成请求 (ID: {workflow_id}, Indices: {data_indices})")
@@ -176,11 +183,13 @@ class WorkflowGenerator:
                             {"role": "assistant", "content": code}
                         ]
                     })
+                return code  # 返回生成的代码供后续使用
             else:
                 raise ValueError("API响应中未能提取有效代码。")
 
         except Exception as e:
             logging.error(f"生成工作流 {workflow_id} 时失败: {e}")
+            return None
 
     def _save_workflow_files(self, workflow_id: str, code: str, indices: List[int]):
         """保存 .py 代码和 .meta.json 元数据文件。"""
@@ -215,22 +224,35 @@ class WorkflowGenerator:
                 f.write(json.dumps(record, ensure_ascii=False) + '\n')
         logging.info(f"{len(self.training_records)} 条训练数据已追加到: {self.training_data_output}")
 
-    ### 修改点 2: 修改 run 方法的签名，接收 start_index ###
-    async def run(self, data_indices_list: List[List[int]], start_index: int):
+    ### 修改点 2: 修改 run 方法的签名，接收 start_index 和 parallelism ###
+    async def run(self, data_indices_list: List[List[int]], start_index: int, parallelism: int = 2):
         """主运行逻辑，创建并执行所有生成任务。"""
-        # 修改日志，显示ID起始点
-        logging.info(f"开始为 Benchmark '{self.benchmark_name}' 并行生成 {len(data_indices_list)} 个工作流，ID 从 {start_index} 开始...")
+        # 修改日志，显示ID起始点和并行度
+        total_workflows = len(data_indices_list) * parallelism
+        logging.info(f"开始为 Benchmark '{self.benchmark_name}' 生成 {total_workflows} 个工作流 ({len(data_indices_list)} 组 × {parallelism} 并行度)，ID 从 {start_index} 开始...")
         
-        tasks = []
         api_index_counter = 0
-        for i, indices in enumerate(data_indices_list):
-            ### 修改点 3: 使用 start_index 计算全局唯一的 workflow_id ###
-            workflow_id = f"{self.benchmark_name}_{start_index + i}"
-            api_config = self.api_configs[api_index_counter % len(self.api_configs)]
-            api_index_counter += 1
-            tasks.append(self._generate_one_workflow(workflow_id, indices, api_config))
         
-        await asyncio.gather(*tasks)
+        # 为每个数据组合生成多个工作流
+        for i, indices in enumerate(data_indices_list):
+            generated_workflows = []  # 存储已生成的工作流代码
+            
+            for j in range(parallelism):
+                ### 修改点 3: 使用新的命名规则 ###
+                workflow_id = f"{self.benchmark_name}_{start_index + i}_{j}"
+                api_config = self.api_configs[api_index_counter % len(self.api_configs)]
+                api_index_counter += 1
+                
+                # 第一个工作流不需要参考已有工作流
+                if j == 0:
+                    generated_code = await self._generate_one_workflow(workflow_id, indices, api_config)
+                else:
+                    # 后续工作流需要参考第一个生成的工作流
+                    existing_workflow = generated_workflows[0] if generated_workflows else None
+                    generated_code = await self._generate_one_workflow(workflow_id, indices, api_config, existing_workflow)
+                
+                if generated_code:
+                    generated_workflows.append(generated_code)
         
         self._save_training_data()
         logging.info("工作流生成阶段完成。")
@@ -260,8 +282,8 @@ async def main():
             training_data_output=args.training_data_output
         )
         
-        ### 修改点 4: 将从命令行解析出的 id_start_index 传递给 run 方法 ###
-        await generator.run(generation_indices_list, args.id_start_index)
+        ### 修改点 4: 将从命令行解析出的 id_start_index 和 parallelism 传递给 run 方法 ###
+        await generator.run(generation_indices_list, args.id_start_index, args.parallelism)
         
     except (ImportError, FileNotFoundError, ValueError) as e:
         logging.error(f"初始化或运行生成器时发生严重错误: {e}")

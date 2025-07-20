@@ -125,7 +125,19 @@ META_PROMPTS = [
     "Your objective is to build a workflow that combines thoughtful code generation with comprehensive testing. Use review operators to improve code quality and ensure the final solution is both correct and well-written.",
     "Your objective is to construct an efficient workflow that balances thoroughness with simplicity. Focus on generating high-quality code on the first attempt, with targeted fix cycles only when necessary.",
     "Your objective is to design a creative workflow that explores different problem-solving approaches. Use branching logic to try alternative strategies when initial attempts fail, ensuring robustness.",
-    "Your objective is to create a workflow emphasizing code quality through peer review patterns. Generate initial solutions, review them for improvements, test thoroughly, and refine based on both test results and code review feedback."
+    "Your objective is to create a workflow emphasizing code quality through peer review patterns. Generate initial solutions, review them for improvements, test thoroughly, and refine based on both test results and code review feedback.",
+    "Your objective is to implement a minimal yet effective workflow. Start with a single code generation attempt, test it, and only add complexity (fixing, reviewing, ensemble) if absolutely necessary. Prioritize simplicity.",
+    "Your objective is to create a workflow that maximizes solution diversity. Use loops to generate 2-3 different solutions with varying prompts, then use ensemble to combine the best aspects of each approach.",
+    "Your objective is to design an aggressive error-handling workflow. After each failed test, immediately try a completely different approach rather than fixing the existing code. Only use fix operations as a last resort.",
+    "Your objective is to build a workflow with early exit optimization. Test solutions as soon as they're generated and return immediately upon finding a working solution, avoiding unnecessary additional operations.",
+    "Your objective is to create a layered refinement workflow. Start with basic code generation, then progressively apply review and fix operations regardless of test results to ensure the highest quality output.",
+    "Your objective is to implement a fail-fast workflow with ensemble fallback. Try quick single generations first, and only resort to ensemble methods after multiple individual attempts have failed.",
+    "Your objective is to design a workflow that alternates between generation strategies. Use different instruction prompts for each generation attempt to explore various problem-solving angles.",
+    "Your objective is to create a confidence-based workflow. Generate multiple solutions, but instead of always using ensemble, select solutions based on which one passes tests with the most comprehensive test coverage.",
+    "Your objective is to build a hybrid workflow combining speed and reliability. Use a fast single generation for simple cases, but switch to a more complex multi-generation ensemble approach if initial attempts fail.",
+    "Your objective is to implement a recursive improvement workflow. After generating and testing initial code, use the test results (whether passed or failed) to inform subsequent generation attempts with more specific instructions.",
+    "Your objective is to design a workflow with strategic operator usage. Minimize the use of expensive operations like ensemble, and prefer targeted fixes and reviews for efficiency.",
+    "Your objective is to create a workflow that leverages conditional complexity. Start simple, but progressively add more sophisticated operations (review, ensemble) based on the number of failed attempts."
 ]
 
 SYSTEM_PROMPT = "You are a helpful AI assistant expert in solving programming challenges. Please think step by step."

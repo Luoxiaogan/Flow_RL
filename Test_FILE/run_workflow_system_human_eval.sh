@@ -63,6 +63,7 @@ LOG_LEVEL="INFO"
 MAX_CONCURRENT_TASKS=10  # 生成器内部的最大并发任务数
 WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
+PARALLELISM=2  # 每个数据组合生成的工作流并行度（默认2个不同版本）
 
 # ============================ 任务配置 =======================================
 # 说明: 一次只取消注释一个任务块来运行。
@@ -70,10 +71,10 @@ MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
 # ------------------------- 任务 1: GSM8K (数学推理) -------------------------
 #
 BENCHMARK="humaneval"
-TOTAL_PROBLEMS=1      # Testing with just 1 problem
-MIN_SAMPLE_SIZE=1     # 每个工作流最少使用的问题样本数
-MAX_SAMPLE_SIZE=1     # 每个工作流最多使用的问题样本数
-BATCH_SIZE=1          # 每批次生成的工作流数量
+TOTAL_PROBLEMS=4      # Testing with just 1 problem
+MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
+MAX_SAMPLE_SIZE=2     # 每个工作流最多使用的问题样本数
+BATCH_SIZE=2          # 每批次生成的工作流数量
 # 数据集文件的路径 (推荐使用相对路径)
 # 假设数据存放在项目根目录下的 'data' 文件夹中
 DATASET_PATH="../Processed_dataset/human_eval/test.jsonl"
@@ -129,7 +130,8 @@ python3 master_runner.py \
     --log-level "$LOG_LEVEL" \
     --max-concurrent-tasks "$MAX_CONCURRENT_TASKS" \
     --workflow-timeout "$WORKFLOW_TIMEOUT" \
-    --max-concurrent-executions "$MAX_CONCURRENT_EXECUTIONS"
+    --max-concurrent-executions "$MAX_CONCURRENT_EXECUTIONS" \
+    --parallelism "$PARALLELISM"
 
 # 检查上一个命令的退出状态
 if [ $? -eq 0 ]; then
