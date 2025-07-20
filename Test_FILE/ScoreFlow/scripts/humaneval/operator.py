@@ -173,8 +173,8 @@ class CodeFix(Operator):
             error_message=error_message,
             entry_point=self.entry_point
         )
-        response = await self._fill_node(CodeFixOp, prompt, mode="code_fill", function_name=self.entry_point)
-        return response["fixed_code"]
+        response = await self._fill_node(CodeFixOp, prompt, mode="xml_fill")
+        return response.get("fixed_code", "")
 
 class Review(Operator):
     def __init__(self, llm: LLM, problem: str = None):
