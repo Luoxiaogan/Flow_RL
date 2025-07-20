@@ -5,8 +5,8 @@ import traceback
 from collections import Counter
 from typing import Dict, List, Tuple
 
-from ScoreFlow.scripts.HumanEval.operator_an import *
-from ScoreFlow.scripts.HumanEval.op_prompt import *
+from ScoreFlow.scripts.humaneval.operator_an import *
+from ScoreFlow.scripts.humaneval.op_prompt import *
 from metagpt.actions.action_node import ActionNode
 from metagpt.llm import LLM
 from metagpt.logs import logger
@@ -20,7 +20,8 @@ class CodeDataset(Enum):
 
 def extract_test_cases_from_jsonl(entry_point: str, dataset: CodeDataset = CodeDataset.HUMAN_EVAL):
     if dataset == CodeDataset.HUMAN_EVAL.value:
-        file_path = "data/humaneval_public_test.jsonl"
+        # This function is not needed for HumanEval as we'll use the test field from the problem
+        return None
         # Retain the original hardcoded test cases
         hardcoded_cases = {
             "find_zero": "",
@@ -35,7 +36,8 @@ def extract_test_cases_from_jsonl(entry_point: str, dataset: CodeDataset = CodeD
             "starts_one_ends": "",
         }
     elif dataset == CodeDataset.MBPP.value:
-        file_path = "data/mbpp_public_test.jsonl"
+        # This file path is not used in our implementation
+        return None
         hardcoded_cases = {
             "remove_odd": "",
             "replace_spaces": "",
@@ -46,17 +48,6 @@ def extract_test_cases_from_jsonl(entry_point: str, dataset: CodeDataset = CodeD
             "sort_sublists": "",
             "unique_sublists": "",
         }
-    # Check if there are hardcoded test cases
-    if entry_point in hardcoded_cases:
-        return hardcoded_cases[entry_point]
-
-    # If there are no hardcoded test cases, read from the file
-    with open(file_path, "r") as file:
-        for line in file:
-            data = json.loads(line)
-            if data.get("entry_point") == entry_point:
-                return data.get("test")
-
     return None
 
 
@@ -100,10 +91,8 @@ class Custom(Operator):
         self.problem = "You have the following task: " + problem["prompt"]
 
     async def __call__(self, instruction):
-        
         prompt = instruction + self.problem
         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
-        
         return response["response"]
     
 class CustomCodeGenerate(Operator):
@@ -158,46 +147,52 @@ class Test(Operator):
         self.code_generate = CustomCodeGenerate(llm, problem)
         self.problem = "You have the following task: " + problem["prompt"]
         self.entry_point = problem["entry_point"]
+        self.test_code = problem.get("test", "")
 
-    def exec_code(self, solution):
-
-        test_cases = extract_test_cases_from_jsonl(self.entry_point, dataset="HumanEval")
-                
-        fail_cases = []
-        for test_case in test_cases:
-            test_code = test_case_2_test_function(solution, test_case, self.entry_point)
-            print("test_code:\n\n", test_code)
-            try:
-                exec(test_code, globals())
-            except AssertionError as e:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb_str = traceback.format_exception(exc_type, exc_value, exc_traceback)
-                with open("tester.txt", "a") as f:
-                    f.write("test_error of " + self.entry_point + "\n")
-                error_infomation = {
-                    "test_fail_case": {
-                        "test_case": test_case,
-                        "error_type": "AssertionError",
-                        "error_message": str(e),
-                        "traceback": tb_str,
-                    }
-                }
-                fail_cases.append(error_infomation)
-            except Exception as e:
-                with open("tester.txt", "a") as f:
-                    f.write(self.entry_point + " " + str(e) + "\n")
-                return {"exec_fail_case": str(e)}
-        if fail_cases != []:
-            return fail_cases
-        else:
-            return "no error"
+    def exec_code(self, solution, test_code):
+        # Use the shared unsafe_execute function from utils
+        from ScoreFlow.scripts.utils.code_executor import unsafe_execute
+        import multiprocessing
+        
+        # Extract test assertions from the test code
+        test_lines = test_code.strip().split('\n')
+        test_assertions = [line.strip() for line in test_lines if line.strip().startswith('assert')]
+        
+        if not test_assertions:
+            return {"exec_fail_case": "No test assertions found"}
+        
+        result_queue = multiprocessing.Queue()
+        process = multiprocessing.Process(
+            target=unsafe_execute,
+            args=(solution, test_assertions, result_queue)
+        )
+        
+        process.start()
+        process.join(timeout=30)  # 30 second timeout
+        
+        if process.is_alive():
+            process.terminate()
+            process.join()
+            return {"exec_fail_case": "Execution timed out"}
+        
+        if process.exitcode != 0:
+            return {"exec_fail_case": f"Process exited with code {process.exitcode}"}
+        
+        try:
+            status, message = result_queue.get_nowait()
+            if status == "success":
+                return "no error"
+            else:
+                return {"exec_fail_case": message}
+        except multiprocessing.queues.Empty:
+            return {"exec_fail_case": "No result from execution"}
     
     async def __call__(
         self, solution, test_loop: int = 10
     ):
         
         for _ in range(test_loop):
-            result = self.exec_code(solution)
+            result = self.exec_code(solution, self.test_code)
             if result == "no error":
                 print("NO ERROR\n\n")
                 return solution
@@ -225,7 +220,7 @@ class Test(Operator):
                 response = await self._fill_node(ReflectionTestOp, prompt, mode="code_fill")
                 solution = response["reflection_and_solution"]
         
-        result = self.exec_code(solution)
+        result = self.exec_code(solution, self.test_code)
         if result == "no error":
             return solution
         else:

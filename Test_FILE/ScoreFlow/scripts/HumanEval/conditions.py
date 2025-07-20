@@ -1,6 +1,6 @@
 PYTHON_START = '''import asyncio
 from typing import Literal
-import ScoreFlow.scripts.HumanEval.operator as operator
+import ScoreFlow.scripts.humaneval.operator as operator
 from metagpt.provider.llm_provider_registry import create_llm_instance as create
 
 '''
@@ -97,15 +97,21 @@ TEMP_AVOID = '''class Workflow:
         
         return solution'''
 
+META_PROMPTS = [
+    "Your objective is to design a workflow that sequentially processes problems through code generation and testing cycles.",
+    "Your objective is to create a workflow that implements iterative test-fix loops for code generation.",
+    "Your objective is to develop a workflow that uses ensemble methods to generate and select the best code solution.",
+    "Your objective is to build a workflow that combines generation, testing, and refinement operators for robust code creation.",
+    "Your objective is to construct a workflow that emphasizes correctness through repeated testing and fixing cycles."
+]
 
-""
-
+SYSTEM_PROMPT = "You are a helpful AI assistant expert in solving programming challenges. Please think step by step."
 
 TEST_PROMPT = {"task_id": "HumanEval/2025", "prompt": "\n\ndef my_sum(a: int, b: int) -> int:\n    \"\"\" Write a function to add two int numbers.", "entry_point": "my_sum", "canonical_solution": "    return a+b\n", "test": "\n\ndef check(candidate):\n    assert candidate(1, 2) == 3\n"}
 
 NO_EXCEPTION_LIST = ['''.split(' ')''', '''int(''']
 
 TIME_LIMIT_TEST = 120
-TIME_LIMIT = 240
+TIME_LIMIT = 180
 sim_threshold = 1.1
 

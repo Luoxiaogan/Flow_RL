@@ -8,6 +8,28 @@ In the "thought" field, provide a detailed explanation of your thought process. 
 
 CustomCodeGenerate_PROMPT = """Note that you should think carefully based on four dimensions: "Logical correctness", "Consideration of all situations", "Potential misunderstanding of the problem", and "If the function name is the given entry_point"."""
 
+REVIEW_PROMPT = """
+Given the code problem and an initial solution, review the code to identify any logical errors, edge cases not handled, or improvements needed.
+
+### Problem
+{problem}
+
+### Entry Point
+The solution must use the function name: {entry_point}
+
+### Initial Solution
+{solution}
+
+Analyze the solution across multiple dimensions:
+1. Logical correctness
+2. Handling of edge cases
+3. Code efficiency
+4. Following the problem requirements exactly
+5. Using the correct function name (entry_point)
+
+Provide your thought process and then the improved code.
+"""
+
 REFLECTION_ON_PUBLIC_TEST_PROMPT = """
 Given a code problem and a python code solution which failed to pass test or execute, you need to analyze the reason for the failure and propose a better code solution.: 
 ### problem
