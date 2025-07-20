@@ -48,15 +48,15 @@ The output can serve as the input of next operators or the final output.
 
 2. CodeRunner:
 Usage: Executes the provided code solution against test cases and returns the results.
-Format MUST follow: code_runner(solution: str) -> str
+Format MUST follow: code_runner(solution) -> str
 Returns either "PASSED" if all tests pass, or detailed error information if tests fail.
-Example: test_result = await self.code_runner(solution=generated_code)
+Example: test_result = await self.code_runner(generated_code)
 
 3. CodeFix:
 Usage: Analyzes failed code and error messages to generate a corrected version.
-Format MUST follow: code_fix(solution: str, error_message: str) -> str
+Format MUST follow: code_fix(solution, error_message) -> str
 Takes the failed code and error details, returns an improved solution.
-Example: fixed_code = await self.code_fix(solution=failed_code, error_message=error_info)
+Example: fixed_code = await self.code_fix(failed_code, error_info)
 
 4. ScEnsemble:
 Usage: Evaluates multiple solutions and selects the best one based on quality and correctness.
@@ -67,8 +67,8 @@ The output can serve as the input of next operators or the final output.
 
 5. Review:
 Usage: Reviews and improves existing code solution for better quality, readability, and efficiency.
-Format MUST follow: review(solution: str) -> str
-Example: reviewed_solution = await self.review(solution=working_code)
+Format MUST follow: review(solution) -> str
+Example: reviewed_solution = await self.review(working_code)
 
 We have the task input as follow. But your output graph can not contain any specific information of the give task.
 TASK: '''
