@@ -140,7 +140,7 @@ class WorkflowGenerator:
         
         # 3. 如果有已存在的工作流，添加指示生成不同逻辑的工作流
         if existing_workflow:
-            diversity_prompt = f"\n\n**IMPORTANT**: Here is an existing workflow solution:\n<existing_workflow>\n{existing_workflow}\n</existing_workflow>\n\nPlease generate a workflow that uses DIFFERENT LOGIC and APPROACH from the above. Try different operator combinations, different control flow patterns, or different strategies to solve the same problem.\n\n"
+            diversity_prompt = f"\n\n**IMPORTANT**: Here is an existing workflow solution:\n<existing_workflow>\n{existing_workflow}\n</existing_workflow>\n\nPlease generate a workflow that uses DIFFERENT LOGIC and APPROACH from the above. Try different operator combinations, different control flow patterns, or different strategies to solve the same problem.\n\n**IMPORTANT_AGAIN!**: Here is an existing workflow solution:\n<existing_workflow>\n{existing_workflow}\n</existing_workflow>\n\nPlease generate a workflow that uses DIFFERENT LOGIC and APPROACH from the above. Try different operator combinations, different control flow patterns, or different strategies to solve the same problem.\n\n"
             user_prompt_str = start_prompt + f"{problem_text}" + diversity_prompt + final_end_prompt
         else:
             user_prompt_str = start_prompt + f"{problem_text}" + final_end_prompt

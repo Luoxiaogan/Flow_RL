@@ -1,6 +1,6 @@
-# Workflow ID: humaneval_1
+# Workflow ID: humaneval_0_0
 # Benchmark: humaneval
-# Data Indices: [1, 3]
+# Data Indices: [2, 1]
 
 class Workflow:
     def __init__(
@@ -24,26 +24,23 @@ class Workflow:
         result1 = await self.code_runner(solution1)
 
         if result1 == "PASSED":
-            return solution1
+            solution2 = await self.review(solution1)
+            return solution2
         else:
-            solution2 = await self.code_generate("Can you analyze this problem again step by step and generate the code?")
+            solution2 = await self.code_fix(solution1, result1)
             result2 = await self.code_runner(solution2)
 
             if result2 == "PASSED":
-                return solution2
+                solution3 = await self.review(solution2)
+                return solution3
             else:
-                fixed_solution = await self.code_fix(solution1, result1)
-                result3 = await self.code_runner(fixed_solution)
+                solution3 = await self.code_generate("Can you analyze this problem step by step and generate the code again?")
+                result3 = await self.code_runner(solution3)
 
                 if result3 == "PASSED":
-                    return fixed_solution
+                    solution4 = await self.review(solution3)
+                    return solution4
                 else:
-                    solution3 = await self.code_generate("Can you think of a different approach to solve this problem step by step?")
-                    result4 = await self.code_runner(solution3)
-
-                    if result4 == "PASSED":
-                        return solution3
-                    else:
-                        ensemble_solutions = [solution1, solution2, fixed_solution, solution3]
-                        final_solution = await self.sc_ensemble(ensemble_solutions)
-                        return final_solution
+                    solutions = [solution1, solution2, solution3]
+                    final_solution = await self.sc_ensemble(solutions)
+                    return final_solution
