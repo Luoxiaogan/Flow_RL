@@ -12,4 +12,3 @@ setup_env.sh
 external_api_key.txt
 *.pyc
 __pycache__/
-*.pkl
