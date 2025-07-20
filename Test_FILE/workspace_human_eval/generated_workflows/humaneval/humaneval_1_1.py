@@ -1,6 +1,6 @@
 # Workflow ID: humaneval_1_1
 # Benchmark: humaneval
-# Data Indices: [0, 3]
+# Data Indices: [1, 0]
 
 class Workflow:
     def __init__(
@@ -18,33 +18,34 @@ class Workflow:
 
     async def run_workflow(self):
         """
-        This is a workflow graph emphasizing code quality through peer review patterns.
+        This is a workflow graph.
         """
-        # Step 1: Generate initial code based on the problem
-        solution = await self.code_generate("Can you analyze this problem step by step and generate the code?")
+        solution1 = await self.code_generate("Can you analyze this problem step by step and generate the code?")
+        test_result1 = await self.code_runner(solution1)
 
-        # Step 2: Review the generated code for quality and readability
-        reviewed_solution = await self.review(solution)
+        if test_result1 == "PASSED":
+            return solution1
 
-        # Step 3: Run the reviewed code to check for correctness
-        result = await self.code_runner(reviewed_solution)
+        solution2 = await self.code_generate("Can you analyze this problem step by step and generate the code?")
+        test_result2 = await self.code_runner(solution2)
 
-        # Step 4: If the code fails, fix it using the error message
-        if "PASSED" not in result:
-            error_message = result
-            fixed_solution = await self.code_fix(reviewed_solution, error_message)
-            reviewed_solution = fixed_solution
+        if test_result2 == "PASSED":
+            return solution2
 
-        # Step 5: Generate multiple solutions to ensure robustness
-        solutions = []
-        for _ in range(3):
-            generated_solution = await self.code_generate("Can you analyze this problem step by step and generate the code?")
-            solutions.append(generated_solution)
+        solution3 = await self.code_generate("Can you analyze this problem step by step and generate the code?")
+        test_result3 = await self.code_runner(solution3)
 
-        # Step 6: Use ensemble to select the best solution
-        best_solution = await self.sc_ensemble(solutions)
+        if test_result3 == "PASSED":
+            return solution3
 
-        # Step 7: Final review of the best solution for quality and readability
-        final_solution = await self.review(best_solution)
+        solutions = [solution1, solution2, solution3]
+        ensemble_solution = await self.sc_ensemble(solutions)
 
-        return final_solution
+        reviewed_solution = await self.review(ensemble_solution)
+        test_result = await self.code_runner(reviewed_solution)
+
+        if test_result == "PASSED":
+            return reviewed_solution
+        else:
+            fixed_solution = await self.code_fix(reviewed_solution, test_result)
+            return fixed_solution

@@ -3,3 +3,7 @@ humaneval_0_1,humaneval,2_1,verified_correct,
 humaneval_0_0,humaneval,2_1,verified_correct,
 humaneval_1_1,humaneval,0_3,verified_correct,
 humaneval_1_0,humaneval,0_3,verified_correct,
+humaneval_0_0,humaneval,2_3,verified_correct,
+humaneval_0_1,humaneval,2_3,verified_correct,
+humaneval_1_0,humaneval,1_0,verified_incorrect,
+humaneval_1_1,humaneval,1_0,execution_failed,TimeoutError
