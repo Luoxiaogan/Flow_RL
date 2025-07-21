@@ -29,3 +29,29 @@ Think step by step and solve the problem.
 2. In the "answer" field, provide the final answer concisely and clearly. The answer should be a direct response to the question, without including explanations or reasoning.
 Your task: {input}
 """
+
+
+FLEXIBLE_CUSTOM_PROMPT = """
+Given the question and passage: {problem}
+
+{custom_instruction}
+
+Configuration: {config}
+{previous_context}
+
+Apply the specified reasoning pattern and steps to solve this problem requiring discrete reasoning.
+
+For discrete reasoning tasks, consider:
+- Identifying numerical values and entities to count
+- Determining what operations are needed (counting, arithmetic, comparison)
+- Extracting relevant information systematically
+- Performing calculations accurately
+- Verifying your answer makes sense in context
+
+In the "thought" field, explain your reasoning process according to the configured pattern and steps.
+In the "solution" field, provide your numerical or textual answer clearly.
+In the "needs_iteration" field, indicate if this pattern requires another iteration (only for iterative patterns).
+In the "intermediate_results" field, capture any important calculations, counts, or comparisons made.
+
+Remember to follow the reasoning pattern strictly and work through each configured step systematically.
+"""

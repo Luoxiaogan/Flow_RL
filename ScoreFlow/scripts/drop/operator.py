@@ -3,7 +3,7 @@ import random
 import sys
 import traceback
 from collections import Counter
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union, Any
 
 from tenacity import retry, stop_after_attempt, wait_fixed
 
@@ -168,3 +168,93 @@ class ScEnsemble(Operator):
         answer = answer.strip().upper()
         
         return solutions[answer_mapping[answer]]
+
+
+class FlexibleCustom(Operator):
+    """
+    Flexible custom operator that supports various reasoning patterns for discrete reasoning tasks.
+    Allows workflows to define custom logic without embedding problem information in prompts.
+    """
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None, 
+                 reasoning_pattern: str = "sequential", 
+                 steps: List[str] = None,
+                 max_iterations: int = 1,
+                 use_structured_output: bool = True):
+        """
+        Args:
+            llm: Language model instance
+            problem: Problem to solve
+            reasoning_pattern: Type of reasoning (sequential, parallel, iterative, branching)
+            steps: Custom steps to apply during reasoning
+            max_iterations: Maximum iterations for iterative patterns
+            use_structured_output: Whether to use structured output format
+        """
+        super().__init__(llm)
+        self.problem = problem
+        self.reasoning_pattern = reasoning_pattern
+        self.steps = steps or ["extract_values", "identify_operation", "perform_calculation", "verify_result"]
+        self.max_iterations = max_iterations
+        self.use_structured_output = use_structured_output
+    
+    async def __call__(self, custom_instruction: str = "", previous_results: List[str] = None,
+                       reasoning_pattern: str = None, steps: List[str] = None, 
+                       max_iterations: int = None, use_structured_output: bool = None):
+        """
+        Execute the flexible custom operator for discrete reasoning.
+        
+        Args:
+            custom_instruction: Additional custom instruction from workflow
+            previous_results: Previous results for iterative/branching patterns
+            reasoning_pattern: Override the reasoning pattern set in constructor
+            steps: Override the steps set in constructor
+            max_iterations: Override the max iterations set in constructor
+            use_structured_output: Override the structured output setting
+        """
+        # Use passed parameters or fall back to instance attributes
+        actual_reasoning_pattern = reasoning_pattern if reasoning_pattern is not None else self.reasoning_pattern
+        actual_steps = steps if steps is not None else self.steps
+        actual_max_iterations = max_iterations if max_iterations is not None else self.max_iterations
+        actual_use_structured_output = use_structured_output if use_structured_output is not None else self.use_structured_output
+        
+        # Build configuration dictionary for prompt
+        config = {
+            "reasoning_pattern": actual_reasoning_pattern,
+            "steps": actual_steps,
+            "iteration": len(previous_results) + 1 if previous_results else 1,
+            "max_iterations": actual_max_iterations
+        }
+        
+        # Build previous context if available
+        previous_context = ""
+        if previous_results:
+            previous_context = "\n\nPrevious Results:\n" + "\n---\n".join(previous_results)
+        
+        # Create the prompt
+        prompt = FLEXIBLE_CUSTOM_PROMPT.format(
+            problem=self.problem,
+            custom_instruction=custom_instruction,
+            config=str(config),
+            previous_context=previous_context
+        )
+        
+        if actual_use_structured_output:
+            # Use structured output with Pydantic model
+            response = await self._fill_node(FlexibleCustomOp, prompt, mode="xml_fill")
+            
+            # Format the response
+            result = f"Thought: {response.get('thought', '')}\n\nSolution: {response.get('solution', '')}"
+            
+            # Add intermediate results if available
+            if response.get('intermediate_results'):
+                result += f"\n\nIntermediate Results: {response.get('intermediate_results')}"
+            
+            # Handle iteration logic for iterative patterns
+            if actual_reasoning_pattern == "iterative" and response.get('needs_iteration', False):
+                # If more iterations are needed and we haven't reached max, the workflow can call again
+                result += f"\n\n[Iteration {config['iteration']}/{actual_max_iterations}] - More iterations needed"
+            
+            return result
+        else:
+            # Use unstructured output
+            response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
+            return response.get("response", "")

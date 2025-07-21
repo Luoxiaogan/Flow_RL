@@ -29,6 +29,7 @@ class Workflow:
         self.counting_reasoning = operator.CountingReasoning(self.agent, self.problem)
         self.arithmetic_reasoning = operator.ArithmeticReasoning(self.agent, self.problem)
         self.comparison_reasoning = operator.ComparisonReasoning(self.agent, self.problem)
+        self.flexible_custom = operator.FlexibleCustom(self.agent, self.problem)
 
     async def run_workflow(self):
         """
@@ -83,6 +84,30 @@ Format MUST follow: comparison_reasoning() -> str
 For example:
 comparison_result = await self.comparison_reasoning()
 Use this when the problem requires finding maximum, minimum, or comparing entities.
+8. FlexibleCustom (Advanced Operator):
+Usage: A flexible operator that supports various reasoning patterns (sequential, parallel, iterative, branching) with customizable steps. Perfect for complex discrete reasoning without embedding problem-specific information.
+Format: flexible_custom(custom_instruction: str = "", previous_results: List[str] = None) -> str
+Configuration Options:
+- reasoning_pattern: "sequential", "parallel", "iterative", or "branching"
+- steps: List of reasoning steps like ["extract_values", "identify_operation", "perform_calculation", "verify_result"]
+- max_iterations: Maximum iterations for iterative patterns (default: 1)
+- use_structured_output: Whether to use structured output format (default: True)
+Example 1 (Sequential calculation):
+self.flexible_custom = operator.FlexibleCustom(self.agent, self.problem, 
+                                              reasoning_pattern="sequential",
+                                              steps=["identify_numbers", "determine_operation", "calculate_step_by_step", "check_answer"])
+solution = await self.flexible_custom(custom_instruction="Focus on careful numerical extraction and computation")
+Example 2 (Iterative refinement):
+self.flexible_custom_iter = operator.FlexibleCustom(self.agent, self.problem,
+                                                   reasoning_pattern="iterative", 
+                                                   steps=["initial_count", "verify_completeness", "refine_answer"],
+                                                   max_iterations=3)
+refined_answer = await self.flexible_custom_iter(custom_instruction="Count carefully and double-check for missed items")
+Use Cases:
+- Sequential: Step-by-step calculations with verification
+- Parallel: Compare multiple approaches to the same problem
+- Iterative: Progressive refinement of counts or calculations
+- Branching: Different paths based on problem type (counting vs arithmetic)
 
 
 We have the problem input as follow. But your output graph can not contain any specific information of the this problem.
@@ -126,6 +151,7 @@ TEMP_AVOID = '''class Workflow:
         self.counting_reasoning = operator.CountingReasoning(self.agent, self.problem)
         self.arithmetic_reasoning = operator.ArithmeticReasoning(self.agent, self.problem)
         self.comparison_reasoning = operator.ComparisonReasoning(self.agent, self.problem)
+        self.flexible_custom = operator.FlexibleCustom(self.agent, self.problem)
 
     async def run_workflow(self):
         """

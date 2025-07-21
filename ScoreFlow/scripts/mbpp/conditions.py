@@ -96,6 +96,7 @@ class Workflow:
         self.code_runner = operator.CodeRunner(self.config, self.problem)
         self.code_fix = operator.CodeFix(self.config, self.problem)
         self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
 
     async def run_workflow(self):
         """
@@ -136,6 +137,34 @@ Here are the operators you MUST use. Do not create new ones.
     *   **Usage**: Evaluates multiple code solutions and selects the best one.
     *   **Signature**: `sc_ensemble(solutions: List[str]) -> str`
     *   **Example**: `best_code = await self.sc_ensemble(solutions=[code1, code2])`
+
+5.  **FlexibleCustom (Advanced Operator)**:
+    *   **Usage**: A flexible operator that supports various code generation patterns (incremental, test_driven, modular, recursive) with customizable strategies. Perfect for exploring diverse approaches without embedding problem-specific information.
+    *   **Signature**: `flexible_custom(custom_instruction: str = "", previous_results: List[str] = None) -> str`
+    *   **Configuration Options**:
+        - `generation_pattern`: "incremental", "test_driven", "modular", or "recursive"
+        - `strategies`: List of generation strategies like ["analyze_requirements", "handle_edge_cases", "optimize_solution"]
+        - `max_refinements`: Maximum refinement iterations (default: 1)
+        - `use_structured_output`: Whether to use structured output format (default: True)
+    *   **Example 1 (Test-Driven)**:
+        ```python
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem, 
+                                                      generation_pattern="test_driven",
+                                                      strategies=["understand_tests", "implement_minimum", "refactor"])
+        code = await self.flexible_custom(custom_instruction="Focus on passing tests incrementally")
+        ```
+    *   **Example 2 (Modular)**:
+        ```python
+        self.flexible_custom_mod = operator.FlexibleCustom(self.config, self.problem,
+                                                          generation_pattern="modular", 
+                                                          strategies=["decompose_problem", "implement_helpers", "combine_solution"])
+        modular_code = await self.flexible_custom_mod(custom_instruction="Break down into reusable functions")
+        ```
+    *   **Use Cases**:
+        - Test-Driven: Write code to pass tests incrementally
+        - Incremental: Build solution step by step
+        - Modular: Decompose into helper functions
+        - Recursive: Solve with recursive approaches
 
 **Problem Input:**
 The programming problem will be provided. Your generated graph **must not** contain any specific information from this problem (e.g., function names, variable values). The graph should be a general-purpose solver.

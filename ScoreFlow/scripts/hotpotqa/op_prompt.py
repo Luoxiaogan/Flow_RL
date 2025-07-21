@@ -29,3 +29,28 @@ Think step by step and solve the problem.
 2. In the "answer" field, provide the final answer concisely and clearly. The answer should be a direct response to the question, without including explanations or reasoning.
 Your task: {input}
 """
+
+
+FLEXIBLE_CUSTOM_PROMPT = """
+Given the question and context: {problem}
+
+{custom_instruction}
+
+Configuration: {config}
+{previous_context}
+
+Apply the specified reasoning pattern and steps to answer this multi-hop question.
+
+For multi-hop reasoning, consider:
+- Identifying key facts from different parts of the context
+- Making connections between related information
+- Following logical chains to reach the answer
+- Verifying your answer against the provided context
+
+In the "thought" field, explain your reasoning process according to the configured pattern and steps.
+In the "solution" field, provide your answer with supporting evidence from the context.
+In the "needs_iteration" field, indicate if this pattern requires another iteration (only for iterative patterns).
+In the "intermediate_results" field, capture any important facts or connections you've identified.
+
+Remember to follow the reasoning pattern strictly and work through each configured step systematically.
+"""
