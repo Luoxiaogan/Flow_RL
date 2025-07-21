@@ -30,17 +30,18 @@ class DataArguments:
 class SaveInferenceWeightsCallback(TrainerCallback):
     """自定义回调，仅保存推理所需的模型权重"""
     
-    def __init__(self, output_dir: str, save_steps: int, save_total_limit: int = None):
+    def __init__(self, output_dir: str, save_steps: int, tokenizer, save_total_limit: int = None):
         self.output_dir = output_dir
         self.save_steps = save_steps
         self.save_total_limit = save_total_limit
         self.saved_checkpoints = []
+        self.tokenizer = tokenizer
     
     def on_step_end(self, args: HfTrainingArguments, state: TrainerState, control: TrainerControl, **kwargs):
         # 每 save_steps 步保存一次
         if state.global_step % self.save_steps == 0 and state.global_step > 0:
             checkpoint_dir = os.path.join(self.output_dir, f"checkpoint-{state.global_step}")
-            self._save_inference_weights(kwargs["model"], kwargs["tokenizer"], checkpoint_dir)
+            self._save_inference_weights(kwargs["model"], self.tokenizer, checkpoint_dir)
             
             # 管理保存的检查点数量
             self.saved_checkpoints.append(checkpoint_dir)
@@ -54,7 +55,7 @@ class SaveInferenceWeightsCallback(TrainerCallback):
     
     def on_train_end(self, args: HfTrainingArguments, state: TrainerState, control: TrainerControl, **kwargs):
         # 训练结束时保存最终模型
-        self._save_inference_weights(kwargs["model"], kwargs["tokenizer"], self.output_dir)
+        self._save_inference_weights(kwargs["model"], self.tokenizer, self.output_dir)
     
     def _save_inference_weights(self, model, tokenizer, save_path):
         """仅保存推理所需的权重"""
@@ -156,6 +157,7 @@ def train():
     save_inference_callback = SaveInferenceWeightsCallback(
         output_dir=training_args.output_dir,
         save_steps=training_args.save_steps,
+        tokenizer=tokenizer,
         save_total_limit=training_args.save_total_limit
     )
     
