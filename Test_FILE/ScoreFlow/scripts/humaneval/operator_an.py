@@ -20,3 +20,10 @@ class ReviewOp(BaseModel):
 class CodeFixOp(BaseModel):
     analysis: str = Field(default="", description="Analysis of the error and what needs to be fixed.")
     fixed_code: str = Field(default="", description="The corrected code that addresses the error.")
+
+
+class FlexibleCustomCodeOp(BaseModel):
+    thought: str = Field(default="", description="My reasoning process following the specified generation pattern and strategies.")
+    code: str = Field(default="", description="The generated code solution following the custom approach.")
+    needs_refinement: bool = Field(default=False, description="Whether additional refinement iterations are needed.")
+    approach_notes: str = Field(default="", description="Notes on the approach taken and any insights gained.")

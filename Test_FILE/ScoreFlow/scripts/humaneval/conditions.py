@@ -28,6 +28,7 @@ class Workflow:
         self.code_fix = operator.CodeFix(self.config, self.problem)
         self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
         self.review = operator.Review(self.config, self.problem)
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
 
     async def run_workflow(self):
         """
@@ -73,6 +74,32 @@ Format MUST follow: review(solution) -> str
 Call it like: await self.review(working_code)
 Note: Pass the solution directly as a positional argument, not as solution=
 
+6. FlexibleCustom:
+Usage: A flexible code generation operator that supports various generation patterns (incremental, test_driven, modular, recursive) with customizable strategies.
+Format MUST follow: flexible_custom(custom_approach, previous_attempts) -> str
+Call it like: await self.flexible_custom("Focus on edge case handling")
+Configuration Options:
+- generation_pattern: "incremental", "test_driven", "modular", or "recursive"
+- strategies: List of strategies like ["understand", "design", "implement", "optimize"]
+- max_refinements: Maximum refinement iterations (default: 1)
+- use_structured_output: Whether to use structured output format (default: True)
+Example 1 (Test-Driven):
+    self.flexible_custom = operator.FlexibleCustom(self.config, self.problem,
+                                                  generation_pattern="test_driven",
+                                                  strategies=["analyze_tests", "minimal_implementation", "handle_failures"])
+    code = await self.flexible_custom("Prioritize test compliance")
+Example 2 (Incremental):
+    self.flexible_custom_inc = operator.FlexibleCustom(self.config, self.problem,
+                                                      generation_pattern="incremental",
+                                                      strategies=["prototype", "enhance", "optimize"],
+                                                      max_refinements=3)
+    refined_code = await self.flexible_custom_inc("Start simple then improve")
+Use Cases:
+- Incremental: Build solution step by step with refinements
+- Test_driven: Design based on understanding expected behavior
+- Modular: Break into reusable components
+- Recursive: Apply recursive problem-solving patterns
+
 We have the task input as follow. But your output graph can not contain any specific information of the give task.
 TASK: '''
 
@@ -89,7 +116,7 @@ You need to notice:
 
 **As for the instruction prompt for operators. Your instruction prompt should focus on encouraging agent to think step by step. Do not ask agent to generate multiple (a few, some, etc) answers in one operator's instruction. Also note that different agents are independent, so do not use prompts like "generate another/alternative/different answer", "generate the first/second answer", etc.**
 
-**Your output graph can not contain any specific information of the given task due to project requirement. All the information of this task will be given as input "problem" (self.problem) and other agents will execute this workflow.**
+**Your output graph can not contain any specific information of the given task due to project requirement. All the information of this task will be given as input "problem" (self.problem) and other agents will execute this workflow. When using FlexibleCustom, ensure custom_approach parameters contain only general strategies, not task-specific details.**
 
 Only output the optimized graph (remember to add <graph> and </graph>, and the output can not contain any information of the given task).
 
@@ -109,6 +136,7 @@ TEMP_AVOID = '''class Workflow:
         self.code_fix = operator.CodeFix(self.config, self.problem)
         self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
         self.review = operator.Review(self.config, self.problem)
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
 
     async def run_workflow(self):
         """

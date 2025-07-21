@@ -53,3 +53,21 @@ Your code should:
 
 Please ensure your code is efficient, well-commented, and follows Python best practices. The output should be limited to basic data types such as strings, integers, and floats. It is prohibited to transmit images or other file formats. The code output is intended for a text-based language model.
 """
+
+FLEXIBLE_CUSTOM_PROMPT = """
+Given the problem: {problem}
+
+{custom_instruction}
+
+Configuration: {config}
+{previous_context}
+
+Apply the specified reasoning pattern and steps to solve this problem. 
+
+In the "thought" field, explain your reasoning process according to the configured pattern and steps.
+In the "solution" field, provide your solution.
+In the "needs_iteration" field, indicate if this pattern requires another iteration (only for iterative patterns).
+In the "intermediate_results" field, capture any important intermediate findings or calculations.
+
+Remember to follow the reasoning pattern strictly and work through each configured step systematically.
+"""

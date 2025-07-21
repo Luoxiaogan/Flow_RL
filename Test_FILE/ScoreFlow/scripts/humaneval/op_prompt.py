@@ -69,3 +69,27 @@ Given a code problem and a python code solution which failed to pass test or exe
 
 Please provide a reflection on the failed test cases and code solution, followed by a better code solution without any additional text or test cases. Remember to keep the entry_point function name: {entry_point}. You MUST NOT give a code with dead loop!
 """
+
+FLEXIBLE_CUSTOM_CODE_PROMPT = """
+Given the problem: {problem}
+
+Entry point function name: {entry_point}
+
+{custom_approach}
+
+Configuration: {config}
+{previous_context}
+
+Apply the specified generation pattern and strategies to create a code solution.
+
+In the "thought" field, explain your reasoning process according to the configured pattern and strategies.
+In the "code" field, provide your complete Python code solution with the correct function name.
+In the "needs_refinement" field, indicate if this pattern requires another iteration (only for incremental patterns).
+In the "approach_notes" field, capture insights about the approach and any design decisions.
+
+Remember to:
+1. Use the exact function name: {entry_point}
+2. Follow the generation pattern strictly
+3. Apply each strategy systematically
+4. Write clean, efficient, and well-structured code
+"""

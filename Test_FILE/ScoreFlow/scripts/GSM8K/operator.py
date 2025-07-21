@@ -9,10 +9,10 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 
 # ### 修改点：将所有硬编码的 'GSM8K' 改为小写的 'gsm8k' ###
 from ScoreFlow.scripts.gsm8k.operator_an import (
-    GenerateOp, CodeGenerateOp, ScEnsembleOp, ReviewOp, ReflectOp
+    GenerateOp, CodeGenerateOp, ScEnsembleOp, ReviewOp, ReflectOp, FlexibleCustomOp
 )
 from ScoreFlow.scripts.gsm8k.op_prompt import (
-    SC_ENSEMBLE_PROMPT, REVIEW_PROMPT, PYTHON_CODE_VERIFIER_PROMPT, REFLECT_PROMPT
+    SC_ENSEMBLE_PROMPT, REVIEW_PROMPT, PYTHON_CODE_VERIFIER_PROMPT, REFLECT_PROMPT, FLEXIBLE_CUSTOM_PROMPT
 )
 from metagpt.actions.action_node import ActionNode
 from metagpt.llm import LLM
@@ -159,3 +159,75 @@ class ScEnsemble(Operator):
         else:
             logger.warning(f"ScEnsemble returned an invalid letter '{answer}'. Defaulting to the first solution.")
             return solutions[0] if solutions else ""
+
+
+class FlexibleCustom(Operator):
+    """
+    Flexible custom operator that supports various reasoning patterns and configurations.
+    Allows workflows to define custom logic without embedding problem information in prompts.
+    """
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None, 
+                 reasoning_pattern: str = "sequential", 
+                 steps: List[str] = None,
+                 max_iterations: int = 1,
+                 use_structured_output: bool = True):
+        """
+        Args:
+            llm: Language model instance
+            problem: Problem to solve
+            reasoning_pattern: Type of reasoning (sequential, parallel, iterative, branching)
+            steps: Custom steps to apply during reasoning
+            max_iterations: Maximum iterations for iterative patterns
+            use_structured_output: Whether to use structured output format
+        """
+        super().__init__(llm, problem)
+        self.reasoning_pattern = reasoning_pattern
+        self.steps = steps or ["analyze", "plan", "solve", "verify"]
+        self.max_iterations = max_iterations
+        self.use_structured_output = use_structured_output
+    
+    async def __call__(self, custom_instruction: str = "", previous_results: List[str] = None):
+        """
+        Execute the flexible custom operator.
+        
+        Args:
+            custom_instruction: Additional custom instruction from workflow
+            previous_results: Previous results for iterative/branching patterns
+        """
+        # Build configuration dictionary for prompt
+        config = {
+            "reasoning_pattern": self.reasoning_pattern,
+            "steps": self.steps,
+            "iteration": len(previous_results) + 1 if previous_results else 1,
+            "max_iterations": self.max_iterations
+        }
+        
+        # Format previous results if any
+        previous_context = ""
+        if previous_results:
+            previous_context = "\n\nPrevious analysis:\n" + "\n---\n".join(previous_results)
+        
+        # Create prompt using the flexible template
+        prompt = FLEXIBLE_CUSTOM_PROMPT.format(
+            problem=self.problem_text,
+            custom_instruction=custom_instruction,
+            config=str(config),
+            previous_context=previous_context
+        )
+        
+        # Use appropriate response model
+        if self.use_structured_output:
+            response = await self._fill_node(FlexibleCustomOp, prompt, mode="xml_fill")
+            
+            # Handle different reasoning patterns
+            if self.reasoning_pattern == "iterative" and response.get("needs_iteration", False):
+                # Recursive call for iterative patterns
+                if len(previous_results or []) < self.max_iterations - 1:
+                    new_results = (previous_results or []) + [response.get("solution", "")]
+                    return await self.__call__(custom_instruction, new_results)
+            
+            return response.get("solution", "")
+        else:
+            # Use simple generation for non-structured output
+            response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
+            return response["response"]

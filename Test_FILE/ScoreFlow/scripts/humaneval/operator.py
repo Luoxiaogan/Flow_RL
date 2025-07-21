@@ -7,6 +7,7 @@ from typing import Dict, List, Tuple
 
 from ScoreFlow.scripts.humaneval.operator_an import *
 from ScoreFlow.scripts.humaneval.op_prompt import *
+from typing import Union, Any
 from metagpt.actions.action_node import ActionNode
 from metagpt.llm import LLM
 from metagpt.logs import logger
@@ -225,3 +226,81 @@ class ScEnsemble(Operator):
         answer = answer.strip().upper()
         
         return solutions[answer_mapping[answer]]
+
+
+class FlexibleCustom(Operator):
+    """
+    Flexible custom operator that supports various code generation patterns.
+    Allows workflows to define custom logic for code generation without embedding problem information.
+    """
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None,
+                 generation_pattern: str = "incremental",
+                 strategies: List[str] = None,
+                 max_refinements: int = 1,
+                 use_structured_output: bool = True):
+        """
+        Args:
+            llm: Language model instance
+            problem: Problem dictionary with prompt and entry_point
+            generation_pattern: Type of generation (incremental, test_driven, modular, recursive)
+            strategies: Custom strategies to apply during generation
+            max_refinements: Maximum refinement iterations
+            use_structured_output: Whether to use structured output format
+        """
+        super().__init__(llm)
+        self.problem_text = problem["prompt"]
+        self.entry_point = problem["entry_point"]
+        self.generation_pattern = generation_pattern
+        self.strategies = strategies or ["understand", "design", "implement", "optimize"]
+        self.max_refinements = max_refinements
+        self.use_structured_output = use_structured_output
+    
+    async def __call__(self, custom_approach: str = "", previous_attempts: List[str] = None):
+        """
+        Execute the flexible custom operator for code generation.
+        
+        Args:
+            custom_approach: Additional custom approach from workflow
+            previous_attempts: Previous code attempts for refinement patterns
+        """
+        # Build configuration for the generation
+        config = {
+            "generation_pattern": self.generation_pattern,
+            "strategies": self.strategies,
+            "entry_point": self.entry_point,
+            "attempt_number": len(previous_attempts) + 1 if previous_attempts else 1,
+            "max_refinements": self.max_refinements
+        }
+        
+        # Format previous attempts if any
+        previous_context = ""
+        if previous_attempts:
+            previous_context = "\n\nPrevious attempts:\n"
+            for i, attempt in enumerate(previous_attempts, 1):
+                previous_context += f"\nAttempt {i}:\n```python\n{attempt}\n```\n"
+        
+        # Create prompt using the flexible template
+        prompt = FLEXIBLE_CUSTOM_CODE_PROMPT.format(
+            problem=self.problem_text,
+            entry_point=self.entry_point,
+            custom_approach=custom_approach,
+            config=str(config),
+            previous_context=previous_context
+        )
+        
+        # Use appropriate response model
+        if self.use_structured_output:
+            response = await self._fill_node(FlexibleCustomCodeOp, prompt, mode="xml_fill")
+            
+            # Handle different generation patterns
+            if self.generation_pattern == "incremental" and response.get("needs_refinement", False):
+                # Recursive call for incremental patterns
+                if len(previous_attempts or []) < self.max_refinements - 1:
+                    new_attempts = (previous_attempts or []) + [response.get("code", "")]
+                    return await self.__call__(custom_approach, new_attempts)
+            
+            return response.get("code", "")
+        else:
+            # Use simple generation for non-structured output
+            response = await self._fill_node(GenerateOp, prompt, mode="code_fill", function_name=self.entry_point)
+            return response["response"]
