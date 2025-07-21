@@ -1,91 +1,88 @@
 (verl) root@ctyun172022236189:/nas/ganluo/Flow_RL/my_llama3_h100# bash run_finetune.sh 
 ipex flag is deprecated, will be removed in Accelerate v1.10. From 2.7.0, PyTorch has all needed optimizations for Intel CPU and XPU.
-[2025-07-20 19:54:50,496] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-07-20 19:54:52,324] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
-W0720 19:54:53.405283 164717 site-packages/torch/distributed/run.py:792] 
-W0720 19:54:53.405283 164717 site-packages/torch/distributed/run.py:792] *****************************************
-W0720 19:54:53.405283 164717 site-packages/torch/distributed/run.py:792] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0720 19:54:53.405283 164717 site-packages/torch/distributed/run.py:792] *****************************************
-[2025-07-20 19:55:02,692] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-07-20 19:55:03,518] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-07-20 19:55:03,539] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-07-20 19:55:03,601] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
-[2025-07-20 19:55:03,607] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-07-20 19:55:03,611] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-07-20 19:55:03,625] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-07-20 19:55:03,696] [INFO] [comm.py:676:init_distributed] cdb=None
-[2025-07-20 19:55:03,715] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-07-20 19:55:03,715] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-07-20 19:55:04,542] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-20 20:03:19,697] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-20 20:03:21,463] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+W0720 20:03:23.033200 205088 site-packages/torch/distributed/run.py:792] 
+W0720 20:03:23.033200 205088 site-packages/torch/distributed/run.py:792] *****************************************
+W0720 20:03:23.033200 205088 site-packages/torch/distributed/run.py:792] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0720 20:03:23.033200 205088 site-packages/torch/distributed/run.py:792] *****************************************
+[2025-07-20 20:03:32,393] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-20 20:03:32,723] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-20 20:03:32,723] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-20 20:03:32,728] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-20 20:03:32,734] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-20 20:03:32,736] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-20 20:03:32,794] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-20 20:03:32,795] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-20 20:03:33,398] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-20 20:03:33,496] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-20 20:03:34,032] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-20 20:03:34,035] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-20 20:03:34,035] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-20 20:03:34,111] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-20 20:03:34,120] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-20 20:03:34,121] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-20 20:03:34,123] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-20 20:03:34,124] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-20 20:03:34,124] [INFO] [comm.py:707:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+[2025-07-20 20:03:34,124] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-20 20:03:34,132] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-20 20:03:34,205] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-20 20:03:34,211] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-20 20:03:34,214] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-20 20:03:34,223] [INFO] [comm.py:676:init_distributed] cdb=None
 Loading model from /nas/models/Meta-Llama-3-8B-Instruct...
-[2025-07-20 19:55:04,611] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
-[2025-07-20 19:55:04,632] [INFO] [comm.py:676:init_distributed] cdb=None
-[2025-07-20 19:55:04,636] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
-[2025-07-20 19:55:04,642] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
-[2025-07-20 19:55:04,694] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
-[2025-07-20 19:55:04,702] [INFO] [comm.py:676:init_distributed] cdb=None
-[2025-07-20 19:55:04,729] [INFO] [comm.py:676:init_distributed] cdb=None
-[2025-07-20 19:55:04,733] [INFO] [comm.py:676:init_distributed] cdb=None
-[2025-07-20 19:55:04,733] [INFO] [comm.py:707:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
-[2025-07-20 19:55:04,767] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
-[2025-07-20 19:55:04,779] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
-[2025-07-20 19:55:04,788] [INFO] [comm.py:676:init_distributed] cdb=None
-[2025-07-20 19:55:04,828] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
-You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
-[2025-07-20 19:55:04,857] [INFO] [comm.py:676:init_distributed] cdb=None
-[2025-07-20 19:55:04,869] [INFO] [comm.py:676:init_distributed] cdb=None
-Loading model from /nas/models/Meta-Llama-3-8B-Instruct...
-[2025-07-20 19:55:06,469] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+[2025-07-20 20:03:36,343] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
 You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
 Loading model from /nas/models/Meta-Llama-3-8B-Instruct...
-[2025-07-20 19:55:07,045] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+[2025-07-20 20:03:37,195] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
 You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
 Loading model from /nas/models/Meta-Llama-3-8B-Instruct...
 Loading model from /nas/models/Meta-Llama-3-8B-Instruct...
 Loading model from /nas/models/Meta-Llama-3-8B-Instruct...
 Loading model from /nas/models/Meta-Llama-3-8B-Instruct...
 Loading model from /nas/models/Meta-Llama-3-8B-Instruct...
-[2025-07-20 19:55:07,884] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+[2025-07-20 20:03:38,266] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
 You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
-[2025-07-20 19:55:07,946] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+Loading model from /nas/models/Meta-Llama-3-8B-Instruct...
+[2025-07-20 20:03:38,331] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
 You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
-[2025-07-20 19:55:07,968] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+[2025-07-20 20:03:38,376] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+[2025-07-20 20:03:38,377] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
 You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
-[2025-07-20 19:55:08,021] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
 You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
-[2025-07-20 19:55:08,046] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+[2025-07-20 20:03:38,422] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
 You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
-[2025-07-20 19:55:22,001] [INFO] [partition_parameters.py:366:__exit__] finished initializing model - num_params = 291, num_elems = 8.03B
-Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.55it/s]
-Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.55it/s]
-Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.55it/s]
-Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.55it/s]
-Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.55it/s]
-Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.55it/s]
-Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.55it/s]
-Loading checkpoint shards:  75%|███████████████████████████████████████████████████████████████████▌                      | 3/4 [00:03<00:01,  1.15s/it]/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:163: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+[2025-07-20 20:03:38,543] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading checkpoint shards:   0%|                                                                                                  | 0/4 [00:00<?, ?it/s][2025-07-20 20:03:56,209] [INFO] [partition_parameters.py:366:__exit__] finished initializing model - num_params = 291, num_elems = 8.03B
+Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.88it/s]
+Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.77it/s]
+Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.86it/s]
+Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.88it/s]
+Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.76it/s]
+
+Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.86it/s]
+Loading checkpoint shards:  75%|███████████████████████████████████████████████████████████████████▌                      | 3/4 [00:03<00:00,  1.03it/s]/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:165: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
   trainer = Trainer(
-/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:163: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:165: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
   trainer = Trainer(
-/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:163: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:03<00:00,  1.24it/s]
+/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:165: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
   trainer = Trainer(
-/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:163: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:165: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
   trainer = Trainer(
-/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:163: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:165: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
   trainer = Trainer(
-/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:163: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:165: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
   trainer = Trainer(
-/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:163: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
-  trainer = Trainer(
-Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:03<00:00,  1.05it/s]
 Starting full SFT training...
 Starting full SFT training...
 Starting full SFT training...
 Starting full SFT training...
 Starting full SFT training...
 Starting full SFT training...
-Starting full SFT training...
-/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:163: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:165: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
   trainer = Trainer(
 Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
 Detected CUDA files, patching ldflags
@@ -98,10 +95,22 @@ Allowing ninja to set a default number of workers... (overridable by setting the
 Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
 ninja: no work to do.
 Loading extension module fused_adam...
-Time to load fused_adam op: 0.021944284439086914 seconds
+Time to load fused_adam op: 0.023854494094848633 seconds
 Loading extension module fused_adam...
-Time to load fused_adam op: 0.1009979248046875 seconds
+Time to load fused_adam op: 0.10094213485717773 seconds
 Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
+/root/miniforge3/envs/verl/lib/python3.10/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.021420717239379883 seconds
 Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
 Detected CUDA files, patching ldflags
 Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
@@ -112,36 +121,16 @@ Building extension module fused_adam...
 Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
 ninja: no work to do.
 Loading extension module fused_adam...
-Time to load fused_adam op: 0.02133631706237793 seconds
-Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
-Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
-Detected CUDA files, patching ldflags
-Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
-/root/miniforge3/envs/verl/lib/python3.10/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
-If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
-  warnings.warn(
-Building extension module fused_adam...
-Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
-ninja: no work to do.
+Time to load fused_adam op: 0.021141529083251953 seconds
 Loading extension module fused_adam...
-Time to load fused_adam op: 0.020366191864013672 seconds
+Time to load fused_adam op: 0.10091781616210938 seconds
 Loading extension module fused_adam...
-Time to load fused_adam op: 0.10093402862548828 seconds
-Loading extension module fused_adam...
-Time to load fused_adam op: 0.10088944435119629 seconds
+Time to load fused_adam op: 0.10093140602111816 seconds
+/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py:165: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
 Starting full SFT training...
-Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
-Detected CUDA files, patching ldflags
-Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
-/root/miniforge3/envs/verl/lib/python3.10/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
-If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
-  warnings.warn(
-Building extension module fused_adam...
-Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
-ninja: no work to do.
-Loading extension module fused_adam...
-Time to load fused_adam op: 0.020558595657348633 seconds
 Gradient accumulation steps mismatch: GradientAccumulationPlugin has 1, DeepSpeed config has 4. Using DeepSpeed's value.
+Starting full SFT training...
 Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
 Detected CUDA files, patching ldflags
 Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
@@ -152,249 +141,117 @@ Building extension module fused_adam...
 Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
 ninja: no work to do.
 Loading extension module fused_adam...
-Time to load fused_adam op: 0.021962642669677734 seconds
+Time to load fused_adam op: 0.021772146224975586 seconds
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
+/root/miniforge3/envs/verl/lib/python3.10/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.023062467575073242 seconds
 Parameter Offload - Persistent parameters statistics: param_count = 65, numel = 266240
-[2025-07-20 19:55:31,951] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
-[2025-07-20 19:55:31,952] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
-[2025-07-20 19:55:31,952] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
-[2025-07-20 19:55:31,953] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
-[2025-07-20 19:55:31,953] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
-[2025-07-20 19:55:31,954] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
-[2025-07-20 19:55:31,956] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
-[2025-07-20 19:55:32,140] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-20 20:04:05,001] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-20 20:04:05,001] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-20 20:04:05,002] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-20 20:04:05,002] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-20 20:04:05,003] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-20 20:04:05,003] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-20 20:04:05,004] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-20 20:04:05,177] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
 wandb: WARNING The `run_name` is currently set to the same value as `TrainingArguments.output_dir`. If this was not intended, please specify a different run name by setting the `TrainingArguments.run_name` parameter.
 wandb: Currently logged in as: xuwh (xuwh-university-of-washington) to https://api.bandw.top. Use `wandb login --relogin` to force relogin
 wandb: Tracking run with wandb version 0.21.0
-wandb: Run data is saved locally in /nas/ganluo/Flow_RL/my_llama3_h100/wandb/run-20250720_195533-yir4wnz0
+wandb: Run data is saved locally in /nas/ganluo/Flow_RL/my_llama3_h100/wandb/run-20250720_200407-t5p4qfft
 wandb: Run `wandb offline` to turn off syncing.
 wandb: Syncing run /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100
 wandb: ⭐️ View project at https://app.bandw.top/xuwh-university-of-washington/llama3-8b-workflow-h100-sft
-wandb: 🚀 View run at https://app.bandw.top/xuwh-university-of-washington/llama3-8b-workflow-h100-sft/runs/yir4wnz0
-{'loss': 2.1944, 'grad_norm': 41.177058049363374, 'learning_rate': 0.0, 'epoch': 0.07}                                                                  
-{'loss': 2.1538, 'grad_norm': 39.9210894157407, 'learning_rate': 2e-05, 'epoch': 0.15}                                                                  
-{'loss': 2.1775, 'grad_norm': 40.537172102666105, 'learning_rate': 2e-05, 'epoch': 0.22}                                                                
-{'loss': 1.8717, 'grad_norm': 32.10479836194284, 'learning_rate': 2e-05, 'epoch': 0.29}                                                                 
-{'loss': 1.1279, 'grad_norm': 12.43191706302793, 'learning_rate': 2e-05, 'epoch': 0.36}                                                                 
-{'loss': 0.9074, 'grad_norm': 10.65370684070409, 'learning_rate': 2e-05, 'epoch': 0.44}                                                                 
-{'loss': 0.8712, 'grad_norm': 23.376740343156634, 'learning_rate': 2e-05, 'epoch': 0.51}                                                                
-{'loss': 0.755, 'grad_norm': 3.356105442856604, 'learning_rate': 2e-05, 'epoch': 0.58}                                                                  
-{'loss': 0.7613, 'grad_norm': 4.097117862032115, 'learning_rate': 2e-05, 'epoch': 0.65}                                                                 
-{'loss': 0.7912, 'grad_norm': 6.917941956375648, 'learning_rate': 2e-05, 'epoch': 0.73}                                                                 
-{'loss': 0.7459, 'grad_norm': 2.6871556978006153, 'learning_rate': 2e-05, 'epoch': 0.8}                                                                 
-{'loss': 0.6966, 'grad_norm': 3.1650093870083706, 'learning_rate': 2e-05, 'epoch': 0.87}                                                                
-{'loss': 0.7094, 'grad_norm': 5.687331830740153, 'learning_rate': 2e-05, 'epoch': 0.95}                                                                 
-{'loss': 0.7084, 'grad_norm': 2.3228409207852083, 'learning_rate': 2e-05, 'epoch': 1.0}                                                                 
-{'loss': 0.6299, 'grad_norm': 2.8146057396959354, 'learning_rate': 2e-05, 'epoch': 1.07}                                                                
-{'loss': 0.6196, 'grad_norm': 2.607821821468269, 'learning_rate': 2e-05, 'epoch': 1.15}                                                                 
-{'loss': 0.6137, 'grad_norm': 1.9756630551694268, 'learning_rate': 2e-05, 'epoch': 1.22}                                                                
-{'loss': 0.5856, 'grad_norm': 1.4026907176999661, 'learning_rate': 2e-05, 'epoch': 1.29}                                                                
-{'loss': 0.6046, 'grad_norm': 1.6090272061316162, 'learning_rate': 2e-05, 'epoch': 1.36}                                                                
-{'loss': 0.6001, 'grad_norm': 1.9966961650466701, 'learning_rate': 2e-05, 'epoch': 1.44}                                                                
-{'loss': 0.6119, 'grad_norm': 1.8443437324284173, 'learning_rate': 2e-05, 'epoch': 1.51}                                                                
-{'loss': 0.5872, 'grad_norm': 1.3846997628279791, 'learning_rate': 2e-05, 'epoch': 1.58}                                                                
-{'loss': 0.5853, 'grad_norm': 1.3808265791579617, 'learning_rate': 2e-05, 'epoch': 1.65}                                                                
-{'loss': 0.5831, 'grad_norm': 1.4938594778780767, 'learning_rate': 2e-05, 'epoch': 1.73}                                                                
-{'loss': 0.5804, 'grad_norm': 1.4805425227796052, 'learning_rate': 2e-05, 'epoch': 1.8}                                                                 
-{'loss': 0.5831, 'grad_norm': 1.155224456315962, 'learning_rate': 2e-05, 'epoch': 1.87}                                                                 
-{'loss': 0.6025, 'grad_norm': 1.0070613484856006, 'learning_rate': 2e-05, 'epoch': 1.95}                                                                
-{'loss': 0.5687, 'grad_norm': 1.5674831895504722, 'learning_rate': 2e-05, 'epoch': 2.0}                                                                 
-{'loss': 0.4662, 'grad_norm': 1.982657016912677, 'learning_rate': 2e-05, 'epoch': 2.07}                                                                 
-{'loss': 0.4283, 'grad_norm': 1.6537919431741053, 'learning_rate': 2e-05, 'epoch': 2.15}                                                                
-{'loss': 0.4072, 'grad_norm': 1.2982939103642117, 'learning_rate': 2e-05, 'epoch': 2.22}                                                                
-{'loss': 0.4061, 'grad_norm': 2.0053614266461834, 'learning_rate': 2e-05, 'epoch': 2.29}                                                                
-{'loss': 0.4137, 'grad_norm': 1.7930985133002069, 'learning_rate': 2e-05, 'epoch': 2.36}                                                                
-{'loss': 0.3966, 'grad_norm': 1.5026728127742268, 'learning_rate': 2e-05, 'epoch': 2.44}                                                                
-{'loss': 0.3904, 'grad_norm': 1.3841349143352761, 'learning_rate': 2e-05, 'epoch': 2.51}                                                                
-{'loss': 0.3977, 'grad_norm': 1.0534062256334555, 'learning_rate': 2e-05, 'epoch': 2.58}                                                                
-{'loss': 0.3918, 'grad_norm': 1.1880196514051915, 'learning_rate': 2e-05, 'epoch': 2.65}                                                                
-{'loss': 0.3807, 'grad_norm': 1.3733402995182737, 'learning_rate': 2e-05, 'epoch': 2.73}                                                                
-{'loss': 0.3966, 'grad_norm': 1.450910574619999, 'learning_rate': 2e-05, 'epoch': 2.8}                                                                  
-{'train_runtime': 121.5797, 'train_samples_per_second': 43.305, 'train_steps_per_second': 0.321, 'train_loss': 0.7513460837877713, 'epoch': 2.8}        
-100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 39/39 [01:57<00:00,  2.52s/it]Traceback (most recent call last):
-  File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 187, in <module>
-    train()
-  File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 181, in train
-    trainer.train()
-  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2245, in train
-    return inner_training_loop(
-  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2725, in _inner_training_loop
-    self.control = self.callback_handler.on_train_end(args, self.state, self.control)
-  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 509, in on_train_end
-    return self.call_event("on_train_end", args, state, control)
-  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 556, in call_event
-    result = getattr(callback, event)(
-  File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 57, in on_train_end
-    self._save_inference_weights(kwargs["model"], kwargs["tokenizer"], self.output_dir)
-KeyError: 'tokenizer'
-[rank6]: Traceback (most recent call last):
-[rank6]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 187, in <module>
-[rank6]:     train()
-[rank6]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 181, in train
-[rank6]:     trainer.train()
-[rank6]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2245, in train
-[rank6]:     return inner_training_loop(
-[rank6]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2725, in _inner_training_loop
-[rank6]:     self.control = self.callback_handler.on_train_end(args, self.state, self.control)
-[rank6]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 509, in on_train_end
-[rank6]:     return self.call_event("on_train_end", args, state, control)
-[rank6]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 556, in call_event
-[rank6]:     result = getattr(callback, event)(
-[rank6]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 57, in on_train_end
-[rank6]:     self._save_inference_weights(kwargs["model"], kwargs["tokenizer"], self.output_dir)
-[rank6]: KeyError: 'tokenizer'
-[rank2]: Traceback (most recent call last):
-[rank2]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 187, in <module>
-[rank2]:     train()
-[rank2]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 181, in train
-[rank2]:     trainer.train()
-[rank2]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2245, in train
-[rank2]:     return inner_training_loop(
-[rank2]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2725, in _inner_training_loop
-[rank2]:     self.control = self.callback_handler.on_train_end(args, self.state, self.control)
-[rank2]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 509, in on_train_end
-[rank2]:     return self.call_event("on_train_end", args, state, control)
-[rank2]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 556, in call_event
-[rank2]:     result = getattr(callback, event)(
-[rank2]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 57, in on_train_end
-[rank2]:     self._save_inference_weights(kwargs["model"], kwargs["tokenizer"], self.output_dir)
-[rank2]: KeyError: 'tokenizer'
-[rank4]: Traceback (most recent call last):
-[rank4]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 187, in <module>
-[rank4]:     train()
-[rank4]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 181, in train
-[rank4]:     trainer.train()
-[rank4]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2245, in train
-[rank4]:     return inner_training_loop(
-[rank4]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2725, in _inner_training_loop
-[rank4]:     self.control = self.callback_handler.on_train_end(args, self.state, self.control)
-[rank4]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 509, in on_train_end
-[rank4]:     return self.call_event("on_train_end", args, state, control)
-[rank4]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 556, in call_event
-[rank4]:     result = getattr(callback, event)(
-[rank4]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 57, in on_train_end
-[rank4]:     self._save_inference_weights(kwargs["model"], kwargs["tokenizer"], self.output_dir)
-[rank4]: KeyError: 'tokenizer'
-[rank5]: Traceback (most recent call last):
-[rank5]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 187, in <module>
-[rank5]:     train()
-[rank5]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 181, in train
-[rank5]:     trainer.train()
-[rank5]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2245, in train
-[rank5]:     return inner_training_loop(
-[rank5]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2725, in _inner_training_loop
-[rank5]:     self.control = self.callback_handler.on_train_end(args, self.state, self.control)
-[rank5]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 509, in on_train_end
-[rank5]:     return self.call_event("on_train_end", args, state, control)
-[rank5]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 556, in call_event
-[rank5]:     result = getattr(callback, event)(
-[rank5]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 57, in on_train_end
-[rank5]:     self._save_inference_weights(kwargs["model"], kwargs["tokenizer"], self.output_dir)
-[rank5]: KeyError: 'tokenizer'
-[rank1]: Traceback (most recent call last):
-[rank1]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 187, in <module>
-[rank1]:     train()
-[rank1]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 181, in train
-[rank1]:     trainer.train()
-[rank1]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2245, in train
-[rank1]:     return inner_training_loop(
-[rank1]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2725, in _inner_training_loop
-[rank1]:     self.control = self.callback_handler.on_train_end(args, self.state, self.control)
-[rank1]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 509, in on_train_end
-[rank1]:     return self.call_event("on_train_end", args, state, control)
-[rank1]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 556, in call_event
-[rank1]:     result = getattr(callback, event)(
-[rank1]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 57, in on_train_end
-[rank1]:     self._save_inference_weights(kwargs["model"], kwargs["tokenizer"], self.output_dir)
-[rank1]: KeyError: 'tokenizer'
-[rank3]: Traceback (most recent call last):
-[rank3]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 187, in <module>
-[rank3]:     train()
-[rank3]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 181, in train
-[rank3]:     trainer.train()
-[rank3]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2245, in train
-[rank3]:     return inner_training_loop(
-[rank3]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2725, in _inner_training_loop
-[rank3]:     self.control = self.callback_handler.on_train_end(args, self.state, self.control)
-[rank3]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 509, in on_train_end
-[rank3]:     return self.call_event("on_train_end", args, state, control)
-[rank3]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 556, in call_event
-[rank3]:     result = getattr(callback, event)(
-[rank3]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 57, in on_train_end
-[rank3]:     self._save_inference_weights(kwargs["model"], kwargs["tokenizer"], self.output_dir)
-[rank3]: KeyError: 'tokenizer'
-[rank7]: Traceback (most recent call last):
-[rank7]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 187, in <module>
-[rank7]:     train()
-[rank7]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 181, in train
-[rank7]:     trainer.train()
-[rank7]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2245, in train
-[rank7]:     return inner_training_loop(
-[rank7]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2725, in _inner_training_loop
-[rank7]:     self.control = self.callback_handler.on_train_end(args, self.state, self.control)
-[rank7]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 509, in on_train_end
-[rank7]:     return self.call_event("on_train_end", args, state, control)
-[rank7]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 556, in call_event
-[rank7]:     result = getattr(callback, event)(
-[rank7]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 57, in on_train_end
-[rank7]:     self._save_inference_weights(kwargs["model"], kwargs["tokenizer"], self.output_dir)
-[rank7]: KeyError: 'tokenizer'
-[rank0]: Traceback (most recent call last):
-[rank0]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 187, in <module>
-[rank0]:     train()
-[rank0]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 181, in train
-[rank0]:     trainer.train()
-[rank0]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2245, in train
-[rank0]:     return inner_training_loop(
-[rank0]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer.py", line 2725, in _inner_training_loop
-[rank0]:     self.control = self.callback_handler.on_train_end(args, self.state, self.control)
-[rank0]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 509, in on_train_end
-[rank0]:     return self.call_event("on_train_end", args, state, control)
-[rank0]:   File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/transformers/trainer_callback.py", line 556, in call_event
-[rank0]:     result = getattr(callback, event)(
-[rank0]:   File "/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py", line 57, in on_train_end
-[rank0]:     self._save_inference_weights(kwargs["model"], kwargs["tokenizer"], self.output_dir)
-[rank0]: KeyError: 'tokenizer'
-W0720 19:57:36.487675 164717 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 165073 closing signal SIGTERM
-W0720 19:57:36.490332 164717 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 165074 closing signal SIGTERM
-W0720 19:57:36.490534 164717 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 165076 closing signal SIGTERM
-W0720 19:57:36.490644 164717 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 165077 closing signal SIGTERM
-W0720 19:57:36.490747 164717 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 165078 closing signal SIGTERM
-W0720 19:57:36.490846 164717 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 165079 closing signal SIGTERM
-W0720 19:57:36.490945 164717 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 165080 closing signal SIGTERM
-E0720 19:57:38.158054 164717 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 2 (pid: 165075) of binary: /root/miniforge3/envs/verl/bin/python
-Traceback (most recent call last):
-  File "/root/miniforge3/envs/verl/lib/python3.10/runpy.py", line 196, in _run_module_as_main
-    return _run_code(code, main_globals, None,
-  File "/root/miniforge3/envs/verl/lib/python3.10/runpy.py", line 86, in _run_code
-    exec(code, run_globals)
-  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1209, in <module>
-    main()
-  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1205, in main
-    launch_command(args)
-  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1184, in launch_command
-    deepspeed_launcher(args)
-  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/accelerate/commands/launch.py", line 868, in deepspeed_launcher
-    distrib_run.run(args)
-  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/torch/distributed/run.py", line 909, in run
-    elastic_launch(
-  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
-    return launch_agent(self._config, self._entrypoint, list(args))
-  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
-    raise ChildFailedError(
-torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
-============================================================
-/nas/ganluo/Flow_RL/my_llama3_h100/src/train.py FAILED
-------------------------------------------------------------
-Failures:
-  <NO_OTHER_FAILURES>
-------------------------------------------------------------
-Root Cause (first observed failure):
-[0]:
-  time      : 2025-07-20_19:57:36
-  host      : ctyun172022236189.et1032-ctyun
-  rank      : 2 (local_rank: 2)
-  exitcode  : 1 (pid: 165075)
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
-============================================================
-(verl) root@ctyun172022236189:/nas/ganluo/Flow_RL/my_llama3_h100# 
+wandb: 🚀 View run at https://app.bandw.top/xuwh-university-of-washington/llama3-8b-workflow-h100-sft/runs/t5p4qfft
+{'loss': 2.1944, 'grad_norm': 41.16833293657392, 'learning_rate': 0.0, 'epoch': 0.07}                                                                   
+{'loss': 2.1538, 'grad_norm': 39.92559520276835, 'learning_rate': 2e-05, 'epoch': 0.15}                                                                 
+{'loss': 2.1775, 'grad_norm': 40.52926142371547, 'learning_rate': 2e-05, 'epoch': 0.22}                                                                 
+{'loss': 1.8712, 'grad_norm': 32.121243014675656, 'learning_rate': 2e-05, 'epoch': 0.29}                                                                
+{'loss': 1.1274, 'grad_norm': 11.960407333026449, 'learning_rate': 2e-05, 'epoch': 0.36}                                                                
+{'loss': 0.9048, 'grad_norm': 10.180196474810081, 'learning_rate': 2e-05, 'epoch': 0.44}                                                                
+{'loss': 0.8297, 'grad_norm': 19.469563483011466, 'learning_rate': 2e-05, 'epoch': 0.51}                                                                
+{'loss': 0.7585, 'grad_norm': 5.031148562282542, 'learning_rate': 2e-05, 'epoch': 0.58}                                                                 
+{'loss': 0.7356, 'grad_norm': 2.9410333173019585, 'learning_rate': 2e-05, 'epoch': 0.65}                                                                
+{'loss': 0.7669, 'grad_norm': 6.673619811250175, 'learning_rate': 2e-05, 'epoch': 0.73}                                                                 
+{'loss': 0.7413, 'grad_norm': 2.5897356018162374, 'learning_rate': 2e-05, 'epoch': 0.8}                                                                 
+{'loss': 0.6989, 'grad_norm': 3.010250081445995, 'learning_rate': 2e-05, 'epoch': 0.87}                                                                 
+{'loss': 0.7041, 'grad_norm': 2.356312400616778, 'learning_rate': 2e-05, 'epoch': 0.95}                                                                 
+{'loss': 0.6995, 'grad_norm': 2.4776233847148874, 'learning_rate': 2e-05, 'epoch': 1.0}                                                                 
+{'loss': 0.6312, 'grad_norm': 2.9048701943700093, 'learning_rate': 2e-05, 'epoch': 1.07}                                                                
+{'loss': 0.6131, 'grad_norm': 2.4523486297885393, 'learning_rate': 2e-05, 'epoch': 1.15}                                                                
+{'loss': 0.6025, 'grad_norm': 1.8452387463397482, 'learning_rate': 2e-05, 'epoch': 1.22}                                                                
+{'loss': 0.5767, 'grad_norm': 1.3840239577081233, 'learning_rate': 2e-05, 'epoch': 1.29}                                                                
+{'loss': 0.6049, 'grad_norm': 4.13760322641892, 'learning_rate': 2e-05, 'epoch': 1.36}                                                                  
+{'loss': 0.6043, 'grad_norm': 2.7175197271048575, 'learning_rate': 2e-05, 'epoch': 1.44}                                                                
+{'loss': 0.6452, 'grad_norm': 4.435998566459763, 'learning_rate': 2e-05, 'epoch': 1.51}                                                                 
+{'loss': 0.5893, 'grad_norm': 2.1479114668990626, 'learning_rate': 2e-05, 'epoch': 1.58}                                                                
+{'loss': 0.5929, 'grad_norm': 2.3273607207120626, 'learning_rate': 2e-05, 'epoch': 1.65}                                                                
+{'loss': 0.5857, 'grad_norm': 2.122445184781521, 'learning_rate': 2e-05, 'epoch': 1.73}                                                                 
+{'loss': 0.5769, 'grad_norm': 1.6036031418912606, 'learning_rate': 2e-05, 'epoch': 1.8}                                                                 
+{'loss': 0.5733, 'grad_norm': 5.393207209124002, 'learning_rate': 2e-05, 'epoch': 1.87}                                                                 
+{'loss': 0.6026, 'grad_norm': 1.3787911490389202, 'learning_rate': 2e-05, 'epoch': 1.95}                                                                
+{'loss': 0.5948, 'grad_norm': 10.845638648627324, 'learning_rate': 2e-05, 'epoch': 2.0}                                                                 
+{'loss': 0.5106, 'grad_norm': 12.865835268760577, 'learning_rate': 2e-05, 'epoch': 2.07}                                                                
+{'loss': 0.4872, 'grad_norm': 3.7322045999384326, 'learning_rate': 2e-05, 'epoch': 2.15}                                                                
+{'loss': 0.4677, 'grad_norm': 2.165080367271562, 'learning_rate': 2e-05, 'epoch': 2.22}                                                                 
+{'loss': 0.4542, 'grad_norm': 1.4293048908932715, 'learning_rate': 2e-05, 'epoch': 2.29}                                                                
+{'loss': 0.4734, 'grad_norm': 4.775283781727578, 'learning_rate': 2e-05, 'epoch': 2.36}                                                                 
+{'loss': 0.4629, 'grad_norm': 3.3461040576930574, 'learning_rate': 2e-05, 'epoch': 2.44}                                                                
+{'loss': 0.445, 'grad_norm': 1.881740433778228, 'learning_rate': 2e-05, 'epoch': 2.51}                                                                  
+{'loss': 0.4341, 'grad_norm': 1.2289070938775473, 'learning_rate': 2e-05, 'epoch': 2.58}                                                                
+{'loss': 0.4332, 'grad_norm': 1.2956956348949027, 'learning_rate': 2e-05, 'epoch': 2.65}                                                                
+{'loss': 0.4197, 'grad_norm': 1.25117064190274, 'learning_rate': 2e-05, 'epoch': 2.73}                                                                  
+{'loss': 0.4344, 'grad_norm': 1.2578805384961933, 'learning_rate': 2e-05, 'epoch': 2.8}                                                                 
+{'train_runtime': 115.2333, 'train_samples_per_second': 45.69, 'train_steps_per_second': 0.338, 'train_loss': 0.7635774704126211, 'epoch': 2.8}         
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 39/39 [01:50<00:00,  2.55s/it]Saving inference weights to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100...Saving inference weights to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100...Saving inference weights to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100...Saving inference weights to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100...
+Saving inference weights to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100...Saving inference weights to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100...
+
+
+
+
+Saving inference weights to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100...
+Saving inference weights to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100...
+Inference weights saved to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100
+Training finished. Model has been saved by callback.
+Inference weights saved to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100
+Training finished. Model has been saved by callback.
+Inference weights saved to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100
+Training finished. Model has been saved by callback.
+Inference weights saved to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100
+Training finished. Model has been saved by callback.
+Inference weights saved to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100
+Training finished. Model has been saved by callback.
+Inference weights saved to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100
+Training finished. Model has been saved by callback.
+Inference weights saved to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 39/39 [01:51<00:00,  2.87s/it]
+Training finished. Model has been saved by callback.
+Inference weights saved to /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100
+Training finished. Model has been saved by callback.
+wandb: 
+wandb: 🚀 View run /nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100 at: https://app.bandw.top/xuwh-university-of-washington/llama3-8b-workflow-h100-sft/runs/t5p4qfft
+wandb: Find logs at: wandb/run-20250720_200407-t5p4qfft/logs
+(verl) root@ctyun172022236189:/nas/ganluo/Flow_RL/my_llama3_h100# cd /nas
+(verl) root@ctyun172022236189:/nas# cd ganluo
+(verl) root@ctyun172022236189:/nas/ganluo# ls
+Flow_RL  ScoreFlow  set_up.bash  sft_output
+(verl) root@ctyun172022236189:/nas/ganluo# cd sft_output/
+(verl) root@ctyun172022236189:/nas/ganluo/sft_output# du -sh .
+18M     .
+(verl) root@ctyun172022236189:/nas/ganluo/sft_output# du -sh .
+18M     .
+(verl) root@ctyun172022236189:/nas/ganluo/sft_output# ls
+Llama-3-8B-Instruct-Workflow-Expert-H100
+(verl) root@ctyun172022236189:/nas/ganluo/sft_output# cd Llama-3-8B-Instruct-Workflow-Expert-H100/
+(verl) root@ctyun172022236189:/nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100# ls
+config.json  generation_config.json  model.safetensors  special_tokens_map.json  tokenizer_config.json  tokenizer.json
+(verl) root@ctyun172022236189:/nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100# du -sh .
+18M     .
+(verl) root@ctyun172022236189:/nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100# 
