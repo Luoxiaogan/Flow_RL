@@ -1,0 +1,39 @@
+{
+    "benchmarks": {
+        "gsm8k": {
+            "ability": "math_reasoning",
+            "dataset_path": "./data/gsm8k/train.jsonl",
+            "total_problems": 7473,
+            "train_ratio": 0.8,
+            "description": "Grade School Math 8K - Mathematical reasoning problems"
+        },
+        "mbpp": {
+            "ability": "code_generation",
+            "dataset_path": "./data/mbpp/train.jsonl", 
+            "total_problems": 374,
+            "train_ratio": 0.8,
+            "description": "Mostly Basic Python Problems - Code generation tasks"
+        }
+    },
+    "generation_config": {
+        "min_sample_size": 2,
+        "max_sample_size": 4,
+        "batch_size": 10,
+        "max_concurrent_tasks": 10
+    },
+    "api_config": {
+        "provider": "openai",
+        "model": "qwen-turbo", 
+        "api_key": "sk-2df74af0570a42059c10a3f24de1b9df",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    },
+    "verl_config": {
+        "train_samples_per_benchmark": 100,
+        "test_samples_per_benchmark": 25,
+        "chat_template_format": "huggingface"
+    },
+    "output_paths": {
+        "data_dir": "./data",
+        "temp_workspace": "./temp_workspace"
+    }
+} 
