@@ -76,3 +76,32 @@ Sun Jul 20 06:25:06 2025
 (ruicheng) root@ctyun172022236189:/nas/ganluo/Flow_RL# 
 
 
+(base) root@ctyun172022236189:/nas/ganluo# du -sh .
+120G    .
+(base) root@ctyun172022236189:/nas/ganluo# cd sft_output/
+(base) root@ctyun172022236189:/nas/ganluo/sft_output# ls
+Llama-3-8B-Instruct-Workflow-Expert-H100
+(base) root@ctyun172022236189:/nas/ganluo/sft_output# cd sft_output/
+bash: cd: sft_output/: No such file or directory
+(base) root@ctyun172022236189:/nas/ganluo/sft_output# du -sh .
+120G    .
+(base) root@ctyun172022236189:/nas/ganluo/sft_output# cd Llama-3-8B-Instruct-Workflow-Expert-H100/
+(base) root@ctyun172022236189:/nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100# ls
+checkpoint-39           model-00001-of-00004.safetensors  model-00004-of-00004.safetensors  tokenizer_config.json
+config.json             model-00002-of-00004.safetensors  model.safetensors.index.json      tokenizer.json
+generation_config.json  model-00003-of-00004.safetensors  special_tokens_map.json           training_args.bin
+(base) root@ctyun172022236189:/nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100# cd checkpoint-39/
+(base) root@ctyun172022236189:/nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100/checkpoint-39# ls
+config.json             model-00001-of-00004.safetensors  model.safetensors.index.json  rng_state_3.pth  rng_state_7.pth          trainer_state.json
+generation_config.json  model-00002-of-00004.safetensors  rng_state_0.pth               rng_state_4.pth  special_tokens_map.json  training_args.bin
+global_step39           model-00003-of-00004.safetensors  rng_state_1.pth               rng_state_5.pth  tokenizer_config.json    zero_to_fp32.py
+latest                  model-00004-of-00004.safetensors  rng_state_2.pth               rng_state_6.pth  tokenizer.json
+(base) root@ctyun172022236189:/nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100/checkpoint-39# cd global_step39/
+(base) root@ctyun172022236189:/nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100/checkpoint-39/global_step39# ls
+bf16_zero_pp_rank_0_mp_rank_00_optim_states.pt  bf16_zero_pp_rank_6_mp_rank_00_optim_states.pt  zero_pp_rank_4_mp_rank_00_model_states.pt
+bf16_zero_pp_rank_1_mp_rank_00_optim_states.pt  bf16_zero_pp_rank_7_mp_rank_00_optim_states.pt  zero_pp_rank_5_mp_rank_00_model_states.pt
+bf16_zero_pp_rank_2_mp_rank_00_optim_states.pt  zero_pp_rank_0_mp_rank_00_model_states.pt       zero_pp_rank_6_mp_rank_00_model_states.pt
+bf16_zero_pp_rank_3_mp_rank_00_optim_states.pt  zero_pp_rank_1_mp_rank_00_model_states.pt       zero_pp_rank_7_mp_rank_00_model_states.pt
+bf16_zero_pp_rank_4_mp_rank_00_optim_states.pt  zero_pp_rank_2_mp_rank_00_model_states.pt
+bf16_zero_pp_rank_5_mp_rank_00_optim_states.pt  zero_pp_rank_3_mp_rank_00_model_states.pt
+(base) root@ctyun172022236189:/nas/ganluo/sft_output/Llama-3-8B-Instruct-Workflow-Expert-H100/checkpoint-39/global_step39# 
