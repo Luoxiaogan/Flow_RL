@@ -7,8 +7,8 @@ from typing import Dict, List, Tuple
 
 from tenacity import retry, stop_after_attempt, wait_fixed
 
-from ScoreFlow.scripts.HotpotQA.operator_an import *
-from ScoreFlow.scripts.HotpotQA.op_prompt import *
+from ScoreFlow.scripts.hotpotqa.operator_an import *
+from ScoreFlow.scripts.hotpotqa.op_prompt import *
 from metagpt.actions.action_node import ActionNode
 from metagpt.llm import LLM
 from metagpt.logs import logger

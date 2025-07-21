@@ -1,6 +1,6 @@
 PYTHON_START = '''import asyncio
 from typing import Literal
-import ScoreFlow.scripts.HotpotQA.operator as operator
+import ScoreFlow.scripts.hotpotqa.operator as operator
 from metagpt.provider.llm_provider_registry import create_llm_instance as create
 
 '''
