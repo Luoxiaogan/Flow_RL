@@ -1,0 +1,97 @@
+(workflow) luogan@luogandeMacBook-Pro Test_FILE % bash /Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE/run_workflow_system_gsm8k.sh
+==================================================
+  启动工作流系统 (V3)
+==================================================
+  任务时间: 2025年 7月21日 星期一 15时30分25秒 CST
+  工作目录: /Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE
+  Benchmark: gsm8k
+  数据集路径: ../Processed_dataset/gsm8k/train.jsonl
+  工作空间: ./workspace_gsm8k
+==================================================
+
+正在从 6 个问题中创建随机抽样任务...
+成功创建 3 个生成任务。
+任务将被分为 1 个批次进行处理，每批次最多 3 个任务。
+
+================================================================================
+正在处理批次 1/1...
+--- 阶段 1: 为批次 1 生成 3 个工作流 ---
+执行生成命令: python3 workflow_generator.py --api-pool [
+    {
+        "provider": "openai",
+        "model": "qwen-turbo",
+        "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    }
+] --benchmark gsm8k --dataset-path ../Processed_dataset/gsm8k/train.jsonl --generation-tasks 1_3,2_0,5_4 --workspace-path ./workspace_gsm8k --log-level INFO --max-concurrent-tasks 10 --id-start-index 0 --parallelism 2 --training-data-output ./workspace_gsm8k/training_data_gsm8k.jsonl
+2025-07-21 15:30:25,655 - INFO - 开始为 Benchmark 'gsm8k' 生成 6 个工作流 (3 组 × 2 并行度)，ID 从 0 开始...
+2025-07-21 15:30:25,655 - INFO - 向 openai 发送生成请求 (ID: gsm8k_0_0, Indices: [1, 3])
+2025-07-21 15:30:36,456 - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-21 15:30:36,465 - INFO - 成功生成并保存工作流: gsm8k_0_0
+2025-07-21 15:30:36,466 - INFO - 向 openai 发送生成请求 (ID: gsm8k_0_1, Indices: [1, 3])
+2025-07-21 15:30:47,000 - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-21 15:30:47,003 - INFO - 成功生成并保存工作流: gsm8k_0_1
+2025-07-21 15:30:47,004 - INFO - 向 openai 发送生成请求 (ID: gsm8k_1_0, Indices: [2, 0])
+2025-07-21 15:30:56,476 - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-21 15:30:56,479 - INFO - 成功生成并保存工作流: gsm8k_1_0
+2025-07-21 15:30:56,479 - INFO - 向 openai 发送生成请求 (ID: gsm8k_1_1, Indices: [2, 0])
+2025-07-21 15:31:06,018 - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-21 15:31:06,022 - INFO - 成功生成并保存工作流: gsm8k_1_1
+2025-07-21 15:31:06,022 - INFO - 向 openai 发送生成请求 (ID: gsm8k_2_0, Indices: [5, 4])
+2025-07-21 15:31:16,898 - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-21 15:31:16,903 - INFO - 成功生成并保存工作流: gsm8k_2_0
+2025-07-21 15:31:16,903 - INFO - 向 openai 发送生成请求 (ID: gsm8k_2_1, Indices: [5, 4])
+2025-07-21 15:31:31,637 - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-21 15:31:31,640 - INFO - 成功生成并保存工作流: gsm8k_2_1
+2025-07-21 15:31:31,641 - INFO - 6 条训练数据已追加到: ./workspace_gsm8k/training_data_gsm8k.jsonl
+2025-07-21 15:31:31,641 - INFO - 工作流生成阶段完成。
+2025-07-21 15:31:31,641 - INFO - 
+整个生成流程耗时: 66.00 秒
+生成阶段成功。
+--- 阶段 2: 逐个执行并验证新生成的工作流 ---
+并行执行 6 个工作流验证（最多 5 个并发）...
+
+执行验证命令: python3 workflow_executor.py --workflow-path ./workspace_gsm8k/generated_workflows/gsm8k/gsm8k_0_0.py --exec-llm {
+    "provider": "openai",
+    "model": "qwen-turbo",
+    "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+} --workspace-path ./workspace_gsm8k --workflow-timeout 180 --log-level INFO
+
+执行验证命令: python3 workflow_executor.py --workflow-path ./workspace_gsm8k/generated_workflows/gsm8k/gsm8k_0_1.py --exec-llm {
+    "provider": "openai",
+    "model": "qwen-turbo",
+    "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+} --workspace-path ./workspace_gsm8k --workflow-timeout 180 --log-level INFO
+
+执行验证命令: python3 workflow_executor.py --workflow-path ./workspace_gsm8k/generated_workflows/gsm8k/gsm8k_1_0.py --exec-llm {
+    "provider": "openai",
+    "model": "qwen-turbo",
+    "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+} --workspace-path ./workspace_gsm8k --workflow-timeout 180 --log-level INFO
+
+执行验证命令: python3 workflow_executor.py --workflow-path ./workspace_gsm8k/generated_workflows/gsm8k/gsm8k_1_1.py --exec-llm {
+    "provider": "openai",
+    "model": "qwen-turbo",
+    "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+} --workspace-path ./workspace_gsm8k --workflow-timeout 180 --log-level INFO
+
+执行验证命令: python3 workflow_executor.py --workflow-path ./workspace_gsm8k/generated_workflows/gsm8k/gsm8k_2_0.py --exec-llm {
+    "provider": "openai",
+    "model": "qwen-turbo",
+    "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+} --workspace-path ./workspace_gsm8k --workflow-timeout 180 --log-level INFO
+2025-07-21 15:31:32.110 | INFO     | metagpt.const:get_metagpt_package_root:21 - Package root set to /Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE
+2025-07-21 15:31:32.111 | INFO     | metagpt.const:get_metagpt_package_root:21 - Package root set to /Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE
+2025-07-21 15:31:32.112 | INFO     | metagpt.const:get_metagpt_package_root:21 - Package root set to /Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE
+2025-07-21 15:31:32.119 | INFO     | metagpt.const:get_metagpt_package_root:21 - Package root set to /Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE
+2025-07-21 15:31:32.153 | INFO     | metagpt.const:get_metagpt_package_root:21 - Package root set to /Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE
+2025-07-21 15:31:33,401 - INFO - [execute_and_verify] 开始处理工作流 gsm8k_1_0 (Benchmark: gsm8k)...
+2025-07-21 15:31:33,401 - INFO - [execute_and_verify] 开始处理工作流 gsm8k_1_1 (Benchmark: gsm8k)...
+2025-07-21 15:31:33,401 - INFO - [execute_and_verify] 开始处理工作流 gsm8k_0_0 (Benchmark: gsm8k)...
+2025-07-21 15:31:33,402 - INFO - [execute_and_verify] 开始处理工作流 gsm8k_0_1 (Benchmark: gsm8k)...
+2025-07-21 15:31:33,410 - INFO - [execute_and_verify] 开始处理工作流 gsm8k_2_0 (Benchmark: gsm8k)...

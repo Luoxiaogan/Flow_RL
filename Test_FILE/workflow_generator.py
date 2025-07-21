@@ -39,6 +39,7 @@ def parse_arguments():
     ### 修改点 1: 增加新的命令行参数 --id-start-index ###
     parser.add_argument('--id-start-index', type=int, default=0, help='生成工作流ID的起始索引')
     parser.add_argument('--parallelism', type=int, default=2, help='每个数据组合生成的工作流并行度')
+    parser.add_argument('--max-concurrent-groups', type=int, default=5, help='最大并发组数')
     
     return parser.parse_args()
 
@@ -99,7 +100,7 @@ async def call_openai_compatible_api(api_config: Dict, messages: List[Dict]) -> 
 
 class WorkflowGenerator:
     def __init__(self, api_configs: List[Dict], workspace_path: str, handler: BenchmarkHandler,
-                 training_data_output: str = None):
+                 training_data_output: str = None, max_concurrent_groups: int = 5):
         if not api_configs:
             raise ValueError("生成API配置不能为空。")
         self.api_configs = api_configs
@@ -107,7 +108,7 @@ class WorkflowGenerator:
         self.handler = handler
         self.benchmark_name = handler.benchmark_name
         self.training_data_output = training_data_output
-        self.training_records = [] # 用于暂存训练数据
+        self.max_concurrent_groups = max_concurrent_groups
 
         # 创建工作流保存目录
         self.workflows_output_dir = os.path.join(self.workspace_path, "generated_workflows", self.benchmark_name)
@@ -173,16 +174,20 @@ class WorkflowGenerator:
             if code:
                 self._save_workflow_files(workflow_id, code, data_indices)
                 logging.info(f"成功生成并保存工作流: {workflow_id}")
-                # 暂存训练数据
+                # 立即保存训练数据（而不是暂存）
                 if self.training_data_output:
                     _, _, system_prompt, _ = self._load_prompt_templates()
-                    self.training_records.append({
+                    training_record = {
+                        "workflow_id": workflow_id,  # 添加工作流ID以便后续匹配
+                        "benchmark": self.benchmark_name,
+                        "data_indices": data_indices,
                         "messages": [
                             {"role": "system", "content": system_prompt},
                             {"role": "user", "content": problem_text},
                             {"role": "assistant", "content": code}
                         ]
-                    })
+                    }
+                    self._save_single_training_record(training_record)
                 return code  # 返回生成的代码供后续使用
             else:
                 raise ValueError("API响应中未能提取有效代码。")
@@ -210,19 +215,19 @@ class WorkflowGenerator:
         with open(meta_path, 'w', encoding='utf-8') as f:
             json.dump(meta_data, f, indent=4)
 
-    def _save_training_data(self):
-        """将暂存的训练数据追加到文件。"""
-        if not self.training_data_output or not self.training_records:
+    def _save_single_training_record(self, record: Dict):
+        """立即保存单条训练数据到文件（线程安全）。"""
+        if not self.training_data_output:
             return
         
         output_dir = os.path.dirname(self.training_data_output)
         if output_dir:
             os.makedirs(output_dir, exist_ok=True)
             
+        # 使用追加模式，每次写入一条记录
         with open(self.training_data_output, 'a', encoding='utf-8') as f:
-            for record in self.training_records:
-                f.write(json.dumps(record, ensure_ascii=False) + '\n')
-        logging.info(f"{len(self.training_records)} 条训练数据已追加到: {self.training_data_output}")
+            f.write(json.dumps(record, ensure_ascii=False) + '\n')
+        logging.debug(f"训练数据已保存: {record['workflow_id']}")
 
     ### 修改点 2: 修改 run 方法的签名，接收 start_index 和 parallelism ###
     async def run(self, data_indices_list: List[List[int]], start_index: int, parallelism: int = 2):
@@ -231,31 +236,56 @@ class WorkflowGenerator:
         total_workflows = len(data_indices_list) * parallelism
         logging.info(f"开始为 Benchmark '{self.benchmark_name}' 生成 {total_workflows} 个工作流 ({len(data_indices_list)} 组 × {parallelism} 并行度)，ID 从 {start_index} 开始...")
         
+        # 创建信号量限制并发组数
+        semaphore = asyncio.Semaphore(self.max_concurrent_groups)
         api_index_counter = 0
         
-        # 为每个数据组合生成多个工作流
-        for i, indices in enumerate(data_indices_list):
-            generated_workflows = []  # 存储已生成的工作流代码
-            
-            for j in range(parallelism):
-                ### 修改点 3: 使用新的命名规则 ###
-                workflow_id = f"{self.benchmark_name}_{start_index + i}_{j}"
-                api_config = self.api_configs[api_index_counter % len(self.api_configs)]
-                api_index_counter += 1
-                
-                # 第一个工作流不需要参考已有工作流
-                if j == 0:
-                    generated_code = await self._generate_one_workflow(workflow_id, indices, api_config)
-                else:
-                    # 后续工作流需要参考第一个生成的工作流
-                    existing_workflow = generated_workflows[0] if generated_workflows else None
-                    generated_code = await self._generate_one_workflow(workflow_id, indices, api_config, existing_workflow)
-                
-                if generated_code:
-                    generated_workflows.append(generated_code)
+        # 创建所有组的任务，组间并行执行，组内串行执行
+        group_tasks = []
         
-        self._save_training_data()
-        logging.info("工作流生成阶段完成。")
+        async def generate_group_with_semaphore(indices, group_index, parallelism, api_start_index):
+            async with semaphore:
+                await self._generate_group_workflows(indices, group_index, parallelism, api_start_index)
+        
+        for i, indices in enumerate(data_indices_list):
+            # 为每个组创建一个异步任务
+            group_task = generate_group_with_semaphore(
+                indices, 
+                start_index + i, 
+                parallelism, 
+                api_index_counter
+            )
+            group_tasks.append(group_task)
+            api_index_counter += parallelism  # 预分配API索引
+        
+        # 并行执行所有组的任务（受信号量限制）
+        await asyncio.gather(*group_tasks)
+        
+        if self.training_data_output:
+            # 统计已保存的训练数据条数
+            total_workflows = len(data_indices_list) * parallelism
+            logging.info(f"工作流生成阶段完成。已生成 {total_workflows} 个工作流，训练数据已保存到: {self.training_data_output}")
+        else:
+            logging.info("工作流生成阶段完成。")
+    
+    async def _generate_group_workflows(self, indices: List[int], group_index: int, parallelism: int, api_start_index: int):
+        """为一个数据组生成多个工作流，组内串行执行以便后续工作流参考前面的工作流"""
+        generated_workflows = []  # 存储已生成的工作流代码
+        
+        for j in range(parallelism):
+            workflow_id = f"{self.benchmark_name}_{group_index}_{j}"
+            api_config = self.api_configs[(api_start_index + j) % len(self.api_configs)]
+            
+            # 第一个工作流不需要参考已有工作流
+            if j == 0:
+                generated_code = await self._generate_one_workflow(workflow_id, indices, api_config)
+            else:
+                # 后续工作流需要参考第一个生成的工作流
+                existing_workflow = generated_workflows[0] if generated_workflows else None
+                generated_code = await self._generate_one_workflow(workflow_id, indices, api_config, existing_workflow)
+            
+            if generated_code:
+                generated_workflows.append(generated_code)
 
 
 async def main():
@@ -279,7 +309,8 @@ async def main():
             api_configs=api_pool,
             workspace_path=args.workspace_path,
             handler=handler,
-            training_data_output=args.training_data_output
+            training_data_output=args.training_data_output,
+            max_concurrent_groups=args.max_concurrent_groups
         )
         
         ### 修改点 4: 将从命令行解析出的 id_start_index 和 parallelism 传递给 run 方法 ###

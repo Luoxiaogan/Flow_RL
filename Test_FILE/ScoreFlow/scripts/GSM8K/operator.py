@@ -186,20 +186,32 @@ class FlexibleCustom(Operator):
         self.max_iterations = max_iterations
         self.use_structured_output = use_structured_output
     
-    async def __call__(self, custom_instruction: str = "", previous_results: List[str] = None):
+    async def __call__(self, custom_instruction: str = "", previous_results: List[str] = None,
+                       reasoning_pattern: str = None, steps: List[str] = None, 
+                       max_iterations: int = None, use_structured_output: bool = None):
         """
         Execute the flexible custom operator.
         
         Args:
             custom_instruction: Additional custom instruction from workflow
             previous_results: Previous results for iterative/branching patterns
+            reasoning_pattern: Override the reasoning pattern set in constructor
+            steps: Override the steps set in constructor
+            max_iterations: Override the max iterations set in constructor
+            use_structured_output: Override the structured output setting
         """
+        # Use passed parameters or fall back to instance attributes
+        actual_reasoning_pattern = reasoning_pattern if reasoning_pattern is not None else self.reasoning_pattern
+        actual_steps = steps if steps is not None else self.steps
+        actual_max_iterations = max_iterations if max_iterations is not None else self.max_iterations
+        actual_use_structured_output = use_structured_output if use_structured_output is not None else self.use_structured_output
+        
         # Build configuration dictionary for prompt
         config = {
-            "reasoning_pattern": self.reasoning_pattern,
-            "steps": self.steps,
+            "reasoning_pattern": actual_reasoning_pattern,
+            "steps": actual_steps,
             "iteration": len(previous_results) + 1 if previous_results else 1,
-            "max_iterations": self.max_iterations
+            "max_iterations": actual_max_iterations
         }
         
         # Format previous results if any
@@ -216,15 +228,15 @@ class FlexibleCustom(Operator):
         )
         
         # Use appropriate response model
-        if self.use_structured_output:
+        if actual_use_structured_output:
             response = await self._fill_node(FlexibleCustomOp, prompt, mode="xml_fill")
             
             # Handle different reasoning patterns
-            if self.reasoning_pattern == "iterative" and response.get("needs_iteration", False):
+            if actual_reasoning_pattern == "iterative" and response.get("needs_iteration", False):
                 # Recursive call for iterative patterns
-                if len(previous_results or []) < self.max_iterations - 1:
+                if len(previous_results or []) < actual_max_iterations - 1:
                     new_results = (previous_results or []) + [response.get("solution", "")]
-                    return await self.__call__(custom_instruction, new_results)
+                    return await self.__call__(custom_instruction, new_results, reasoning_pattern, steps, max_iterations, use_structured_output)
             
             return response.get("solution", "")
         else:

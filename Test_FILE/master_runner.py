@@ -90,6 +90,7 @@ def main():
     parser.add_argument('--workflow-timeout', type=int, default=120, help='执行器的工作流超时时间(秒)')
     parser.add_argument('--max-concurrent-executions', type=int, default=5, help='并行执行工作流的最大并发数')
     parser.add_argument('--parallelism', type=int, default=2, help='每个数据组合生成的工作流并行度')
+    parser.add_argument('--max-concurrent-groups', type=int, default=5, help='生成阶段最大并发组数')
     
     args = parser.parse_args()
 
@@ -134,7 +135,8 @@ def main():
             '--max-concurrent-tasks', str(args.max_concurrent_tasks),
             # 新增参数传递
             '--id-start-index', str(start_index),
-            '--parallelism', str(args.parallelism)
+            '--parallelism', str(args.parallelism),
+            '--max-concurrent-groups', str(args.max_concurrent_groups)
         ]
         
         if args.training_data_output:
