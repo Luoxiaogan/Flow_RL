@@ -69,5 +69,10 @@ python -m accelerate.commands.launch \
     --max_seq_length 4096 \
     --use_flash_attention_2 True
 
+# Would save every 50 steps IF save_strategy was "steps"
+# --save_strategy "no" - This means NO automatic checkpoints will be saved during training
+# --save_total_limit 10 - Would keep maximum 10 checkpoints IF saving was enabled
+# Or use --save_strategy "epoch" to save after each epoch
+
 # 后台运行命令
 # nohup bash run_finetune.sh > training_h100.log 2>&1 &
