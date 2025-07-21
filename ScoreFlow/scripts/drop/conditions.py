@@ -1,6 +1,6 @@
 PYTHON_START = '''import asyncio
 from typing import Literal
-import ScoreFlow.scripts.DROP.operator as operator
+import ScoreFlow.scripts.drop.operator as operator
 from metagpt.provider.llm_provider_registry import create_llm_instance as create
 
 '''
@@ -26,6 +26,9 @@ class Workflow:
         self.sc_ensemble = operator.ScEnsemble(self.agent, self.problem)
         self.answer_generate = operator.AnswerGenerate(self.agent, self.problem)
         self.review = operator.Review(self.agent, self.problem)
+        self.counting_reasoning = operator.CountingReasoning(self.agent, self.problem)
+        self.arithmetic_reasoning = operator.ArithmeticReasoning(self.agent, self.problem)
+        self.comparison_reasoning = operator.ComparisonReasoning(self.agent, self.problem)
 
     async def run_workflow(self):
         """
@@ -62,6 +65,24 @@ Format MUST follow: review(pre_solution: str) -> str
 pre_solution should be solution from previous operator, for example
 rev_solution = await self.review(pre_solution=pre_solution)
 The output can serve as the input of next operators or the final output.
+5. CountingReasoning:
+Usage: Specialized for counting tasks (counting events, entities, occurrences).
+Format MUST follow: counting_reasoning() -> str
+For example:
+count_result = await self.counting_reasoning()
+Use this when the problem requires counting items, events, or occurrences.
+6. ArithmeticReasoning:
+Usage: Specialized for arithmetic computations (addition, subtraction, multiplication).
+Format MUST follow: arithmetic_reasoning() -> str
+For example:
+arithmetic_result = await self.arithmetic_reasoning()
+Use this when the problem requires numerical calculations.
+7. ComparisonReasoning:
+Usage: Specialized for comparison tasks (finding max/min, sorting, comparing values).
+Format MUST follow: comparison_reasoning() -> str
+For example:
+comparison_result = await self.comparison_reasoning()
+Use this when the problem requires finding maximum, minimum, or comparing entities.
 
 
 We have the problem input as follow. But your output graph can not contain any specific information of the this problem.
@@ -102,6 +123,9 @@ TEMP_AVOID = '''class Workflow:
         self.sc_ensemble = operator.ScEnsemble(self.agent, self.problem)
         self.answer_generate = operator.AnswerGenerate(self.agent, self.problem)
         self.review = operator.Review(self.agent, self.problem)
+        self.counting_reasoning = operator.CountingReasoning(self.agent, self.problem)
+        self.arithmetic_reasoning = operator.ArithmeticReasoning(self.agent, self.problem)
+        self.comparison_reasoning = operator.ComparisonReasoning(self.agent, self.problem)
 
     async def run_workflow(self):
         """

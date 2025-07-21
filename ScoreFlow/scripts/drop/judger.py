@@ -1,5 +1,5 @@
 from typing import Literal
-import ScoreFlow.scripts.DROP.operator as operator
+import ScoreFlow.scripts.drop.operator as operator
 from metagpt.provider.llm_provider_registry import create_llm_instance
 
 class Workflow:
