@@ -58,6 +58,7 @@ python -m accelerate.commands.launch \
     --lr_scheduler_type "cosine" \
     --warmup_ratio 0.03 \
     --logging_steps 1 \
+    --save_strategy "no" \
     --save_steps 50 \
     --save_total_limit 10 \
     --bf16 True \
