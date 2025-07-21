@@ -12,8 +12,8 @@ from metagpt.llm import LLM
 from metagpt.logs import logger
 
 # 从同一目录导入新的 Pydantic 模型和 Prompt 模板
-from .operator_an import CodeGenerateOp, ScEnsembleOp, CodeFixOp, CodeRunnerResult
-from .op_prompt import SC_ENSEMBLE_PROMPT, CODE_FIX_PROMPT, CUSTOM_CODE_GENERATE_INSTRUCTION
+from .operator_an import CodeGenerateOp, ScEnsembleOp, CodeFixOp, CodeRunnerResult, ReviewOp, FlexibleCustomCodeOp
+from .op_prompt import SC_ENSEMBLE_PROMPT, CODE_FIX_PROMPT, CUSTOM_CODE_GENERATE_INSTRUCTION, REVIEW_PROMPT, FLEXIBLE_CUSTOM_PROMPT
 
 class Operator:
     """
@@ -186,3 +186,135 @@ class CodeRunner(Operator):
                 is_correct=False, 
                 error_message="Result queue was empty despite process success. Unknown execution error."
             )
+
+
+class Review(Operator):
+    """
+    审查和改进生成的代码。
+    """
+    def __init__(self, llm: LLM, problem: Dict[str, Any] = None):
+        super().__init__(llm, problem)
+        self.entry_point = self.problem.get("entry_point", "")
+
+    async def __call__(self, solution: str) -> str:
+        """
+        :param solution: 需要审查的代码。
+        :return: 审查并可能改进后的代码。
+        """
+        problem_description = self.problem.get("text", "")
+        prompt = REVIEW_PROMPT.format(
+            problem=problem_description,
+            entry_point=self.entry_point,
+            solution=solution
+        )
+        
+        response = await self._fill_node(ReviewOp, prompt, mode="xml_fill")
+        final_code = response.get("final_code", "")
+        
+        # Clean up XML tags if present  
+        if "</final_code>" in final_code:
+            final_code = final_code.replace("</final_code>", "").strip()
+        if "<final_code>" in final_code:
+            start = final_code.find("<final_code>") + len("<final_code>")
+            final_code = final_code[start:].strip()
+        
+        return final_code
+
+
+class FlexibleCustom(Operator):
+    """
+    灵活的自定义代码生成 Operator，支持各种代码生成模式。
+    允许工作流定义自定义逻辑而不需要在提示中嵌入问题信息。
+    """
+    def __init__(self, llm: LLM, problem: Dict[str, Any] = None,
+                 generation_pattern: str = "incremental",
+                 strategies: List[str] = None,
+                 max_refinements: int = 1,
+                 use_structured_output: bool = True):
+        """
+        Args:
+            llm: 语言模型实例
+            problem: 包含 text 和 entry_point 的问题字典
+            generation_pattern: 生成类型 (incremental, test_driven, modular, recursive)
+            strategies: 生成过程中应用的自定义策略
+            max_refinements: 最大优化迭代次数
+            use_structured_output: 是否使用结构化输出格式
+        """
+        super().__init__(llm, problem)
+        self.entry_point = self.problem.get("entry_point", "")
+        self.generation_pattern = generation_pattern
+        self.strategies = strategies or ["analyze_requirements", "handle_edge_cases", "optimize_solution"]
+        self.max_refinements = max_refinements
+        self.use_structured_output = use_structured_output
+    
+    async def __call__(self, custom_instruction: str = "", previous_results: List[str] = None,
+                       generation_pattern: str = None, strategies: List[str] = None, 
+                       max_refinements: int = None, use_structured_output: bool = None) -> str:
+        """
+        执行灵活的自定义 Operator。
+        
+        Args:
+            custom_instruction: 来自工作流的额外自定义指令
+            previous_results: 用于迭代/分支模式的先前结果
+            generation_pattern: 覆盖构造函数中设置的生成模式
+            strategies: 覆盖构造函数中设置的策略
+            max_refinements: 覆盖构造函数中设置的最大优化次数
+            use_structured_output: 覆盖构造函数中设置的结构化输出
+            
+        Returns:
+            生成的代码解决方案
+        """
+        # 使用传入的参数或默认值
+        pattern = generation_pattern or self.generation_pattern
+        strat = strategies or self.strategies
+        max_ref = max_refinements if max_refinements is not None else self.max_refinements
+        
+        problem_description = self.problem.get("text", "")
+        
+        # 准备先前结果的文本
+        prev_results_text = ""
+        if previous_results:
+            prev_results_text = "\n\n".join([f"### Previous Attempt {i+1}\n```python\n{result}\n```" 
+                                             for i, result in enumerate(previous_results)])
+        
+        prompt = FLEXIBLE_CUSTOM_PROMPT.format(
+            problem=problem_description,
+            entry_point=self.entry_point,
+            custom_instruction=custom_instruction,
+            generation_pattern=pattern,
+            strategies=", ".join(strat),
+            previous_results=prev_results_text
+        )
+        
+        response = await self._fill_node(FlexibleCustomCodeOp, prompt, mode="xml_fill")
+        code = response.get("code", "")
+        needs_refinement = response.get("needs_refinement", False)
+        
+        # 处理优化迭代
+        refinement_count = 0
+        refined_results = [code] if code else []
+        
+        while needs_refinement and refinement_count < max_ref:
+            refinement_count += 1
+            logger.info(f"FlexibleCustom: 执行第 {refinement_count} 次优化迭代")
+            
+            # 使用先前的结果进行优化
+            prompt = FLEXIBLE_CUSTOM_PROMPT.format(
+                problem=problem_description,
+                entry_point=self.entry_point,
+                custom_instruction=f"{custom_instruction}\n\nRefinement iteration {refinement_count}: Please improve upon the previous solutions.",
+                generation_pattern=pattern,
+                strategies=", ".join(strat),
+                previous_results="\n\n".join([f"### Attempt {i+1}\n```python\n{r}\n```" 
+                                              for i, r in enumerate(refined_results)])
+            )
+            
+            response = await self._fill_node(FlexibleCustomCodeOp, prompt, mode="xml_fill")
+            code = response.get("code", "")
+            needs_refinement = response.get("needs_refinement", False)
+            
+            if code:
+                refined_results.append(code)
+        
+        # 返回最终的代码（最后一次迭代的结果）
+        return refined_results[-1] if refined_results else ""

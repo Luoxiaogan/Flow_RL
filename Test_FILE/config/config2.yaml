@@ -14,7 +14,7 @@ llm:
   model: "qwen-turbo"
   
   # 您的API-Key
-  api_key: "sk-2df74af0570a42059c10a3f24de1b9df"
+  api_key: "956c41bd0f31beaf68b871d4987af4bb"
 
   # 您的请求地址
-  base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+  base_url: "https://idealab.alibaba-inc.com/api/openai/v1"

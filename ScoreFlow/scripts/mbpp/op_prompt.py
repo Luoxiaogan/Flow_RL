@@ -44,3 +44,61 @@ Please provide a complete and correct Python code solution.
 Ensure the function name matches the problem's entry point.
 Think step-by-step about potential edge cases and requirements.
 """
+
+# 用于 Review Operator 的 Prompt
+REVIEW_PROMPT = """
+You are an expert code reviewer. Your task is to review the given code solution and identify any potential issues, bugs, or improvements needed.
+
+### Programming Problem
+{problem}
+
+### Entry Point
+The solution must use the function name: {entry_point}
+
+### Code to Review
+```python
+{solution}
+```
+
+### Your Task
+1. In the "thought" field, provide a comprehensive review including:
+   - Analysis of correctness for all edge cases
+   - Code quality and readability
+   - Potential performance improvements
+   - Any bugs or logical errors
+
+2. In the "final_code" field, provide the reviewed and improved code. If the code is already perfect, return it as-is. Otherwise, fix any issues you identified.
+
+Remember to maintain the original function signature.
+"""
+
+# 用于 FlexibleCustom Operator 的 Prompt  
+FLEXIBLE_CUSTOM_PROMPT = """
+You are an expert Python programmer implementing a custom code generation approach.
+
+### Programming Problem
+{problem}
+
+### Entry Point
+The solution must use the function name: {entry_point}
+
+### Custom Instructions
+{custom_instruction}
+
+### Generation Pattern: {generation_pattern}
+### Custom Strategies: {strategies}
+
+### Previous Results (if any)
+{previous_results}
+
+### Your Task
+1. In the "thought" field, explain your reasoning process following the specified generation pattern and strategies.
+
+2. In the "code" field, provide the complete Python code solution following the custom approach.
+
+3. In the "needs_refinement" field, indicate whether additional refinement iterations are needed (true/false).
+
+4. In the "approach_notes" field, document any insights or notes about the approach taken.
+
+Remember to follow the specified generation pattern and custom strategies while solving the problem.
+"""
