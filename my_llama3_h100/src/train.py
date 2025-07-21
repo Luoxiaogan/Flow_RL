@@ -28,7 +28,7 @@ class DataArguments:
     max_seq_length: Optional[int] = field(default=2048)
 
 class SaveInferenceWeightsCallback(TrainerCallback):
-    """自定义回调，仅保存推理所需的模型权重"""
+    """自定义回调，用于管理检查点保存"""
     
     def __init__(self, output_dir: str, save_steps: int, tokenizer, save_total_limit: int = None):
         self.output_dir = output_dir
@@ -37,49 +37,23 @@ class SaveInferenceWeightsCallback(TrainerCallback):
         self.saved_checkpoints = []
         self.tokenizer = tokenizer
     
-    def on_step_end(self, args: HfTrainingArguments, state: TrainerState, control: TrainerControl, **kwargs):
-        # 每 save_steps 步保存一次
-        if state.global_step % self.save_steps == 0 and state.global_step > 0:
-            checkpoint_dir = os.path.join(self.output_dir, f"checkpoint-{state.global_step}")
-            self._save_inference_weights(kwargs["model"], self.tokenizer, checkpoint_dir)
+    def on_save(self, args: HfTrainingArguments, state: TrainerState, control: TrainerControl, **kwargs):
+        """当 Trainer 保存检查点时调用"""
+        # 管理保存的检查点数量
+        checkpoint_folder = f"checkpoint-{state.global_step}"
+        checkpoint_path = os.path.join(args.output_dir, checkpoint_folder)
+        
+        if os.path.exists(checkpoint_path):
+            self.saved_checkpoints.append(checkpoint_path)
             
-            # 管理保存的检查点数量
-            self.saved_checkpoints.append(checkpoint_dir)
+            # 如果超过限制，删除旧的检查点
             if self.save_total_limit and len(self.saved_checkpoints) > self.save_total_limit:
-                # 删除最旧的检查点
                 old_checkpoint = self.saved_checkpoints.pop(0)
                 if os.path.exists(old_checkpoint):
                     import shutil
                     shutil.rmtree(old_checkpoint)
-                    print(f"Removed old checkpoint: {old_checkpoint}")
-    
-    def on_train_end(self, args: HfTrainingArguments, state: TrainerState, control: TrainerControl, **kwargs):
-        # 训练结束时保存最终模型
-        self._save_inference_weights(kwargs["model"], self.tokenizer, self.output_dir)
-    
-    def _save_inference_weights(self, model, tokenizer, save_path):
-        """仅保存推理所需的权重"""
-        print(f"Saving inference weights to {save_path}...")
-        os.makedirs(save_path, exist_ok=True)
-        
-        # 从 DeepSpeed 收集模型权重
-        if hasattr(model, 'module'):
-            # DeepSpeed wrapped model
-            unwrapped_model = model.module
-        else:
-            unwrapped_model = model
-        
-        # 使用 save_pretrained 保存模型（这会自动处理 DeepSpeed 的权重收集）
-        unwrapped_model.save_pretrained(
-            save_path,
-            state_dict=unwrapped_model.state_dict(),
-            safe_serialization=True  # 使用 safetensors 格式
-        )
-        
-        # 保存 tokenizer
-        tokenizer.save_pretrained(save_path)
-        
-        print(f"Inference weights saved to {save_path}")
+                    if torch.distributed.get_rank() == 0:
+                        print(f"Removed old checkpoint: {old_checkpoint}")
 
 def formatting_prompts_func(examples):
     """格式化数据集中的聊天数据"""
@@ -182,8 +156,16 @@ def train():
     print("Starting full SFT training...")
     trainer.train()
 
-    # --- 最终模型保存已由回调处理 ---
-    print("Training finished. Model has been saved by callback.")
+    # --- 保存最终模型 ---
+    print("Training finished. Saving model...")
+    
+    # 使用 Trainer 的 save_model 方法，它会正确处理 DeepSpeed ZeRO-3
+    trainer.save_model(training_args.output_dir)
+    
+    # 保存 tokenizer
+    if trainer.is_world_process_zero():
+        tokenizer.save_pretrained(training_args.output_dir)
+        print(f"Model and tokenizer saved to {training_args.output_dir}")
 
 if __name__ == "__main__":
     train()
