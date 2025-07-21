@@ -66,9 +66,9 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 # ============================ 任务配置 =======================================
 # 说明: 一次只取消注释一个任务块来运行。
 
-# ------------------------- 任务 1: GSM8K (数学推理) -------------------------
+# ------------------------- 任务 1: MBPP (代码生成) -------------------------
 #
-BENCHMARK="drop"
+BENCHMARK="mbpp"
 # wc -l  /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
 TOTAL_PROBLEMS=374      # Testing with just 1 problem
 MIN_SAMPLE_SIZE=1     # 每个工作流最少使用的问题样本数
