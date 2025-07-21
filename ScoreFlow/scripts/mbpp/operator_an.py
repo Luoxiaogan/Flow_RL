@@ -51,3 +51,39 @@ class CodeFixOp(BaseModel):
         default="",
         description="The complete, revised Python code that addresses the identified failures. It should be a fully functional replacement for the original code, containing only the function definition."
     )
+
+class ReviewOp(BaseModel):
+    """
+    用于代码审查操作的输出模型。
+    对应 Review Operator。
+    """
+    thought: str = Field(
+        default="",
+        description="A detailed analysis of the code including potential issues, edge cases, and improvements."
+    )
+    final_code: str = Field(
+        default="",
+        description="The reviewed and potentially improved code. Should maintain the same function signature and solve the problem correctly."
+    )
+
+class FlexibleCustomCodeOp(BaseModel):
+    """
+    用于灵活自定义代码生成操作的输出模型。
+    对应 FlexibleCustom Operator。
+    """
+    thought: str = Field(
+        default="",
+        description="My reasoning process following the specified generation pattern and strategies."
+    )
+    code: str = Field(
+        default="",
+        description="The generated code solution following the custom approach."
+    )
+    needs_refinement: bool = Field(
+        default=False,
+        description="Whether additional refinement iterations are needed."
+    )
+    approach_notes: str = Field(
+        default="",
+        description="Notes on the approach taken and any insights gained."
+    )
