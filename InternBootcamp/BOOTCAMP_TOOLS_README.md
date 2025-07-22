@@ -1,4 +1,4 @@
-# InternBootcamp Tools
+1 InternBootcamp Tools
 
 `bootcamp_tools.py` 是一个综合工具，用于管理和维护 InternBootcamp 模块。
 
