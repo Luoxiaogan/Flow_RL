@@ -16,8 +16,16 @@ import re
 
 
 class Operator:
-    def __init__(self, llm: LLM):
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
         self.llm = llm
+        self.problem = problem
+        # Convert problem to text format if it's a dictionary
+        if isinstance(problem, dict):
+            self.problem_text = str(problem)
+        elif isinstance(problem, str):
+            self.problem_text = problem
+        else:
+            self.problem_text = ""
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError
@@ -32,13 +40,12 @@ class Operator:
 
 
 class Custom(Operator):
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.problem = problem
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+        super().__init__(llm, problem)
 
     async def __call__(self, instruction):
         
-        prompt = instruction + self.problem
+        prompt = instruction + self.problem_text
         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
         
         return response["response"]
@@ -49,9 +56,8 @@ class CountingReasoning(Operator):
     Specialized operator for counting tasks in DROP dataset.
     Handles counting occurrences, entities, events, etc.
     """
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.problem = problem
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+        super().__init__(llm, problem)
 
     async def __call__(self):
         instruction = """Analyze the given passage and question carefully to perform counting tasks.
@@ -63,7 +69,7 @@ class CountingReasoning(Operator):
         
         Problem: """
         
-        prompt = instruction + self.problem
+        prompt = instruction + self.problem_text
         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
         
         return response["response"]
@@ -74,9 +80,8 @@ class ArithmeticReasoning(Operator):
     Specialized operator for arithmetic computations in DROP dataset.
     Handles addition, subtraction, and other mathematical operations.
     """
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.problem = problem
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+        super().__init__(llm, problem)
 
     async def __call__(self):
         instruction = """Solve this problem step by step using arithmetic reasoning.
@@ -89,7 +94,7 @@ class ArithmeticReasoning(Operator):
         
         Problem: """
         
-        prompt = instruction + self.problem
+        prompt = instruction + self.problem_text
         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
         
         return response["response"]
@@ -100,9 +105,8 @@ class ComparisonReasoning(Operator):
     Specialized operator for comparison tasks (max/min/sorting) in DROP dataset.
     Handles finding maximum, minimum, or ordering entities.
     """
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.problem = problem
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+        super().__init__(llm, problem)
 
     async def __call__(self):
         instruction = """Analyze the passage to perform comparison or sorting tasks.
@@ -115,19 +119,18 @@ class ComparisonReasoning(Operator):
         
         Problem: """
         
-        prompt = instruction + self.problem
+        prompt = instruction + self.problem_text
         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
         
         return response["response"]
 
     
 class AnswerGenerate(Operator):
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.problem = problem
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+        super().__init__(llm, problem)
 
     async def __call__(self) -> str:
-        prompt = ANSWER_GENERATION_PROMPT.format(input=self.problem)
+        prompt = ANSWER_GENERATION_PROMPT.format(input=self.problem_text)
         response = await self._fill_node(AnswerGenerateOp, prompt, mode="xml_fill")
         answer = response.get("answer", "")
         thought = response.get("thought", "")
@@ -136,13 +139,12 @@ class AnswerGenerate(Operator):
 
 
 class Review(Operator):
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.problem = problem
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+        super().__init__(llm, problem)
 
     async def __call__(self, pre_solution):
         
-        prompt = REVIEW_PROMPT.format(problem=self.problem, solution=pre_solution)
+        prompt = REVIEW_PROMPT.format(problem=self.problem_text, solution=pre_solution)
         response = await self._fill_node(ReviewOp, prompt, mode="xml_fill")
         answer = response.get("revised_solution", "")
 
@@ -151,9 +153,8 @@ class Review(Operator):
 
 class ScEnsemble(Operator):
 
-    def __init__(self, llm: LLM, problem: str = None):
-        super().__init__(llm)
-        self.problem = problem
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+        super().__init__(llm, problem)
 
     async def __call__(self, solutions: List[str]):
         answer_mapping = {}
@@ -162,7 +163,7 @@ class ScEnsemble(Operator):
             answer_mapping[chr(65 + index)] = index
             solution_text += f"{chr(65 + index)}: \n{str(solution)}\n\n\n"
 
-        prompt = SC_ENSEMBLE_PROMPT.format(problem=self.problem, solutions=solution_text)
+        prompt = SC_ENSEMBLE_PROMPT.format(problem=self.problem_text, solutions=solution_text)
         response = await self._fill_node(ScEnsembleOp, prompt, mode="xml_fill")
         answer = response.get("solution_letter", "")
         answer = answer.strip().upper()

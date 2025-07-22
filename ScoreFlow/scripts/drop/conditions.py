@@ -39,15 +39,15 @@ class Workflow:
         problem
     ) -> None:
         self.problem = problem
-        self.agent = create(config)
-        self.custom = operator.Custom(self.agent, self.problem)
-        self.sc_ensemble = operator.ScEnsemble(self.agent, self.problem)
-        self.answer_generate = operator.AnswerGenerate(self.agent, self.problem)
-        self.review = operator.Review(self.agent, self.problem)
-        self.counting_reasoning = operator.CountingReasoning(self.agent, self.problem)
-        self.arithmetic_reasoning = operator.ArithmeticReasoning(self.agent, self.problem)
-        self.comparison_reasoning = operator.ComparisonReasoning(self.agent, self.problem)
-        self.flexible_custom = operator.FlexibleCustom(self.agent, self.problem)
+        self.config = create(config)
+        self.custom = operator.Custom(self.config, self.problem)
+        self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
+        self.answer_generate = operator.AnswerGenerate(self.config, self.problem)
+        self.review = operator.Review(self.config, self.problem)
+        self.counting_reasoning = operator.CountingReasoning(self.config, self.problem)
+        self.arithmetic_reasoning = operator.ArithmeticReasoning(self.config, self.problem)
+        self.comparison_reasoning = operator.ComparisonReasoning(self.config, self.problem)
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
 
     async def run_workflow(self):
         """
@@ -163,15 +163,15 @@ TEMP_AVOID = '''class Workflow:
         problem
     ) -> None:
         self.problem = problem
-        self.agent = create(config)
-        self.custom = operator.Custom(self.agent, self.problem)
-        self.sc_ensemble = operator.ScEnsemble(self.agent, self.problem)
-        self.answer_generate = operator.AnswerGenerate(self.agent, self.problem)
-        self.review = operator.Review(self.agent, self.problem)
-        self.counting_reasoning = operator.CountingReasoning(self.agent, self.problem)
-        self.arithmetic_reasoning = operator.ArithmeticReasoning(self.agent, self.problem)
-        self.comparison_reasoning = operator.ComparisonReasoning(self.agent, self.problem)
-        self.flexible_custom = operator.FlexibleCustom(self.agent, self.problem)
+        self.config = create(config)
+        self.custom = operator.Custom(self.config, self.problem)
+        self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
+        self.answer_generate = operator.AnswerGenerate(self.config, self.problem)
+        self.review = operator.Review(self.config, self.problem)
+        self.counting_reasoning = operator.CountingReasoning(self.config, self.problem)
+        self.arithmetic_reasoning = operator.ArithmeticReasoning(self.config, self.problem)
+        self.comparison_reasoning = operator.ComparisonReasoning(self.config, self.problem)
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
 
     async def run_workflow(self):
         """
