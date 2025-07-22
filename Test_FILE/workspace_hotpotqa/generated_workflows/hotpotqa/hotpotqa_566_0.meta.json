@@ -1,0 +1,13 @@
+{
+    "id": "hotpotqa_566_0",
+    "benchmark": "hotpotqa",
+    "data_indices": [
+        2332,
+        1608,
+        3981,
+        3435,
+        3619
+    ],
+    "dataset_path": "/root/lg/Flow_RL_luogan/Processed_dataset/hotpotqa/train.jsonl",
+    "generation_timestamp": 1753160025.7900102
+}
