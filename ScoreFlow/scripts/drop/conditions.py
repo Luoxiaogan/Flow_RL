@@ -38,7 +38,9 @@ class Workflow:
         config,
         problem
     ) -> None:
-        self.problem = problem
+        self.problem = problem  # IMPORTANT: problem is a dictionary, not a string!
+        # If you need the problem as text, use self.problem_text:
+        self.problem_text = str(problem) if isinstance(problem, dict) else problem
         self.config = create(config)
         self.custom = operator.Custom(self.config, self.problem)
         self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
@@ -128,6 +130,13 @@ Use Cases:
 - Branching: Different paths based on problem type (counting vs arithmetic)
 
 
+IMPORTANT NOTES ABOUT PROBLEM HANDLING:
+- The 'problem' parameter is a DICTIONARY, not a string! 
+- Do NOT call string methods like .lower() directly on self.problem
+- If you need to check problem content, use self.problem_text instead
+- The operators already handle the problem internally - you don't need to analyze it in the workflow
+- Avoid conditional logic based on problem content - let the operators handle that
+
 We have the problem input as follow. But your output graph can not contain any specific information of the this problem.
 Question: '''
 
@@ -142,6 +151,8 @@ You need to notice:
 **Every operator(agent)'s output should contribute to the final return output, otherwise, do not use them.**
 
 **The graph complexity may corelate with the problem complexity.** The graph complexity must between 3 and 8. Considering information loss, complex graphs may yield better results, but insufficient information transmission can omit the solution.
+
+**AVOID conditional logic in your workflow!** Do not use if/elif statements checking problem content like 'if "count" in self.problem.lower()'. The specialized operators (CountingReasoning, ArithmeticReasoning, etc.) already handle problem type detection internally. Just use them directly or combine multiple operators and let ScEnsemble select the best result.
 
 **As for the instruction prompt for custom operator. Your instruction prompt should focus on encouraging agent to think step by step. Do not ask agent to generate multiple (a few, some, etc) answers in one operator's instruction. Also note that different agents are independent, so do not use prompts like "generate another/alternative/different answer", "generate the first/second answer", etc.**
 
@@ -162,7 +173,9 @@ TEMP_AVOID = '''class Workflow:
         config,
         problem
     ) -> None:
-        self.problem = problem
+        self.problem = problem  # IMPORTANT: problem is a dictionary, not a string!
+        # If you need the problem as text, use self.problem_text:
+        self.problem_text = str(problem) if isinstance(problem, dict) else problem
         self.config = create(config)
         self.custom = operator.Custom(self.config, self.problem)
         self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
