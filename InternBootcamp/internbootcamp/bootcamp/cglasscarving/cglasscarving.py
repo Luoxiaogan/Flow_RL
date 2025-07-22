@@ -113,10 +113,10 @@ for i in range(n):
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cglasscarvingbootcamp(Basebootcamp):
     def __init__(self, default_w=4, default_h=3, max_cuts=4):

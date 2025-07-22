@@ -87,10 +87,10 @@ print max(inc)
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import itertools
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def _calculate_max_beauty(n, edges):
     adj = [[] for _ in range(n)]

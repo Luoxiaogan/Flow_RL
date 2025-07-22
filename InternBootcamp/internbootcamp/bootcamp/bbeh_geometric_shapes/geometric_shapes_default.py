@@ -4,7 +4,7 @@ import random
 import math
 import json
 import matplotlib.pyplot as plt
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def generate_rectangle():
     x = random.uniform(0, 50)

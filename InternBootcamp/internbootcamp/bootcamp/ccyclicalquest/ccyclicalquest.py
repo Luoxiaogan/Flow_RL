@@ -232,11 +232,11 @@ int main(int argc, char *argv[]) {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import json
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Ccyclicalquestbootcamp(Basebootcamp):
     def __init__(self, s_length=10, num_queries=5, query_length_min=1, query_length_max=10, seed=None):

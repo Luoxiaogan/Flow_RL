@@ -1,5 +1,6 @@
 
 
+"""
 ### 谜题描述
 
 **Thermometers Puzzle Rules (General Explanation):**

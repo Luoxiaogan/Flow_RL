@@ -94,11 +94,11 @@ else:
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
 from math import gcd
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Avasyaandtrianglebootcamp(Basebootcamp):
     def __init__(self, min_n=1, max_n=10**3, min_m=1, max_m=10**3, min_k=2, max_k=10**6, ensure_solvable=None):

@@ -1,5 +1,6 @@
 
 
+"""
 ### 谜题描述
 
 The Aquarium puzzle is solved by determining water levels for each aquarium region in a grid, adhering to the following rules:
@@ -20,7 +21,7 @@ The Aquarium puzzle is solved by determining water levels for each aquarium regi
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 from typing import Dict, List, Optional

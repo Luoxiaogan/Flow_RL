@@ -1,0 +1,179 @@
+PYTHON_START = '''import asyncio
+from typing import Literal
+import ScoreFlow.scripts.humaneval.operator as operator
+from metagpt.provider.llm_provider_registry import create_llm_instance as create
+
+'''
+
+PYTHON_END = '''
+
+    async def __call__(self):
+        TIMEOUT = {time}
+        return await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)'''
+
+
+START_PROMPT = '''Your objective is to output a workflow graph, based on the following template:
+
+<graph>
+class Workflow:
+    def __init__(
+        self,
+        config,
+        problem
+    ) -> None:
+        self.problem = problem
+        self.config = create(config)
+        self.code_generate = operator.CustomCodeGenerate(self.config, self.problem)
+        self.code_runner = operator.CodeRunner(self.config, self.problem)
+        self.code_fix = operator.CodeFix(self.config, self.problem)
+        self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
+        self.review = operator.Review(self.config, self.problem)
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
+
+    async def run_workflow(self):
+        """
+        This is a workflow graph.
+        """
+        solution = await self.code_generate(instruction="Can you analyze this problem step by step and generate the code?")
+        
+        return solution
+</graph>
+
+
+Here's an introduction to operators you can use: (these are all you can use, do not create new operators)
+IMPORTANT: All operators accept POSITIONAL arguments only. Do NOT use keyword arguments like 'solution=' or 'instruction='. Use positional arguments directly.
+1. CustomCodeGenerate:
+Usage: Generates Python code based on customized input instruction.
+Format MUST follow: code_generate(instruction) -> str
+Call it like: await self.code_generate("your instruction here")
+The instruction should encourage operator to think step by step and understand the problem, do not add the specific information of the task into the input instruction.
+The output can serve as the input of next operators or the final output.
+
+2. CodeRunner:
+Usage: Executes the provided code solution against test cases and returns the results.
+Format MUST follow: code_runner(solution) -> str
+Call it like: await self.code_runner(generated_code)
+Returns either "PASSED" if all tests pass, or detailed error information if tests fail.
+
+3. CodeFix:
+Usage: Analyzes failed code and error messages to generate a corrected version.
+Format MUST follow: code_fix(solution, error_message) -> str
+Call it like: await self.code_fix(failed_code, error_info)
+Takes the failed code and error details, returns an improved solution.
+
+4. ScEnsemble:
+Usage: Evaluates multiple solutions and selects the best one based on quality and correctness.
+Format MUST follow: sc_ensemble(solutions) -> str where solutions is a List[str]
+Call it like: await self.sc_ensemble([solution1, solution2, solution3])
+Note: Pass the list directly as a positional argument, not as solutions=
+The output can serve as the input of next operators or the final output.
+
+5. Review:
+Usage: Reviews and improves existing code solution for better quality, readability, and efficiency.
+Format MUST follow: review(solution) -> str
+Call it like: await self.review(working_code)
+Note: Pass the solution directly as a positional argument, not as solution=
+
+6. FlexibleCustom:
+Usage: A flexible code generation operator that supports various generation patterns (incremental, test_driven, modular, recursive) with customizable strategies.
+Format MUST follow: flexible_custom(custom_approach, previous_attempts) -> str
+Call it like: await self.flexible_custom("Focus on edge case handling")
+Configuration Options:
+- generation_pattern: "incremental", "test_driven", "modular", or "recursive"
+- strategies: List of strategies like ["understand", "design", "implement", "optimize"]
+- max_refinements: Maximum refinement iterations (default: 1)
+- use_structured_output: Whether to use structured output format (default: True)
+Example 1 (Test-Driven):
+    self.flexible_custom = operator.FlexibleCustom(self.config, self.problem,
+                                                  generation_pattern="test_driven",
+                                                  strategies=["analyze_tests", "minimal_implementation", "handle_failures"])
+    code = await self.flexible_custom("Prioritize test compliance")
+Example 2 (Incremental):
+    self.flexible_custom_inc = operator.FlexibleCustom(self.config, self.problem,
+                                                      generation_pattern="incremental",
+                                                      strategies=["prototype", "enhance", "optimize"],
+                                                      max_refinements=3)
+    refined_code = await self.flexible_custom_inc("Start simple then improve")
+Use Cases:
+- Incremental: Build solution step by step with refinements
+- Test_driven: Design based on understanding expected behavior
+- Modular: Break into reusable components
+- Recursive: Apply recursive problem-solving patterns
+
+We have the task input as follow. But your output graph can not contain any specific information of the give task.
+TASK: '''
+
+
+END_PROMPT = '''
+
+You need to notice:
+
+**Ensure your graph is based on the given template and is correct to avoid runtime failures.** Do NOT import the modules operator and create, which have already been automatically imported. Ensure that all the prompts required by the current graph are included. Exclude any other prompts. The generated prompt must not contain any placeholders. Do not load the operators not provided.
+
+**Introducing multiple operators at appropriate points can enhance performance.** Consider Python's loops (for, the iteration number MUST <= 3) to generate multiple solutions to ensemble. Consider logical and control flow (IF-ELSE, loops) for a more enhanced graphical representation.
+
+**The graph complexity may corelate with the task complexity.** The graph complexity must < 7. Considering information loss, complex graphs may yield better results, but insufficient information transmission can omit the solution.
+
+**As for the instruction prompt for operators. Your instruction prompt should focus on encouraging agent to think step by step. Do not ask agent to generate multiple (a few, some, etc) answers in one operator's instruction. Also note that different agents are independent, so do not use prompts like "generate another/alternative/different answer", "generate the first/second answer", etc.**
+
+**Your output graph can not contain any specific information of the given task due to project requirement. All the information of this task will be given as input "problem" (self.problem) and other agents will execute this workflow. When using FlexibleCustom, ensure custom_approach parameters contain only general strategies, not task-specific details.**
+
+Only output the optimized graph (remember to add <graph> and </graph>, and the output can not contain any information of the given task).
+
+Here is the graph without any task information: '''
+
+
+TEMP_AVOID = '''class Workflow:
+    def __init__(
+        self,
+        config,
+        problem
+    ) -> None:
+        self.problem = problem
+        self.config = create(config)
+        self.code_generate = operator.CustomCodeGenerate(self.config, self.problem)
+        self.code_runner = operator.CodeRunner(self.config, self.problem)
+        self.code_fix = operator.CodeFix(self.config, self.problem)
+        self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
+        self.review = operator.Review(self.config, self.problem)
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
+
+    async def run_workflow(self):
+        """
+        This is a workflow graph.
+        """
+        solution = await self.code_generate(instruction="Can you analyze this problem step by step and generate the code?")
+        
+        return solution'''
+
+META_PROMPTS = [
+    "Your objective is to design a workflow that generates correct Python code through iterative testing and refinement cycles. The workflow should emphasize code correctness by running tests and fixing errors systematically.",
+    "Your objective is to create a robust workflow that implements test-driven development patterns. The workflow should generate code, test it thoroughly, fix any failures, and possibly ensemble multiple solutions for the best result.",
+    "Your objective is to develop a workflow that uses parallel generation and ensemble methods. Generate multiple code solutions independently, test them all, and select the best working solution through ensemble evaluation.",
+    "Your objective is to build a workflow that combines thoughtful code generation with comprehensive testing. Use review operators to improve code quality and ensure the final solution is both correct and well-written.",
+    "Your objective is to construct an efficient workflow that balances thoroughness with simplicity. Focus on generating high-quality code on the first attempt, with targeted fix cycles only when necessary.",
+    "Your objective is to design a creative workflow that explores different problem-solving approaches. Use branching logic to try alternative strategies when initial attempts fail, ensuring robustness.",
+    "Your objective is to create a workflow emphasizing code quality through peer review patterns. Generate initial solutions, review them for improvements, test thoroughly, and refine based on both test results and code review feedback.",
+    "Your objective is to implement a minimal yet effective workflow. Start with a single code generation attempt, test it, and only add complexity (fixing, reviewing, ensemble) if absolutely necessary. Prioritize simplicity.",
+    "Your objective is to create a workflow that maximizes solution diversity. Use loops to generate 2-3 different solutions with varying prompts, then use ensemble to combine the best aspects of each approach.",
+    "Your objective is to design an aggressive error-handling workflow. After each failed test, immediately try a completely different approach rather than fixing the existing code. Only use fix operations as a last resort.",
+    "Your objective is to build a workflow with early exit optimization. Test solutions as soon as they're generated and return immediately upon finding a working solution, avoiding unnecessary additional operations.",
+    "Your objective is to create a layered refinement workflow. Start with basic code generation, then progressively apply review and fix operations regardless of test results to ensure the highest quality output.",
+    "Your objective is to implement a fail-fast workflow with ensemble fallback. Try quick single generations first, and only resort to ensemble methods after multiple individual attempts have failed.",
+    "Your objective is to design a workflow that alternates between generation strategies. Use different instruction prompts for each generation attempt to explore various problem-solving angles.",
+    "Your objective is to create a confidence-based workflow. Generate multiple solutions, but instead of always using ensemble, select solutions based on which one passes tests with the most comprehensive test coverage.",
+    "Your objective is to build a hybrid workflow combining speed and reliability. Use a fast single generation for simple cases, but switch to a more complex multi-generation ensemble approach if initial attempts fail.",
+    "Your objective is to implement a recursive improvement workflow. After generating and testing initial code, use the test results (whether passed or failed) to inform subsequent generation attempts with more specific instructions.",
+    "Your objective is to design a workflow with strategic operator usage. Minimize the use of expensive operations like ensemble, and prefer targeted fixes and reviews for efficiency.",
+    "Your objective is to create a workflow that leverages conditional complexity. Start simple, but progressively add more sophisticated operations (review, ensemble) based on the number of failed attempts."
+]
+
+SYSTEM_PROMPT = "You are a helpful AI assistant expert in solving programming challenges. Please think step by step."
+
+TEST_PROMPT = {"task_id": "HumanEval/2025", "prompt": "\n\ndef my_sum(a: int, b: int) -> int:\n    \"\"\" Write a function to add two int numbers.", "entry_point": "my_sum", "canonical_solution": "    return a+b\n", "test": "\n\ndef check(candidate):\n    assert candidate(1, 2) == 3\n"}
+
+NO_EXCEPTION_LIST = ['''.split(' ')''', '''int(''']
+
+TIME_LIMIT_TEST = 120
+TIME_LIMIT = 180
+sim_threshold = 1.1

@@ -1,7 +1,7 @@
 import random
 import re
 from typing import List, Dict, Tuple
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 
 class Bbehshuffobjectbootcamp(Basebootcamp):

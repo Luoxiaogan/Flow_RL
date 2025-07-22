@@ -138,10 +138,10 @@ my_main()
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 from collections import defaultdict
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cairconditionerbootcamp(Basebootcamp):
     def __init__(self, n_min=1, n_max=100, m_min=-1000, m_max=1000, time_delta_min=0, time_delta_max=100):

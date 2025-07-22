@@ -116,11 +116,11 @@ print ans
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import heapq
 from heapq import heappush, heappop
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def calculate_max_pleasure(n, m, k, p, matrix):
     # 计算初始行和列的总和

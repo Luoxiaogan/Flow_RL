@@ -90,10 +90,10 @@ print numbers[-1]-numbers[0]-visited[addingOne][k]
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Bminimizationbootcamp(Basebootcamp):
     def __init__(self, min_n=2, max_n=10, min_k=1, max_k=None, min_val=-100, max_val=100):

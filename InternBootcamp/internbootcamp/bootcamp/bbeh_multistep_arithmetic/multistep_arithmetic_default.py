@@ -4,7 +4,7 @@ import math
 from math import gcd
 from typing import Dict, Any, List, Optional
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 import json

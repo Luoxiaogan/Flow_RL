@@ -84,10 +84,10 @@ for _ in range(T):
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Bsequentialnimbootcamp(Basebootcamp):
     def __init__(self, min_n=1, max_n=10**5, min_a=1, max_a=10**9, case_type='mixed'):

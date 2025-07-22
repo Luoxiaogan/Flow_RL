@@ -1,5 +1,6 @@
 
 
+"""
 ### 谜题描述
 
 Jigsaw Sudoku follows core Sudoku principles but replaces traditional fixed rectangular regions (\"boxes\") with irregularly shaped, contiguous regions (\"pieces\"). The rules are:

@@ -1,0 +1,1 @@
+D:\temp\Flow_RL\InternBootcamp\internbootcamp这个文件夹的组织非常不合理,导入任何一个小的子任务都需要依赖其他子任务,其他子任务一旦报错就会影响;我希望你太高例如修改InternBootcamp\internbootcamp\bootcamp\__init__.py的引用方式,让这些子任务之间不再相互依赖,同时写一个脚本批量检测哪些子任务会报错什么信息

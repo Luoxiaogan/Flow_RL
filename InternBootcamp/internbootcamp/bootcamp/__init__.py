@@ -3,1098 +3,1146 @@ warnings.filterwarnings("ignore")
 
 from .base import Basebootcamp
 
-from .arc.arc_default import Arcbootcamp
-from .arrowmaze.arrowmaze_default import Arrowmazebootcamp
-from .calcudoku.calcudoku import Calcudokubootcamp
-from .campsite.campsite_default import Campsitebootcamp
-from .cipher.cipher_default import Cipherbootcamp
-from .crypto_math.crypto_math import Cryptomathbootcamp
-from .futoshiki.futoshiki import Futoshikibootcamp
-from .game24.game_default import Game24bootcamp
-from .circuit.circuit import Circuitbootcamp
-from .skyscrapers.skyscrapers import Skyscrapersbootcamp
-from .starbattle.starbattle_default import Starbattlebootcamp
-# from .masyu.masyu_default import Masyubootcamp
-from .maze.maze_default import Mazebootcamp
-from .slitherlink.slitherlink_default import Slitherlinkbootcamp
-from .bbeh_geometric_shapes.geometric_shapes_default import BbehGeometricShapesbootcamp
+# Dictionary to store all bootcamp class paths for lazy loading
+BOOTCAMP_REGISTRY = {
+    "Aalmostarithmeticalprogressionbootcamp": ".aalmostarithmeticalprogression.aalmostarithmeticalprogression",
+    "Adidyoumeanbootcamp": ".adidyoumean.adidyoumean",
+    "Adimaandstaircasebootcamp": ".adimaandstaircase.adimaandstaircase",
+    "Adnaalignmentbootcamp": ".adnaalignment.adnaalignment",
+    "Aexamsbootcamp": ".aexams.aexams",
+    "Afoxandnamesbootcamp": ".afoxandnames.afoxandnames",
+    "Aglasscarvingbootcamp": ".aglasscarving.aglasscarving",
+    "Amessybootcamp": ".amessy.amessy",
+    "Amishaandforestbootcamp": ".amishaandforest.amishaandforest",
+    "Amrkitayutathetreasurehunterbootcamp": ".amrkitayutathetreasurehunter.amrkitayutathetreasurehunter",
+    "Apbinarybootcamp": ".apbinary.apbinary",
+    "Aperformeasilybootcamp": ".aperformeasily.aperformeasily",
+    "Apetyaandcatacombsbootcamp": ".apetyaandcatacombs.apetyaandcatacombs",
+    "Aquariumbootcamp": ".aquarium.aquarium",
+    "Aquizbootcamp": ".aquiz.aquiz",
+    "Arcbootcamp": ".arc.arc_default",
+    "Aremovingcolumnsbootcamp": ".aremovingcolumns.aremovingcolumns",
+    "Arrowmazebootcamp": ".arrowmaze.arrowmaze_default",
+    "Aryoukosmemorynotebootcamp": ".aryoukosmemorynote.aryoukosmemorynote",
+    "Asavethenaturebootcamp": ".asavethenature.asavethenature",
+    "Asearchingforgraphbootcamp": ".asearchingforgraph.asearchingforgraph",
+    "Atavasandkarafsbootcamp": ".atavasandkarafs.atavasandkarafs",
+    "Atennischampionshipbootcamp": ".atennischampionship.atennischampionship",
+    "Athechildandtoybootcamp": ".athechildandtoy.athechildandtoy",
+    "Aunusualproductbootcamp": ".aunusualproduct.aunusualproduct",
+    "AutoIFbootcamp": ".instruction_following.autoif",
+    "Avasyaandtrianglebootcamp": ".avasyaandtriangle.avasyaandtriangle",
+    "B2palindromegamehardversionbootcamp": ".b2palindromegamehardversion.b2palindromegamehardversion",
+    "BBEHBuggyTablesbootcamp": ".bbeh_buggy_tables.bbeh_buggy_tables_default",
+    "BBEHHyperbatonbootcamp": ".bbeh_hyperbaton.hyperbaton_default",
+    "BBEHMultistepArithmeticV2bootcamp": ".bbeh_multistep_arithmetic.multistep_arithmetic",
+    "Bandreyandproblembootcamp": ".bandreyandproblem.bandreyandproblem",
+    "Bandsequencesbootcamp": ".bandsequences.bandsequences",
+    "Bantmanbootcamp": ".bantman.bantman",
+    "Bazamonwebservicesbootcamp": ".bazamonwebservices.bazamonwebservices",
+    "BbehDyckLanguagesbootcamp": ".bbeh_dyck.bbeh_dyck_languages_InternBootcampDEV",
+    "BbehGeometricShapesbootcamp": ".bbeh_geometric_shapes.geometric_shapes_default",
+    "BbehMultistepArithmeticbootcamp": ".bbeh_multistep_arithmetic.multistep_arithmetic_default",
+    "BbehTemporalSequencesbootcamp": ".temporal_sequences.temporal_sequences",
+    "BbehWebOfLiesbootcamp": ".web_of_lies.web_of_lies",
+    "BbehWordSortingbootcamp": ".word_sorting.word_sorting",
+    "Bbehboardgameqabootcamp": ".bbeh_boardgame_qa.bbeh_boardgame_qa",
+    "Bbehbooleanexpressionsbootcamp": ".bbeh_boolean_expressions.bbeh_boolean_expressions",
+    "Bbehobjectcountingbootcamp": ".bbeh_object_counting.object_counting_default",
+    "Bbehobjectpropertiesbootcamp": ".bbeh_object_properties.object_properties_default",
+    "Bbehshuffobjectbootcamp": ".bbeh_shuff_object.shuff_object",
+    "Bbornthiswaybootcamp": ".bbornthisway.bbornthisway",
+    "Bcandyboxesbootcamp": ".bcandyboxes.bcandyboxes",
+    "Bchatbootcamp": ".bchat.bchat",
+    "Bchemicaltablebootcamp": ".bchemicaltable.bchemicaltable",
+    "Bcountpairsbootcamp": ".bcountpairs.bcountpairs",
+    "Bdistinctpathsbootcamp": ".bdistinctpaths.bdistinctpaths",
+    "Bdreamoonandwifibootcamp": ".bdreamoonandwifi.bdreamoonandwifi",
+    "Bdzylovesmodificationbootcamp": ".bdzylovesmodification.bdzylovesmodification",
+    "Bformingteamsbootcamp": ".bformingteams.bformingteams",
+    "BigCodeBenchbootcamp": ".bigcodebench.bigcodebench",
+    "Binairobootcamp": ".binairo.binairo",
+    "Binterestingarraybootcamp": ".binterestingarray.binterestingarray",
+    "Bintersectingsubtreesbootcamp": ".bintersectingsubtrees.bintersectingsubtrees",
+    "Binvarianceoftreebootcamp": ".binvarianceoftree.binvarianceoftree",
+    "Bjohnnyandgrandmasterbootcamp": ".bjohnnyandgrandmaster.bjohnnyandgrandmaster",
+    "Bkarenandtestbootcamp": ".bkarenandtest.bkarenandtest",
+    "Blcmbootcamp": ".blcm.blcm",
+    "Blongtailhedgehogbootcamp": ".blongtailhedgehog.blongtailhedgehog",
+    "Bminimizationbootcamp": ".bminimization.bminimization",
+    "Bminimumdiametertreebootcamp": ".bminimumdiametertree.bminimumdiametertree",
+    "Bmodulosumbootcamp": ".bmodulosum.bmodulosum",
+    "Bmorningjoggingbootcamp": ".bmorningjogging.bmorningjogging",
+    "Bmultithreadingbootcamp": ".bmultithreading.bmultithreading",
+    "Bnewyearandascentsequencebootcamp": ".bnewyearandascentsequence.bnewyearandascentsequence",
+    "Bonceagainbootcamp": ".bonceagain.bonceagain",
+    "Bonlinemeetingbootcamp": ".bonlinemeeting.bonlinemeeting",
+    "Boracandmediansbootcamp": ".boracandmedians.boracandmedians",
+    "Bourtanyaiscryingoutloudbootcamp": ".bourtanyaiscryingoutloud.bourtanyaiscryingoutloud",
+    "Bpietbootcamp": ".bpiet.bpiet",
+    "Bpincodesbootcamp": ".bpincodes.bpincodes",
+    "Bpipelinebootcamp": ".bpipeline.bpipeline",
+    "Bplanetlapitulettibootcamp": ".bplanetlapituletti.bplanetlapituletti",
+    "Bplusandmultiplybootcamp": ".bplusandmultiply.bplusandmultiply",
+    "Brestorecubebootcamp": ".brestorecube.brestorecube",
+    "Bridgesbootcamp": ".bridges.bridges",
+    "Bsashaandonemorenamebootcamp": ".bsashaandonemorename.bsashaandonemorename",
+    "Bseabattlebootcamp": ".bseabattle.bseabattle",
+    "Bsequentialnimbootcamp": ".bsequentialnim.bsequentialnim",
+    "Bsetofpointsbootcamp": ".bsetofpoints.bsetofpoints",
+    "Bshiftingbootcamp": ".bshifting.bshifting",
+    "Bshowerlinebootcamp": ".bshowerline.bshowerline",
+    "Bsifidandstrangesubsequencesbootcamp": ".bsifidandstrangesubsequences.bsifidandstrangesubsequences",
+    "Bsimplexmlbootcamp": ".bsimplexml.bsimplexml",
+    "Bskillsbootcamp": ".bskills.bskills",
+    "Bstringbootcamp": ".bstring.bstring",
+    "Bstripbootcamp": ".bstrip.bstrip",
+    "Btaxesbootcamp": ".btaxes.btaxes",
+    "Bthechildandsetbootcamp": ".bthechildandset.bthechildandset",
+    "Bthequeuebootcamp": ".bthequeue.bthequeue",
+    "Btheworldisjustaprogrammingtaskhardversionbootcamp": ".btheworldisjustaprogrammingtaskhardversion.btheworldisjustaprogrammingtaskhardversion",
+    "Bthreereligionsbootcamp": ".bthreereligions.bthreereligions",
+    "Btreearraybootcamp": ".btreearray.btreearray",
+    "Btwoheapsbootcamp": ".btwoheaps.btwoheaps",
+    "Bweirdjourneybootcamp": ".bweirdjourney.bweirdjourney",
+    "Byaroslavandtwostringsbootcamp": ".byaroslavandtwostrings.byaroslavandtwostrings",
+    "Byetanotherarraypartitioningtaskbootcamp": ".byetanotherarraypartitioningtask.byetanotherarraypartitioningtask",
+    "Bzgukistringzbootcamp": ".bzgukistringz.bzgukistringz",
+    "Bzumabootcamp": ".bzuma.bzuma",
+    "C1convergingarrayeasyversionbootcamp": ".c1convergingarrayeasyversion.c1convergingarrayeasyversion",
+    "Caandbandteamtrainingbootcamp": ".caandbandteamtraining.caandbandteamtraining",
+    "Cacolourfulprospectbootcamp": ".cacolourfulprospect.cacolourfulprospect",
+    "Cacookieforyoubootcamp": ".cacookieforyou.cacookieforyou",
+    "Caddonebootcamp": ".caddone.caddone",
+    "Cairconditionerbootcamp": ".cairconditioner.cairconditioner",
+    "Calcudokubootcamp": ".calcudoku.calcudoku",
+    "Caliceboborangesandapplesbootcamp": ".caliceboborangesandapples.caliceboborangesandapples",
+    "Calmostarithmeticalprogressionbootcamp": ".calmostarithmeticalprogression.calmostarithmeticalprogression",
+    "Calyonaandspreadsheetbootcamp": ".calyonaandspreadsheet.calyonaandspreadsheet",
+    "Camistofflorescencebootcamp": ".camistofflorescence.camistofflorescence",
+    "Campsitebootcamp": ".campsite.campsite_default",
+    "Camrandchemistrybootcamp": ".camrandchemistry.camrandchemistry",
+    "Canagramsearchbootcamp": ".canagramsearch.canagramsearch",
+    "Candreachabilitybootcamp": ".candreachability.candreachability",
+    "Candryushaandcoloredballoonsbootcamp": ".candryushaandcoloredballoons.candryushaandcoloredballoons",
+    "Canimpassionedcirculationofaffectionbootcamp": ".canimpassionedcirculationofaffection.canimpassionedcirculationofaffection",
+    "Cannasvyatoslavandmapsbootcamp": ".cannasvyatoslavandmaps.cannasvyatoslavandmaps",
+    "Canniversarybootcamp": ".canniversary.canniversary",
+    "Canotherproblemonstringsbootcamp": ".canotherproblemonstrings.canotherproblemonstrings",
+    "Cantonandfairytalebootcamp": ".cantonandfairytale.cantonandfairytale",
+    "Canyaandghostsbootcamp": ".canyaandghosts.canyaandghosts",
+    "Canyaandsmartphonebootcamp": ".canyaandsmartphone.canyaandsmartphone",
+    "Capplemanandasheetofpaperbootcamp": ".capplemanandasheetofpaper.capplemanandasheetofpaper",
+    "Caquamoonandpermutationsbootcamp": ".caquamoonandpermutations.caquamoonandpermutations",
+    "Carithmeticprogressionbootcamp": ".carithmeticprogression.carithmeticprogression",
+    "Carpaandagamewithmojtababootcamp": ".carpaandagamewithmojtaba.carpaandagamewithmojtaba",
+    "Carpasovernightpartyandmehrdadssilententeringbootcamp": ".carpasovernightpartyandmehrdadssilententering.carpasovernightpartyandmehrdadssilententering",
+    "Carrangementbootcamp": ".carrangement.carrangement",
+    "Carraybeautybootcamp": ".carraybeauty.carraybeauty",
+    "Carraydestructionbootcamp": ".carraydestruction.carraydestruction",
+    "Carrayproductbootcamp": ".carrayproduct.carrayproduct",
+    "Carthurandtablebootcamp": ".carthurandtable.carthurandtable",
+    "Cataleoftwolandsbootcamp": ".cataleoftwolands.cataleoftwolands",
+    "Caupontrougebootcamp": ".caupontrouge.caupontrouge",
+    "Cayoubandlostarraybootcamp": ".cayoubandlostarray.cayoubandlostarray",
+    "Cayoubsfunctionbootcamp": ".cayoubsfunction.cayoubsfunction",
+    "Cbabyehabpartitionsagainbootcamp": ".cbabyehabpartitionsagain.cbabyehabpartitionsagain",
+    "Cbadsequencebootcamp": ".cbadsequence.cbadsequence",
+    "Cballbootcamp": ".cballbootcamps.cballbootcamps",
+    "Cbamboopartitionbootcamp": ".cbamboopartition.cbamboopartition",
+    "Cbanhmibootcamp": ".cbanhmi.cbanhmi",
+    "Cbarcodebootcamp": ".cbarcode.cbarcode",
+    "Cbasketballexercisebootcamp": ".cbasketballexercise.cbasketballexercise",
+    "Cbearanddrawingbootcamp": ".cbearanddrawing.cbearanddrawing",
+    "Cbearandprimenumbersbootcamp": ".cbearandprimenumbers.cbearandprimenumbers",
+    "Cbeautifulipaddressesbootcamp": ".cbeautifulipaddresses.cbeautifulipaddresses",
+    "Cbeautifullyricsbootcamp": ".cbeautifullyrics.cbeautifullyrics",
+    "Cbeautifulsetsofpointsbootcamp": ".cbeautifulsetsofpoints.cbeautifulsetsofpoints",
+    "Cbeautypageantbootcamp": ".cbeautypageant.cbeautypageant",
+    "Cbeaverbootcamp": ".cbeaver.cbeaver",
+    "Cberlandsquarebootcamp": ".cberlandsquare.cberlandsquare",
+    "Cbinarysearchbootcamp": ".cbinarysearch.cbinarysearch",
+    "Cbirthdaybootcamp": ".cbirthday.cbirthday",
+    "Cblackwidowbootcamp": ".cblackwidow.cblackwidow",
+    "Cboboniuandstringbootcamp": ".cboboniuandstring.cboboniuandstring",
+    "Cboredombootcamp": ".cboredom.cboredom",
+    "Cbracketsbootcamp": ".cbrackets.cbrackets",
+    "Cbracketsubsequencebootcamp": ".cbracketsubsequence.cbracketsubsequence",
+    "Cbugincodebootcamp": ".cbugincode.cbugincode",
+    "Cbuildingpermutationbootcamp": ".cbuildingpermutation.cbuildingpermutation",
+    "Cbullsandcowsbootcamp": ".cbullsandcows.cbullsandcows",
+    "Cbunsbootcamp": ".cbuns.cbuns",
+    "Cbusbootcamp": ".codecontests_172_cbus.cbus",
+    "Ccandiesbootcamp": ".ccandies.ccandies",
+    "Ccandiesdistributionbootcamp": ".ccandiesdistribution.ccandiesdistribution",
+    "Ccaptainmarmotbootcamp": ".ccaptainmarmot.ccaptainmarmot",
+    "Ccapturevalerianbootcamp": ".ccapturevalerian.ccapturevalerian",
+    "Ccardiogrambootcamp": ".ccardiogram.ccardiogram",
+    "Ccelexupdatebootcamp": ".ccelexupdate.ccelexupdate",
+    "Ccentroidsbootcamp": ".ccentroids.ccentroids",
+    "Ccheckpostsbootcamp": ".ccheckposts.ccheckposts",
+    "Cchessboardbilliardbootcamp": ".cchessboardbilliard.cchessboardbilliard",
+    "Cchickenorfishbootcamp": ".cchickenorfish.cchickenorfish",
+    "Cchocolatebunnybootcamp": ".cchocolatebunny.cchocolatebunny",
+    "Cchoosingballsbootcamp": ".cchoosingballs.cchoosingballs",
+    "Cchoosingflowersbootcamp": ".cchoosingflowers.cchoosingflowers",
+    "Ccielthecommanderbootcamp": ".ccielthecommander.ccielthecommander",
+    "Ccipherbootcamp": ".ccipher.ccipher",
+    "Ccirclingroundtreasuresbootcamp": ".ccirclingroundtreasures.ccirclingroundtreasures",
+    "Ccircularrmqbootcamp": ".ccircularrmq.ccircularrmq",
+    "Ccivilizationbootcamp": ".ccivilization.ccivilization",
+    "Ccleverfatratbootcamp": ".ccleverfatrat.ccleverfatrat",
+    "Ccoffeebreakbootcamp": ".ccoffeebreak.ccoffeebreak",
+    "Ccointroublesbootcamp": ".ccointroubles.ccointroubles",
+    "Ccoloredrooksbootcamp": ".ccoloredrooks.ccoloredrooks",
+    "Ccolorfulbricksbootcamp": ".ccolorfulbricks.ccolorfulbricks",
+    "Ccoloringtreesbootcamp": ".ccoloringtrees.ccoloringtrees",
+    "Ccolorstripebootcamp": ".ccolorstripe.ccolorstripe",
+    "Ccompartmentsbootcamp": ".ccompartments.ccompartments",
+    "Ccompressionandexpansionbootcamp": ".ccompressionandexpansion.ccompressionandexpansion",
+    "Ccompressstringbootcamp": ".ccompressstring.ccompressstring",
+    "Cconnectbootcamp": ".cconnect.cconnect",
+    "Cconstanzesmachinebootcamp": ".cconstanzesmachine.cconstanzesmachine",
+    "Cconstellationbootcamp": ".cconstellation.cconstellation",
+    "Cconstructatreebootcamp": ".cconstructatree.cconstructatree",
+    "Ccontinuouscitybootcamp": ".ccontinuouscity.ccontinuouscity",
+    "Cconvenientforeverybodybootcamp": ".cconvenientforeverybody.cconvenientforeverybody",
+    "Ccorporationmailbootcamp": ".ccorporationmail.ccorporationmail",
+    "Ccounttrianglesbootcamp": ".ccounttriangles.ccounttriangles",
+    "Ccowandmessagebootcamp": ".ccowandmessage.ccowandmessage",
+    "Ccowboysbootcamp": ".ccowboys.ccowboys",
+    "Ccrazydiamondbootcamp": ".ccrazydiamond.ccrazydiamond",
+    "Ccreativesnapbootcamp": ".ccreativesnap.ccreativesnap",
+    "Ccrosswordbootcamp": ".ccrossword.ccrossword",
+    "Ccubeproblembootcamp": ".ccubeproblem.ccubeproblem",
+    "Ccupboardandballoonsbootcamp": ".ccupboardandballoons.ccupboardandballoons",
+    "Ccutemallbootcamp": ".ccutemall.ccutemall",
+    "Ccuttingrectanglebootcamp": ".ccuttingrectangle.ccuttingrectangle",
+    "Ccyclebootcamp": ".ccycle.ccycle",
+    "Ccycleinmazebootcamp": ".ccycleinmaze.ccycleinmaze",
+    "Ccyclicalquestbootcamp": ".ccyclicalquest.ccyclicalquest",
+    "Ccycliccoloringbootcamp": ".ccycliccoloring.ccycliccoloring",
+    "Cdashaandpasswordbootcamp": ".cdashaandpassword.cdashaandpassword",
+    "Cdesigntutorialmakeitnondeterministicbootcamp": ".cdesigntutorialmakeitnondeterministic.cdesigntutorialmakeitnondeterministic",
+    "Cdevelopingskillsbootcamp": ".cdevelopingskills.cdevelopingskills",
+    "Cdigittreebootcamp": ".cdigittree.cdigittree",
+    "Cdijkstrabootcamp": ".cdijkstra.cdijkstra",
+    "Cdilucandkaeyabootcamp": ".cdilucandkaeya.cdilucandkaeya",
+    "Cdimaandsaladbootcamp": ".cdimaandsalad.cdimaandsalad",
+    "Cdimaandstaircasebootcamp": ".cdimaandstaircase.cdimaandstaircase",
+    "Cdiscreteaccelerationbootcamp": ".cdiscreteacceleration.cdiscreteacceleration",
+    "Cdispositionbootcamp": ".cdisposition.cdisposition",
+    "Cdiversesubstringsbootcamp": ".cdiversesubstrings.cdiversesubstrings",
+    "Cdividingthenumbersbootcamp": ".cdividingthenumbers.cdividingthenumbers",
+    "Cdivisionintoteamsbootcamp": ".cdivisionintoteams.cdivisionintoteams",
+    "Cdnaalignmentbootcamp": ".cdnaalignment.cdnaalignment",
+    "Cdnaevolutionbootcamp": ".cdnaevolution.cdnaevolution",
+    "Cdoegraphsbootcamp": ".cdoegraphs.cdoegraphs",
+    "Cdominoesbootcamp": ".cdominoes.cdominoes",
+    "Cdoublehappinessbootcamp": ".cdoublehappiness.cdoublehappiness",
+    "Cdoubleprofilesbootcamp": ".cdoubleprofiles.cdoubleprofiles",
+    "Cdrazillikesheapbootcamp": ".cdrazillikesheap.cdrazillikesheap",
+    "Cdreamoonandsumsbootcamp": ".cdreamoonandsums.cdreamoonandsums",
+    "Cdungeonsandcandiesbootcamp": ".cdungeonsandcandies.cdungeonsandcandies",
+    "Cdzylovesfibonaccinumbersbootcamp": ".cdzylovesfibonaccinumbers.cdzylovesfibonaccinumbers",
+    "Cedgytreesbootcamp": ".cedgytrees.cedgytrees",
+    "Cedoandmagnetsbootcamp": ".cedoandmagnets.cedoandmagnets",
+    "Cehabanda2operationtaskbootcamp": ".cehabanda2operationtask.cehabanda2operationtask",
+    "Cehabandaspecialcoloringproblembootcamp": ".cehabandaspecialcoloringproblem.cehabandaspecialcoloringproblem",
+    "Cehabandpatheticmexsbootcamp": ".cehabandpatheticmexs.cehabandpatheticmexs",
+    "Cehabandprefixmexsbootcamp": ".cehabandprefixmexs.cehabandprefixmexs",
+    "Celectionsbootcamp": ".celections.celections",
+    "Celectricchargesbootcamp": ".celectriccharges.celectriccharges",
+    "Celementexterminationbootcamp": ".celementextermination.celementextermination",
+    "Cemailaddressbootcamp": ".cemailaddress.cemailaddress",
+    "Cengineerartembootcamp": ".cengineerartem.cengineerartem",
+    "Cereaderdisplaybootcamp": ".cereaderdisplay.cereaderdisplay",
+    "Ceugeneandanarraybootcamp": ".ceugeneandanarray.ceugeneandanarray",
+    "Cevenpicturebootcamp": ".cevenpicture.cevenpicture",
+    "Ceverhungrykrakozyabrabootcamp": ".ceverhungrykrakozyabra.ceverhungrykrakozyabra",
+    "Cexamsbootcamp": ".cexams.cexams",
+    "Cfadiandlcmbootcamp": ".cfadiandlcm.cfadiandlcm",
+    "Cfamildoorandbracketsbootcamp": ".cfamildoorandbrackets.cfamildoorandbrackets",
+    "Cfancynumberbootcamp": ".cfancynumber.cfancynumber",
+    "Cfencepaintingbootcamp": ".cfencepainting.cfencepainting",
+    "Cfetchthetreasurebootcamp": ".cfetchthetreasure.cfetchthetreasure",
+    "Cfifaandfafabootcamp": ".cfifaandfafa.cfifaandfafa",
+    "Cfindacarbootcamp": ".cfindacar.cfindacar",
+    "Cfindpairbootcamp": ".cfindpair.cfindpair",
+    "Cfireagainbootcamp": ".cfireagain.cfireagain",
+    "Cfirstdigitlawbootcamp": ".cfirstdigitlaw.cfirstdigitlaw",
+    "Cfixedpointremovalbootcamp": ".cfixedpointremoval.cfixedpointremoval",
+    "Cfixingtyposbootcamp": ".cfixingtypos.cfixingtypos",
+    "Cflagbootcamp": ".cflag.cflag",
+    "Cflawedflowbootcamp": ".cflawedflow.cflawedflow",
+    "Cfleabootcamp": ".cflea.cflea",
+    "Cfloorandmodbootcamp": ".cfloorandmod.cfloorandmod",
+    "Cfoolsandroadsbootcamp": ".cfoolsandroads.cfoolsandroads",
+    "Cfootballbootcamp": ".cfootball.cfootball",
+    "Cfoxandcardgamebootcamp": ".cfoxandcardgame.cfoxandcardgame",
+    "Cfoxandnamesbootcamp": ".cfoxandnames.cfoxandnames",
+    "Cfractaldetectorbootcamp": ".cfractaldetector.cfractaldetector",
+    "Cfragilebridgesbootcamp": ".cfragilebridges.cfragilebridges",
+    "Cgamblingbootcamp": ".cgambling.cgambling",
+    "Cgameonleavesbootcamp": ".cgameonleaves.cgameonleaves",
+    "Cgameontreebootcamp": ".cgameontree.cgameontree",
+    "Cgameswithrectanglebootcamp": ".cgameswithrectangle.cgameswithrectangle",
+    "Cgamewithstringsbootcamp": ".cgamewithstrings.cgamewithstrings",
+    "Cgardenofthesunbootcamp": ".cgardenofthesun.cgardenofthesun",
+    "Cgargariandbishopsbootcamp": ".cgargariandbishops.cgargariandbishops",
+    "Cgarlandbootcamp": ".cgarland.cgarland",
+    "Cgeometricprogressionbootcamp": ".cgeometricprogression.cgeometricprogression",
+    "Cgeorgeandnumberbootcamp": ".cgeorgeandnumber.cgeorgeandnumber",
+    "Cgeraldandgiantchessbootcamp": ".cgeraldandgiantchess.cgeraldandgiantchess",
+    "Cgivenlengthandsumofdigitsbootcamp": ".cgivenlengthandsumofdigits.cgivenlengthandsumofdigits",
+    "Cglasscarvingbootcamp": ".cglasscarving.cglasscarving",
+    "Cgottagofastbootcamp": ".cgottagofast.cgottagofast",
+    "Cgreedyarkadybootcamp": ".cgreedyarkady.cgreedyarkady",
+    "Cgreedyshoppingbootcamp": ".cgreedyshopping.cgreedyshopping",
+    "Cgregandfriendsbootcamp": ".cgregandfriends.cgregandfriends",
+    "Cguessyourwayoutbootcamp": ".cguessyourwayout.cguessyourwayout",
+    "Cgukizhatesboxesbootcamp": ".cgukizhatesboxes.cgukizhatesboxes",
+    "Chackerpackyourbagsbootcamp": ".chackerpackyourbags.chackerpackyourbags",
+    "Chackitbootcamp": ".chackit.chackit",
+    "Chamburgersbootcamp": ".chamburgers.chamburgers",
+    "Chappyfarm5bootcamp": ".chappyfarm5.chappyfarm5",
+    "Chardproblembootcamp": ".chardproblem.chardproblem",
+    "Charmonyanalysisbootcamp": ".charmonyanalysis.charmonyanalysis",
+    "Chelgahufflepuffscupbootcamp": ".chelgahufflepuffscup.chelgahufflepuffscup",
+    "Chelpcaretakerbootcamp": ".chelpcaretaker.chelpcaretaker",
+    "ChessV2bootcamp": ".chess.chess",
+    "Chiddenwordbootcamp": ".chiddenword.chiddenword",
+    "Chillsbootcamp": ".chills.chills",
+    "Chistorybootcamp": ".chistory.chistory",
+    "Chongcowbuysadeckofcardsbootcamp": ".chongcowbuysadeckofcards.chongcowbuysadeckofcards",
+    "Cicecavebootcamp": ".cicecave.cicecave",
+    "Cicecreamcoloringbootcamp": ".cicecreamcoloring.cicecreamcoloring",
+    "Cilyaandmatrixbootcamp": ".cilyaandmatrix.cilyaandmatrix",
+    "Cilyaandthetreebootcamp": ".cilyaandthetree.cilyaandthetree",
+    "Cinnaandcandyboxesbootcamp": ".cinnaandcandyboxes.cinnaandcandyboxes",
+    "Cinnaanddimabootcamp": ".cinnaanddima.cinnaanddima",
+    "Cinstantnoodlesbootcamp": ".cinstantnoodles.cinstantnoodles",
+    "Cinterestinggamebootcamp": ".cinterestinggame.cinterestinggame",
+    "Cipherbootcamp": ".cipher.cipher_default",
+    "Circuitbootcamp": ".circuit.circuit",
+    "Civanandpowersoftwobootcamp": ".civanandpowersoftwo.civanandpowersoftwo",
+    "Cjeopardybootcamp": ".cjeopardy.cjeopardy",
+    "Cjeremybearimybootcamp": ".cjeremybearimy.cjeremybearimy",
+    "Cjohnnyandanotherratingdropbootcamp": ".cjohnnyandanotherratingdrop.cjohnnyandanotherratingdrop",
+    "Cjonsnowandhisfavouritenumberbootcamp": ".cjonsnowandhisfavouritenumber.cjonsnowandhisfavouritenumber",
+    "Cjzzhuandapplesbootcamp": ".cjzzhuandapples.cjzzhuandapples",
+    "Ckaaviandmagicspellbootcamp": ".ckaaviandmagicspell.ckaaviandmagicspell",
+    "Ckalilaanddimnaintheloggingindustrybootcamp": ".ckalilaanddimnaintheloggingindustry.ckalilaanddimnaintheloggingindustry",
+    "Ckamalolmolkspaintingbootcamp": ".ckamalolmolkspainting.ckamalolmolkspainting",
+    "Ckbeautifulstringsbootcamp": ".ckbeautifulstrings.ckbeautifulstrings",
+    "Ckcompletewordbootcamp": ".ckcompleteword.ckcompleteword",
+    "Ckilljoybootcamp": ".ckilljoy.ckilljoy",
+    "Ckingspathbootcamp": ".ckingspath.ckingspath",
+    "Ckintegersbootcamp": ".ckintegers.ckintegers",
+    "Ckleofášandthenthlonbootcamp": ".ckleofášandthenthlon.ckleofášandthenthlon",
+    "Cknightsbootcamp": ".cknights.cknights",
+    "Cktreebootcamp": ".cktree.cktree",
+    "Ckuroandwalkingroutebootcamp": ".ckuroandwalkingroute.ckuroandwalkingroute",
+    "Ckuroniandimpossiblecalculationbootcamp": ".ckuroniandimpossiblecalculation.ckuroniandimpossiblecalculation",
+    "Cladderbootcamp": ".cladder.cladder",
+    "Clatinsquarebootcamp": ".clatinsquare.clatinsquare",
+    "Cleagueofleesinsbootcamp": ".cleagueofleesins.cleagueofleesins",
+    "Cleavingthebarbootcamp": ".cleavingthebar.cleavingthebar",
+    "Clevkoandstringsbootcamp": ".clevkoandstrings.clevkoandstrings",
+    "Clinkcutcentroidsbootcamp": ".clinkcutcentroids.clinkcutcentroids",
+    "Clittlealawnspuzzlebootcamp": ".clittlealawnspuzzle.clittlealawnspuzzle",
+    "Clittleelephantandfurikandrubikbootcamp": ".clittleelephantandfurikandrubik.clittleelephantandfurikandrubik",
+    "Clittleelephantandlcmbootcamp": ".clittleelephantandlcm.clittleelephantandlcm",
+    "Clittleelephantandshiftsbootcamp": ".clittleelephantandshifts.clittleelephantandshifts",
+    "Clittlefrogbootcamp": ".clittlefrog.clittlefrog",
+    "Clittlegirlandmaximumsumbootcamp": ".clittlegirlandmaximumsum.clittlegirlandmaximumsum",
+    "Clittleponyandsummersuncelebrationbootcamp": ".clittleponyandsummersuncelebration.clittleponyandsummersuncelebration",
+    "Clogoturtlebootcamp": ".clogoturtle.clogoturtle",
+    "Clrubootcamp": ".clru.clru",
+    "Cluckydaysbootcamp": ".cluckydays.cluckydays",
+    "Cluckypermutationbootcamp": ".cluckypermutation.cluckypermutation",
+    "Cluckysubsequencebootcamp": ".cluckysubsequence.cluckysubsequence",
+    "Cluckytreebootcamp": ".cluckytree.cluckytree",
+    "Clunarnewyearandnumberdivisionbootcamp": ".clunarnewyearandnumberdivision.clunarnewyearandnumberdivision",
+    "Cmachineprogrammingbootcamp": ".cmachineprogramming.cmachineprogramming",
+    "Cmagicfivebootcamp": ".cmagicfive.cmagicfive",
+    "Cmagicformulasbootcamp": ".cmagicformulas.cmagicformulas",
+    "Cmagicgridbootcamp": ".cmagicgrid.cmagicgrid",
+    "Cmahmoudandamessagebootcamp": ".cmahmoudandamessage.cmahmoudandamessage",
+    "Cmahmoudandehabandthexorbootcamp": ".cmahmoudandehabandthexor.cmahmoudandehabandthexor",
+    "Cmailstampsbootcamp": ".cmailstamps.cmailstamps",
+    "Cmainsequencebootcamp": ".cmainsequence.cmainsequence",
+    "Cmakegoodbootcamp": ".cmakegood.cmakegood",
+    "Cmarblesbootcamp": ".cmarbles.cmarbles",
+    "Cmarinaandvasyabootcamp": ".cmarinaandvasya.cmarinaandvasya",
+    "Cmashaandtwofriendsbootcamp": ".cmashaandtwofriends.cmashaandtwofriends",
+    "Cmashmokhandreverseoperationbootcamp": ".cmashmokhandreverseoperation.cmashmokhandreverseoperation",
+    "Cmatchingvsindependentsetbootcamp": ".cmatchingvsindependentset.cmatchingvsindependentset",
+    "Cmatrixsortingbootcamp": ".cmatrixsorting.cmatrixsorting",
+    "Cmaximandmatrixbootcamp": ".cmaximandmatrix.cmaximandmatrix",
+    "Cmaximummedianbootcamp": ".cmaximummedian.cmaximummedian",
+    "Cmaximumsplittingbootcamp": ".cmaximumsplitting.cmaximumsplitting",
+    "Cmaximumsubrectanglebootcamp": ".cmaximumsubrectangle.cmaximumsubrectangle",
+    "Cmaximumwidthbootcamp": ".cmaximumwidth.cmaximumwidth",
+    "Cmaxmexbootcamp": ".cmaxmex.cmaxmex",
+    "Cmeaninglessoperationsbootcamp": ".cmeaninglessoperations.cmeaninglessoperations",
+    "Cmemoryanddeevolutionbootcamp": ".cmemoryanddeevolution.cmemoryanddeevolution",
+    "Cmessybootcamp": ".cmessy.cmessy",
+    "Cmiceproblembootcamp": ".cmiceproblem.cmiceproblem",
+    "Cmikeandfoambootcamp": ".cmikeandfoam.cmikeandfoam",
+    "Cmikeandgcdproblembootcamp": ".cmikeandgcdproblem.cmikeandgcdproblem",
+    "Cminimumsumbootcamp": ".cminimumsum.cminimumsum",
+    "Cmishaandforestbootcamp": ".cmishaandforest.cmishaandforest",
+    "Cmittensbootcamp": ".cmittens.cmittens",
+    "Cmodifiedgcdbootcamp": ".cmodifiedgcd.cmodifiedgcd",
+    "Cmollyschemicalsbootcamp": ".cmollyschemicals.cmollyschemicals",
+    "Cmonsterinvadersbootcamp": ".cmonsterinvaders.cmonsterinvaders",
+    "Cmorsecodebootcamp": ".cmorsecode.cmorsecode",
+    "Cmoviecriticsbootcamp": ".cmoviecritics.cmoviecritics",
+    "Cmrkitayutathetreasurehunterbootcamp": ".cmrkitayutathetreasurehunter.cmrkitayutathetreasurehunter",
+    "Cmultiplicitybootcamp": ".cmultiplicity.cmultiplicity",
+    "Cmuseumstourbootcamp": ".cmuseumstour.cmuseumstour",
+    "Cmushroomstrifebootcamp": ".cmushroomstrife.cmushroomstrife",
+    "Cnamequestbootcamp": ".cnamequest.cnamequest",
+    "Cnamingcompanybootcamp": ".cnamingcompany.cnamingcompany",
+    "Cnastiaandahiddenpermutationbootcamp": ".cnastiaandahiddenpermutation.cnastiaandahiddenpermutation",
+    "Cnastyaandawardrobebootcamp": ".cnastyaandawardrobe.cnastyaandawardrobe",
+    "Cnastyaandunexpectedguestbootcamp": ".cnastyaandunexpectedguest.cnastyaandunexpectedguest",
+    "Cnastyaistransposingmatricesbootcamp": ".cnastyaistransposingmatrices.cnastyaistransposingmatrices",
+    "Cneedforpinkslipsbootcamp": ".cneedforpinkslips.cneedforpinkslips",
+    "Cnekodoesmathsbootcamp": ".cnekodoesmaths.cnekodoesmaths",
+    "Cnetworkmaskbootcamp": ".cnetworkmask.cnetworkmask",
+    "Cnetworksafetybootcamp": ".cnetworksafety.cnetworksafety",
+    "Cnewlanguagebootcamp": ".cnewlanguage.cnewlanguage",
+    "Cnewyearanddominobootcamp": ".cnewyearanddomino.cnewyearanddomino",
+    "Cnewyearandpermutationbootcamp": ".cnewyearandpermutation.cnewyearandpermutation",
+    "Cnewyearandthespheretransmissionbootcamp": ".cnewyearandthespheretransmission.cnewyearandthespheretransmission",
+    "Cnewyearratingschangebootcamp": ".cnewyearratingschange.cnewyearratingschange",
+    "Cnewyearsnowmenbootcamp": ".cnewyearsnowmen.cnewyearsnowmen",
+    "Cnezzarandnicebeatmapbootcamp": ".cnezzarandnicebeatmap.cnezzarandnicebeatmap",
+    "Cnezzarandsymmetricarraybootcamp": ".cnezzarandsymmetricarray.cnezzarandsymmetricarray",
+    "Cnikitaandstackbootcamp": ".cnikitaandstack.cnikitaandstack",
+    "Cnnandtheopticalillusionbootcamp": ".cnnandtheopticalillusion.cnnandtheopticalillusion",
+    "Cnumbergamebootcamp": ".cnumbergame.cnumbergame",
+    "Cnumberofwaysbootcamp": ".cnumberofways.cnumberofways",
+    "Cnumbertransformationbootcamp": ".cnumbertransformation.cnumbertransformation",
+    "CodeIObootcamp": ".codeio.codeio",
+    "Cokabeandboxesbootcamp": ".cokabeandboxes.cokabeandboxes",
+    "Coldberlandlanguagebootcamp": ".coldberlandlanguage.coldberlandlanguage",
+    "Comkarandbaseballbootcamp": ".comkarandbaseball.comkarandbaseball",
+    "Comnomandcandiesbootcamp": ".comnomandcandies.comnomandcandies",
+    "Conebasedarithmeticbootcamp": ".conebasedarithmetic.conebasedarithmetic",
+    "Conlinecoursesinbsubootcamp": ".conlinecoursesinbsu.conlinecoursesinbsu",
+    "Conlinemeetingbootcamp": ".conlinemeeting.conlinemeeting",
+    "Coptimalpolygonperimeterbootcamp": ".coptimalpolygonperimeter.coptimalpolygonperimeter",
+    "Coracandgameoflifebootcamp": ".coracandgameoflife.coracandgameoflife",
+    "Cpackagedeliverybootcamp": ".cpackagedelivery.cpackagedelivery",
+    "Cpagenumbersbootcamp": ".cpagenumbers.cpagenumbers",
+    "Cpaintthedigitsbootcamp": ".cpaintthedigits.cpaintthedigits",
+    "Cpainttreebootcamp": ".cpainttree.cpainttree",
+    "Cpalindrometransformationbootcamp": ".cpalindrometransformation.cpalindrometransformation",
+    "Cpalindromicpathsbootcamp": ".cpalindromicpaths.cpalindromicpaths",
+    "Cpalindromifierbootcamp": ".cpalindromifier.cpalindromifier",
+    "Cparquetbootcamp": ".cparquet.cparquet",
+    "Cpartialsumsbootcamp": ".cpartialsums.cpartialsums",
+    "Cpartybootcamp": ".cparty.cparty",
+    "Cpatternbootcamp": ".cpattern.cpattern",
+    "Cpbinarybootcamp": ".cpbinary.cpbinary",
+    "Cperfecttriplesbootcamp": ".cperfecttriples.cperfecttriples",
+    "Cperformeasilybootcamp": ".cperformeasily.cperformeasily",
+    "Cpermutationgamebootcamp": ".cpermutationgame.cpermutationgame",
+    "Cpermutationrecoverybootcamp": ".cpermutationrecovery.cpermutationrecovery",
+    "Cperunultbootcamp": ".cperunult.cperunult",
+    "Cpetyaandcatacombsbootcamp": ".cpetyaandcatacombs.cpetyaandcatacombs",
+    "Cpetyaandexambootcamp": ".cpetyaandexam.cpetyaandexam",
+    "Cpetyaandspidersbootcamp": ".cpetyaandspiders.cpetyaandspiders",
+    "Cphoenixanddistributionbootcamp": ".cphoenixanddistribution.cphoenixanddistribution",
+    "Cphoenixandtowersbootcamp": ".cphoenixandtowers.cphoenixandtowers",
+    "Cphonenumbersbootcamp": ".cphonenumbers.cphonenumbers",
+    "Cphotographerbootcamp": ".cphotographer.cphotographer",
+    "Cpickheroesbootcamp": ".cpickheroes.cpickheroes",
+    "Cpieordiebootcamp": ".cpieordie.cpieordie",
+    "Cpinkiepieeatspattycakesbootcamp": ".cpinkiepieeatspattycakes.cpinkiepieeatspattycakes",
+    "Cplasticinezebrabootcamp": ".cplasticinezebra.cplasticinezebra",
+    "Cplayingpianobootcamp": ".cplayingpiano.cplayingpiano",
+    "Cplayingwithsupergluebootcamp": ".cplayingwithsuperglue.cplayingwithsuperglue",
+    "Cplumberbootcamp": ".cplumber.cplumber",
+    "Cpocketbookbootcamp": ".cpocketbook.cpocketbook",
+    "Cpointorderingbootcamp": ".cpointordering.cpointordering",
+    "Cpolandballandforestbootcamp": ".cpolandballandforest.cpolandballandforest",
+    "Cpolycarpattheradiobootcamp": ".cpolycarpattheradio.cpolycarpattheradio",
+    "Cpolycarpusdicebootcamp": ".cpolycarpusdice.cpolycarpusdice",
+    "Cpostcardbootcamp": ".cpostcard.cpostcard",
+    "Cposterizedbootcamp": ".cposterized.cposterized",
+    "Cpredictoutcomeofthegamebootcamp": ".cpredictoutcomeofthegame.cpredictoutcomeofthegame",
+    "Cprefixenlightenmentbootcamp": ".cprefixenlightenment.cprefixenlightenment",
+    "Cprefixproductsequencebootcamp": ".cprefixproductsequence.cprefixproductsequence",
+    "Cpresentbootcamp": ".cpresent.cpresent",
+    "Cprimenumberbootcamp": ".cprimenumber.cprimenumber",
+    "Cprimesonintervalbootcamp": ".cprimesoninterval.cprimesoninterval",
+    "Cprimitiveprimesbootcamp": ".cprimitiveprimes.cprimitiveprimes",
+    "Cproblemfornazarbootcamp": ".cproblemfornazar.cproblemfornazar",
+    "Cproduct1modulonbootcamp": ".cproduct1modulon.cproduct1modulon",
+    "Cpromocodeswithmistakesbootcamp": ".cpromocodeswithmistakes.cpromocodeswithmistakes",
+    "Cpropagatingtreebootcamp": ".cpropagatingtree.cpropagatingtree",
+    "Cpythagoreantriplesbootcamp": ".cpythagoreantriples.cpythagoreantriples",
+    "Cpythonindentationbootcamp": ".cpythonindentation.cpythonindentation",
+    "Cquantifierquestionbootcamp": ".cquantifierquestion.cquantifierquestion",
+    "Cqueueinthetrainbootcamp": ".cqueueinthetrain.cqueueinthetrain",
+    "Cquizbootcamp": ".cquiz.cquiz",
+    "Cramessesandcornerinversionbootcamp": ".cramessesandcornerinversion.cramessesandcornerinversion",
+    "Crandomeventsbootcamp": ".crandomevents.crandomevents",
+    "Crangeincrementsbootcamp": ".crangeincrements.crangeincrements",
+    "Crationalleebootcamp": ".crationallee.crationallee",
+    "Craytracingbootcamp": ".craytracing.craytracing",
+    "Creadtimebootcamp": ".creadtime.creadtime",
+    "Crectanglesbootcamp": ".crectangles.crectangles",
+    "Creducingfractionsbootcamp": ".creducingfractions.creducingfractions",
+    "Cregionseparationbootcamp": ".cregionseparation.cregionseparation",
+    "Crelayracebootcamp": ".crelayrace.crelayrace",
+    "Crememberingstringsbootcamp": ".crememberingstrings.crememberingstrings",
+    "Cremoveadjacentbootcamp": ".cremoveadjacent.cremoveadjacent",
+    "Cremoveextraonebootcamp": ".cremoveextraone.cremoveextraone",
+    "Cremovingcolumnsbootcamp": ".cremovingcolumns.cremovingcolumns",
+    "Creplacementbootcamp": ".creplacement.creplacement",
+    "Creportbootcamp": ".creport.creport",
+    "Crestoregraphbootcamp": ".crestoregraph.crestoregraph",
+    "Crestoringpermutationbootcamp": ".crestoringpermutation.crestoringpermutation",
+    "Criversidecuriobootcamp": ".criversidecurio.criversidecurio",
+    "Croadtocinemabootcamp": ".croadtocinema.croadtocinema",
+    "Crotationmatchingbootcamp": ".crotationmatching.crotationmatching",
+    "Croundcorridorbootcamp": ".croundcorridor.croundcorridor",
+    "Croundtableknightsbootcamp": ".croundtableknights.croundtableknights",
+    "Crunningtrackbootcamp": ".crunningtrack.crunningtrack",
+    "Crussianroulettebootcamp": ".crussianroulette.crussianroulette",
+    "Cryoukosmemorynotebootcamp": ".cryoukosmemorynote.cryoukosmemorynote",
+    "Cryptomathbootcamp": ".crypto_math.crypto_math",
+    "Csafecrackingbootcamp": ".csafecracking.csafecracking",
+    "Csagheerandnubianmarketbootcamp": ".csagheerandnubianmarket.csagheerandnubianmarket",
+    "Csanatoriumbootcamp": ".csanatorium.csanatorium",
+    "Csantaclausandrobotbootcamp": ".csantaclausandrobot.csantaclausandrobot",
+    "Csashaandapatientfriendbootcamp": ".csashaandapatientfriend.csashaandapatientfriend",
+    "Csashaandarraybootcamp": ".csashaandarray.csashaandarray",
+    "Cschedulebootcamp": ".cschedule.cschedule",
+    "Csearchingforgraphbootcamp": ".csearchingforgraph.csearchingforgraph",
+    "Csecretbootcamp": ".csecret.csecret",
+    "Csequencepairweightbootcamp": ".csequencepairweight.csequencepairweight",
+    "Csequencetransformationbootcamp": ".csequencetransformation.csequencetransformation",
+    "Cserejaandbracketsbootcamp": ".cserejaandbrackets.cserejaandbrackets",
+    "Cserejaandsubsequencesbootcamp": ".cserejaandsubsequences.cserejaandsubsequences",
+    "Cserejaandthearrangementofnumbersbootcamp": ".cserejaandthearrangementofnumbers.cserejaandthearrangementofnumbers",
+    "Cserejaandtwosequencesbootcamp": ".cserejaandtwosequences.cserejaandtwosequences",
+    "Csergeanddiningroombootcamp": ".csergeanddiningroom.csergeanddiningroom",
+    "Csergeysproblembootcamp": ".csergeysproblem.csergeysproblem",
+    "Cservalandparenthesissequencebootcamp": ".cservalandparenthesissequence.cservalandparenthesissequence",
+    "Cserversbootcamp": ".cservers.cservers",
+    "Cshaassandlightsbootcamp": ".cshaassandlights.cshaassandlights",
+    "Cshawarmatentbootcamp": ".cshawarmatent.cshawarmatent",
+    "Cshootinggallerybootcamp": ".cshootinggallery.cshootinggallery",
+    "Cskierbootcamp": ".cskier.cskier",
+    "Cslavaandtanksbootcamp": ".cslavaandtanks.cslavaandtanks",
+    "Csmallestwordbootcamp": ".csmallestword.csmallestword",
+    "Csocksbootcamp": ".csocks.csocks",
+    "Csoldierandcardsbootcamp": ".csoldierandcards.csoldierandcards",
+    "Csonyaandrobotsbootcamp": ".csonyaandrobots.csonyaandrobots",
+    "Cspysyndrome2bootcamp": ".cspysyndrome2.cspysyndrome2",
+    "Cstablegroupsbootcamp": ".cstablegroups.cstablegroups",
+    "Cstarskybootcamp": ".cstarsky.cstarsky",
+    "Cstlbootcamp": ".cstl.cstl",
+    "Cstrangefunctionbootcamp": ".cstrangefunction.cstrangefunction",
+    "Cstrangeradiationbootcamp": ".cstrangeradiation.cstrangeradiation",
+    "Cstringmanipulation10bootcamp": ".cstringmanipulation10.cstringmanipulation10",
+    "Cstripe2bootcamp": ".cstripe2.cstripe2",
+    "Csubsequencecountingbootcamp": ".csubsequencecounting.csubsequencecounting",
+    "Csubsequencesbootcamp": ".csubsequences.csubsequences",
+    "Csubsetsumsbootcamp": ".csubsetsums.csubsetsums",
+    "Csubstitutesinnumberbootcamp": ".csubstitutesinnumber.csubstitutesinnumber",
+    "Csubstringgameinthelessonbootcamp": ".csubstringgameinthelesson.csubstringgameinthelesson",
+    "Csuperiorperiodicsubarraysbootcamp": ".csuperiorperiodicsubarrays.csuperiorperiodicsubarrays",
+    "Cswaplettersbootcamp": ".cswapletters.cswapletters",
+    "Cswapsbootcamp": ".cswaps.cswaps",
+    "Csweetseatingbootcamp": ".csweetseating.csweetseating",
+    "Csystemtestingbootcamp": ".csystemtesting.csystemtesting",
+    "Ctabledecorationsbootcamp": ".ctabledecorations.ctabledecorations",
+    "Ctanyaandcoloredcandiesbootcamp": ".ctanyaandcoloredcandies.ctanyaandcoloredcandies",
+    "Ctavasandkarafsbootcamp": ".ctavasandkarafs.ctavasandkarafs",
+    "Cteambootcamp": ".cteam.cteam",
+    "Cteambuildingbootcamp": ".cteambuilding.cteambuilding",
+    "Cteodorisnotaliarbootcamp": ".cteodorisnotaliar.cteodorisnotaliar",
+    "Ctexteditorbootcamp": ".ctexteditor.ctexteditor",
+    "Cthanosnimbootcamp": ".cthanosnim.cthanosnim",
+    "Cthebigracebootcamp": ".cthebigrace.cthebigrace",
+    "Cthechildandtoybootcamp": ".cthechildandtoy.cthechildandtoy",
+    "Cthedeliverydilemmabootcamp": ".cthedeliverydilemma.cthedeliverydilemma",
+    "Cthefairnutandstringbootcamp": ".cthefairnutandstring.cthefairnutandstring",
+    "Cthefootballseasonbootcamp": ".cthefootballseason.cthefootballseason",
+    "Cthesportsfestivalbootcamp": ".cthesportsfestival.cthesportsfestival",
+    "Ctheworldisatheatrebootcamp": ".ctheworldisatheatre.ctheworldisatheatre",
+    "Cthreebagsbootcamp": ".cthreebags.cthreebags",
+    "Cthreebasestationsbootcamp": ".cthreebasestations.cthreebasestations",
+    "Cthreedisplaysbootcamp": ".cthreedisplays.cthreedisplays",
+    "Cthreestatesbootcamp": ".cthreestates.cthreestates",
+    "Ctillicollapsebootcamp": ".ctillicollapse.ctillicollapse",
+    "Ctimofeyandremodulingbootcamp": ".ctimofeyandremoduling.ctimofeyandremoduling",
+    "Ctitlebootcamp": ".ctitle.ctitle",
+    "Ctoaddornottoaddbootcamp": ".ctoaddornottoadd.ctoaddornottoadd",
+    "Ctokitsukazeandduelbootcamp": ".ctokitsukazeandduel.ctokitsukazeandduel",
+    "Ctouristsnotesbootcamp": ".ctouristsnotes.ctouristsnotes",
+    "Ctournamentbootcamp": ".ctournament.ctournament",
+    "Ctrackbootcamp": ".ctrack.ctrack",
+    "Ctrailinglovesorloeufsbootcamp": ".ctrailinglovesorloeufs.ctrailinglovesorloeufs",
+    "Ctrambootcamp": ".ctram.ctram",
+    "Ctravellingsalesmanandspecialnumbersbootcamp": ".ctravellingsalesmanandspecialnumbers.ctravellingsalesmanandspecialnumbers",
+    "Ctravellingsalesmanproblembootcamp": ".ctravellingsalesmanproblem.ctravellingsalesmanproblem",
+    "Ctreegeneratorbootcamp": ".ctreegenerator.ctreegenerator",
+    "Ctreesbootcamp": ".ctrees.ctrees",
+    "Ctreesoftranquillitybootcamp": ".ctreesoftranquillity.ctreesoftranquillity",
+    "Ctrianglesbootcamp": ".ctriangles.ctriangles",
+    "Ctryandcatchbootcamp": ".ctryandcatch.ctryandcatch",
+    "Ctwopermutationsbootcamp": ".ctwopermutations.ctwopermutations",
+    "Cu2bootcamp": ".cu2.cu2",
+    "Cunclebogdanandcountryhappinessbootcamp": ".cunclebogdanandcountryhappiness.cunclebogdanandcountryhappiness",
+    "Cunfairpollbootcamp": ".cunfairpoll.cunfairpoll",
+    "Cunorderedsubsequencebootcamp": ".cunorderedsubsequence.cunorderedsubsequence",
+    "Cunusualproductbootcamp": ".cunusualproduct.cunusualproduct",
+    "Cupgradingtreebootcamp": ".cupgradingtree.cupgradingtree",
+    "Cvaleraandelectionsbootcamp": ".cvaleraandelections.cvaleraandelections",
+    "Cvaleraandtubesbootcamp": ".cvaleraandtubes.cvaleraandtubes",
+    "Cvalhallasiegebootcamp": ".cvalhallasiege.cvalhallasiege",
+    "Cvanyaandexamsbootcamp": ".cvanyaandexams.cvanyaandexams",
+    "Cvanyaandscalesbootcamp": ".cvanyaandscales.cvanyaandscales",
+    "Cvasilythebearandsequencebootcamp": ".cvasilythebearandsequence.cvasilythebearandsequence",
+    "Cvasyaandbeautifularraysbootcamp": ".cvasyaandbeautifularrays.cvasyaandbeautifularrays",
+    "Cvladikandfractionsbootcamp": ".cvladikandfractions.cvladikandfractions",
+    "Cvladikandmemorabletripbootcamp": ".cvladikandmemorabletrip.cvladikandmemorabletrip",
+    "Cvotingbootcamp": ".cvoting.cvoting",
+    "Cvulnerablekerbalsbootcamp": ".cvulnerablekerbals.cvulnerablekerbals",
+    "Cvusthecossackandstringsbootcamp": ".cvusthecossackandstrings.cvusthecossackandstrings",
+    "Cwatchingfireworksisfunbootcamp": ".cwatchingfireworksisfun.cwatchingfireworksisfun",
+    "Cwaterbalancebootcamp": ".cwaterbalance.cwaterbalance",
+    "Cwateringflowersbootcamp": ".cwateringflowers.cwateringflowers",
+    "Cwetsharkandflowersbootcamp": ".cwetsharkandflowers.cwetsharkandflowers",
+    "Cwilburandpointsbootcamp": ".cwilburandpoints.cwilburandpoints",
+    "Cwizardsandnumbersbootcamp": ".cwizardsandnumbers.cwizardsandnumbers",
+    "Cwonderfulrandomizedsumbootcamp": ".cwonderfulrandomizedsum.cwonderfulrandomizedsum",
+    "Cwoodcuttersbootcamp": ".cwoodcutters.cwoodcutters",
+    "Cworldeaterbrothersbootcamp": ".cworldeaterbrothers.cworldeaterbrothers",
+    "Cworldofdarkraftbattleforazathothbootcamp": ".cworldofdarkraftbattleforazathoth.cworldofdarkraftbattleforazathoth",
+    "Cxenonsattackonthegangsbootcamp": ".cxenonsattackonthegangs.cxenonsattackonthegangs",
+    "Cxorinversebootcamp": ".cxorinverse.cxorinverse",
+    "Cxortreebootcamp": ".cxortree.cxortree",
+    "Cyaroslavandalgorithmbootcamp": ".cyaroslavandalgorithm.cyaroslavandalgorithm",
+    "Cyuhaoandaparenthesisbootcamp": ".cyuhaoandaparenthesis.cyuhaoandaparenthesis",
+    "Czeroonebootcamp": ".czeroone.czeroone",
+    "D1frequencyproblemeasyversionbootcamp": ".d1frequencyproblemeasyversion.d1frequencyproblemeasyversion",
+    "D1kirkandabinarystringeasyversionbootcamp": ".d1kirkandabinarystringeasyversion.d1kirkandabinarystringeasyversion",
+    "D2optimalsubsequenceshardversionbootcamp": ".d2optimalsubsequenceshardversion.d2optimalsubsequenceshardversion",
+    "D2rpdandrapsheethardversionbootcamp": ".d2rpdandrapsheethardversion.d2rpdandrapsheethardversion",
+    "D2submarineintherybinskseahardeditionbootcamp": ".d2submarineintherybinskseahardedition.d2submarineintherybinskseahardedition",
+    "D2theworldisjustaprogrammingtaskhardversionbootcamp": ".d2theworldisjustaprogrammingtaskhardversion.d2theworldisjustaprogrammingtaskhardversion",
+    "Dabilitytoconvertbootcamp": ".dabilitytoconvert.dabilitytoconvert",
+    "Dalarmclockbootcamp": ".dalarmclock.dalarmclock",
+    "Daliceandthedollbootcamp": ".daliceandthedoll.daliceandthedoll",
+    "Dandorandsquaresumbootcamp": ".dandorandsquaresum.dandorandsquaresum",
+    "Dandreyandproblembootcamp": ".dandreyandproblem.dandreyandproblem",
+    "Dbearandcontributionbootcamp": ".dbearandcontribution.dbearandcontribution",
+    "Dbeautifulpairsofnumbersbootcamp": ".dbeautifulpairsofnumbers.dbeautifulpairsofnumbers",
+    "Dboboniuandjianghubootcamp": ".dboboniuandjianghu.dboboniuandjianghu",
+    "Dbookshelvesbootcamp": ".dbookshelves.dbookshelves",
+    "Dbouncingboomerangsbootcamp": ".dbouncingboomerangs.dbouncingboomerangs",
+    "Dbuildingbridgebootcamp": ".dbuildingbridge.dbuildingbridge",
+    "Dcandiesforchildrenbootcamp": ".dcandiesforchildren.dcandiesforchildren",
+    "Dchallengesinschool41bootcamp": ".dchallengesinschool41.dchallengesinschool41",
+    "Dchangingarraybootcamp": ".dchangingarray.dchangingarray",
+    "Dchaoticvbootcamp": ".dchaoticv.dchaoticv",
+    "Dchemicaltablebootcamp": ".dchemicaltable.dchemicaltable",
+    "Dcolorfulpointsbootcamp": ".dcolorfulpoints.dcolorfulpoints",
+    "Dcompletetripartitebootcamp": ".dcompletetripartite.dcompletetripartite",
+    "Dcowandsnacksbootcamp": ".dcowandsnacks.dcowandsnacks",
+    "Dcuptrickbootcamp": ".dcuptrick.dcuptrick",
+    "Dcurfewbootcamp": ".dcurfew.dcurfew",
+    "Ddecreasingdebtsbootcamp": ".ddecreasingdebts.ddecreasingdebts",
+    "Ddensesubsequencebootcamp": ".ddensesubsequence.ddensesubsequence",
+    "Ddirtydeedsdonedirtcheapbootcamp": ".ddirtydeedsdonedirtcheap.ddirtydeedsdonedirtcheap",
+    "Ddistinctpathsbootcamp": ".ddistinctpaths.ddistinctpaths",
+    "Ddivideandsummarizebootcamp": ".ddivideandsummarize.ddivideandsummarize",
+    "Ddonkeyandstarsbootcamp": ".ddonkeyandstars.ddonkeyandstars",
+    "Ddzylovesmodificationbootcamp": ".ddzylovesmodification.ddzylovesmodification",
+    "Deelsbootcamp": ".deels.deels",
+    "Dehabthexorcistbootcamp": ".dehabthexorcist.dehabthexorcist",
+    "Dfafaandancientalphabetbootcamp": ".dfafaandancientalphabet.dfafaandancientalphabet",
+    "Dfibonacciishbootcamp": ".dfibonacciish.dfibonacciish",
+    "Dflipthecardsbootcamp": ".dflipthecards.dflipthecards",
+    "Dfreedivbootcamp": ".dfreediv.dfreediv",
+    "Dgamebootcamp": ".dgame.dgame",
+    "Dgamewitharraybootcamp": ".dgamewitharray.dgamewitharray",
+    "Dgamewithpowersbootcamp": ".dgamewithpowers.dgamewithpowers",
+    "Dgeneratingsetsbootcamp": ".dgeneratingsets.dgeneratingsets",
+    "Dgeniusbootcamp": ".dgenius.dgenius",
+    "Dgottagofastbootcamp": ".dgottagofast.dgottagofast",
+    "Dgrid00100bootcamp": ".dgrid00100.dgrid00100",
+    "Dhamiltonianspanningtreebootcamp": ".dhamiltonianspanningtree.dhamiltonianspanningtree",
+    "Dharmoniousgraphbootcamp": ".dharmoniousgraph.dharmoniousgraph",
+    "Dhugestringsbootcamp": ".dhugestrings.dhugestrings",
+    "Dicesculpturesbootcamp": ".dicesculptures.dicesculptures",
+    "Dinterestingarraybootcamp": ".dinterestingarray.dinterestingarray",
+    "Dintersectingsubtreesbootcamp": ".dintersectingsubtrees.dintersectingsubtrees",
+    "Dinvarianceoftreebootcamp": ".dinvarianceoftree.dinvarianceoftree",
+    "Dirrigationbootcamp": ".dirrigation.dirrigation",
+    "Djerrysprotestbootcamp": ".djerrysprotest.djerrysprotest",
+    "Djonandorbsbootcamp": ".djonandorbs.djonandorbs",
+    "Dkarenandtestbootcamp": ".dkarenandtest.dkarenandtest",
+    "Dkonradandcompanyevaluationbootcamp": ".dkonradandcompanyevaluation.dkonradandcompanyevaluation",
+    "Dkuroandgcdandxorandsumbootcamp": ".dkuroandgcdandxorandsum.dkuroandgcdandxorandsum",
+    "Dkuroniandthecelebrationbootcamp": ".dkuroniandthecelebration.dkuroniandthecelebration",
+    "Dlccbootcamp": ".dlcc.dlcc",
+    "Dletsplaythewordsbootcamp": ".dletsplaythewords.dletsplaythewords",
+    "Dlosttreebootcamp": ".dlosttree.dlosttree",
+    "Dlunarnewyearandawanderbootcamp": ".dlunarnewyearandawander.dlunarnewyearandawander",
+    "Dmahmoudandehabandanotherarrayconstructiontaskbootcamp": ".dmahmoudandehabandanotherarrayconstructiontask.dmahmoudandehabandanotherarrayconstructiontask",
+    "Dmahmoudandehabandthebinarystringbootcamp": ".dmahmoudandehabandthebinarystring.dmahmoudandehabandthebinarystring",
+    "Dmarsroverbootcamp": ".dmarsrover.dmarsrover",
+    "Dmashmokhandwatertanksbootcamp": ".dmashmokhandwatertanks.dmashmokhandwatertanks",
+    "Dmaxmedianbootcamp": ".dmaxmedian.dmaxmedian",
+    "Dmichaelandchargingstationsbootcamp": ".dmichaelandchargingstations.dmichaelandchargingstations",
+    "Dminimumdiametertreebootcamp": ".dminimumdiametertree.dminimumdiametertree",
+    "Dmissionimpassablebootcamp": ".dmissionimpassable.dmissionimpassable",
+    "Dmisspunyversebootcamp": ".dmisspunyverse.dmisspunyverse",
+    "Dmrkitayutascolorfulgraphbootcamp": ".dmrkitayutascolorfulgraph.dmrkitayutascolorfulgraph",
+    "Dmultiplesandpowerdifferencesbootcamp": ".dmultiplesandpowerdifferences.dmultiplesandpowerdifferences",
+    "Dnashmatrixbootcamp": ".dnashmatrix.dnashmatrix",
+    "Dnauuoandportalsbootcamp": ".dnauuoandportals.dnauuoandportals",
+    "Dnewpassengertramsbootcamp": ".dnewpassengertrams.dnewpassengertrams",
+    "Dnewyearandancientprophecybootcamp": ".dnewyearandancientprophecy.dnewyearandancientprophecy",
+    "Dnewyearsantanetworkbootcamp": ".dnewyearsantanetwork.dnewyearsantanetwork",
+    "Dnudistbeachbootcamp": ".dnudistbeach.dnudistbeach",
+    "Dolyaandmagicalsquarebootcamp": ".dolyaandmagicalsquare.dolyaandmagicalsquare",
+    "Dominosabootcamp": ".dominosa.dominosa",
+    "Domkarandbedwarsbootcamp": ".domkarandbedwars.domkarandbedwars",
+    "Domnomandnecklacebootcamp": ".domnomandnecklace.domnomandnecklace",
+    "Dpackagedeliverybootcamp": ".dpackagedelivery.dpackagedelivery",
+    "Dpaintthetreebootcamp": ".dpaintthetree.dpaintthetree",
+    "Dpalindromiccharacteristicsbootcamp": ".dpalindromiccharacteristics.dpalindromiccharacteristics",
+    "Dpickingstringsbootcamp": ".dpickingstrings.dpickingstrings",
+    "Dpietbootcamp": ".dpiet.dpiet",
+    "Dpolylinebootcamp": ".dpolyline.dpolyline",
+    "Dportalsbootcamp": ".dportals.dportals",
+    "Dpowerfulkseniabootcamp": ".dpowerfulksenia.dpowerfulksenia",
+    "Dpricefixedbootcamp": ".dpricefixed.dpricefixed",
+    "Dprogramminglanguagebootcamp": ".dprogramminglanguage.dprogramminglanguage",
+    "Dqueuebootcamp": ".dqueue.dqueue",
+    "Drarityandnewdressbootcamp": ".drarityandnewdress.drarityandnewdress",
+    "Dratingcompressionbootcamp": ".dratingcompression.dratingcompression",
+    "Drearrangebootcamp": ".drearrange.drearrange",
+    "Drecoveringbstbootcamp": ".drecoveringbst.drecoveringbst",
+    "Drectanglepainting1bootcamp": ".drectanglepainting1.drectanglepainting1",
+    "Dreplacebymexbootcamp": ".dreplacebymex.dreplacebymex",
+    "Drestorecubebootcamp": ".drestorecube.drestorecube",
+    "Dreturninghomebootcamp": ".dreturninghome.dreturninghome",
+    "Drobotvacuumcleanerbootcamp": ".drobotvacuumcleaner.drobotvacuumcleaner",
+    "Dromandigitsbootcamp": ".dromandigits.dromandigits",
+    "Drussianroulettebootcamp": ".drussianroulette.drussianroulette",
+    "Drésuméreviewbootcamp": ".drésuméreview.drésuméreview",
+    "Dsashaandinterestingfactfromgraphtheorybootcamp": ".dsashaandinterestingfactfromgraphtheory.dsashaandinterestingfactfromgraphtheory",
+    "Dsashaandonemorenamebootcamp": ".dsashaandonemorename.dsashaandonemorename",
+    "Dseabattlebootcamp": ".dseabattle.dseabattle",
+    "Dsecretpasswordsbootcamp": ".dsecretpasswords.dsecretpasswords",
+    "Dservalandrootedtreebootcamp": ".dservalandrootedtree.dservalandrootedtree",
+    "Dsetofpointsbootcamp": ".dsetofpoints.dsetofpoints",
+    "Dshichikujiandpowergridbootcamp": ".dshichikujiandpowergrid.dshichikujiandpowergrid",
+    "Dshortestandlongestlisbootcamp": ".dshortestandlongestlis.dshortestandlongestlis",
+    "Dskillsbootcamp": ".dskills.dskills",
+    "Dslimebootcamp": ".dslime.dslime",
+    "Dsocialcirclesbootcamp": ".dsocialcircles.dsocialcircles",
+    "Dsocialnetworkbootcamp": ".dsocialnetwork.dsocialnetwork",
+    "Dsolvethemazebootcamp": ".dsolvethemaze.dsolvethemaze",
+    "Dspaceminesbootcamp": ".dspacemines.dspacemines",
+    "Dstasandthequeueatthebuffetbootcamp": ".dstasandthequeueatthebuffet.dstasandthequeueatthebuffet",
+    "Dstrangehousingbootcamp": ".dstrangehousing.dstrangehousing",
+    "Dstringbootcamp": ".dstring.dstring",
+    "Dstripbootcamp": ".dstrip.dstrip",
+    "Dsubstringbootcamp": ".dsubstring.dsubstring",
+    "Dsumbootcamp": ".dsum.dsum",
+    "Dsumofpathsbootcamp": ".dsumofpaths.dsumofpaths",
+    "Dtaxesbootcamp": ".dtaxes.dtaxes",
+    "Dteamsformationbootcamp": ".dteamsformation.dteamsformation",
+    "Dthebestvacationbootcamp": ".dthebestvacation.dthebestvacation",
+    "Dthewubootcamp": ".dthewu.dthewu",
+    "Dthreereligionsbootcamp": ".dthreereligions.dthreereligions",
+    "Dtimetorunbootcamp": ".dtimetorun.dtimetorun",
+    "Dtokitsukazeandstrangerectanglebootcamp": ".dtokitsukazeandstrangerectangle.dtokitsukazeandstrangerectangle",
+    "Dtooeasyproblemsbootcamp": ".dtooeasyproblems.dtooeasyproblems",
+    "Dtopsecrettaskbootcamp": ".dtopsecrettask.dtopsecrettask",
+    "Dtreearraybootcamp": ".dtreearray.dtreearray",
+    "Dtshirtsdistributionbootcamp": ".dtshirtsdistribution.dtshirtsdistribution",
+    "Dunmergebootcamp": ".dunmerge.dunmerge",
+    "Dvalidbfsbootcamp": ".dvalidbfs.dvalidbfs",
+    "Dvasyaandchessbootcamp": ".dvasyaandchess.dvasyaandchess",
+    "Dvolcanoesbootcamp": ".dvolcanoes.dvolcanoes",
+    "Dvolleyballbootcamp": ".dvolleyball.dvolleyball",
+    "Dvusthecossackandnumbersbootcamp": ".dvusthecossackandnumbers.dvusthecossackandnumbers",
+    "Dwasherdryerfolderbootcamp": ".dwasherdryerfolder.dwasherdryerfolder",
+    "Dweirdchessbootcamp": ".dweirdchess.dweirdchess",
+    "Dweirdjourneybootcamp": ".dweirdjourney.dweirdjourney",
+    "Dwindingpolygonallinebootcamp": ".dwindingpolygonalline.dwindingpolygonalline",
+    "Dzookeeperandtheinfinitezoobootcamp": ".dzookeeperandtheinfinitezoo.dzookeeperandtheinfinitezoo",
+    "Dzumabootcamp": ".dzuma.dzuma",
+    "E1asterismeasyversionbootcamp": ".e1asterismeasyversion.e1asterismeasyversion",
+    "E1chiorianddollpickingeasyversionbootcamp": ".e1chiorianddollpickingeasyversion.e1chiorianddollpickingeasyversion",
+    "E1convergingarrayeasyversionbootcamp": ".e1convergingarrayeasyversion.e1convergingarrayeasyversion",
+    "E1squarefreedivisioneasyversionbootcamp": ".e1squarefreedivisioneasyversion.e1squarefreedivisioneasyversion",
+    "E1twilightandancientscrolleasierversionbootcamp": ".e1twilightandancientscrolleasierversion.e1twilightandancientscrolleasierversion",
+    "E2chiorianddollpickinghardversionbootcamp": ".e2chiorianddollpickinghardversion.e2chiorianddollpickinghardversion",
+    "E2rotatecolumnshardversionbootcamp": ".e2rotatecolumnshardversion.e2rotatecolumnshardversion",
+    "E2twilightandancientscrollharderversionbootcamp": ".e2twilightandancientscrollharderversion.e2twilightandancientscrollharderversion",
+    "Eacolourfulprospectbootcamp": ".eacolourfulprospect.eacolourfulprospect",
+    "Ealiceboborangesandapplesbootcamp": ".ealiceboborangesandapples.ealiceboborangesandapples",
+    "Ealyonaandtowersbootcamp": ".ealyonaandtowers.ealyonaandtowers",
+    "Eandreachabilitybootcamp": ".eandreachability.eandreachability",
+    "Eanniversarybootcamp": ".eanniversary.eanniversary",
+    "Eapolloversuspanbootcamp": ".eapolloversuspan.eapolloversuspan",
+    "Eapplemanandasheetofpaperbootcamp": ".eapplemanandasheetofpaper.eapplemanandasheetofpaper",
+    "Earpaandagamewithmojtababootcamp": ".earpaandagamewithmojtaba.earpaandagamewithmojtaba",
+    "Earrangementbootcamp": ".earrangement.earrangement",
+    "Eartemandarraybootcamp": ".eartemandarray.eartemandarray",
+    "Earthdew2humiditybootcamp": ".earth_dew2humidity.earth_dew2humidity",
+    "Earthtyphoonbootcamp": ".earth_typhoon.earth_typhoon",
+    "Ebearandcompanybootcamp": ".ebearandcompany.ebearandcompany",
+    "Ebearanddrawingbootcamp": ".ebearanddrawing.ebearanddrawing",
+    "Ebeavermuncher0xffbootcamp": ".ebeavermuncher0xff.ebeavermuncher0xff",
+    "Eblackwhiteandgreytreebootcamp": ".eblackwhiteandgreytree.eblackwhiteandgreytree",
+    "Eblackwidowbootcamp": ".eblackwidow.eblackwidow",
+    "Eboredombootcamp": ".eboredom.eboredom",
+    "Ebracketsbootcamp": ".ebrackets.ebrackets",
+    "Ecarrotsforrabbitsbootcamp": ".ecarrotsforrabbits.ecarrotsforrabbits",
+    "Echoosingballsbootcamp": ".echoosingballs.echoosingballs",
+    "Ecielthecommanderbootcamp": ".ecielthecommander.ecielthecommander",
+    "Ecipherbootcamp": ".ecipher.ecipher",
+    "Ecirclingroundtreasuresbootcamp": ".ecirclingroundtreasures.ecirclingroundtreasures",
+    "Ecivilizationbootcamp": ".ecivilization.ecivilization",
+    "Ecleverfatratbootcamp": ".ecleverfatrat.ecleverfatrat",
+    "Ecnf2bootcamp": ".ecnf2.ecnf2",
+    "Ecointroublesbootcamp": ".ecointroubles.ecointroubles",
+    "Ecoloradopotatobeetlebootcamp": ".ecoloradopotatobeetle.ecoloradopotatobeetle",
+    "Ecompartmentsbootcamp": ".ecompartments.ecompartments",
+    "Econveyorbootcamp": ".econveyor.econveyor",
+    "Ecountpairsbootcamp": ".ecountpairs.ecountpairs",
+    "Ecubeproblembootcamp": ".ecubeproblem.ecubeproblem",
+    "Ecuptrickbootcamp": ".ecuptrick.ecuptrick",
+    "Ecuttingrectanglebootcamp": ".ecuttingrectangle.ecuttingrectangle",
+    "Ecyclicalquestbootcamp": ".ecyclicalquest.ecyclicalquest",
+    "Edatacentermaintenancebootcamp": ".edatacentermaintenance.edatacentermaintenance",
+    "Edigittreebootcamp": ".edigittree.edigittree",
+    "Ednaevolutionbootcamp": ".ednaevolution.ednaevolution",
+    "Edoegraphsbootcamp": ".edoegraphs.edoegraphs",
+    "Edoublehappinessbootcamp": ".edoublehappiness.edoublehappiness",
+    "Edoubleprofilesbootcamp": ".edoubleprofiles.edoubleprofiles",
+    "Edrazillikesheapbootcamp": ".edrazillikesheap.edrazillikesheap",
+    "Edzylovesfibonaccinumbersbootcamp": ".edzylovesfibonaccinumbers.edzylovesfibonaccinumbers",
+    "Eelectricchargesbootcamp": ".eelectriccharges.eelectriccharges",
+    "Eereaderdisplaybootcamp": ".eereaderdisplay.eereaderdisplay",
+    "Eeverhungrykrakozyabrabootcamp": ".eeverhungrykrakozyabra.eeverhungrykrakozyabra",
+    "Efetchthetreasurebootcamp": ".efetchthetreasure.efetchthetreasure",
+    "Efibtreebootcamp": ".efibtree.efibtree",
+    "Efixedpointremovalbootcamp": ".efixedpointremoval.efixedpointremoval",
+    "Eflawedflowbootcamp": ".eflawedflow.eflawedflow",
+    "Efragilebridgesbootcamp": ".efragilebridges.efragilebridges",
+    "Efreelancersdreamsbootcamp": ".efreelancersdreams.efreelancersdreams",
+    "Egameontreebootcamp": ".egameontree.egameontree",
+    "Egameswithrectanglebootcamp": ".egameswithrectangle.egameswithrectangle",
+    "Egamewithstringsbootcamp": ".egamewithstrings.egamewithstrings",
+    "Egeraldandgiantchessbootcamp": ".egeraldandgiantchess.egeraldandgiantchess",
+    "Egoodbyesouvenirbootcamp": ".egoodbyesouvenir.egoodbyesouvenir",
+    "Egraphreconstructionbootcamp": ".egraphreconstruction.egraphreconstruction",
+    "Egreedyshoppingbootcamp": ".egreedyshopping.egreedyshopping",
+    "Eguessthetreebootcamp": ".eguessthetree.eguessthetree",
+    "Eheightallthesamebootcamp": ".eheightallthesame.eheightallthesame",
+    "Ehelpgregthedwarfbootcamp": ".ehelpgregthedwarf.ehelpgregthedwarf",
+    "Ehelpingpeoplebootcamp": ".ehelpingpeople.ehelpingpeople",
+    "Ehillsbootcamp": ".ehills.ehills",
+    "Ehongcowbuysadeckofcardsbootcamp": ".ehongcowbuysadeckofcards.ehongcowbuysadeckofcards",
+    "Eicecreamcoloringbootcamp": ".eicecreamcoloring.eicecreamcoloring",
+    "Einstantnoodlesbootcamp": ".einstantnoodles.einstantnoodles",
+    "Einterestinggamebootcamp": ".einterestinggame.einterestinggame",
+    "Ejeffandbracketsbootcamp": ".ejeffandbrackets.ejeffandbrackets",
+    "Ejeremybearimybootcamp": ".ejeremybearimy.ejeremybearimy",
+    "Ejohnnyandgrandmasterbootcamp": ".ejohnnyandgrandmaster.ejohnnyandgrandmaster",
+    "Ekalilaanddimnaintheloggingindustrybootcamp": ".ekalilaanddimnaintheloggingindustry.ekalilaanddimnaintheloggingindustry",
+    "Ekarenandsupermarketbootcamp": ".ekarenandsupermarket.ekarenandsupermarket",
+    "Ekleofášandthenthlonbootcamp": ".ekleofášandthenthlon.ekleofášandthenthlon",
+    "Eleavingthebarbootcamp": ".eleavingthebar.eleavingthebar",
+    "Elevkoandstringsbootcamp": ".elevkoandstrings.elevkoandstrings",
+    "Elittleelephantandfurikandrubikbootcamp": ".elittleelephantandfurikandrubik.elittleelephantandfurikandrubik",
+    "Elittleelephantandlcmbootcamp": ".elittleelephantandlcm.elittleelephantandlcm",
+    "Elittleelephantandshiftsbootcamp": ".elittleelephantandshifts.elittleelephantandshifts",
+    "Elittleponyandsummersuncelebrationbootcamp": ".elittleponyandsummersuncelebration.elittleponyandsummersuncelebration",
+    "Elockpuzzlebootcamp": ".elockpuzzle.elockpuzzle",
+    "Elogicalexpressionbootcamp": ".elogicalexpression.elogicalexpression",
+    "Elogoturtlebootcamp": ".elogoturtle.elogoturtle",
+    "Elrubootcamp": ".elru.elru",
+    "Eluckypermutationbootcamp": ".eluckypermutation.eluckypermutation",
+    "Eluckysubsequencebootcamp": ".eluckysubsequence.eluckysubsequence",
+    "Eluckytreebootcamp": ".eluckytree.eluckytree",
+    "Emashmokhandreverseoperationbootcamp": ".emashmokhandreverseoperation.emashmokhandreverseoperation",
+    "Ematchingvsindependentsetbootcamp": ".ematchingvsindependentset.ematchingvsindependentset",
+    "Emiddleoutbootcamp": ".emiddleout.emiddleout",
+    "Emikeandfoambootcamp": ".emikeandfoam.emikeandfoam",
+    "Emonsterinvadersbootcamp": ".emonsterinvaders.emonsterinvaders",
+    "Emorrowindowsbootcamp": ".emorrowindows.emorrowindows",
+    "Emuseumstourbootcamp": ".emuseumstour.emuseumstour",
+    "Enastyaandunexpectedguestbootcamp": ".enastyaandunexpectedguest.enastyaandunexpectedguest",
+    "Enecklacebootcamp": ".enecklace.enecklace",
+    "Enewlanguagebootcamp": ".enewlanguage.enewlanguage",
+    "Enewyearandentityenumerationbootcamp": ".enewyearandentityenumeration.enewyearandentityenumeration",
+    "Enikitaandstackbootcamp": ".enikitaandstack.enikitaandstack",
+    "Enumbertransformationbootcamp": ".enumbertransformation.enumbertransformation",
+    "Enumbertransformationiibootcamp": ".enumbertransformationii.enumbertransformationii",
+    "Eonchangingtreebootcamp": ".eonchangingtree.eonchangingtree",
+    "Eoptimalpolygonperimeterbootcamp": ".eoptimalpolygonperimeter.eoptimalpolygonperimeter",
+    "Eoracandgameoflifebootcamp": ".eoracandgameoflife.eoracandgameoflife",
+    "Epackagedeliverybootcamp": ".epackagedelivery.epackagedelivery",
+    "Epainttreebootcamp": ".epainttree.epainttree",
+    "Epartybootcamp": ".eparty.eparty",
+    "Epermutationrecoverybootcamp": ".epermutationrecovery.epermutationrecovery",
+    "Epetyaandspidersbootcamp": ".epetyaandspiders.epetyaandspiders",
+    "Eplayingwithsupergluebootcamp": ".eplayingwithsuperglue.eplayingwithsuperglue",
+    "Epleasebootcamp": ".eplease.eplease",
+    "Eplumberbootcamp": ".eplumber.eplumber",
+    "Epointsonplanebootcamp": ".epointsonplane.epointsonplane",
+    "Epolothepenguinandxoroperationbootcamp": ".epolothepenguinandxoroperation.epolothepenguinandxoroperation",
+    "Eprairiepartitionbootcamp": ".eprairiepartition.eprairiepartition",
+    "Eprefixenlightenmentbootcamp": ".eprefixenlightenment.eprefixenlightenment",
+    "Eprefixproductsequencebootcamp": ".eprefixproductsequence.eprefixproductsequence",
+    "Epropagatingtreebootcamp": ".epropagatingtree.epropagatingtree",
+    "Equantifierquestionbootcamp": ".equantifierquestion.equantifierquestion",
+    "Equeueinthetrainbootcamp": ".equeueinthetrain.equeueinthetrain",
+    "Ereadtimebootcamp": ".ereadtime.ereadtime",
+    "Erectanglepainting2bootcamp": ".erectanglepainting2.erectanglepainting2",
+    "Eregionseparationbootcamp": ".eregionseparation.eregionseparation",
+    "Erelayracebootcamp": ".erelayrace.erelayrace",
+    "Erememberingstringsbootcamp": ".erememberingstrings.erememberingstrings",
+    "Erooksandrectanglesbootcamp": ".erooksandrectangles.erooksandrectangles",
+    "Erustystringbootcamp": ".erustystring.erustystring",
+    "Esashaandapatientfriendbootcamp": ".esashaandapatientfriend.esashaandapatientfriend",
+    "Esashaandarraybootcamp": ".esashaandarray.esashaandarray",
+    "Eserejaandbracketsbootcamp": ".eserejaandbrackets.eserejaandbrackets",
+    "Eserejaandsubsequencesbootcamp": ".eserejaandsubsequences.eserejaandsubsequences",
+    "Eserejaandthearrangementofnumbersbootcamp": ".eserejaandthearrangementofnumbers.eserejaandthearrangementofnumbers",
+    "Esergeanddiningroombootcamp": ".esergeanddiningroom.esergeanddiningroom",
+    "Esergeyandsubwaybootcamp": ".esergeyandsubway.esergeyandsubway",
+    "Esergeysproblembootcamp": ".esergeysproblem.esergeysproblem",
+    "Eskibasebootcamp": ".eskibase.eskibase",
+    "Esubsetsumsbootcamp": ".esubsetsums.esubsetsums",
+    "Esubstitutesinnumberbootcamp": ".esubstitutesinnumber.esubstitutesinnumber",
+    "Esumbalancebootcamp": ".esumbalance.esumbalance",
+    "Esuperiorperiodicsubarraysbootcamp": ".esuperiorperiodicsubarrays.esuperiorperiodicsubarrays",
+    "Eteambuildingbootcamp": ".eteambuilding.eteambuilding",
+    "Ethanosnimbootcamp": ".ethanosnim.ethanosnim",
+    "Ethegreatmixingbootcamp": ".ethegreatmixing.ethegreatmixing",
+    "Etournamentbootcamp": ".etournament.etournament",
+    "Evasyaandbeautifularraysbootcamp": ".evasyaandbeautifularrays.evasyaandbeautifularrays",
+    "Evectorsbootcamp": ".evectors.evectors",
+    "Ewatchingfireworksisfunbootcamp": ".ewatchingfireworksisfun.ewatchingfireworksisfun",
+    "Ewaterbalancebootcamp": ".ewaterbalance.ewaterbalance",
+    "Eweakmemorybootcamp": ".eweakmemory.eweakmemory",
+    "Ewizardsandnumbersbootcamp": ".ewizardsandnumbers.ewizardsandnumbers",
+    "Ewoodenfencebootcamp": ".ewoodenfence.ewoodenfence",
+    "Eworldeaterbrothersbootcamp": ".eworldeaterbrothers.eworldeaterbrothers",
+    "Eworldofdarkraftbattleforazathothbootcamp": ".eworldofdarkraftbattleforazathoth.eworldofdarkraftbattleforazathoth",
+    "Exenonsattackonthegangsbootcamp": ".exenonsattackonthegangs.exenonsattackonthegangs",
+    "Exorinversebootcamp": ".exorinverse.exorinverse",
+    "Exortreebootcamp": ".exortree.exortree",
+    "Eyaroslavandalgorithmbootcamp": ".eyaroslavandalgorithm.eyaroslavandalgorithm",
+    "Eyetanothernumbersequencebootcamp": ".eyetanothernumbersequence.eyetanothernumbersequence",
+    "Ezeroonebootcamp": ".ezeroone.ezeroone",
+    "F1chessstrikesbackeasyversionbootcamp": ".f1chessstrikesbackeasyversion.f1chessstrikesbackeasyversion",
+    "F1fallingsandeasyversionbootcamp": ".f1fallingsandeasyversion.f1fallingsandeasyversion",
+    "F1frequencyproblemeasyversionbootcamp": ".f1frequencyproblemeasyversion.f1frequencyproblemeasyversion",
+    "F1shortcolorfulstripbootcamp": ".f1shortcolorfulstrip.f1shortcolorfulstrip",
+    "F2longcolorfulstripbootcamp": ".f2longcolorfulstrip.f2longcolorfulstrip",
+    "F2thehiddenpairhardversionbootcamp": ".f2thehiddenpairhardversion.f2thehiddenpairhardversion",
+    "Farraybeautybootcamp": ".farraybeauty.farraybeauty",
+    "Faupontrougebootcamp": ".faupontrouge.faupontrouge",
+    "Fbamboopartitionbootcamp": ".fbamboopartition.fbamboopartition",
+    "Fbeautifulrectanglebootcamp": ".fbeautifulrectangle.fbeautifulrectangle",
+    "Fboboniuandstringbootcamp": ".fboboniuandstring.fboboniuandstring",
+    "Fbreakupbootcamp": ".fbreakup.fbreakup",
+    "Fcandiesforchildrenbootcamp": ".fcandiesforchildren.fcandiesforchildren",
+    "Fchaoticvbootcamp": ".fchaoticv.fchaoticv",
+    "Fcomputepowerbootcamp": ".fcomputepower.fcomputepower",
+    "Fcurfewbootcamp": ".fcurfew.fcurfew",
+    "Fencodingbootcamp": ".fencoding.fencoding",
+    "Feuclidsnightmarebootcamp": ".feuclidsnightmare.feuclidsnightmare",
+    "Ffruitsequencesbootcamp": ".ffruitsequences.ffruitsequences",
+    "Fgamebootcamp": ".fgame.fgame",
+    "Fhighcrybootcamp": ".fhighcry.fhighcry",
+    "Fknightsbootcamp": ".fknights.fknights",
+    "Fkonradandcompanyevaluationbootcamp": ".fkonradandcompanyevaluation.fkonradandcompanyevaluation",
+    "Fmaxmexbootcamp": ".fmaxmex.fmaxmex",
+    "Fmisspunyversebootcamp": ".fmisspunyverse.fmisspunyverse",
+    "Fnastyaandtimemachinebootcamp": ".fnastyaandtimemachine.fnastyaandtimemachine",
+    "Fnauuoandportalsbootcamp": ".fnauuoandportals.fnauuoandportals",
+    "Frearrangebootcamp": ".frearrange.frearrange",
+    "Frectanglepainting1bootcamp": ".frectanglepainting1.frectanglepainting1",
+    "Frésuméreviewbootcamp": ".frésuméreview.frésuméreview",
+    "Fsashaandinterestingfactfromgraphtheorybootcamp": ".fsashaandinterestingfactfromgraphtheory.fsashaandinterestingfactfromgraphtheory",
+    "Fslimeandsequenceseasyversionbootcamp": ".fslimeandsequenceseasyversion.fslimeandsequenceseasyversion",
+    "Fteodorisnotaliarbootcamp": ".fteodorisnotaliar.fteodorisnotaliar",
+    "Ftokitsukazeandstrangerectanglebootcamp": ".ftokitsukazeandstrangerectangle.ftokitsukazeandstrangerectangle",
+    "Fu2bootcamp": ".fu2.fu2",
+    "Futoshikibootcamp": ".futoshiki.futoshiki",
+    "Fwindingpolygonallinebootcamp": ".fwindingpolygonalline.fwindingpolygonalline",
+    "G1intoblockseasyversionbootcamp": ".g1intoblockseasyversion.g1intoblockseasyversion",
+    "Galaxiesbootcamp": ".galaxies.galaxies",
+    "Game24bootcamp": ".game24.game_default",
+    "Ghappylinebootcamp": ".ghappyline.ghappyline",
+    "Heyawakebootcamp": ".heyawake.heyawake",
+    "Hitoribootcamp": ".hitori.hitori",
+    "InChI2logPbootcamp": ".ChemStructure2Property.InChI2logPBootCamp",
+    "InternGObootcamp": ".GO.InternGOBootcampDev",
+    "JigsawSudokuV2bootcamp": ".jigsaw_sudoku.jigsaw_sudoku",
+    "Kakurasubootcamp": ".kakurasu.kakurasu",
+    "Kakurobootcamp": ".kakuro.kakuro",
+    "Killersudokubootcamp": ".killer_sudoku.killer_sudoku",
+    "KodCodebootcamp": ".kodcode.kodcode",
+    "KorCipherCustomInverseShiftSubstitutionCipherbootcamp": ".kor_cipher_custom_inverse_shift_substitution_cipher.kor_cipher_custom_inverse_shift_substitution_cipher",
+    "KorLogicAnalogicalReasoningbootcamp": ".kor_logic_analogical_reasoning.kor_logic_analogical_reasoning",
+    "KorLogicCanonicalPropositionsbootcamp": ".kor_logic_canonical_propositions.kor_logic_canonical_propositions",
+    "KorLogicCircuitDiagrambootcamp": ".kor_logic_circuit_diagram.kor_logic_circuit_diagram",
+    "KorLogicCooperativePrinciplebootcamp": ".kor_logic_cooperative_principle.kor_logic_cooperative_principle",
+    "KorLogicDefinitionsbootcamp": ".kor_logic_definitions.kor_logic_definitions",
+    "KorLogicDerivativeReasoningOfPropositionalLogicbootcamp": ".kor_logic_derivative_reasoning_of_propositional_logic.kor_logic_derivative_reasoning_of_propositional_logic",
+    "KorLogicDisjunctiveNormalFormAndConjunctiveNormalFormbootcamp": ".kor_logic_disjunctive_normal_form_and_conjunctive_normal_form.kor_logic_disjunctive_normal_form_and_conjunctive_normal_form",
+    "KorLogicDynamicLogicbootcamp": ".kor_logic_dynamic_logic.kor_logic_dynamic_logic",
+    "KorLogicEnumerativeInductiveReasoningbootcamp": ".kor_logic_enumerative_inductive_reasoning.kor_logic_enumerative_inductive_reasoning",
+    "KorLogicEpistemicLogicbootcamp": ".kor_logic_epistemic_logic.kor_logic_epistemic_logic",
+    "KorLogicEquivalenceCalculusbootcamp": ".kor_logic_equivalence_calculus.kor_logic_equivalence_calculus",
+    "KorLogicFigureOfTheSyllogismbootcamp": ".kor_logic_figure_of_the_syllogism.kor_logic_figure_of_the_syllogism",
+    "KorLogicFormalFallaciesbootcamp": ".kor_logic_formal_fallacies.kor_logic_formal_fallacies",
+    "KorLogicInductionParadoxbootcamp": ".kor_logic_induction_paradox.kor_logic_induction_paradox",
+    "KorLogicLogicalMethodsForExploringCauseAndEffectRelationshipsbootcamp": ".kor_logic_logical_methods_for_exploring_cause_and_effect_relationships.kor_logic_logical_methods_for_exploring_cause_and_effect_relationships",
+    "KorLogicPredicateLogicFormalizationbootcamp": ".kor_logic_predicate_logic_formalization.kor_logic_predicate_logic_formalization",
+    "KorLogicPropositionalLogicConceptsbootcamp": ".kor_logic_propositional_logic_concepts.kor_logic_propositional_logic_concepts",
+    "KorLogicPropositionalLogicFormalizationbootcamp": ".kor_logic_propositional_logic_formalization.kor_logic_propositional_logic_formalization",
+    "KorLogicResolutionbootcamp": ".kor_logic_resolution.kor_logic_resolution",
+    "KorLogicSpeechActsbootcamp": ".kor_logic_speech_acts.kor_logic_speech_acts",
+    "KorLogicStatisticalReasoningbootcamp": ".kor_logic_statistical_reasoning.kor_logic_statistical_reasoning",
+    "KorLogicTemporalPropositionsbootcamp": ".kor_logic_temporal_propositions.kor_logic_temporal_propositions",
+    "KorLogicTruthValueModalPropositionsbootcamp": ".kor_logic_truth_value_modal_propositions.kor_logic_truth_value_modal_propositions",
+    "KorOperationUnicode0023bootcamp": ".kor_operation_unicode0023.kor_operation_unicode0023",
+    "KorOperationUnicode0031bootcamp": ".kor_operation_unicode0031.kor_operation_unicode0031",
+    "KorOperationUnicode0032bootcamp": ".kor_operation_unicode0032.kor_operation_unicode0032",
+    "KorOperationUnicode0033bootcamp": ".kor_operation_unicode0033.kor_operation_unicode0033",
+    "KorOperationUnicode203bbootcamp": ".kor_operation_unicode203b.kor_operation_unicode203b",
+    "KorOperationUnicode20acbootcamp": ".kor_operation_unicode20ac.kor_operation_unicode20ac",
+    "KorOperationUnicode221ebootcamp": ".kor_operation_unicode221e.kor_operation_unicode221e",
+    "KorOperationUnicode2295bootcamp": ".kor_operation_unicode2295.kor_operation_unicode2295",
+    "KorOperationUnicode25a0bootcamp": ".kor_operation_unicode25a0.kor_operation_unicode25a0",
+    "KorOperationUnicode25a1bootcamp": ".kor_operation_unicode25a1.kor_operation_unicode25a1",
+    "KorOperationUnicode25b3bootcamp": ".kor_operation_unicode25b3.kor_operation_unicode25b3",
+    "KorOperationUnicode25bdbootcamp": ".kor_operation_unicode25bd.kor_operation_unicode25bd",
+    "KorOperationUnicode25c6bootcamp": ".kor_operation_unicode25c6.kor_operation_unicode25c6",
+    "KorOperationUnicode25c7bootcamp": ".kor_operation_unicode25c7.kor_operation_unicode25c7",
+    "KorOperationUnicode25cbbootcamp": ".kor_operation_unicode25cb.kor_operation_unicode25cb",
+    "KorOperationUnicode25cebootcamp": ".kor_operation_unicode25ce.kor_operation_unicode25ce",
+    "KorOperationUnicode25cfbootcamp": ".kor_operation_unicode25cf.kor_operation_unicode25cf",
+    "KorOperationUnicode2605bootcamp": ".kor_operation_unicode2605.kor_operation_unicode2605",
+    "KorOperationUnicodeffe0bootcamp": ".kor_operation_unicodeffe0.kor_operation_unicodeffe0",
+    "KorOperationUnicodeffe1bootcamp": ".kor_operation_unicodeffe1.kor_operation_unicodeffe1",
+    "KorPuzzle24Pointsbootcamp": ".kor_puzzle_24_points.kor_puzzle_24_points",
+    "KorPuzzleArrowMazebootcamp": ".kor_puzzle_arrow_maze.kor_puzzle_arrow_maze",
+    "KorPuzzleCalcudokobootcamp": ".kor_puzzle_calcudoko.kor_puzzle_calcudoko",
+    "KorPuzzleCampsitebootcamp": ".kor_puzzle_campsite.kor_puzzle_campsite",
+    "KorPuzzleConnectWordsbootcamp": ".kor_puzzle_connect_words.kor_puzzle_connect_words",
+    "KorPuzzleCryptoMathbootcamp": ".kor_puzzle_crypto_math.kor_puzzle_crypto_math",
+    "KorPuzzleKukurasubootcamp": ".kor_puzzle_kukurasu.kor_puzzle_kukurasu",
+    "KorPuzzleLogicPuzzlebootcamp": ".kor_puzzle_logic_puzzle.kor_puzzle_logic_puzzle",
+    "KorPuzzleMathPathbootcamp": ".kor_puzzle_math_path.kor_puzzle_math_path",
+    "KorPuzzleMinesweeperbootcamp": ".kor_puzzle_minesweeper.kor_puzzle_minesweeper",
+    "KorPuzzleSkyscrapersbootcamp": ".kor_puzzle_skyscrapers.kor_puzzle_skyscrapers",
+    "KorPuzzleSudokobootcamp": ".kor_puzzle_sudoko.kor_puzzle_sudoko",
+    "KorPuzzleWordBrainTeasersbootcamp": ".kor_puzzle_word_brain_teasers.kor_puzzle_word_brain_teasers",
+    "KorPuzzleWordLadderbootcamp": ".kor_puzzle_word_ladder.kor_puzzle_word_ladder",
+    "KorPuzzleWordRootsAndAffixesbootcamp": ".kor_puzzle_word_roots_and_affixes.kor_puzzle_word_roots_and_affixes",
+    "KorPuzzleWordSearchbootcamp": ".kor_puzzle_word_search.kor_puzzle_word_search",
+    "KorPuzzleWordscapesbootcamp": ".kor_puzzle_wordscapes.kor_puzzle_wordscapes",
+    "LightUpbootcamp": ".light_up.light_up",
+    "LinearODEbootcamp": ".linearODE.linearODE",
+    "MasyuV2bootcamp": ".masyu.masyu",
+    "Masyubootcamp": ".masyu.masyu_default",
+    "Mazebootcamp": ".maze.maze_default",
+    "Medcalculatorbootcamp": ".med_calculator.med_calculator",
+    "Minesweeperbootcamp": ".minesweeper.minesweeper",
+    "Nonogramsbootcamp": ".nonograms.nonograms",
+    "Norinoribootcamp": ".norinori.norinori",
+    "Pipesbootcamp": ".pipes.pipes",
+    "Shingokibootcamp": ".shingoki.shingoki",
+    "Skyscrapersbootcamp": ".skyscrapers.skyscrapers",
+    "Slitherlinkbootcamp": ".slitherlink.slitherlink_default",
+    "Starbattlebootcamp": ".starbattle.starbattle_default",
+    "Stitchesbootcamp": ".stitches.stitches",
+    "Sudokubootcamp": ".sudoku.sudoku",
+    "SymbolicRegressionbootcamp": ".symbolic_regression.symbolic_regression",
+    "Tapabootcamp": ".tapa.tapa",
+    "Tentsbootcamp": ".tents.tents",
+    "Thermometersbootcamp": ".thermometers.thermometers",
+}
 
+# Add all other bootcamps dynamically from directories with single character names
+import os
+import string
 
-from .bbeh_buggy_tables.bbeh_buggy_tables_default import BBEHBuggyTablesbootcamp
-from .bbeh_object_counting.object_counting_default import Bbehobjectcountingbootcamp
-from .bbeh_object_properties.object_properties_default import Bbehobjectpropertiesbootcamp
-from .bbeh_multistep_arithmetic.multistep_arithmetic_default import BbehMultistepArithmeticbootcamp
-from .bbeh_multistep_arithmetic.multistep_arithmetic import BBEHMultistepArithmeticV2bootcamp
-from .bbeh_shuff_object.shuff_object import Bbehshuffobjectbootcamp
-from .bbeh_dyck.bbeh_dyck_languages_InternBootcampDEV import BbehDyckLanguagesbootcamp
-from .bbeh_hyperbaton.hyperbaton_default import BBEHHyperbatonbootcamp
-from .bbeh_boardgame_qa.bbeh_boardgame_qa import Bbehboardgameqabootcamp
-from .bbeh_boolean_expressions.bbeh_boolean_expressions import Bbehbooleanexpressionsbootcamp
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
+# Helper function to convert snake_case to CamelCase
+def snake_to_camel(name):
+    parts = name.split('_')
+    return ''.join(word.capitalize() for word in parts)
 
-from .ChemStructure2Property.InChI2logPBootCamp import InChI2logPbootcamp
-from .ChemStructure2Property.InChI2MRBootCamp import InChI2MRbootCamp
-from .ChemStructure2Property.SMILES2logPBootCamp import SMILES2logPbootcamp
-from .ChemStructure2Property.SMILES2MRBootCamp import SMILES2MRbootCamp
+# Scan for single-letter directories and their bootcamp files
+for letter in string.ascii_lowercase:
+    # Pattern matching for directories starting with single letters
+    for dirname in os.listdir(current_dir):
+        if dirname.startswith(letter) and os.path.isdir(os.path.join(current_dir, dirname)):
+            # Skip directories already in registry
+            bootcamp_name = snake_to_camel(dirname) + "bootcamp"
+            if bootcamp_name not in BOOTCAMP_REGISTRY:
+                # Check if there's a Python file with the same name in the directory
+                py_file = os.path.join(current_dir, dirname, dirname + ".py")
+                if os.path.exists(py_file):
+                    BOOTCAMP_REGISTRY[bootcamp_name] = f".{dirname}.{dirname}.{bootcamp_name}"
 
+# Lazy import function
+def __getattr__(name):
+    """
+    Lazy loading of bootcamp classes to avoid circular imports and reduce startup time.
+    """
+    if name in BOOTCAMP_REGISTRY:
+        module_path = BOOTCAMP_REGISTRY[name]
+        # Use the registry key (name) as the class name, not the module path
+        class_name = name
+        
+        try:
+            # Import the module dynamically
+            from importlib import import_module
+            module = import_module(module_path, package=__name__)
+            return getattr(module, class_name)
+        except ModuleNotFoundError as e:
+            # Create a placeholder class for modules with missing dependencies
+            import warnings
+            warnings.warn(f"Module {name} could not be loaded due to missing dependency: {str(e)}")
+            
+            class PlaceholderBootcamp(Basebootcamp):
+                def __init__(self):
+                    raise ImportError(f"Cannot instantiate {name} due to missing dependency: {str(e)}")
+            
+            PlaceholderBootcamp.__name__ = name
+            PlaceholderBootcamp.__module__ = module_path
+            return PlaceholderBootcamp
+        except Exception as e:
+            raise AttributeError(f"Failed to import {name}: {str(e)}")
+    
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-from .earth_dew2humidity.earth_dew2humidity import Earthdew2humiditybootcamp
-from .linearODE.linearODE import LinearODEbootcamp
-
-from .kakurasu.kakurasu import Kakurasubootcamp
-from .nonograms.nonograms import Nonogramsbootcamp
-from .hitori.hitori import Hitoribootcamp
-from .norinori.norinori import Norinoribootcamp
-from .bridges.bridges import Bridgesbootcamp
-from .tents.tents import Tentsbootcamp
-from .masyu.masyu import MasyuV2bootcamp
-from .sudoku.sudoku import Sudokubootcamp
-from .aquarium.aquarium import Aquariumbootcamp
-from .light_up.light_up import LightUpbootcamp
-from .heyawake.heyawake import Heyawakebootcamp
-from .binairo.binairo import Binairobootcamp
-from .thermometers.thermometers import Thermometersbootcamp
-from .minesweeper.minesweeper import Minesweeperbootcamp
-from .galaxies.galaxies import Galaxiesbootcamp
-from .futoshiki.futoshiki import Futoshikibootcamp
-from .pipes.pipes import Pipesbootcamp
-from .tapa.tapa import Tapabootcamp
-from .kakuro.kakuro import Kakurobootcamp
-from .killer_sudoku.killer_sudoku import Killersudokubootcamp
-from .skyscrapers.skyscrapers import Skyscrapersbootcamp
-from .shingoki.shingoki import Shingokibootcamp
-from .stitches.stitches import Stitchesbootcamp
-from .dominosa.dominosa import Dominosabootcamp
-from .GO.InternGOBootcampDev import InternGObootcamp
-
-from .instruction_following.autoif import AutoIFbootcamp
-from .codeio.codeio import CodeIObootcamp
-from .kodcode.kodcode import KodCodebootcamp
-from .bigcodebench.bigcodebench import BigCodeBenchbootcamp
-from .word_sorting.word_sorting import BbehWordSortingbootcamp
-from .web_of_lies.web_of_lies import BbehWebOfLiesbootcamp
-from .temporal_sequences.temporal_sequences import BbehTemporalSequencesbootcamp
-from .kor_logic_predicate_logic_formalization.kor_logic_predicate_logic_formalization import KorLogicPredicateLogicFormalizationbootcamp
-from .kor_puzzle_connect_words.kor_puzzle_connect_words import KorPuzzleConnectWordsbootcamp
-from .kor_operation_unicode25c7.kor_operation_unicode25c7 import KorOperationUnicode25c7bootcamp
-from .kor_operation_unicode0023.kor_operation_unicode0023 import KorOperationUnicode0023bootcamp
-from .kor_puzzle_skyscrapers.kor_puzzle_skyscrapers import KorPuzzleSkyscrapersbootcamp
-from .kor_puzzle_sudoko.kor_puzzle_sudoko import KorPuzzleSudokobootcamp
-from .kor_puzzle_campsite.kor_puzzle_campsite import KorPuzzleCampsitebootcamp
-from .kor_operation_unicode0033.kor_operation_unicode0033 import KorOperationUnicode0033bootcamp
-from .kor_logic_dynamic_logic.kor_logic_dynamic_logic import KorLogicDynamicLogicbootcamp
-from .kor_logic_enumerative_inductive_reasoning.kor_logic_enumerative_inductive_reasoning import KorLogicEnumerativeInductiveReasoningbootcamp
-from .kor_logic_derivative_reasoning_of_propositional_logic.kor_logic_derivative_reasoning_of_propositional_logic import KorLogicDerivativeReasoningOfPropositionalLogicbootcamp
-from .kor_logic_equivalence_calculus.kor_logic_equivalence_calculus import KorLogicEquivalenceCalculusbootcamp
-from .kor_puzzle_math_path.kor_puzzle_math_path import KorPuzzleMathPathbootcamp
-from .kor_puzzle_word_roots_and_affixes.kor_puzzle_word_roots_and_affixes import KorPuzzleWordRootsAndAffixesbootcamp
-from .kor_puzzle_arrow_maze.kor_puzzle_arrow_maze import KorPuzzleArrowMazebootcamp
-from .kor_operation_unicodeffe1.kor_operation_unicodeffe1 import KorOperationUnicodeffe1bootcamp
-from .kor_logic_analogical_reasoning.kor_logic_analogical_reasoning import KorLogicAnalogicalReasoningbootcamp
-from .kor_logic_resolution.kor_logic_resolution import KorLogicResolutionbootcamp
-from .kor_operation_unicode25cb.kor_operation_unicode25cb import KorOperationUnicode25cbbootcamp
-from .kor_logic_temporal_propositions.kor_logic_temporal_propositions import KorLogicTemporalPropositionsbootcamp
-from .kor_operation_unicode221e.kor_operation_unicode221e import KorOperationUnicode221ebootcamp
-from .kor_logic_statistical_reasoning.kor_logic_statistical_reasoning import KorLogicStatisticalReasoningbootcamp
-from .kor_puzzle_logic_puzzle.kor_puzzle_logic_puzzle import KorPuzzleLogicPuzzlebootcamp
-from .kor_operation_unicode0031.kor_operation_unicode0031 import KorOperationUnicode0031bootcamp
-from .kor_puzzle_crypto_math.kor_puzzle_crypto_math import KorPuzzleCryptoMathbootcamp
-from .kor_cipher_custom_inverse_shift_substitution_cipher.kor_cipher_custom_inverse_shift_substitution_cipher import KorCipherCustomInverseShiftSubstitutionCipherbootcamp
-from .kor_operation_unicode203b.kor_operation_unicode203b import KorOperationUnicode203bbootcamp
-from .kor_logic_canonical_propositions.kor_logic_canonical_propositions import KorLogicCanonicalPropositionsbootcamp
-from .kor_puzzle_kukurasu.kor_puzzle_kukurasu import KorPuzzleKukurasubootcamp
-from .kor_operation_unicode25a0.kor_operation_unicode25a0 import KorOperationUnicode25a0bootcamp
-from .kor_logic_formal_fallacies.kor_logic_formal_fallacies import KorLogicFormalFallaciesbootcamp
-from .kor_operation_unicode25ce.kor_operation_unicode25ce import KorOperationUnicode25cebootcamp
-from .kor_puzzle_wordscapes.kor_puzzle_wordscapes import KorPuzzleWordscapesbootcamp
-from .kor_logic_definitions.kor_logic_definitions import KorLogicDefinitionsbootcamp
-from .kor_logic_disjunctive_normal_form_and_conjunctive_normal_form.kor_logic_disjunctive_normal_form_and_conjunctive_normal_form import KorLogicDisjunctiveNormalFormAndConjunctiveNormalFormbootcamp
-from .kor_operation_unicode2295.kor_operation_unicode2295 import KorOperationUnicode2295bootcamp
-from .kor_logic_figure_of_the_syllogism.kor_logic_figure_of_the_syllogism import KorLogicFigureOfTheSyllogismbootcamp
-from .kor_operation_unicode20ac.kor_operation_unicode20ac import KorOperationUnicode20acbootcamp
-from .kor_operation_unicode2605.kor_operation_unicode2605 import KorOperationUnicode2605bootcamp
-from .kor_logic_speech_acts.kor_logic_speech_acts import KorLogicSpeechActsbootcamp
-from .kor_operation_unicode25cf.kor_operation_unicode25cf import KorOperationUnicode25cfbootcamp
-from .kor_operation_unicode25c6.kor_operation_unicode25c6 import KorOperationUnicode25c6bootcamp
-from .kor_logic_epistemic_logic.kor_logic_epistemic_logic import KorLogicEpistemicLogicbootcamp
-from .kor_puzzle_minesweeper.kor_puzzle_minesweeper import KorPuzzleMinesweeperbootcamp
-from .kor_operation_unicode0032.kor_operation_unicode0032 import KorOperationUnicode0032bootcamp
-from .kor_operation_unicodeffe0.kor_operation_unicodeffe0 import KorOperationUnicodeffe0bootcamp
-from .kor_puzzle_word_ladder.kor_puzzle_word_ladder import KorPuzzleWordLadderbootcamp
-from .kor_logic_cooperative_principle.kor_logic_cooperative_principle import KorLogicCooperativePrinciplebootcamp
-from .kor_operation_unicode25a1.kor_operation_unicode25a1 import KorOperationUnicode25a1bootcamp
-from .kor_puzzle_24_points.kor_puzzle_24_points import KorPuzzle24Pointsbootcamp
-from .kor_logic_propositional_logic_concepts.kor_logic_propositional_logic_concepts import KorLogicPropositionalLogicConceptsbootcamp
-from .kor_logic_induction_paradox.kor_logic_induction_paradox import KorLogicInductionParadoxbootcamp
-from .kor_puzzle_word_brain_teasers.kor_puzzle_word_brain_teasers import KorPuzzleWordBrainTeasersbootcamp
-from .kor_logic_circuit_diagram.kor_logic_circuit_diagram import KorLogicCircuitDiagrambootcamp
-from .kor_logic_propositional_logic_formalization.kor_logic_propositional_logic_formalization import KorLogicPropositionalLogicFormalizationbootcamp
-from .kor_logic_truth_value_modal_propositions.kor_logic_truth_value_modal_propositions import KorLogicTruthValueModalPropositionsbootcamp
-from .kor_operation_unicode25bd.kor_operation_unicode25bd import KorOperationUnicode25bdbootcamp
-from .kor_logic_logical_methods_for_exploring_cause_and_effect_relationships.kor_logic_logical_methods_for_exploring_cause_and_effect_relationships import KorLogicLogicalMethodsForExploringCauseAndEffectRelationshipsbootcamp
-from .kor_puzzle_calcudoko.kor_puzzle_calcudoko import KorPuzzleCalcudokobootcamp
-from .kor_puzzle_word_search.kor_puzzle_word_search import KorPuzzleWordSearchbootcamp
-from .kor_operation_unicode25b3.kor_operation_unicode25b3 import KorOperationUnicode25b3bootcamp
-
-from .dandorandsquaresum.dandorandsquaresum import Dandorandsquaresumbootcamp
-from .cicecreamcoloring.cicecreamcoloring import Cicecreamcoloringbootcamp
-from .cfractaldetector.cfractaldetector import Cfractaldetectorbootcamp
-from .cwateringflowers.cwateringflowers import Cwateringflowersbootcamp
-from .cgreedyarkady.cgreedyarkady import Cgreedyarkadybootcamp
-from .cxortree.cxortree import Cxortreebootcamp
-from .daliceandthedoll.daliceandthedoll import Daliceandthedollbootcamp
-from .cfindpair.cfindpair import Cfindpairbootcamp
-from .bantman.bantman import Bantmanbootcamp
-from .amrkitayutathetreasurehunter.amrkitayutathetreasurehunter import Amrkitayutathetreasurehunterbootcamp
-from .cdiscreteacceleration.cdiscreteacceleration import Cdiscreteaccelerationbootcamp
-from .ccandies.ccandies import Ccandiesbootcamp
-from .aglasscarving.aglasscarving import Aglasscarvingbootcamp
-from .bonceagain.bonceagain import Bonceagainbootcamp
-from .cnetworksafety.cnetworksafety import Cnetworksafetybootcamp
-from .dstrangehousing.dstrangehousing import Dstrangehousingbootcamp
-from .ccowboys.ccowboys import Ccowboysbootcamp
-from .cpetyaandexam.cpetyaandexam import Cpetyaandexambootcamp
-from .cmorsecode.cmorsecode import Cmorsecodebootcamp
-from .dbouncingboomerangs.dbouncingboomerangs import Dbouncingboomerangsbootcamp
-from .erememberingstrings.erememberingstrings import Erememberingstringsbootcamp
-from .crunningtrack.crunningtrack import Crunningtrackbootcamp
-from .cgivenlengthandsumofdigits.cgivenlengthandsumofdigits import Cgivenlengthandsumofdigitsbootcamp
-from .cpocketbook.cpocketbook import Cpocketbookbootcamp
-from .cvaleraandelections.cvaleraandelections import Cvaleraandelectionsbootcamp
-from .dreturninghome.dreturninghome import Dreturninghomebootcamp
-from .cmishaandforest.cmishaandforest import Cmishaandforestbootcamp
-from .edoublehappiness.edoublehappiness import Edoublehappinessbootcamp
-from .eandreachability.eandreachability import Eandreachabilitybootcamp
-from .cremovingcolumns.cremovingcolumns import Cremovingcolumnsbootcamp
-from .ccelexupdate.ccelexupdate import Ccelexupdatebootcamp
-from .athechildandtoy.athechildandtoy import Athechildandtoybootcamp
-from .ccolorfulbricks.ccolorfulbricks import Ccolorfulbricksbootcamp
-from .ccoloredrooks.ccoloredrooks import Ccoloredrooksbootcamp
-from .dshichikujiandpowergrid.dshichikujiandpowergrid import Dshichikujiandpowergridbootcamp
-from .crangeincrements.crangeincrements import Crangeincrementsbootcamp
-from .cmollyschemicals.cmollyschemicals import Cmollyschemicalsbootcamp
-from .bseabattle.bseabattle import Bseabattlebootcamp
-from .cacolourfulprospect.cacolourfulprospect import Cacolourfulprospectbootcamp
-from .ccrossword.ccrossword import Ccrosswordbootcamp
-from .cfamildoorandbrackets.cfamildoorandbrackets import Cfamildoorandbracketsbootcamp
-from .cquiz.cquiz import Cquizbootcamp
-from .cvasilythebearandsequence.cvasilythebearandsequence import Cvasilythebearandsequencebootcamp
-from .dsocialnetwork.dsocialnetwork import Dsocialnetworkbootcamp
-from .edzylovesfibonaccinumbers.edzylovesfibonaccinumbers import Edzylovesfibonaccinumbersbootcamp
-from .dmultiplesandpowerdifferences.dmultiplesandpowerdifferences import Dmultiplesandpowerdifferencesbootcamp
-from .dtaxes.dtaxes import Dtaxesbootcamp
-from .chackit.chackit import Chackitbootcamp
-from .dtopsecrettask.dtopsecrettask import Dtopsecrettaskbootcamp
-from .celementextermination.celementextermination import Celementexterminationbootcamp
-from .elittleelephantandfurikandrubik.elittleelephantandfurikandrubik import Elittleelephantandfurikandrubikbootcamp
-from .ccycleinmaze.ccycleinmaze import Ccycleinmazebootcamp
-from .dminimumdiametertree.dminimumdiametertree import Dminimumdiametertreebootcamp
-from .ctram.ctram import Ctrambootcamp
-from .d2rpdandrapsheethardversion.d2rpdandrapsheethardversion import D2rpdandrapsheethardversionbootcamp
-from .cthreebasestations.cthreebasestations import Cthreebasestationsbootcamp
-from .cpalindromicpaths.cpalindromicpaths import Cpalindromicpathsbootcamp
-from .cladder.cladder import Cladderbootcamp
-from .dtooeasyproblems.dtooeasyproblems import Dtooeasyproblemsbootcamp
-from .dcolorfulpoints.dcolorfulpoints import Dcolorfulpointsbootcamp
-from .bskills.bskills import Bskillsbootcamp
-from .e1twilightandancientscrolleasierversion.e1twilightandancientscrolleasierversion import E1twilightandancientscrolleasierversionbootcamp
-from .csmallestword.csmallestword import Csmallestwordbootcamp
-from .czeroone.czeroone import Czeroonebootcamp
-from .dsocialcircles.dsocialcircles import Dsocialcirclesbootcamp
-from .ematchingvsindependentset.ematchingvsindependentset import Ematchingvsindependentsetbootcamp
-from .ctravellingsalesmanandspecialnumbers.ctravellingsalesmanandspecialnumbers import Ctravellingsalesmanandspecialnumbersbootcamp
-from .drearrange.drearrange import Drearrangebootcamp
-from .edoubleprofiles.edoubleprofiles import Edoubleprofilesbootcamp
-from .dweirdchess.dweirdchess import Dweirdchessbootcamp
-from .clittlefrog.clittlefrog import Clittlefrogbootcamp
-from .dsum.dsum import Dsumbootcamp
-from .boracandmedians.boracandmedians import Boracandmediansbootcamp
-from .afoxandnames.afoxandnames import Afoxandnamesbootcamp
-from .cgargariandbishops.cgargariandbishops import Cgargariandbishopsbootcamp
-from .dprogramminglanguage.dprogramminglanguage import Dprogramminglanguagebootcamp
-from .csagheerandnubianmarket.csagheerandnubianmarket import Csagheerandnubianmarketbootcamp
-from .drecoveringbst.drecoveringbst import Drecoveringbstbootcamp
-from .eteambuilding.eteambuilding import Eteambuildingbootcamp
-from .bstrip.bstrip import Bstripbootcamp
-from .dnauuoandportals.dnauuoandportals import Dnauuoandportalsbootcamp
-from .d1frequencyproblemeasyversion.d1frequencyproblemeasyversion import D1frequencyproblemeasyversionbootcamp
-from .csystemtesting.csystemtesting import Csystemtestingbootcamp
-from .aalmostarithmeticalprogression.aalmostarithmeticalprogression import Aalmostarithmeticalprogressionbootcamp
-from .camrandchemistry.camrandchemistry import Camrandchemistrybootcamp
-from .cbeautifullyrics.cbeautifullyrics import Cbeautifullyricsbootcamp
-from .bpincodes.bpincodes import Bpincodesbootcamp
-from .ecielthecommander.ecielthecommander import Ecielthecommanderbootcamp
-from .cflag.cflag import Cflagbootcamp
-from .btreearray.btreearray import Btreearraybootcamp
-from .emikeandfoam.emikeandfoam import Emikeandfoambootcamp
-from .cstablegroups.cstablegroups import Cstablegroupsbootcamp
-from .ccandiesdistribution.ccandiesdistribution import Ccandiesdistributionbootcamp
-from .fwindingpolygonalline.fwindingpolygonalline import Fwindingpolygonallinebootcamp
-from .cayoubsfunction.cayoubsfunction import Cayoubsfunctionbootcamp
-from .cmodifiedgcd.cmodifiedgcd import Cmodifiedgcdbootcamp
-from .eplumber.eplumber import Eplumberbootcamp
-from .cbeaver.cbeaver import Cbeaverbootcamp
-from .cmuseumstour.cmuseumstour import Cmuseumstourbootcamp
-from .emiddleout.emiddleout import Emiddleoutbootcamp
-from .egoodbyesouvenir.egoodbyesouvenir import Egoodbyesouvenirbootcamp
-from .crectangles.crectangles import Crectanglesbootcamp
-from .canotherproblemonstrings.canotherproblemonstrings import Canotherproblemonstringsbootcamp
-from .coptimalpolygonperimeter.coptimalpolygonperimeter import Coptimalpolygonperimeterbootcamp
-from .ceverhungrykrakozyabra.ceverhungrykrakozyabra import Ceverhungrykrakozyabrabootcamp
-from .dolyaandmagicalsquare.dolyaandmagicalsquare import Dolyaandmagicalsquarebootcamp
-from .cryoukosmemorynote.cryoukosmemorynote import Cryoukosmemorynotebootcamp
-from .efixedpointremoval.efixedpointremoval import Efixedpointremovalbootcamp
-from .dromandigits.dromandigits import Dromandigitsbootcamp
-from .drésuméreview.drésuméreview import Drésuméreviewbootcamp
-from .ckamalolmolkspainting.ckamalolmolkspainting import Ckamalolmolkspaintingbootcamp
-from .fkonradandcompanyevaluation.fkonradandcompanyevaluation import Fkonradandcompanyevaluationbootcamp
-from .croundcorridor.croundcorridor import Croundcorridorbootcamp
-from .eparty.eparty import Epartybootcamp
-from .cmikeandfoam.cmikeandfoam import Cmikeandfoambootcamp
-from .cjonsnowandhisfavouritenumber.cjonsnowandhisfavouritenumber import Cjonsnowandhisfavouritenumberbootcamp
-from .dsolvethemaze.dsolvethemaze import Dsolvethemazebootcamp
-from .egameontree.egameontree import Egameontreebootcamp
-from .cpartialsums.cpartialsums import Cpartialsumsbootcamp
-from .creadtime.creadtime import Creadtimebootcamp
-from .cbeautypageant.cbeautypageant import Cbeautypageantbootcamp
-from .binvarianceoftree.binvarianceoftree import Binvarianceoftreebootcamp
-from .chelgahufflepuffscup.chelgahufflepuffscup import Chelgahufflepuffscupbootcamp
-from .ctavasandkarafs.ctavasandkarafs import Ctavasandkarafsbootcamp
-from .dmarsrover.dmarsrover import Dmarsroverbootcamp
-from .cschedule.cschedule import Cschedulebootcamp
-from .eluckysubsequence.eluckysubsequence import Eluckysubsequencebootcamp
-from .eacolourfulprospect.eacolourfulprospect import Eacolourfulprospectbootcamp
-from .apbinary.apbinary import Apbinarybootcamp
-from .ecubeproblem.ecubeproblem import Ecubeproblembootcamp
-from .ccowandmessage.ccowandmessage import Ccowandmessagebootcamp
-from .cpythagoreantriples.cpythagoreantriples import Cpythagoreantriplesbootcamp
-from .crotationmatching.crotationmatching import Crotationmatchingbootcamp
-from .csanatorium.csanatorium import Csanatoriumbootcamp
-from .dteamsformation.dteamsformation import Dteamsformationbootcamp
-from .cteodorisnotaliar.cteodorisnotaliar import Cteodorisnotaliarbootcamp
-from .aquiz.aquiz import Aquizbootcamp
-from .cmaxmex.cmaxmex import Cmaxmexbootcamp
-from .ctwopermutations.ctwopermutations import Ctwopermutationsbootcamp
-from .ccorporationmail.ccorporationmail import Ccorporationmailbootcamp
-from .drectanglepainting1.drectanglepainting1 import Drectanglepainting1bootcamp
-from .fboboniuandstring.fboboniuandstring import Fboboniuandstringbootcamp
-from .cmaximumsubrectangle.cmaximumsubrectangle import Cmaximumsubrectanglebootcamp
-from .cairconditioner.cairconditioner import Cairconditionerbootcamp
-from .fbreakup.fbreakup import Fbreakupbootcamp
-from .cparty.cparty import Cpartybootcamp
-from .clogoturtle.clogoturtle import Clogoturtlebootcamp
-from .cflawedflow.cflawedflow import Cflawedflowbootcamp
-from .cmoviecritics.cmoviecritics import Cmoviecriticsbootcamp
-from .cmaximumwidth.cmaximumwidth import Cmaximumwidthbootcamp
-from .cwizardsandnumbers.cwizardsandnumbers import Cwizardsandnumbersbootcamp
-from .eluckypermutation.eluckypermutation import Eluckypermutationbootcamp
-from .ckintegers.ckintegers import Ckintegersbootcamp
-from .eworldeaterbrothers.eworldeaterbrothers import Eworldeaterbrothersbootcamp
-from .f1frequencyproblemeasyversion.f1frequencyproblemeasyversion import F1frequencyproblemeasyversionbootcamp
-from .dqueue.dqueue import Dqueuebootcamp
-from .cayoubandlostarray.cayoubandlostarray import Cayoubandlostarraybootcamp
-from .cserejaandbrackets.cserejaandbrackets import Cserejaandbracketsbootcamp
-from .exortree.exortree import Exortreebootcamp
-from .caddone.caddone import Caddonebootcamp
-from .cshaassandlights.cshaassandlights import Cshaassandlightsbootcamp
-from .bsifidandstrangesubsequences.bsifidandstrangesubsequences import Bsifidandstrangesubsequencesbootcamp
-from .ckingspath.ckingspath import Ckingspathbootcamp
-from .bzgukistringz.bzgukistringz import Bzgukistringzbootcamp
-from .cemailaddress.cemailaddress import Cemailaddressbootcamp
-from .eblackwhiteandgreytree.eblackwhiteandgreytree import Eblackwhiteandgreytreebootcamp
-from .cmahmoudandamessage.cmahmoudandamessage import Cmahmoudandamessagebootcamp
-from .cskier.cskier import Cskierbootcamp
-from .ednaevolution.ednaevolution import Ednaevolutionbootcamp
-from .cconstellation.cconstellation import Cconstellationbootcamp
-from .dpickingstrings.dpickingstrings import Dpickingstringsbootcamp
-from .cgameonleaves.cgameonleaves import Cgameonleavesbootcamp
-from .cstrangefunction.cstrangefunction import Cstrangefunctionbootcamp
-from .dzookeeperandtheinfinitezoo.dzookeeperandtheinfinitezoo import Dzookeeperandtheinfinitezoobootcamp
-from .cpbinary.cpbinary import Cpbinarybootcamp
-from .cnastyaistransposingmatrices.cnastyaistransposingmatrices import Cnastyaistransposingmatricesbootcamp
-from .cphonenumbers.cphonenumbers import Cphonenumbersbootcamp
-from .epropagatingtree.epropagatingtree import Epropagatingtreebootcamp
-from .bmultithreading.bmultithreading import Bmultithreadingbootcamp
-from .cstarsky.cstarsky import Cstarskybootcamp
-from .cbamboopartition.cbamboopartition import Cbamboopartitionbootcamp
-from .cdimaandsalad.cdimaandsalad import Cdimaandsaladbootcamp
-from .ceugeneandanarray.ceugeneandanarray import Ceugeneandanarraybootcamp
-from .elru.elru import Elrubootcamp
-from .ckaaviandmagicspell.ckaaviandmagicspell import Ckaaviandmagicspellbootcamp
-from .farraybeauty.farraybeauty import Farraybeautybootcamp
-from .chappyfarm5.chappyfarm5 import Chappyfarm5bootcamp
-from .dseabattle.dseabattle import Dseabattlebootcamp
-from .dvusthecossackandnumbers.dvusthecossackandnumbers import Dvusthecossackandnumbersbootcamp
-from .chills.chills import Chillsbootcamp
-from .conlinecoursesinbsu.conlinecoursesinbsu import Conlinecoursesinbsubootcamp
-from .csergeysproblem.csergeysproblem import Csergeysproblembootcamp
-from .dgamewithpowers.dgamewithpowers import Dgamewithpowersbootcamp
-from .emuseumstour.emuseumstour import Emuseumstourbootcamp
-from .atavasandkarafs.atavasandkarafs import Atavasandkarafsbootcamp
-from .enecklace.enecklace import Enecklacebootcamp
-from .cnewlanguage.cnewlanguage import Cnewlanguagebootcamp
-from .cdesigntutorialmakeitnondeterministic.cdesigntutorialmakeitnondeterministic import Cdesigntutorialmakeitnondeterministicbootcamp
-from .csubstitutesinnumber.csubstitutesinnumber import Csubstitutesinnumberbootcamp
-from .cnewyearratingschange.cnewyearratingschange import Cnewyearratingschangebootcamp
-from .eplayingwithsuperglue.eplayingwithsuperglue import Eplayingwithsupergluebootcamp
-from .edigittree.edigittree import Edigittreebootcamp
-from .dpowerfulksenia.dpowerfulksenia import Dpowerfulkseniabootcamp
-from .bsimplexml.bsimplexml import Bsimplexmlbootcamp
-from .e2rotatecolumnshardversion.e2rotatecolumnshardversion import E2rotatecolumnshardversionbootcamp
-from .dslime.dslime import Dslimebootcamp
-from .cphotographer.cphotographer import Cphotographerbootcamp
-from .fbamboopartition.fbamboopartition import Fbamboopartitionbootcamp
-from .esashaandapatientfriend.esashaandapatientfriend import Esashaandapatientfriendbootcamp
-from .cgambling.cgambling import Cgamblingbootcamp
-from .dservalandrootedtree.dservalandrootedtree import Dservalandrootedtreebootcamp
-from .cu2.cu2 import Cu2bootcamp
-from .craytracing.craytracing import Craytracingbootcamp
-from .cconstanzesmachine.cconstanzesmachine import Cconstanzesmachinebootcamp
-from .chongcowbuysadeckofcards.chongcowbuysadeckofcards import Chongcowbuysadeckofcardsbootcamp
-from .cmashaandtwofriends.cmashaandtwofriends import Cmashaandtwofriendsbootcamp
-from .cnikitaandstack.cnikitaandstack import Cnikitaandstackbootcamp
-from .elittleponyandsummersuncelebration.elittleponyandsummersuncelebration import Elittleponyandsummersuncelebrationbootcamp
-from .dsecretpasswords.dsecretpasswords import Dsecretpasswordsbootcamp
-from .cdevelopingskills.cdevelopingskills import Cdevelopingskillsbootcamp
-from .dgame.dgame import Dgamebootcamp
-from .cswaps.cswaps import Cswapsbootcamp
-from .cmemoryanddeevolution.cmemoryanddeevolution import Cmemoryanddeevolutionbootcamp
-from .cnastiaandahiddenpermutation.cnastiaandahiddenpermutation import Cnastiaandahiddenpermutationbootcamp
-from .dchangingarray.dchangingarray import Dchangingarraybootcamp
-from .ekalilaanddimnaintheloggingindustry.ekalilaanddimnaintheloggingindustry import Ekalilaanddimnaintheloggingindustrybootcamp
-from .dvasyaandchess.dvasyaandchess import Dvasyaandchessbootcamp
-from .ecuttingrectangle.ecuttingrectangle import Ecuttingrectanglebootcamp
-from .cposterized.cposterized import Cposterizedbootcamp
-from .charmonyanalysis.charmonyanalysis import Charmonyanalysisbootcamp
-from .e2twilightandancientscrollharderversion.e2twilightandancientscrollharderversion import E2twilightandancientscrollharderversionbootcamp
-from .dfafaandancientalphabet.dfafaandancientalphabet import Dfafaandancientalphabetbootcamp
-from .ckuroniandimpossiblecalculation.ckuroniandimpossiblecalculation import Ckuroniandimpossiblecalculationbootcamp
-from .bcountpairs.bcountpairs import Bcountpairsbootcamp
-from .cehabandprefixmexs.cehabandprefixmexs import Cehabandprefixmexsbootcamp
-from .domnomandnecklace.domnomandnecklace import Domnomandnecklacebootcamp
-from .ddivideandsummarize.ddivideandsummarize import Ddivideandsummarizebootcamp
-from .ctreesoftranquillity.ctreesoftranquillity import Ctreesoftranquillitybootcamp
-from .cilyaandthetree.cilyaandthetree import Cilyaandthetreebootcamp
-from .enewyearandentityenumeration.enewyearandentityenumeration import Enewyearandentityenumerationbootcamp
-from .cpickheroes.cpickheroes import Cpickheroesbootcamp
-from .cexams.cexams import Cexamsbootcamp
-from .bminimumdiametertree.bminimumdiametertree import Bminimumdiametertreebootcamp
-from .cqueueinthetrain.cqueueinthetrain import Cqueueinthetrainbootcamp
-from .dsetofpoints.dsetofpoints import Dsetofpointsbootcamp
-from .csubsetsums.csubsetsums import Csubsetsumsbootcamp
-from .eskibase.eskibase import Eskibasebootcamp
-from .dthebestvacation.dthebestvacation import Dthebestvacationbootcamp
-from .fu2.fu2 import Fu2bootcamp
-from .dlunarnewyearandawander.dlunarnewyearandawander import Dlunarnewyearandawanderbootcamp
-from .bweirdjourney.bweirdjourney import Bweirdjourneybootcamp
-from .ccircularrmq.ccircularrmq import Ccircularrmqbootcamp
-from .dsumofpaths.dsumofpaths import Dsumofpathsbootcamp
-from .cglasscarving.cglasscarving import Cglasscarvingbootcamp
-from .ccrazydiamond.ccrazydiamond import Ccrazydiamondbootcamp
-from .erooksandrectangles.erooksandrectangles import Erooksandrectanglesbootcamp
-from .cbasketballexercise.cbasketballexercise import Cbasketballexercisebootcamp
-from .crussianroulette.crussianroulette import Crussianroulettebootcamp
-from .cstrangeradiation.cstrangeradiation import Cstrangeradiationbootcamp
-from .ethegreatmixing.ethegreatmixing import Ethegreatmixingbootcamp
-from .dsashaandinterestingfactfromgraphtheory.dsashaandinterestingfactfromgraphtheory import Dsashaandinterestingfactfromgraphtheorybootcamp
-from .cmeaninglessoperations.cmeaninglessoperations import Cmeaninglessoperationsbootcamp
-from .cpermutationgame.cpermutationgame import Cpermutationgamebootcamp
-from .cbuildingpermutation.cbuildingpermutation import Cbuildingpermutationbootcamp
-from .aunusualproduct.aunusualproduct import Aunusualproductbootcamp
-from .csocks.csocks import Csocksbootcamp
-from .bourtanyaiscryingoutloud.bourtanyaiscryingoutloud import Bourtanyaiscryingoutloudbootcamp
-from .frearrange.frearrange import Frearrangebootcamp
-from .amessy.amessy import Amessybootcamp
-from .cvladikandfractions.cvladikandfractions import Cvladikandfractionsbootcamp
-from .ctokitsukazeandduel.ctokitsukazeandduel import Ctokitsukazeandduelbootcamp
-from .chistory.chistory import Chistorybootcamp
-from .eoptimalpolygonperimeter.eoptimalpolygonperimeter import Eoptimalpolygonperimeterbootcamp
-from .ecountpairs.ecountpairs import Ecountpairsbootcamp
-from .echoosingballs.echoosingballs import Echoosingballsbootcamp
-from .eplease.eplease import Epleasebootcamp
-from .ctournament.ctournament import Ctournamentbootcamp
-from .elittleelephantandlcm.elittleelephantandlcm import Elittleelephantandlcmbootcamp
-from .adidyoumean.adidyoumean import Adidyoumeanbootcamp
-from .dvolcanoes.dvolcanoes import Dvolcanoesbootcamp
-from .cpresent.cpresent import Cpresentbootcamp
-from .crestoregraph.crestoregraph import Crestoregraphbootcamp
-from .cfoxandcardgame.cfoxandcardgame import Cfoxandcardgamebootcamp
-from .dbeautifulpairsofnumbers.dbeautifulpairsofnumbers import Dbeautifulpairsofnumbersbootcamp
-from .ccycle.ccycle import Ccyclebootcamp
-from .cpolycarpattheradio.cpolycarpattheradio import Cpolycarpattheradiobootcamp
-from .dnudistbeach.dnudistbeach import Dnudistbeachbootcamp
-from .ccyclicalquest.ccyclicalquest import Ccyclicalquestbootcamp
-from .csecret.csecret import Csecretbootcamp
-from .ccointroubles.ccointroubles import Ccointroublesbootcamp
-from .croadtocinema.croadtocinema import Croadtocinemabootcamp
-from .ccutemall.ccutemall import Ccutemallbootcamp
-from .dfibonacciish.dfibonacciish import Dfibonacciishbootcamp
-from .epetyaandspiders.epetyaandspiders import Epetyaandspidersbootcamp
-from .cchickenorfish.cchickenorfish import Cchickenorfishbootcamp
-from .dmissionimpassable.dmissionimpassable import Dmissionimpassablebootcamp
-from .cxenonsattackonthegangs.cxenonsattackonthegangs import Cxenonsattackonthegangsbootcamp
-from .eartemandarray.eartemandarray import Eartemandarraybootcamp
-from .cvoting.cvoting import Cvotingbootcamp
-from .fnauuoandportals.fnauuoandportals import Fnauuoandportalsbootcamp
-from .dcuptrick.dcuptrick import Dcuptrickbootcamp
-from .binterestingarray.binterestingarray import Binterestingarraybootcamp
-from .etournament.etournament import Etournamentbootcamp
-from .cereaderdisplay.cereaderdisplay import Cereaderdisplaybootcamp
-from .ecipher.ecipher import Ecipherbootcamp
-from .elevkoandstrings.elevkoandstrings import Elevkoandstringsbootcamp
-from .cluckysubsequence.cluckysubsequence import Cluckysubsequencebootcamp
-from .fgame.fgame import Fgamebootcamp
-from .bnewyearandascentsequence.bnewyearandascentsequence import Bnewyearandascentsequencebootcamp
-from .cwonderfulrandomizedsum.cwonderfulrandomizedsum import Cwonderfulrandomizedsumbootcamp
-from .ddzylovesmodification.ddzylovesmodification import Ddzylovesmodificationbootcamp
-from .elogoturtle.elogoturtle import Elogoturtlebootcamp
-from .cfadiandlcm.cfadiandlcm import Cfadiandlcmbootcamp
-from .eapplemanandasheetofpaper.eapplemanandasheetofpaper import Eapplemanandasheetofpaperbootcamp
-from .dandreyandproblem.dandreyandproblem import Dandreyandproblembootcamp
-from .cplayingpiano.cplayingpiano import Cplayingpianobootcamp
-from .eworldofdarkraftbattleforazathoth.eworldofdarkraftbattleforazathoth import Eworldofdarkraftbattleforazathothbootcamp
-from .ctimofeyandremoduling.ctimofeyandremoduling import Ctimofeyandremodulingbootcamp
-from .ecompartments.ecompartments import Ecompartmentsbootcamp
-from .cworldeaterbrothers.cworldeaterbrothers import Cworldeaterbrothersbootcamp
-from .faupontrouge.faupontrouge import Faupontrougebootcamp
-from .cthefootballseason.cthefootballseason import Cthefootballseasonbootcamp
-from .dhamiltonianspanningtree.dhamiltonianspanningtree import Dhamiltonianspanningtreebootcamp
-from .bazamonwebservices.bazamonwebservices import Bazamonwebservicesbootcamp
-from .bsequentialnim.bsequentialnim import Bsequentialnimbootcamp
-from .dweirdjourney.dweirdjourney import Dweirdjourneybootcamp
-from .cconvenientforeverybody.cconvenientforeverybody import Cconvenientforeverybodybootcamp
-from .cmiceproblem.cmiceproblem import Cmiceproblembootcamp
-from .cbus.cbus import Cbusbootcamp
-from .cmagicgrid.cmagicgrid import Cmagicgridbootcamp
-from .cnastyaandawardrobe.cnastyaandawardrobe import Cnastyaandawardrobebootcamp
-from .creplacement.creplacement import Creplacementbootcamp
-from .fnastyaandtimemachine.fnastyaandtimemachine import Fnastyaandtimemachinebootcamp
-from .bstring.bstring import Bstringbootcamp
-from .cplasticinezebra.cplasticinezebra import Cplasticinezebrabootcamp
-from .cnnandtheopticalillusion.cnnandtheopticalillusion import Cnnandtheopticalillusionbootcamp
-from .cdnaevolution.cdnaevolution import Cdnaevolutionbootcamp
-from .dmashmokhandwatertanks.dmashmokhandwatertanks import Dmashmokhandwatertanksbootcamp
-from .apetyaandcatacombs.apetyaandcatacombs import Apetyaandcatacombsbootcamp
-from .cinnaandcandyboxes.cinnaandcandyboxes import Cinnaandcandyboxesbootcamp
-from .cpinkiepieeatspattycakes.cpinkiepieeatspattycakes import Cpinkiepieeatspattycakesbootcamp
-from .chelpcaretaker.chelpcaretaker import Chelpcaretakerbootcamp
-from .bmorningjogging.bmorningjogging import Bmorningjoggingbootcamp
-from .cyaroslavandalgorithm.cyaroslavandalgorithm import Cyaroslavandalgorithmbootcamp
-from .cfancynumber.cfancynumber import Cfancynumberbootcamp
-from .efetchthetreasure.efetchthetreasure import Efetchthetreasurebootcamp
-from .clittlegirlandmaximumsum.clittlegirlandmaximumsum import Clittlegirlandmaximumsumbootcamp
-from .ehongcowbuysadeckofcards.ehongcowbuysadeckofcards import Ehongcowbuysadeckofcardsbootcamp
-from .efragilebridges.efragilebridges import Efragilebridgesbootcamp
-from .csubsequencecounting.csubsequencecounting import Csubsequencecountingbootcamp
-from .erectanglepainting2.erectanglepainting2 import Erectanglepainting2bootcamp
-from .cvanyaandexams.cvanyaandexams import Cvanyaandexamsbootcamp
-from .cthedeliverydilemma.cthedeliverydilemma import Cthedeliverydilemmabootcamp
-from .cluckypermutation.cluckypermutation import Cluckypermutationbootcamp
-from .dcompletetripartite.dcompletetripartite import Dcompletetripartitebootcamp
-from .cedgytrees.cedgytrees import Cedgytreesbootcamp
-from .cjohnnyandanotherratingdrop.cjohnnyandanotherratingdrop import Cjohnnyandanotherratingdropbootcamp
-from .f2longcolorfulstrip.f2longcolorfulstrip import F2longcolorfulstripbootcamp
-from .dnewyearandancientprophecy.dnewyearandancientprophecy import Dnewyearandancientprophecybootcamp
-from .cproduct1modulon.cproduct1modulon import Cproduct1modulonbootcamp
-from .cgottagofast.cgottagofast import Cgottagofastbootcamp
-from .cpropagatingtree.cpropagatingtree import Cpropagatingtreebootcamp
-from .dkarenandtest.dkarenandtest import Dkarenandtestbootcamp
-from .cblackwidow.cblackwidow import Cblackwidowbootcamp
-from .bkarenandtest.bkarenandtest import Bkarenandtestbootcamp
-from .crandomevents.crandomevents import Crandomeventsbootcamp
-from .cmrkitayutathetreasurehunter.cmrkitayutathetreasurehunter import Cmrkitayutathetreasurehunterbootcamp
-from .adimaandstaircase.adimaandstaircase import Adimaandstaircasebootcamp
-from .carithmeticprogression.carithmeticprogression import Carithmeticprogressionbootcamp
-from .dstring.dstring import Dstringbootcamp
-from .dlosttree.dlosttree import Dlosttreebootcamp
-from .crestoringpermutation.crestoringpermutation import Crestoringpermutationbootcamp
-from .dvalidbfs.dvalidbfs import Dvalidbfsbootcamp
-from .cconnect.cconnect import Cconnectbootcamp
-from .cgamewithstrings.cgamewithstrings import Cgamewithstringsbootcamp
-from .dpaintthetree.dpaintthetree import Dpaintthetreebootcamp
-from .cgeraldandgiantchess.cgeraldandgiantchess import Cgeraldandgiantchessbootcamp
-from .caquamoonandpermutations.caquamoonandpermutations import Caquamoonandpermutationsbootcamp
-from .cicecave.cicecave import Cicecavebootcamp
-from .cluckydays.cluckydays import Cluckydaysbootcamp
-from .cramessesandcornerinversion.cramessesandcornerinversion import Cramessesandcornerinversionbootcamp
-from .cteambuilding.cteambuilding import Cteambuildingbootcamp
-from .ckleofášandthenthlon.ckleofášandthenthlon import Ckleofášandthenthlonbootcamp
-from .csequencepairweight.csequencepairweight import Csequencepairweightbootcamp
-from .canyaandsmartphone.canyaandsmartphone import Canyaandsmartphonebootcamp
-from .cbeautifulsetsofpoints.cbeautifulsetsofpoints import Cbeautifulsetsofpointsbootcamp
-from .ctreegenerator.ctreegenerator import Ctreegeneratorbootcamp
-from .dskills.dskills import Dskillsbootcamp
-from .ccreativesnap.ccreativesnap import Ccreativesnapbootcamp
-from .dhugestrings.dhugestrings import Dhugestringsbootcamp
-from .csantaclausandrobot.csantaclausandrobot import Csantaclausandrobotbootcamp
-from .dbearandcontribution.dbearandcontribution import Dbearandcontributionbootcamp
-from .ccontinuouscity.ccontinuouscity import Ccontinuouscitybootcamp
-from .capplemanandasheetofpaper.capplemanandasheetofpaper import Capplemanandasheetofpaperbootcamp
-from .d2submarineintherybinskseahardedition.d2submarineintherybinskseahardedition import D2submarineintherybinskseahardeditionbootcamp
-from .dnewpassengertrams.dnewpassengertrams import Dnewpassengertramsbootcamp
-from .cpalindrometransformation.cpalindrometransformation import Cpalindrometransformationbootcamp
-from .conebasedarithmetic.conebasedarithmetic import Conebasedarithmeticbootcamp
-from .f1shortcolorfulstrip.f1shortcolorfulstrip import F1shortcolorfulstripbootcamp
-from .cunorderedsubsequence.cunorderedsubsequence import Cunorderedsubsequencebootcamp
-from .dshortestandlongestlis.dshortestandlongestlis import Dshortestandlongestlisbootcamp
-from .cvalhallasiege.cvalhallasiege import Cvalhallasiegebootcamp
-from .bshifting.bshifting import Bshiftingbootcamp
-from .cupgradingtree.cupgradingtree import Cupgradingtreebootcamp
-from .erelayrace.erelayrace import Erelayracebootcamp
-from .fencoding.fencoding import Fencodingbootcamp
-from .dstasandthequeueatthebuffet.dstasandthequeueatthebuffet import Dstasandthequeueatthebuffetbootcamp
-from .cpattern.cpattern import Cpatternbootcamp
-from .bzuma.bzuma import Bzumabootcamp
-from .cfencepainting.cfencepainting import Cfencepaintingbootcamp
-from .cstringmanipulation10.cstringmanipulation10 import Cstringmanipulation10bootcamp
-from .dratingcompression.dratingcompression import Dratingcompressionbootcamp
-from .ecirclingroundtreasures.ecirclingroundtreasures import Ecirclingroundtreasuresbootcamp
-from .cperformeasily.cperformeasily import Cperformeasilybootcamp
-from .crelayrace.crelayrace import Crelayracebootcamp
-from .canagramsearch.canagramsearch import Canagramsearchbootcamp
-from .csashaandapatientfriend.csashaandapatientfriend import Csashaandapatientfriendbootcamp
-from .ckilljoy.ckilljoy import Ckilljoybootcamp
-from .cfoolsandroads.cfoolsandroads import Cfoolsandroadsbootcamp
-from .ctoaddornottoadd.ctoaddornottoadd import Ctoaddornottoaddbootcamp
-from .fbeautifulrectangle.fbeautifulrectangle import Fbeautifulrectanglebootcamp
-from .dsashaandonemorename.dsashaandonemorename import Dsashaandonemorenamebootcamp
-from .eprairiepartition.eprairiepartition import Eprairiepartitionbootcamp
-from .ealyonaandtowers.ealyonaandtowers import Ealyonaandtowersbootcamp
-from .dkuroniandthecelebration.dkuroniandthecelebration import Dkuroniandthecelebrationbootcamp
-from .cregionseparation.cregionseparation import Cregionseparationbootcamp
-from .cquantifierquestion.cquantifierquestion import Cquantifierquestionbootcamp
-from .cfixingtypos.cfixingtypos import Cfixingtyposbootcamp
-from .f2thehiddenpairhardversion.f2thehiddenpairhardversion import F2thehiddenpairhardversionbootcamp
-from .cevenpicture.cevenpicture import Cevenpicturebootcamp
-from .bmodulosum.bmodulosum import Bmodulosumbootcamp
-from .cgeorgeandnumber.cgeorgeandnumber import Cgeorgeandnumberbootcamp
-from .ckalilaanddimnaintheloggingindustry.ckalilaanddimnaintheloggingindustry import Ckalilaanddimnaintheloggingindustrybootcamp
-from .csafecracking.csafecracking import Csafecrackingbootcamp
-from .cdoublehappiness.cdoublehappiness import Cdoublehappinessbootcamp
-from .carraydestruction.carraydestruction import Carraydestructionbootcamp
-from .bthequeue.bthequeue import Bthequeuebootcamp
-from .caliceboborangesandapples.caliceboborangesandapples import Caliceboborangesandapplesbootcamp
-from .cvladikandmemorabletrip.cvladikandmemorabletrip import Cvladikandmemorabletripbootcamp
-from .esuperiorperiodicsubarrays.esuperiorperiodicsubarrays import Esuperiorperiodicsubarraysbootcamp
-from .exenonsattackonthegangs.exenonsattackonthegangs import Exenonsattackonthegangsbootcamp
-from .caandbandteamtraining.caandbandteamtraining import Caandbandteamtrainingbootcamp
-from .dsubstring.dsubstring import Dsubstringbootcamp
-from .eserejaandthearrangementofnumbers.eserejaandthearrangementofnumbers import Eserejaandthearrangementofnumbersbootcamp
-from .cpromocodeswithmistakes.cpromocodeswithmistakes import Cpromocodeswithmistakesbootcamp
-from .cguessyourwayout.cguessyourwayout import Cguessyourwayoutbootcamp
-from .cperunult.cperunult import Cperunultbootcamp
-from .eserejaandsubsequences.eserejaandsubsequences import Eserejaandsubsequencesbootcamp
-from .bdreamoonandwifi.bdreamoonandwifi import Bdreamoonandwifibootcamp
-from .aexams.aexams import Aexamsbootcamp
-from .eeverhungrykrakozyabra.eeverhungrykrakozyabra import Eeverhungrykrakozyabrabootcamp
-from .chamburgers.chamburgers import Chamburgersbootcamp
-from .ctabledecorations.ctabledecorations import Ctabledecorationsbootcamp
-from .bplusandmultiply.bplusandmultiply import Bplusandmultiplybootcamp
-from .cpythonindentation.cpythonindentation import Cpythonindentationbootcamp
-from .dpiet.dpiet import Dpietbootcamp
-from .dehabthexorcist.dehabthexorcist import Dehabthexorcistbootcamp
-from .blcm.blcm import Blcmbootcamp
-from .candryushaandcoloredballoons.candryushaandcoloredballoons import Candryushaandcoloredballoonsbootcamp
-from .esumbalance.esumbalance import Esumbalancebootcamp
-from .cmatchingvsindependentset.cmatchingvsindependentset import Cmatchingvsindependentsetbootcamp
-from .asavethenature.asavethenature import Asavethenaturebootcamp
-from .eserejaandbrackets.eserejaandbrackets import Eserejaandbracketsbootcamp
-from .earrangement.earrangement import Earrangementbootcamp
-from .esashaandarray.esashaandarray import Esashaandarraybootcamp
-from .cunclebogdanandcountryhappiness.cunclebogdanandcountryhappiness import Cunclebogdanandcountryhappinessbootcamp
-from .cinterestinggame.cinterestinggame import Cinterestinggamebootcamp
-from .cehabandpatheticmexs.cehabandpatheticmexs import Cehabandpatheticmexsbootcamp
-from .cballbootcamps.cballbootcamps import Cballbootcamp
-from .canimpassionedcirculationofaffection.canimpassionedcirculationofaffection import Canimpassionedcirculationofaffectionbootcamp
-from .ctrack.ctrack import Ctrackbootcamp
-from .candreachability.candreachability import Candreachabilitybootcamp
-from .celectriccharges.celectriccharges import Celectricchargesbootcamp
-from .fsashaandinterestingfactfromgraphtheory.fsashaandinterestingfactfromgraphtheory import Fsashaandinterestingfactfromgraphtheorybootcamp
-from .frésuméreview.frésuméreview import Frésuméreviewbootcamp
-from .cprimenumber.cprimenumber import Cprimenumberbootcamp
-from .dunmerge.dunmerge import Dunmergebootcamp
-from .dsocialnetwork.dsocialnetwork import Dsocialnetworkbootcamp
-from .fcomputepower.fcomputepower import Fcomputepowerbootcamp
-from .ftokitsukazeandstrangerectangle.ftokitsukazeandstrangerectangle import Ftokitsukazeandstrangerectanglebootcamp
-from .dgrid00100.dgrid00100 import Dgrid00100bootcamp
-from .csonyaandrobots.csonyaandrobots import Csonyaandrobotsbootcamp
-from .cfoxandnames.cfoxandnames import Cfoxandnamesbootcamp
-from .cinnaanddima.cinnaanddima import Cinnaanddimabootcamp
-from .dmichaelandchargingstations.dmichaelandchargingstations import Dmichaelandchargingstationsbootcamp
-from .dthewu.dthewu import Dthewubootcamp
-from .cbrackets.cbrackets import Cbracketsbootcamp
-from .bjohnnyandgrandmaster.bjohnnyandgrandmaster import Bjohnnyandgrandmasterbootcamp
-from .cmachineprogramming.cmachineprogramming import Cmachineprogrammingbootcamp
-from .coracandgameoflife.coracandgameoflife import Coracandgameoflifebootcamp
-from .cfifaandfafa.cfifaandfafa import Cfifaandfafabootcamp
-from .eheightallthesame.eheightallthesame import Eheightallthesamebootcamp
-from .csoldierandcards.csoldierandcards import Csoldierandcardsbootcamp
-from .eflawedflow.eflawedflow import Eflawedflowbootcamp
-from .fknights.fknights import Fknightsbootcamp
-from .cthreedisplays.cthreedisplays import Cthreedisplaysbootcamp
-from .cwaterbalance.cwaterbalance import Cwaterbalancebootcamp
-from .cfindacar.cfindacar import Cfindacarbootcamp
-from .cchoosingballs.cchoosingballs import Cchoosingballsbootcamp
-from .ctexteditor.ctexteditor import Ctexteditorbootcamp
-from .enewlanguage.enewlanguage import Enewlanguagebootcamp
-from .e2chiorianddollpickinghardversion.e2chiorianddollpickinghardversion import E2chiorianddollpickinghardversionbootcamp
-from .cknights.cknights import Cknightsbootcamp
-from .earpaandagamewithmojtaba.earpaandagamewithmojtaba import Earpaandagamewithmojtababootcamp
-from .cbullsandcows.cbullsandcows import Cbullsandcowsbootcamp
-from .celections.celections import Celectionsbootcamp
-from .dgenius.dgenius import Dgeniusbootcamp
-from .cmaximumsplitting.cmaximumsplitting import Cmaximumsplittingbootcamp
-from .dmrkitayutascolorfulgraph.dmrkitayutascolorfulgraph import Dmrkitayutascolorfulgraphbootcamp
-from .ctouristsnotes.ctouristsnotes import Ctouristsnotesbootcamp
-from .bchemicaltable.bchemicaltable import Bchemicaltablebootcamp
-from .ecivilization.ecivilization import Ecivilizationbootcamp
-from .bandreyandproblem.bandreyandproblem import Bandreyandproblembootcamp
-from .ctitle.ctitle import Ctitlebootcamp
-from .fmisspunyverse.fmisspunyverse import Fmisspunyversebootcamp
-from .cnewyearsnowmen.cnewyearsnowmen import Cnewyearsnowmenbootcamp
-from .cdashaandpassword.cdashaandpassword import Cdashaandpasswordbootcamp
-from .epackagedelivery.epackagedelivery import Epackagedeliverybootcamp
-from .ddensesubsequence.ddensesubsequence import Ddensesubsequencebootcamp
-from .cjeopardy.cjeopardy import Cjeopardybootcamp
-from .crationallee.crationallee import Crationalleebootcamp
-from .cacookieforyou.cacookieforyou import Cacookieforyoubootcamp
-from .cfootball.cfootball import Cfootballbootcamp
-from .djonandorbs.djonandorbs import Djonandorbsbootcamp
-from .cberlandsquare.cberlandsquare import Cberlandsquarebootcamp
-from .djerrysprotest.djerrysprotest import Djerrysprotestbootcamp
-from .ccubeproblem.ccubeproblem import Ccubeproblembootcamp
-from .cokabeandboxes.cokabeandboxes import Cokabeandboxesbootcamp
-from .dpackagedelivery.dpackagedelivery import Dpackagedeliverybootcamp
-from .dportals.dportals import Dportalsbootcamp
-from .cprimitiveprimes.cprimitiveprimes import Cprimitiveprimesbootcamp
-from .epointsonplane.epointsonplane import Epointsonplanebootcamp
-from .adnaalignment.adnaalignment import Adnaalignmentbootcamp
-from .evectors.evectors import Evectorsbootcamp
-from .dinterestingarray.dinterestingarray import Dinterestingarraybootcamp
-from .atennischampionship.atennischampionship import Atennischampionshipbootcamp
-from .dchaoticv.dchaoticv import Dchaoticvbootcamp
-from .cchocolatebunny.cchocolatebunny import Cchocolatebunnybootcamp
-from .cparquet.cparquet import Cparquetbootcamp
-from .ccardiogram.ccardiogram import Ccardiogrambootcamp
-from .eapolloversuspan.eapolloversuspan import Eapolloversuspanbootcamp
-from .eelectriccharges.eelectriccharges import Eelectricchargesbootcamp
-from .bandsequences.bandsequences import Bandsequencesbootcamp
-from .e1convergingarrayeasyversion.e1convergingarrayeasyversion import E1convergingarrayeasyversionbootcamp
-from .bonlinemeeting.bonlinemeeting import Bonlinemeetingbootcamp
-from .ckbeautifulstrings.ckbeautifulstrings import Ckbeautifulstringsbootcamp
-from .einterestinggame.einterestinggame import Einterestinggamebootcamp
-from .asearchingforgraph.asearchingforgraph import Asearchingforgraphbootcamp
-from .ehelpingpeople.ehelpingpeople import Ehelpingpeoplebootcamp
-from .cthechildandtoy.cthechildandtoy import Cthechildandtoybootcamp
-from .cflea.cflea import Cfleabootcamp
-from .ccapturevalerian.ccapturevalerian import Ccapturevalerianbootcamp
-from .clittleponyandsummersuncelebration.clittleponyandsummersuncelebration import Clittleponyandsummersuncelebrationbootcamp
-from .cslavaandtanks.cslavaandtanks import Cslavaandtanksbootcamp
-from .cwilburandpoints.cwilburandpoints import Cwilburandpointsbootcamp
-from .cengineerartem.cengineerartem import Cengineerartembootcamp
-from .cmaximandmatrix.cmaximandmatrix import Cmaximandmatrixbootcamp
-from .chardproblem.chardproblem import Chardproblembootcamp
-from .f1chessstrikesbackeasyversion.f1chessstrikesbackeasyversion import F1chessstrikesbackeasyversionbootcamp
-from .eoracandgameoflife.eoracandgameoflife import Eoracandgameoflifebootcamp
-from .drobotvacuumcleaner.drobotvacuumcleaner import Drobotvacuumcleanerbootcamp
-from .cthefairnutandstring.cthefairnutandstring import Cthefairnutandstringbootcamp
-from .cilyaandmatrix.cilyaandmatrix import Cilyaandmatrixbootcamp
-from .bthreereligions.bthreereligions import Bthreereligionsbootcamp
-from .dwindingpolygonalline.dwindingpolygonalline import Dwindingpolygonallinebootcamp
-from .dcurfew.dcurfew import Dcurfewbootcamp
-from .cvulnerablekerbals.cvulnerablekerbals import Cvulnerablekerbalsbootcamp
-from .cpetyaandcatacombs.cpetyaandcatacombs import Cpetyaandcatacombsbootcamp
-from .cfixedpointremoval.cfixedpointremoval import Cfixedpointremovalbootcamp
-from .ccompressstring.ccompressstring import Ccompressstringbootcamp
-from .btwoheaps.btwoheaps import Btwoheapsbootcamp
-from .cpolycarpusdice.cpolycarpusdice import Cpolycarpusdicebootcamp
-from .ffruitsequences.ffruitsequences import Ffruitsequencesbootcamp
-from .cdiversesubstrings.cdiversesubstrings import Cdiversesubstringsbootcamp
-from .cnumbergame.cnumbergame import Cnumbergamebootcamp
-from .cperfecttriples.cperfecttriples import Cperfecttriplesbootcamp
-from .clinkcutcentroids.clinkcutcentroids import Clinkcutcentroidsbootcamp
-from .ctrees.ctrees import Ctreesbootcamp
-from .d2optimalsubsequenceshardversion.d2optimalsubsequenceshardversion import D2optimalsubsequenceshardversionbootcamp
-from .deels.deels import Deelsbootcamp
-from .c1convergingarrayeasyversion.c1convergingarrayeasyversion import C1convergingarrayeasyversionbootcamp
-from .cservalandparenthesissequence.cservalandparenthesissequence import Cservalandparenthesissequencebootcamp
-from .bchat.bchat import Bchatbootcamp
-from .cpieordie.cpieordie import Cpieordiebootcamp
-from .cdnaalignment.cdnaalignment import Cdnaalignmentbootcamp
-from .cannasvyatoslavandmaps.cannasvyatoslavandmaps import Cannasvyatoslavandmapsbootcamp
-from .ehelpgregthedwarf.ehelpgregthedwarf import Ehelpgregthedwarfbootcamp
-from .cgameontree.cgameontree import Cgameontreebootcamp
-from .ckuroandwalkingroute.ckuroandwalkingroute import Ckuroandwalkingroutebootcamp
-from .esergeanddiningroom.esergeanddiningroom import Esergeanddiningroombootcamp
-from .ebeavermuncher0xff.ebeavermuncher0xff import Ebeavermuncher0xffbootcamp
-from .cshawarmatent.cshawarmatent import Cshawarmatentbootcamp
-from .aremovingcolumns.aremovingcolumns import Aremovingcolumnsbootcamp
-from .ctrailinglovesorloeufs.ctrailinglovesorloeufs import Ctrailinglovesorloeufsbootcamp
-from .caupontrouge.caupontrouge import Caupontrougebootcamp
-from .dpricefixed.dpricefixed import Dpricefixedbootcamp
-from .cdoegraphs.cdoegraphs import Cdoegraphsbootcamp
-from .ecyclicalquest.ecyclicalquest import Ecyclicalquestbootcamp
-from .ezeroone.ezeroone import Ezeroonebootcamp
-from .dmisspunyverse.dmisspunyverse import Dmisspunyversebootcamp
-from .eweakmemory.eweakmemory import Eweakmemorybootcamp
-from .ecnf2.ecnf2 import Ecnf2bootcamp
-from .cremoveadjacent.cremoveadjacent import Cremoveadjacentbootcamp
-from .equantifierquestion.equantifierquestion import Equantifierquestionbootcamp
-from .ctheworldisatheatre.ctheworldisatheatre import Ctheworldisatheatrebootcamp
-from .dpolyline.dpolyline import Dpolylinebootcamp
-from .csweetseating.csweetseating import Csweetseatingbootcamp
-from .cdzylovesfibonaccinumbers.cdzylovesfibonaccinumbers import Cdzylovesfibonaccinumbersbootcamp
-from .cthreebags.cthreebags import Cthreebagsbootcamp
-from .eprefixenlightenment.eprefixenlightenment import Eprefixenlightenmentbootcamp
-from .cnezzarandsymmetricarray.cnezzarandsymmetricarray import Cnezzarandsymmetricarraybootcamp
-from .dharmoniousgraph.dharmoniousgraph import Dharmoniousgraphbootcamp
-from .dtshirtsdistribution.dtshirtsdistribution import Dtshirtsdistributionbootcamp
-from .clatinsquare.clatinsquare import Clatinsquarebootcamp
-from .cremoveextraone.cremoveextraone import Cremoveextraonebootcamp
-from .cbarcode.cbarcode import Cbarcodebootcamp
-from .dfreediv.dfreediv import Dfreedivbootcamp
-from .ctravellingsalesmanproblem.ctravellingsalesmanproblem import Ctravellingsalesmanproblembootcamp
-from .bplanetlapituletti.bplanetlapituletti import Bplanetlapitulettibootcamp
-from .cdoubleprofiles.cdoubleprofiles import Cdoubleprofilesbootcamp
-from .dmahmoudandehabandthebinarystring.dmahmoudandehabandthebinarystring import Dmahmoudandehabandthebinarystringbootcamp
-from .cgardenofthesun.cgardenofthesun import Cgardenofthesunbootcamp
-from .cgreedyshopping.cgreedyshopping import Cgreedyshoppingbootcamp
-from .elockpuzzle.elockpuzzle import Elockpuzzlebootcamp
-from .cyuhaoandaparenthesis.cyuhaoandaparenthesis import Cyuhaoandaparenthesisbootcamp
-from .feuclidsnightmare.feuclidsnightmare import Feuclidsnightmarebootcamp
-from .ccoloringtrees.ccoloringtrees import Ccoloringtreesbootcamp
-from .fteodorisnotaliar.fteodorisnotaliar import Fteodorisnotaliarbootcamp
-from .drestorecube.drestorecube import Drestorecubebootcamp
-from .cplumber.cplumber import Cplumberbootcamp
-from .ctriangles.ctriangles import Ctrianglesbootcamp
-from .cpermutationrecovery.cpermutationrecovery import Cpermutationrecoverybootcamp
-from .ccuttingrectangle.ccuttingrectangle import Ccuttingrectanglebootcamp
-from .dgamewitharray.dgamewitharray import Dgamewitharraybootcamp
-from .csergeanddiningroom.csergeanddiningroom import Csergeanddiningroombootcamp
-from .clittleelephantandshifts.clittleelephantandshifts import Clittleelephantandshiftsbootcamp
-from .dcowandsnacks.dcowandsnacks import Dcowandsnacksbootcamp
-from .cbus.cbus import Cbusbootcamp
-from .enikitaandstack.enikitaandstack import Enikitaandstackbootcamp
-from .dicesculptures.dicesculptures import Dicesculpturesbootcamp
-from .cswapletters.cswapletters import Cswaplettersbootcamp
-from .cthreestates.cthreestates import Cthreestatesbootcamp
-from .csubstringgameinthelesson.csubstringgameinthelesson import Csubstringgameinthelessonbootcamp
-from .ehills.ehills import Ehillsbootcamp
-from .cbadsequence.cbadsequence import Cbadsequencebootcamp
-from .ecarrotsforrabbits.ecarrotsforrabbits import Ecarrotsforrabbitsbootcamp
-from .egamewithstrings.egamewithstrings import Egamewithstringsbootcamp
-from .cnekodoesmaths.cnekodoesmaths import Cnekodoesmathsbootcamp
-from .cmarinaandvasya.cmarinaandvasya import Cmarinaandvasyabootcamp
-from .b2palindromegamehardversion.b2palindromegamehardversion import B2palindromegamehardversionbootcamp
-from .cbabyehabpartitionsagain.cbabyehabpartitionsagain import Cbabyehabpartitionsagainbootcamp
-from .ctryandcatch.ctryandcatch import Ctryandcatchbootcamp
-from .cfetchthetreasure.cfetchthetreasure import Cfetchthetreasurebootcamp
-from .ecuptrick.ecuptrick import Ecuptrickbootcamp
-from .calmostarithmeticalprogression.calmostarithmeticalprogression import Calmostarithmeticalprogressionbootcamp
-from .f1fallingsandeasyversion.f1fallingsandeasyversion import F1fallingsandeasyversionbootcamp
-from .dinvarianceoftree.dinvarianceoftree import Dinvarianceoftreebootcamp
-from .dtreearray.dtreearray import Dtreearraybootcamp
-from .cmultiplicity.cmultiplicity import Cmultiplicitybootcamp
-from .cprimesoninterval.cprimesoninterval import Cprimesonintervalbootcamp
-from .einstantnoodles.einstantnoodles import Einstantnoodlesbootcamp
-from .carpasovernightpartyandmehrdadssilententering.carpasovernightpartyandmehrdadssilententering import Carpasovernightpartyandmehrdadssilententeringbootcamp
-from .cdividingthenumbers.cdividingthenumbers import Cdividingthenumbersbootcamp
-from .exorinverse.exorinverse import Exorinversebootcamp
-from .cdigittree.cdigittree import Cdigittreebootcamp
-from .ereadtime.ereadtime import Ereadtimebootcamp
-from .ejeffandbrackets.ejeffandbrackets import Ejeffandbracketsbootcamp
-from .cteam.cteam import Cteambootcamp
-from .dkuroandgcdandxorandsum.dkuroandgcdandxorandsum import Dkuroandgcdandxorandsumbootcamp
-from .dnashmatrix.dnashmatrix import Dnashmatrixbootcamp
-from .eonchangingtree.eonchangingtree import Eonchangingtreebootcamp
-from .cgameswithrectangle.cgameswithrectangle import Cgameswithrectanglebootcamp
-from .cthesportsfestival.cthesportsfestival import Cthesportsfestivalbootcamp
-from .ccoffeebreak.ccoffeebreak import Ccoffeebreakbootcamp
-from .fcurfew.fcurfew import Fcurfewbootcamp
-from .esubstitutesinnumber.esubstitutesinnumber import Esubstitutesinnumberbootcamp
-from .aryoukosmemorynote.aryoukosmemorynote import Aryoukosmemorynotebootcamp
-from .cconstructatree.cconstructatree import Cconstructatreebootcamp
-from .e1chiorianddollpickingeasyversion.e1chiorianddollpickingeasyversion import E1chiorianddollpickingeasyversionbootcamp
-from .btheworldisjustaprogrammingtaskhardversion.btheworldisjustaprogrammingtaskhardversion import Btheworldisjustaprogrammingtaskhardversionbootcamp
-from .cmonsterinvaders.cmonsterinvaders import Cmonsterinvadersbootcamp
-from .efibtree.efibtree import Efibtreebootcamp
-from .cbuns.cbuns import Cbunsbootcamp
-from .cgukizhatesboxes.cgukizhatesboxes import Cgukizhatesboxesbootcamp
-from .btaxes.btaxes import Btaxesbootcamp
-from .esubsetsums.esubsetsums import Esubsetsumsbootcamp
-from .edrazillikesheap.edrazillikesheap import Edrazillikesheapbootcamp
-from .cmarbles.cmarbles import Cmarblesbootcamp
-from .dthreereligions.dthreereligions import Dthreereligionsbootcamp
-from .cbracketsubsequence.cbracketsubsequence import Cbracketsubsequencebootcamp
-from .bcandyboxes.bcandyboxes import Bcandyboxesbootcamp
-from .cleavingthebar.cleavingthebar import Cleavingthebarbootcamp
-from .cwetsharkandflowers.cwetsharkandflowers import Cwetsharkandflowersbootcamp
-from .eregionseparation.eregionseparation import Eregionseparationbootcamp
-from .cbearandprimenumbers.cbearandprimenumbers import Cbearandprimenumbersbootcamp
-from .carpaandagamewithmojtaba.carpaandagamewithmojtaba import Carpaandagamewithmojtababootcamp
-from .blongtailhedgehog.blongtailhedgehog import Blongtailhedgehogbootcamp
-from .cbugincode.cbugincode import Cbugincodebootcamp
-from .ealiceboborangesandapples.ealiceboborangesandapples import Ealiceboborangesandapplesbootcamp
-from .dstrip.dstrip import Dstripbootcamp
-from .bsetofpoints.bsetofpoints import Bsetofpointsbootcamp
-from .ewoodenfence.ewoodenfence import Ewoodenfencebootcamp
-from .eboredom.eboredom import Eboredombootcamp
-from .clittleelephantandfurikandrubik.clittleelephantandfurikandrubik import Clittleelephantandfurikandrubikbootcamp
-from .creducingfractions.creducingfractions import Creducingfractionsbootcamp
-from .chiddenword.chiddenword import Chiddenwordbootcamp
-from .cfirstdigitlaw.cfirstdigitlaw import Cfirstdigitlawbootcamp
-from .csashaandarray.csashaandarray import Csashaandarraybootcamp
-from .cmakegood.cmakegood import Cmakegoodbootcamp
-from .cantonandfairytale.cantonandfairytale import Cantonandfairytalebootcamp
-from .cbirthday.cbirthday import Cbirthdaybootcamp
-from .csubsequences.csubsequences import Csubsequencesbootcamp
-from .esergeysproblem.esergeysproblem import Esergeysproblembootcamp
-from .ccentroids.ccentroids import Ccentroidsbootcamp
-from .cdungeonsandcandies.cdungeonsandcandies import Cdungeonsandcandiesbootcamp
-from .clittleelephantandlcm.clittleelephantandlcm import Clittleelephantandlcmbootcamp
-from .dalarmclock.dalarmclock import Dalarmclockbootcamp
-from .cdreamoonandsums.cdreamoonandsums import Cdreamoonandsumsbootcamp
-from .ccipher.ccipher import Ccipherbootcamp
-from .fslimeandsequenceseasyversion.fslimeandsequenceseasyversion import Fslimeandsequenceseasyversionbootcamp
-from .cmainsequence.cmainsequence import Cmainsequencebootcamp
-from .domkarandbedwars.domkarandbedwars import Domkarandbedwarsbootcamp
-from .cmushroomstrife.cmushroomstrife import Cmushroomstrifebootcamp
-from .cunfairpoll.cunfairpoll import Cunfairpollbootcamp
-from .dmahmoudandehabandanotherarrayconstructiontask.dmahmoudandehabandanotherarrayconstructiontask import Dmahmoudandehabandanotherarrayconstructiontaskbootcamp
-from .avasyaandtriangle.avasyaandtriangle import Avasyaandtrianglebootcamp
-from .cmittens.cmittens import Cmittensbootcamp
-from .cehabandaspecialcoloringproblem.cehabandaspecialcoloringproblem import Cehabandaspecialcoloringproblembootcamp
-from .ckcompleteword.ckcompleteword import Ckcompletewordbootcamp
-from .ewaterbalance.ewaterbalance import Ewaterbalancebootcamp
-from .ctanyaandcoloredcandies.ctanyaandcoloredcandies import Ctanyaandcoloredcandiesbootcamp
-from .cwoodcutters.cwoodcutters import Cwoodcuttersbootcamp
-from .cfragilebridges.cfragilebridges import Cfragilebridgesbootcamp
-from .erustystring.erustystring import Erustystringbootcamp
-from .ccaptainmarmot.ccaptainmarmot import Ccaptainmarmotbootcamp
-from .cprefixenlightenment.cprefixenlightenment import Cprefixenlightenmentbootcamp
-from .edoegraphs.edoegraphs import Edoegraphsbootcamp
-from .cmikeandgcdproblem.cmikeandgcdproblem import Cmikeandgcdproblembootcamp
-from .bpipeline.bpipeline import Bpipelinebootcamp
-from .cdimaandstaircase.cdimaandstaircase import Cdimaandstaircasebootcamp
-from .calyonaandspreadsheet.calyonaandspreadsheet import Calyonaandspreadsheetbootcamp
-from .dletsplaythewords.dletsplaythewords import Dletsplaythewordsbootcamp
-from .eicecreamcoloring.eicecreamcoloring import Eicecreamcoloringbootcamp
-from .cnewyearandthespheretransmission.cnewyearandthespheretransmission import Cnewyearandthespheretransmissionbootcamp
-from .equeueinthetrain.equeueinthetrain import Equeueinthetrainbootcamp
-from .bminimization.bminimization import Bminimizationbootcamp
-from .dreplacebymex.dreplacebymex import Dreplacebymexbootcamp
-from .cdrazillikesheap.cdrazillikesheap import Cdrazillikesheapbootcamp
-from .dspacemines.dspacemines import Dspaceminesbootcamp
-from .cxorinverse.cxorinverse import Cxorinversebootcamp
-from .ecoloradopotatobeetle.ecoloradopotatobeetle import Ecoloradopotatobeetlebootcamp
-from .chackerpackyourbags.chackerpackyourbags import Chackerpackyourbagsbootcamp
-from .ejohnnyandgrandmaster.ejohnnyandgrandmaster import Ejohnnyandgrandmasterbootcamp
-from .cchoosingflowers.cchoosingflowers import Cchoosingflowersbootcamp
-from .ebearandcompany.ebearandcompany import Ebearandcompanybootcamp
-from .bdistinctpaths.bdistinctpaths import Bdistinctpathsbootcamp
-from .ejeremybearimy.ejeremybearimy import Ejeremybearimybootcamp
-from .dzuma.dzuma import Dzumabootcamp
-from .cprefixproductsequence.cprefixproductsequence import Cprefixproductsequencebootcamp
-from .cboredom.cboredom import Cboredombootcamp
-from .ccielthecommander.ccielthecommander import Ccielthecommanderbootcamp
-from .enastyaandunexpectedguest.enastyaandunexpectedguest import Enastyaandunexpectedguestbootcamp
-from .conlinemeeting.conlinemeeting import Conlinemeetingbootcamp
-from .bthechildandset.bthechildandset import Bthechildandsetbootcamp
-from .eyaroslavandalgorithm.eyaroslavandalgorithm import Eyaroslavandalgorithmbootcamp
-from .ewatchingfireworksisfun.ewatchingfireworksisfun import Ewatchingfireworksisfunbootcamp
-from .cbearanddrawing.cbearanddrawing import Cbearanddrawingbootcamp
-from .crememberingstrings.crememberingstrings import Crememberingstringsbootcamp
-from .dwasherdryerfolder.dwasherdryerfolder import Dwasherdryerfolderbootcamp
-from .dcandiesforchildren.dcandiesforchildren import Dcandiesforchildrenbootcamp
-from .ccompartments.ccompartments import Ccompartmentsbootcamp
-from .dintersectingsubtrees.dintersectingsubtrees import Dintersectingsubtreesbootcamp
-from .cfireagain.cfireagain import Cfireagainbootcamp
-from .ddirtydeedsdonedirtcheap.ddirtydeedsdonedirtcheap import Ddirtydeedsdonedirtcheapbootcamp
-from .amishaandforest.amishaandforest import Amishaandforestbootcamp
-from .cvusthecossackandstrings.cvusthecossackandstrings import Cvusthecossackandstringsbootcamp
-from .bsashaandonemorename.bsashaandonemorename import Bsashaandonemorenamebootcamp
-from .dlcc.dlcc import Dlccbootcamp
-from .cmaximummedian.cmaximummedian import Cmaximummedianbootcamp
-from .dbuildingbridge.dbuildingbridge import Dbuildingbridgebootcamp
-from .ctillicollapse.ctillicollapse import Ctillicollapsebootcamp
-from .csequencetransformation.csequencetransformation import Csequencetransformationbootcamp
-from .camistofflorescence.camistofflorescence import Camistofflorescencebootcamp
-from .cneedforpinkslips.cneedforpinkslips import Cneedforpinkslipsbootcamp
-from .ccycliccoloring.ccycliccoloring import Ccycliccoloringbootcamp
-from .cmatrixsorting.cmatrixsorting import Cmatrixsortingbootcamp
-from .drarityandnewdress.drarityandnewdress import Drarityandnewdressbootcamp
-from .eblackwidow.eblackwidow import Eblackwidowbootcamp
-from .ethanosnim.ethanosnim import Ethanosnimbootcamp
-from .carraybeauty.carraybeauty import Carraybeautybootcamp
-from .civanandpowersoftwo.civanandpowersoftwo import Civanandpowersoftwobootcamp
-from .comkarandbaseball.comkarandbaseball import Comkarandbaseballbootcamp
-from .dboboniuandjianghu.dboboniuandjianghu import Dboboniuandjianghubootcamp
-from .cehabanda2operationtask.cehabanda2operationtask import Cehabanda2operationtaskbootcamp
-from .dchemicaltable.dchemicaltable import Dchemicaltablebootcamp
-from .brestorecube.brestorecube import Brestorecubebootcamp
-from .cfloorandmod.cfloorandmod import Cfloorandmodbootcamp
-from .cnumberofways.cnumberofways import Cnumberofwaysbootcamp
-from .cnamingcompany.cnamingcompany import Cnamingcompanybootcamp
-from .cpaintthedigits.cpaintthedigits import Cpaintthedigitsbootcamp
-from .eluckytree.eluckytree import Eluckytreebootcamp
-from .cmagicformulas.cmagicformulas import Cmagicformulasbootcamp
-from .canyaandghosts.canyaandghosts import Canyaandghostsbootcamp
-from .cphoenixanddistribution.cphoenixanddistribution import Cphoenixanddistributionbootcamp
-from .cnastyaandunexpectedguest.cnastyaandunexpectedguest import Cnastyaandunexpectedguestbootcamp
-from .eleavingthebar.eleavingthebar import Eleavingthebarbootcamp
-from .ddonkeyandstars.ddonkeyandstars import Ddonkeyandstarsbootcamp
-from .cunusualproduct.cunusualproduct import Cunusualproductbootcamp
-from .cpolandballandforest.cpolandballandforest import Cpolandballandforestbootcamp
-from .coldberlandlanguage.coldberlandlanguage import Coldberlandlanguagebootcamp
-from .e1asterismeasyversion.e1asterismeasyversion import E1asterismeasyversionbootcamp
-from .bpiet.bpiet import Bpietbootcamp
-from .cpredictoutcomeofthegame.cpredictoutcomeofthegame import Cpredictoutcomeofthegamebootcamp
-from .bintersectingsubtrees.bintersectingsubtrees import Bintersectingsubtreesbootcamp
-from .egeraldandgiantchess.egeraldandgiantchess import Egeraldandgiantchessbootcamp
-from .ebrackets.ebrackets import Ebracketsbootcamp
-from .cpostcard.cpostcard import Cpostcardbootcamp
-from .ccompressionandexpansion.ccompressionandexpansion import Ccompressionandexpansionbootcamp
-from .epermutationrecovery.epermutationrecovery import Epermutationrecoverybootcamp
-from .cbinarysearch.cbinarysearch import Cbinarysearchbootcamp
-from .elogicalexpression.elogicalexpression import Elogicalexpressionbootcamp
-from .drussianroulette.drussianroulette import Drussianroulettebootcamp
-from .eyetanothernumbersequence.eyetanothernumbersequence import Eyetanothernumbersequencebootcamp
-from .cjzzhuandapples.cjzzhuandapples import Cjzzhuandapplesbootcamp
-from .enumbertransformationii.enumbertransformationii import Enumbertransformationiibootcamp
-from .dabilitytoconvert.dabilitytoconvert import Dabilitytoconvertbootcamp
-from .clittlealawnspuzzle.clittlealawnspuzzle import Clittlealawnspuzzlebootcamp
-from .dtimetorun.dtimetorun import Dtimetorunbootcamp
-from .d2theworldisjustaprogrammingtaskhardversion.d2theworldisjustaprogrammingtaskhardversion import D2theworldisjustaprogrammingtaskhardversionbootcamp
-from .fhighcry.fhighcry import Fhighcrybootcamp
-from .bformingteams.bformingteams import Bformingteamsbootcamp
-from .dbookshelves.dbookshelves import Dbookshelvesbootcamp
-from .cnetworkmask.cnetworkmask import Cnetworkmaskbootcamp
-from .elittleelephantandshifts.elittleelephantandshifts import Elittleelephantandshiftsbootcamp
-from .cchessboardbilliard.cchessboardbilliard import Cchessboardbilliardbootcamp
-from .cnewyearanddomino.cnewyearanddomino import Cnewyearanddominobootcamp
-from .efreelancersdreams.efreelancersdreams import Efreelancersdreamsbootcamp
-from .ekarenandsupermarket.ekarenandsupermarket import Ekarenandsupermarketbootcamp
-from .cmahmoudandehabandthexor.cmahmoudandehabandthexor import Cmahmoudandehabandthexorbootcamp
-from .csuperiorperiodicsubarrays.csuperiorperiodicsubarrays import Csuperiorperiodicsubarraysbootcamp
-from .cplayingwithsuperglue.cplayingwithsuperglue import Cplayingwithsupergluebootcamp
-from .dgottagofast.dgottagofast import Dgottagofastbootcamp
-from .cgarland.cgarland import Cgarlandbootcamp
-from .cedoandmagnets.cedoandmagnets import Cedoandmagnetsbootcamp
-from .clevkoandstrings.clevkoandstrings import Clevkoandstringsbootcamp
-from .cbanhmi.cbanhmi import Cbanhmibootcamp
-from .ccounttriangles.ccounttriangles import Ccounttrianglesbootcamp
-from .cdijkstra.cdijkstra import Cdijkstrabootcamp
-from .evasyaandbeautifularrays.evasyaandbeautifularrays import Evasyaandbeautifularraysbootcamp
-from .creport.creport import Creportbootcamp
-from .frectanglepainting1.frectanglepainting1 import Frectanglepainting1bootcamp
-from .enumbertransformation.enumbertransformation import Enumbertransformationbootcamp
-from .cvaleraandtubes.cvaleraandtubes import Cvaleraandtubesbootcamp
-from .ewizardsandnumbers.ewizardsandnumbers import Ewizardsandnumbersbootcamp
-from .cpointordering.cpointordering import Cpointorderingbootcamp
-from .cataleoftwolands.cataleoftwolands import Cataleoftwolandsbootcamp
-from .canniversary.canniversary import Canniversarybootcamp
-from .cnewyearandpermutation.cnewyearandpermutation import Cnewyearandpermutationbootcamp
-from .ccheckposts.ccheckposts import Ccheckpostsbootcamp
-from .cinstantnoodles.cinstantnoodles import Cinstantnoodlesbootcamp
-from .cdivisionintoteams.cdivisionintoteams import Cdivisionintoteamsbootcamp
-from .cleagueofleesins.cleagueofleesins import Cleagueofleesinsbootcamp
-from .bbornthisway.bbornthisway import Bbornthiswaybootcamp
-from .dtokitsukazeandstrangerectangle.dtokitsukazeandstrangerectangle import Dtokitsukazeandstrangerectanglebootcamp
-from .cgeometricprogression.cgeometricprogression import Cgeometricprogressionbootcamp
-from .ccirclingroundtreasures.ccirclingroundtreasures import Ccirclingroundtreasuresbootcamp
-from .cstl.cstl import Cstlbootcamp
-from .byetanotherarraypartitioningtask.byetanotherarraypartitioningtask import Byetanotherarraypartitioningtaskbootcamp
-from .cminimumsum.cminimumsum import Cminimumsumbootcamp
-from .fmaxmex.fmaxmex import Fmaxmexbootcamp
-from .comnomandcandies.comnomandcandies import Comnomandcandiesbootcamp
-from .ecointroubles.ecointroubles import Ecointroublesbootcamp
-from .cserejaandsubsequences.cserejaandsubsequences import Cserejaandsubsequencesbootcamp
-from .eanniversary.eanniversary import Eanniversarybootcamp
-from .cworldofdarkraftbattleforazathoth.cworldofdarkraftbattleforazathoth import Cworldofdarkraftbattleforazathothbootcamp
-from .cpalindromifier.cpalindromifier import Cpalindromifierbootcamp
-from .byaroslavandtwostrings.byaroslavandtwostrings import Byaroslavandtwostringsbootcamp
-from .aperformeasily.aperformeasily import Aperformeasilybootcamp
-from .ccivilization.ccivilization import Ccivilizationbootcamp
-from .fchaoticv.fchaoticv import Fchaoticvbootcamp
-from .cnezzarandnicebeatmap.cnezzarandnicebeatmap import Cnezzarandnicebeatmapbootcamp
-from .carrangement.carrangement import Carrangementbootcamp
-from .egreedyshopping.egreedyshopping import Egreedyshoppingbootcamp
-from .cjeremybearimy.cjeremybearimy import Cjeremybearimybootcamp
-from .ekleofášandthenthlon.ekleofášandthenthlon import Ekleofášandthenthlonbootcamp
-from .esergeyandsubway.esergeyandsubway import Esergeyandsubwaybootcamp
-from .ghappyline.ghappyline import Ghappylinebootcamp
-from .dkonradandcompanyevaluation.dkonradandcompanyevaluation import Dkonradandcompanyevaluationbootcamp
-from .cmashmokhandreverseoperation.cmashmokhandreverseoperation import Cmashmokhandreverseoperationbootcamp
-from .edatacentermaintenance.edatacentermaintenance import Edatacentermaintenancebootcamp
-from .cpainttree.cpainttree import Cpainttreebootcamp
-from .cdisposition.cdisposition import Cdispositionbootcamp
-from .carthurandtable.carthurandtable import Carthurandtablebootcamp
-from .dchallengesinschool41.dchallengesinschool41 import Dchallengesinschool41bootcamp
-from .cgregandfriends.cgregandfriends import Cgregandfriendsbootcamp
-from .cbeautifulipaddresses.cbeautifulipaddresses import Cbeautifulipaddressesbootcamp
-from .carrayproduct.carrayproduct import Carrayproductbootcamp
-from .egameswithrectangle.egameswithrectangle import Egameswithrectanglebootcamp
-from .eprefixproductsequence.eprefixproductsequence import Eprefixproductsequencebootcamp
-from .bshowerline.bshowerline import Bshowerlinebootcamp
-from .dmaxmedian.dmaxmedian import Dmaxmedianbootcamp
-from .cthebigrace.cthebigrace import Cthebigracebootcamp
-from .csearchingforgraph.csearchingforgraph import Csearchingforgraphbootcamp
-from .d1kirkandabinarystringeasyversion.d1kirkandabinarystringeasyversion import D1kirkandabinarystringeasyversionbootcamp
-from .cpagenumbers.cpagenumbers import Cpagenumbersbootcamp
-from .cboboniuandstring.cboboniuandstring import Cboboniuandstringbootcamp
-from .cthanosnim.cthanosnim import Cthanosnimbootcamp
-from .cmagicfive.cmagicfive import Cmagicfivebootcamp
-from .cproblemfornazar.cproblemfornazar import Cproblemfornazarbootcamp
-from .dirrigation.dirrigation import Dirrigationbootcamp
-from .cmailstamps.cmailstamps import Cmailstampsbootcamp
-from .dnewyearsantanetwork.dnewyearsantanetwork import Dnewyearsantanetworkbootcamp
-from .dflipthecards.dflipthecards import Dflipthecardsbootcamp
-from .ebearanddrawing.ebearanddrawing import Ebearanddrawingbootcamp
-from .econveyor.econveyor import Econveyorbootcamp
-from .epainttree.epainttree import Epainttreebootcamp
-from .cvasyaandbeautifularrays.cvasyaandbeautifularrays import Cvasyaandbeautifularraysbootcamp
-from .cnumbertransformation.cnumbertransformation import Cnumbertransformationbootcamp
-from .cnamequest.cnamequest import Cnamequestbootcamp
-from .ccupboardandballoons.ccupboardandballoons import Ccupboardandballoonsbootcamp
-from .cpetyaandspiders.cpetyaandspiders import Cpetyaandspidersbootcamp
-from .cphoenixandtowers.cphoenixandtowers import Cphoenixandtowersbootcamp
-from .criversidecurio.criversidecurio import Criversidecuriobootcamp
-from .cdominoes.cdominoes import Cdominoesbootcamp
-from .cmessy.cmessy import Cmessybootcamp
-from .ccolorstripe.ccolorstripe import Ccolorstripebootcamp
-from .cspysyndrome2.cspysyndrome2 import Cspysyndrome2bootcamp
-from .epolothepenguinandxoroperation.epolothepenguinandxoroperation import Epolothepenguinandxoroperationbootcamp
-from .cpackagedelivery.cpackagedelivery import Cpackagedeliverybootcamp
-from .cservers.cservers import Cserversbootcamp
-from .dvolleyball.dvolleyball import Dvolleyballbootcamp
-from .cserejaandtwosequences.cserejaandtwosequences import Cserejaandtwosequencesbootcamp
-from .cluckytree.cluckytree import Cluckytreebootcamp
-from .croundtableknights.croundtableknights import Croundtableknightsbootcamp
-from .cdilucandkaeya.cdilucandkaeya import Cdilucandkaeyabootcamp
-from .cserejaandthearrangementofnumbers.cserejaandthearrangementofnumbers import Cserejaandthearrangementofnumbersbootcamp
-from .dgeneratingsets.dgeneratingsets import Dgeneratingsetsbootcamp
-from .cwatchingfireworksisfun.cwatchingfireworksisfun import Cwatchingfireworksisfunbootcamp
-from .ecleverfatrat.ecleverfatrat import Ecleverfatratbootcamp
-from .e1squarefreedivisioneasyversion.e1squarefreedivisioneasyversion import E1squarefreedivisioneasyversionbootcamp
-from .cstripe2.cstripe2 import Cstripe2bootcamp
-from .g1intoblockseasyversion.g1intoblockseasyversion import G1intoblockseasyversionbootcamp
-from .emashmokhandreverseoperation.emashmokhandreverseoperation import Emashmokhandreverseoperationbootcamp
-from .cshootinggallery.cshootinggallery import Cshootinggallerybootcamp
-from .cvanyaandscales.cvanyaandscales import Cvanyaandscalesbootcamp
-from .cktree.cktree import Cktreebootcamp
-from .ccleverfatrat.ccleverfatrat import Ccleverfatratbootcamp
-from .emonsterinvaders.emonsterinvaders import Emonsterinvadersbootcamp
-from .dpalindromiccharacteristics.dpalindromiccharacteristics import Dpalindromiccharacteristicsbootcamp
-from .fcandiesforchildren.fcandiesforchildren import Fcandiesforchildrenbootcamp
-from .ddecreasingdebts.ddecreasingdebts import Ddecreasingdebtsbootcamp
-from .bdzylovesmodification.bdzylovesmodification import Bdzylovesmodificationbootcamp
-from .egraphreconstruction.egraphreconstruction import Egraphreconstructionbootcamp
-from .emorrowindows.emorrowindows import Emorrowindowsbootcamp
-from .clru.clru import Clrubootcamp
-from .eguessthetree.eguessthetree import Eguessthetreebootcamp
-from .ddistinctpaths.ddistinctpaths import Ddistinctpathsbootcamp
-from .eereaderdisplay.eereaderdisplay import Eereaderdisplaybootcamp
-from .clunarnewyearandnumberdivision.clunarnewyearandnumberdivision import Clunarnewyearandnumberdivisionbootcamp
-from .med_calculator.med_calculator import Medcalculatorbootcamp
-from .symbolic_regression.symbolic_regression import SymbolicRegressionbootcamp
-from .earth_typhoon.earth_typhoon import Earthtyphoonbootcamp
+# Export all bootcamp names for IDE autocompletion
+__all__ = ['Basebootcamp'] + list(BOOTCAMP_REGISTRY.keys())

@@ -2,6 +2,7 @@ import json
 import os
 from pathlib import Path
 from datasets import load_dataset
+import random
 
 def examine_drop_data():
     """检查DROP数据的格式"""
@@ -53,27 +54,42 @@ def process_drop_to_jsonl():
         
         print("\n=== 步骤2: 处理和保存数据 ===")
         
-        # 处理两个分割
-        datasets = [
-            ("train", train_ds),
-            ("validation", validation_ds)
+        # 设置随机种子以确保结果可重现
+        random.seed(42)
+        
+        # 处理两个分割，设定采样数量
+        datasets_config = [
+            ("train", train_ds, 8000),
+            ("validation", validation_ds, 2000)
         ]
         
-        for split_name, dataset in datasets:
+        for split_name, dataset, sample_size in datasets_config:
             output_file = os.path.join(output_path, f"{split_name}.jsonl")
             
-            print(f"处理 {split_name} 数据集 ({len(dataset)} 条记录)...")
+            # 随机采样
+            total_size = len(dataset)
+            if total_size > sample_size:
+                # 生成随机索引
+                indices = random.sample(range(total_size), sample_size)
+                indices.sort()  # 排序以提高访问效率
+                print(f"从 {split_name} 数据集的 {total_size} 条记录中随机采样 {sample_size} 条...")
+            else:
+                indices = list(range(total_size))
+                print(f"处理 {split_name} 数据集的全部 {total_size} 条记录...")
             
             with open(output_file, 'w', encoding='utf-8') as outfile:
                 processed_count = 0
                 
-                for index, item in enumerate(dataset):
+                for new_index, original_index in enumerate(indices):
                     try:
+                        item = dataset[original_index]
+                        
                         # 转换为标准格式
                         processed_data = {
                             "question": item["question"],
                             "passage": item["passage"],
-                            "index": index,
+                            "index": new_index,  # 使用新的连续索引
+                            "original_index": original_index,  # 保留原始索引
                             "split": split_name
                         }
                         
@@ -104,7 +120,7 @@ def process_drop_to_jsonl():
                         processed_count += 1
                         
                     except Exception as e:
-                        print(f"{split_name} 第 {index} 行处理错误: {e}")
+                        print(f"{split_name} 第 {original_index} 行处理错误: {e}")
                         continue
                 
                 print(f"成功处理 {processed_count} 条 {split_name} 数据，保存到: {output_file}")

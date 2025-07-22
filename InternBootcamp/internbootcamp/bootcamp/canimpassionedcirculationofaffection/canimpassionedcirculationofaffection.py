@@ -152,10 +152,10 @@ for iChange, sChar in questionList:
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import string
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Canimpassionedcirculationofaffectionbootcamp(Basebootcamp):
     def __init__(self, n=10, max_q=3, random_seed=None):

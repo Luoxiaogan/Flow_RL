@@ -142,11 +142,11 @@ main()
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import bisect
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Aglasscarvingbootcamp(Basebootcamp):
     def __init__(self, max_width=1000, max_height=1000, max_cuts=20):

@@ -216,12 +216,12 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
 from math import gcd
 from collections import deque
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Ccycliccoloringbootcamp(Basebootcamp):
     def __init__(self, max_n=10, min_k=1, max_k=5):

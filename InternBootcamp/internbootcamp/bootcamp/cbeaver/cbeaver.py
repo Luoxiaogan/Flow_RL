@@ -105,11 +105,11 @@ print mx, ind
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import string
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 allowed_chars = string.ascii_letters + string.digits + '_'
 

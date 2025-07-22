@@ -156,11 +156,11 @@ print 2 + ncuts
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import math
 import re
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cacolourfulprospectbootcamp(Basebootcamp):
     def __init__(self, min_n=1, max_n=3, x_range=(-10, 10), y_range=(-10, 10), r_range=(1, 10)):

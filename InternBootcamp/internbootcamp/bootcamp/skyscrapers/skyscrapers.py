@@ -1,5 +1,6 @@
 
 
+"""
 ### 谜题描述
 
 **Skyscrapers Puzzle Rules (General Form):**

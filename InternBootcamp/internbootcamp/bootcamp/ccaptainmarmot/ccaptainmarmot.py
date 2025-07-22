@@ -142,12 +142,12 @@ for i in range(0,4*n,4):
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import math
 import re
 import random
 from itertools import combinations
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Ccaptainmarmotbootcamp(Basebootcamp):
     def __init__(self, n_regiments=1, same_origin=True, max_rotation=3, solvable_ratio=0.5, **kwargs):

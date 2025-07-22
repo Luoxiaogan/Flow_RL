@@ -38,6 +38,8 @@ def parse_arguments():
     
     ### 修改点 1: 增加新的命令行参数 --id-start-index ###
     parser.add_argument('--id-start-index', type=int, default=0, help='生成工作流ID的起始索引')
+    parser.add_argument('--parallelism', type=int, default=2, help='每个数据组合生成的工作流并行度')
+    parser.add_argument('--max-concurrent-groups', type=int, default=5, help='最大并发组数')
     
     return parser.parse_args()
 
@@ -98,7 +100,7 @@ async def call_openai_compatible_api(api_config: Dict, messages: List[Dict]) -> 
 
 class WorkflowGenerator:
     def __init__(self, api_configs: List[Dict], workspace_path: str, handler: BenchmarkHandler,
-                 training_data_output: str = None):
+                 training_data_output: str = None, max_concurrent_groups: int = 5):
         if not api_configs:
             raise ValueError("生成API配置不能为空。")
         self.api_configs = api_configs
@@ -106,7 +108,7 @@ class WorkflowGenerator:
         self.handler = handler
         self.benchmark_name = handler.benchmark_name
         self.training_data_output = training_data_output
-        self.training_records = [] # 用于暂存训练数据
+        self.max_concurrent_groups = max_concurrent_groups
 
         # 创建工作流保存目录
         self.workflows_output_dir = os.path.join(self.workspace_path, "generated_workflows", self.benchmark_name)
@@ -126,7 +128,7 @@ class WorkflowGenerator:
             logging.error(f"无法为 benchmark '{self.benchmark_name}' 加载脚本模板: {e}")
             raise e
 
-    def _construct_generation_prompt(self, data_indices: List[int]) -> Tuple[List[Dict], str]:
+    def _construct_generation_prompt(self, data_indices: List[int], existing_workflow: str = None) -> Tuple[List[Dict], str]:
         """使用 Handler 构建生成请求的 Prompt。"""
         start_prompt, end_prompt, system_prompt, meta_prompts = self._load_prompt_templates()
         
@@ -136,7 +138,13 @@ class WorkflowGenerator:
         # 2. 构建 Prompt
         selected_meta_prompt = random.choice(meta_prompts) if meta_prompts else ""
         final_end_prompt = f"\n**CRITICAL INSTRUCTION FOR THIS SPECIFIC TASK:**\n{selected_meta_prompt}\n\n" + end_prompt
-        user_prompt_str = start_prompt + f"{problem_text}" + final_end_prompt
+        
+        # 3. 如果有已存在的工作流，添加指示生成不同逻辑的工作流
+        if existing_workflow:
+            diversity_prompt = f"\n\n**CRITICAL REQUIREMENT - DIFFERENT LOGIC**: \n<existing_workflow>\n{existing_workflow}\n</existing_workflow>\n\n**You MUST generate a workflow with FUNDAMENTALLY DIFFERENT LOGIC from the above workflow.**\n\nDO NOT just change variable names (solution vs solution1) or formatting!\n\nInstead, you MUST use at least TWO of the following strategies to ensure different logic:\n1. **Different operator sequence**: Use operators in a different order (e.g., if existing uses generate->fix->review, try generate->review->ensemble)\n2. **Different control flow**: Use different conditional logic or loop structures (e.g., if existing checks result once, try multiple attempts with different strategies)\n3. **Different parallel/serial execution**: If existing runs operators serially, try parallel execution, or vice versa\n4. **Different ensemble strategy**: If existing uses ScEnsemble on all solutions, try selecting the best one first\n5. **Different error handling**: Use different approaches when solutions fail (e.g., retry with different prompts vs fix existing)\n6. **Different operator combinations**: Use operators that the existing workflow doesn't use at all\n\n**REMEMBER: The goal is LOGICAL DIFFERENCE, not cosmetic changes!**\n\n"
+            user_prompt_str = start_prompt + f"{problem_text}" + diversity_prompt + final_end_prompt
+        else:
+            user_prompt_str = start_prompt + f"{problem_text}" + final_end_prompt
 
         messages = [
             {'role': 'system', 'content': system_prompt},
@@ -145,11 +153,11 @@ class WorkflowGenerator:
         
         return messages, problem_text
 
-    async def _generate_one_workflow(self, workflow_id: str, data_indices: List[int], api_config: Dict):
+    async def _generate_one_workflow(self, workflow_id: str, data_indices: List[int], api_config: Dict, existing_workflow: str = None):
         """生成单个工作流并保存文件。"""
         try:
             # 1. 构建 Prompt
-            messages, problem_text = self._construct_generation_prompt(data_indices)
+            messages, problem_text = self._construct_generation_prompt(data_indices, existing_workflow)
             
             # 2. 调用 API
             logging.info(f"向 {api_config.get('provider', 'api')} 发送生成请求 (ID: {workflow_id}, Indices: {data_indices})")
@@ -166,21 +174,27 @@ class WorkflowGenerator:
             if code:
                 self._save_workflow_files(workflow_id, code, data_indices)
                 logging.info(f"成功生成并保存工作流: {workflow_id}")
-                # 暂存训练数据
+                # 立即保存训练数据（而不是暂存）
                 if self.training_data_output:
                     _, _, system_prompt, _ = self._load_prompt_templates()
-                    self.training_records.append({
+                    training_record = {
+                        "workflow_id": workflow_id,  # 添加工作流ID以便后续匹配
+                        "benchmark": self.benchmark_name,
+                        "data_indices": data_indices,
                         "messages": [
                             {"role": "system", "content": system_prompt},
                             {"role": "user", "content": problem_text},
                             {"role": "assistant", "content": code}
                         ]
-                    })
+                    }
+                    self._save_single_training_record(training_record)
+                return code  # 返回生成的代码供后续使用
             else:
                 raise ValueError("API响应中未能提取有效代码。")
 
         except Exception as e:
             logging.error(f"生成工作流 {workflow_id} 时失败: {e}")
+            return None
 
     def _save_workflow_files(self, workflow_id: str, code: str, indices: List[int]):
         """保存 .py 代码和 .meta.json 元数据文件。"""
@@ -201,39 +215,77 @@ class WorkflowGenerator:
         with open(meta_path, 'w', encoding='utf-8') as f:
             json.dump(meta_data, f, indent=4)
 
-    def _save_training_data(self):
-        """将暂存的训练数据追加到文件。"""
-        if not self.training_data_output or not self.training_records:
+    def _save_single_training_record(self, record: Dict):
+        """立即保存单条训练数据到文件（线程安全）。"""
+        if not self.training_data_output:
             return
         
         output_dir = os.path.dirname(self.training_data_output)
         if output_dir:
             os.makedirs(output_dir, exist_ok=True)
             
+        # 使用追加模式，每次写入一条记录
         with open(self.training_data_output, 'a', encoding='utf-8') as f:
-            for record in self.training_records:
-                f.write(json.dumps(record, ensure_ascii=False) + '\n')
-        logging.info(f"{len(self.training_records)} 条训练数据已追加到: {self.training_data_output}")
+            f.write(json.dumps(record, ensure_ascii=False) + '\n')
+        logging.debug(f"训练数据已保存: {record['workflow_id']}")
 
-    ### 修改点 2: 修改 run 方法的签名，接收 start_index ###
-    async def run(self, data_indices_list: List[List[int]], start_index: int):
+    ### 修改点 2: 修改 run 方法的签名，接收 start_index 和 parallelism ###
+    async def run(self, data_indices_list: List[List[int]], start_index: int, parallelism: int = 2):
         """主运行逻辑，创建并执行所有生成任务。"""
-        # 修改日志，显示ID起始点
-        logging.info(f"开始为 Benchmark '{self.benchmark_name}' 并行生成 {len(data_indices_list)} 个工作流，ID 从 {start_index} 开始...")
+        # 修改日志，显示ID起始点和并行度
+        total_workflows = len(data_indices_list) * parallelism
+        logging.info(f"开始为 Benchmark '{self.benchmark_name}' 生成 {total_workflows} 个工作流 ({len(data_indices_list)} 组 × {parallelism} 并行度)，ID 从 {start_index} 开始...")
         
-        tasks = []
+        # 创建信号量限制并发组数
+        semaphore = asyncio.Semaphore(self.max_concurrent_groups)
         api_index_counter = 0
+        
+        # 创建所有组的任务，组间并行执行，组内串行执行
+        group_tasks = []
+        
+        async def generate_group_with_semaphore(indices, group_index, parallelism, api_start_index):
+            async with semaphore:
+                await self._generate_group_workflows(indices, group_index, parallelism, api_start_index)
+        
         for i, indices in enumerate(data_indices_list):
-            ### 修改点 3: 使用 start_index 计算全局唯一的 workflow_id ###
-            workflow_id = f"{self.benchmark_name}_{start_index + i}"
-            api_config = self.api_configs[api_index_counter % len(self.api_configs)]
-            api_index_counter += 1
-            tasks.append(self._generate_one_workflow(workflow_id, indices, api_config))
+            # 为每个组创建一个异步任务
+            group_task = generate_group_with_semaphore(
+                indices, 
+                start_index + i, 
+                parallelism, 
+                api_index_counter
+            )
+            group_tasks.append(group_task)
+            api_index_counter += parallelism  # 预分配API索引
         
-        await asyncio.gather(*tasks)
+        # 并行执行所有组的任务（受信号量限制）
+        await asyncio.gather(*group_tasks)
         
-        self._save_training_data()
-        logging.info("工作流生成阶段完成。")
+        if self.training_data_output:
+            # 统计已保存的训练数据条数
+            total_workflows = len(data_indices_list) * parallelism
+            logging.info(f"工作流生成阶段完成。已生成 {total_workflows} 个工作流，训练数据已保存到: {self.training_data_output}")
+        else:
+            logging.info("工作流生成阶段完成。")
+    
+    async def _generate_group_workflows(self, indices: List[int], group_index: int, parallelism: int, api_start_index: int):
+        """为一个数据组生成多个工作流，组内串行执行以便后续工作流参考前面的工作流"""
+        generated_workflows = []  # 存储已生成的工作流代码
+        
+        for j in range(parallelism):
+            workflow_id = f"{self.benchmark_name}_{group_index}_{j}"
+            api_config = self.api_configs[(api_start_index + j) % len(self.api_configs)]
+            
+            # 第一个工作流不需要参考已有工作流
+            if j == 0:
+                generated_code = await self._generate_one_workflow(workflow_id, indices, api_config)
+            else:
+                # 后续工作流需要参考第一个生成的工作流
+                existing_workflow = generated_workflows[0] if generated_workflows else None
+                generated_code = await self._generate_one_workflow(workflow_id, indices, api_config, existing_workflow)
+            
+            if generated_code:
+                generated_workflows.append(generated_code)
 
 
 async def main():
@@ -257,11 +309,12 @@ async def main():
             api_configs=api_pool,
             workspace_path=args.workspace_path,
             handler=handler,
-            training_data_output=args.training_data_output
+            training_data_output=args.training_data_output,
+            max_concurrent_groups=args.max_concurrent_groups
         )
         
-        ### 修改点 4: 将从命令行解析出的 id_start_index 传递给 run 方法 ###
-        await generator.run(generation_indices_list, args.id_start_index)
+        ### 修改点 4: 将从命令行解析出的 id_start_index 和 parallelism 传递给 run 方法 ###
+        await generator.run(generation_indices_list, args.id_start_index, args.parallelism)
         
     except (ImportError, FileNotFoundError, ValueError) as e:
         logging.error(f"初始化或运行生成器时发生严重错误: {e}")

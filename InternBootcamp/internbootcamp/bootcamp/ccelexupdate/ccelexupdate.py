@@ -92,10 +92,10 @@ for t in range(ni()):
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Ccelexupdatebootcamp(Basebootcamp):
     def __init__(self, max_x=10**9, max_y=10**9, max_dx=100, max_dy=100):

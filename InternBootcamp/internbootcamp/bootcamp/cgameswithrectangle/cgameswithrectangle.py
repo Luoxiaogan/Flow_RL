@@ -65,11 +65,11 @@ print (c(n-1,2*k)*c(m-1,2*k))%(10**9+7)
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import math
 from math import factorial
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cgameswithrectanglebootcamp(Basebootcamp):
     def __init__(self, min_n=1, max_n=1000, min_m=1, max_m=1000, min_k=1, max_k=1000):

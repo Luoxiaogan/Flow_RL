@@ -64,11 +64,11 @@ print xx,yy,((xx-x2)**2+(yy-y2)**2)**0.5
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
 import math
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cfifaandfafabootcamp(Basebootcamp):
     def __init__(self, R_max=10**5, coord_max=10**5, **kwargs):

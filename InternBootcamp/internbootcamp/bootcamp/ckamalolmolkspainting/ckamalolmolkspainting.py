@@ -177,10 +177,10 @@ int main(int argc, char const *argv[]) {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def solve(n, m, grid):
     a = [[1 if cell == 'X' else 0 for cell in row] for row in grid]

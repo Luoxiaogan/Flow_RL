@@ -1,5 +1,6 @@
 
 
+"""
 ### 谜题描述
 
 **Objective**: Divide a grid into non-overlapping regions called \"galaxies,\" each containing exactly one central circle.  

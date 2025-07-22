@@ -126,10 +126,10 @@ print '\n'.join(str(int(x)) for x in out)
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cchoosingballsbootcamp(Basebootcamp):
     def __init__(self, min_n=3, max_n=10, min_q=1, max_q=5, max_v=10, max_color=None, max_ab=10):

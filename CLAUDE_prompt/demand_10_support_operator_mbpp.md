@@ -1,0 +1,19 @@
+1. in `ScoreFlow/scripts`.
+2. 现在已经支持的是`ScoreFlow/scripts/gsm8k` and `ScoreFlow/scripts/humaneval`.
+3. 现在需要支持`ScoreFlow/scripts/mbpp`(多跳问答)
+4. 一些`mbpp`数据的例子:
+```
+{"task_id": 610, "text": "Write a python function to remove the k'th element from a given list.", "code": "def remove_kth_element(list1, L):\r\n    return  list1[:L-1] + list1[L:]", "index": 9, "split": "train", "question": "Write a python function to remove the k'th element from a given list.", "answer": "def remove_kth_element(list1, L):\r\n    return  list1[:L-1] + list1[L:]", "test_list": ["assert remove_kth_element([1,1,2,3,4,4,5,1],3)==[1, 1, 3, 4, 4, 5, 1]", "assert remove_kth_element([0, 0, 1, 2, 3, 4, 4, 5, 6, 6, 6, 7, 8, 9, 4, 4],4)==[0, 0, 1, 3, 4, 4, 5, 6, 6, 6, 7, 8, 9, 4, 4]", "assert remove_kth_element([10, 10, 15, 19, 18, 18, 17, 26, 26, 17, 18, 10],5)==[10,10,15,19, 18, 17, 26, 26, 17, 18, 10]"], "test_setup_code": "", "challenge_test_list": []}
+{"task_id": 611, "text": "Write a function to find the maximum of nth column from the given tuple list.", "code": "def max_of_nth(test_list, N):\r\n  res = max([sub[N] for sub in test_list])\r\n  return (res) ", "index": 10, "split": "train", "question": "Write a function to find the maximum of nth column from the given tuple list.", "answer": "def max_of_nth(test_list, N):\r\n  res = max([sub[N] for sub in test_list])\r\n  return (res) ", "test_list": ["assert max_of_nth([(5, 6, 7), (1, 3, 5), (8, 9, 19)], 2) == 19", "assert max_of_nth([(6, 7, 8), (2, 4, 6), (9, 10, 20)], 1) == 10", "assert max_of_nth([(7, 8, 9), (3, 5, 7), (10, 11, 21)], 1) == 11"], "test_setup_code": "", "challenge_test_list": []}
+{"task_id": 612, "text": "Write a python function to merge the first and last elements separately in a list of lists.", "code": "def merge(lst):  \r\n    return [list(ele) for ele in list(zip(*lst))] ", "index": 11, "split": "train", "question": "Write a python function to merge the first and last elements separately in a list of lists.", "answer": "def merge(lst):  \r\n    return [list(ele) for ele in list(zip(*lst))] ", "test_list": ["assert merge([['x', 'y'], ['a', 'b'], ['m', 'n']]) == [['x', 'a', 'm'], ['y', 'b', 'n']]", "assert merge([[1, 2], [3, 4], [5, 6], [7, 8]]) == [[1, 3, 5, 7], [2, 4, 6, 8]]", "assert merge([['x', 'y','z' ], ['a', 'b','c'], ['m', 'n','o']]) == [['x', 'a', 'm'], ['y', 'b', 'n'],['z', 'c','o']]"], "test_setup_code": "", "challenge_test_list": []}
+{"task_id": 613, "text": "Write a function to find the maximum value in record list as tuple attribute in the given tuple list.", "code": "def maximum_value(test_list):\r\n  res = [(key, max(lst)) for key, lst in test_list]\r\n  return (res) ", "index": 12, "split": "train", "question": "Write a function to find the maximum value in record list as tuple attribute in the given tuple list.", "answer": "def maximum_value(test_list):\r\n  res = [(key, max(lst)) for key, lst in test_list]\r\n  return (res) ", "test_list": ["assert maximum_value([('key1', [3, 4, 5]), ('key2', [1, 4, 2]), ('key3', [9, 3])]) == [('key1', 5), ('key2', 4), ('key3', 9)]", "assert maximum_value([('key1', [4, 5, 6]), ('key2', [2, 5, 3]), ('key3', [10, 4])]) == [('key1', 6), ('key2', 5), ('key3', 10)]", "assert maximum_value([('key1', [5, 6, 7]), ('key2', [3, 6, 4]), ('key3', [11, 5])]) == [('key1', 7), ('key2', 6), ('key3', 11)]"], "test_setup_code": "", "challenge_test_list": []}
+```
+5. 修改`ScoreFlow/scripts/mbpp`里面的文件
+6. 之前我已经支持过`handler.py`相关.
+7. 可能需要支持的是custom operator相关的细节，以及细节上的修改，以便适配mbpp.
+8. 一个参考计划
+   1. 先阅读gsm8k, humaneval的代码, in `ScoreFlow/scripts/gsm8k` and `ScoreFlow/scripts/mbpp`
+   2. 然后阅读mbpp现在的代码
+   3. 然后阅读我4中给出的数据格式
+   4. 然后列出修改计划
+   5. 执行修改计划

@@ -142,11 +142,11 @@ else:
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 from string import digits
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Ccapturevalerianbootcamp(Basebootcamp):
     def __init__(self, roman_prob=0.5, min_a=2, max_a=25, min_b=2, max_b=25):

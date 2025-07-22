@@ -123,11 +123,11 @@ print (-1 if dp[-1]>n else dp[-1])
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 from collections import deque
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Bstripbootcamp(Basebootcamp):
     def __init__(self, min_n=1, max_n=10, min_s=0, max_s=10, min_l=1, max_l=5, solvable_prob=0.5):

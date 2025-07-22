@@ -149,12 +149,12 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import json
 import heapq
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cfetchthetreasurebootcamp(Basebootcamp):
     def __init__(self, max_n=5, max_m=10, max_h=10**3, max_k=10**4, max_ops_type1=20, **params):

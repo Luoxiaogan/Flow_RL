@@ -87,10 +87,10 @@ print sum
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cjeopardybootcamp(Basebootcamp):
     def __init__(self, n_min=1, n_max=100, a_min=1, a_max=10**7, m_min=1, m_max=None):

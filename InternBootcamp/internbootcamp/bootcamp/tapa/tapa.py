@@ -1,5 +1,6 @@
 
 
+"""
 ### 谜题描述
 
 **Tapa Puzzle Rules**  

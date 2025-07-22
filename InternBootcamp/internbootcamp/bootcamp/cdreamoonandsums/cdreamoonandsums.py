@@ -60,9 +60,9 @@ print answer
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cdreamoonandsumsbootcamp(Basebootcamp):
     def __init__(self, a_min=1, a_max=10**7, b_min=1, b_max=10**7):

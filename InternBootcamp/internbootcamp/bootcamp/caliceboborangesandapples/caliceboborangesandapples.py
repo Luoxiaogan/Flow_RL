@@ -94,10 +94,10 @@ print ans if a[0] + b[0] == x and a[1] + b[1] == y else \"Impossible\"
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Caliceboborangesandapplesbootcamp(Basebootcamp):
     def __init__(self, max_value=10**3, probability_impossible=0.3, seed=None):

@@ -84,12 +84,12 @@ print(' '.join([str(day_id[t]) for t in tm_raw]))
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 from heapq import heappush, heappop
 import re
 from collections import defaultdict
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Ccoffeebreakbootcamp(Basebootcamp):
     def __init__(self, max_n=10, max_m=100):

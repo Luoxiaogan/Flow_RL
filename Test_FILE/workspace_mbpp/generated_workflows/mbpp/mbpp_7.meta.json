@@ -1,9 +1,0 @@
-{
-    "id": "mbpp_7",
-    "benchmark": "mbpp",
-    "data_indices": [
-        2
-    ],
-    "dataset_path": "/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/mbpp/train.jsonl",
-    "generation_timestamp": 1752835204.611573
-}

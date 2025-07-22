@@ -103,9 +103,9 @@ for _ in xrange(int(raw_input())):
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Bplanetlapitulettibootcamp(Basebootcamp):
     def __init__(self, h_min=1, h_max=100, m_min=1, m_max=100):

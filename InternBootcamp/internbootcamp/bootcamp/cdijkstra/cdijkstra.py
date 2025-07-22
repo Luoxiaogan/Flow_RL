@@ -97,8 +97,8 @@ else:
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
-from bootcamp import Basebootcamp  # 确保导入基类
+from ..base import Basebootcamp
+from ..base import Basebootcamp  # 确保导入基类
 from collections import defaultdict
 import heapq
 import random

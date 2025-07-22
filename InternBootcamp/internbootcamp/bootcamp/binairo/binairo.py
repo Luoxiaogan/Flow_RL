@@ -1,5 +1,6 @@
 
 
+"""
 ### 谜题描述
 
 Binairo is a logic puzzle played on a rectangular grid (typically square and even-sized, e.g., 6x6, 8x8). The goal is to fill the grid with **0s and 1s** while adhering to these rules:
@@ -22,7 +23,7 @@ The puzzle starts with some cells pre-filled as clues, and players use eliminati
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 

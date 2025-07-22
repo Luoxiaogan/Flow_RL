@@ -123,10 +123,10 @@ print('\n'.join('%d %d' % (p[0] + 1, p[1] + 1) for p in ans))
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 from collections import defaultdict
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 
 def check_permutation_solution(n, p_list_1based):
