@@ -1,0 +1,44 @@
+# Workflow ID: drop_577_0
+# Benchmark: drop
+# Data Indices: [1291, 167, 591, 3944, 3136]
+
+class Workflow:
+    def __init__(
+        self,
+        config,
+        problem
+    ) -> None:
+        self.problem = problem
+        self.problem_text = str(problem) if isinstance(problem, dict) else problem
+        self.config = create(config)
+        self.custom = operator.Custom(self.config, self.problem)
+        self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
+        self.answer_generate = operator.AnswerGenerate(self.config, self.problem)
+        self.review = operator.Review(self.config, self.problem)
+        self.counting_reasoning = operator.CountingReasoning(self.config, self.problem)
+        self.arithmetic_reasoning = operator.ArithmeticReasoning(self.config, self.problem)
+        self.comparison_reasoning = operator.ComparisonReasoning(self.config, self.problem)
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
+
+    async def run_workflow(self):
+        """
+        This is a workflow graph optimized for efficiency and correctness.
+        Uses specialized operators based on problem type without conditional logic.
+        Ensemble of multiple reasoning paths ensures robustness.
+        """
+        # Generate direct answer (baseline)
+        direct_answer = await self.answer_generate()
+
+        # Use specialized operators based on likely problem type
+        counting_result = await self.counting_reasoning()
+        arithmetic_result = await self.arithmetic_reasoning()
+        comparison_result = await self.comparison_reasoning()
+
+        # Review the direct answer to improve it
+        reviewed_answer = await self.review(pre_solution=direct_answer)
+
+        # Ensemble all solutions to select the best one
+        solutions = [direct_answer, counting_result, arithmetic_result, comparison_result, reviewed_answer]
+        final_solution = await self.sc_ensemble(solutions=solutions)
+
+        return final_solution
