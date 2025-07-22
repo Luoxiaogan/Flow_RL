@@ -1,3 +1,21 @@
+import random
+
+META_PROMPTS = [
+    # 1. 强调多跳推理
+    "Your main goal is multi-hop reasoning. Use the 'Sequential Multi-Hop' pattern with FlexibleCustom to trace connections step-by-step through the context. Focus on bridging information from different sources.",
+    # 2. 强调鲁棒性验证
+    "Your main goal is robust multi-hop QA. Generate multiple reasoning paths using different Custom instructions, then use sc_ensemble to select the most well-supported answer. Consider adding Review for final verification.",
+    # 3. 强调迭代推理
+    "Your main goal is iterative multi-hop reasoning. Start with AnswerGenerate for initial hypothesis, then use Review iteratively to verify facts and refine the answer based on context.",
+    # 4. 强调混合策略
+    "Your main goal is comprehensive multi-hop QA. Combine FlexibleCustom with sequential reasoning pattern for fact extraction and connection, followed by Custom for synthesis and Review for validation.",
+    # 5. 强调效率
+    "Your main goal is efficient multi-hop reasoning. Create a streamlined workflow using FlexibleCustom with key steps like 'extract_entities', 'find_connections', 'synthesize_answer' to solve the problem effectively.",
+]
+
+# System prompt for HotpotQA tasks
+SYSTEM_PROMPT = "You are an expert at creating Python workflow graphs to solve multi-hop question answering problems. Given a problem, generate the Python code for an effective workflow using provided operators like Custom, FlexibleCustom, Review, and ScEnsemble."
+
 PYTHON_START = '''import asyncio
 from typing import Literal
 import ScoreFlow.scripts.hotpotqa.operator as operator
@@ -11,7 +29,7 @@ PYTHON_END = '''
         TIMEOUT = {time}
         return await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)'''
 
-START_PORMPT = '''You objective is to output a workflow graph, based on the following template (but you must modify it):
+START_PROMPT = '''Your objective is to generate a Python workflow graph for solving multi-hop question answering problems. You must output valid Python code based on the following template (but you must modify it):
 
 <graph>
 class Workflow:
@@ -110,9 +128,11 @@ You need to notice:
 
 **Your output graph can not contain any information of the given problem due to project requirement. All the information of this problem will be given as input "problem" (self.problem) and other agents will execute this workflow.**
 
-Only output the optimized graph (remember to add <graph> and </graph>, and the output can not contain any information of the given problem).
+Only output the optimized Python code graph (remember to add <graph> and </graph> tags around your Python code, and the output can not contain any information of the given problem).
 
-Here is the optimized graph without any problem information: '''
+Your output must be valid Python code that can be executed. Do not output XML or any other format.
+
+Here is the optimized Python workflow graph without any problem information: '''
 
 
 TEMP_AVOID = '''class Workflow:

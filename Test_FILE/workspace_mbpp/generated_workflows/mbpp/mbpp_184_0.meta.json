@@ -1,9 +1,0 @@
-{
-    "id": "mbpp_184_0",
-    "benchmark": "mbpp",
-    "data_indices": [
-        194
-    ],
-    "dataset_path": "/root/lg/Flow_RL_luogan/Processed_dataset/mbpp/train.jsonl",
-    "generation_timestamp": 1753111615.6918762
-}
