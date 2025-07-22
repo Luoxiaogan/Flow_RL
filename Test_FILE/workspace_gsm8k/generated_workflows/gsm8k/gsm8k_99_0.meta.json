@@ -1,0 +1,11 @@
+{
+    "id": "gsm8k_99_0",
+    "benchmark": "gsm8k",
+    "data_indices": [
+        666,
+        805,
+        329
+    ],
+    "dataset_path": "/root/lg/Flow_RL_luogan/Processed_dataset/gsm8k/1000_train.jsonl",
+    "generation_timestamp": 1753119592.1320333
+}

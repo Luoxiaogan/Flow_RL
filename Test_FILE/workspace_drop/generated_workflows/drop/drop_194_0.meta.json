@@ -1,0 +1,13 @@
+{
+    "id": "drop_194_0",
+    "benchmark": "drop",
+    "data_indices": [
+        1273,
+        1010,
+        3940,
+        3929,
+        1275
+    ],
+    "dataset_path": "/root/lg/Flow_RL_luogan/Processed_dataset/drop/train.jsonl",
+    "generation_timestamp": 1753112830.9119122
+}
