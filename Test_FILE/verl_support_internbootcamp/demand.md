@@ -1,0 +1,1 @@
+请你参考ScoreFlow/里面的设置,为这里面运行workflow的脚本完全改为以下两种setting:基于scoreflow里面定义的这些operator要求模型输出1.基于这些定制化operator的workflow2.基于custom operator的workflow(这两个的区别只需要改提示词就可以);因此你可能需要实现ScoreFlow\scripts\gsm8k里面的各种子脚本
