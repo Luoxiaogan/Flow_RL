@@ -1,0 +1,183 @@
+[
+  {
+    "data_source": "internbootcamp_aalmostarithmeticalprogression",
+    "prompt": [
+      {
+        "role": "system",
+        "content": "You are an expert at designing problem-solving workflows using flexible custom operators."
+      },
+      {
+        "role": "user",
+        "content": "Create a workflow to solve aalmostarithmeticalprogression problems. Task description: # \n\n### 谜题描述\nGena loves sequences of numbers. Recently, he has discovered a new type of sequences which he called an almost arithmetical progression. A sequence is an almost arithmetical progression, if its elements can be represented as:\n\n  * a1 = p, where p is some integer; \n  * ai = ai - 1 + ( - 1)i + 1·q (i > 1), where q is some integer. \n\n\n\nRight now Gena has a piece of paper with sequence b, consisting of n integers. Help Gena, find there the longest subsequence of integers that is an almost arithmetical progression.\n\nSequence s1, s2, ..., sk is a subsequence of sequence b1, b2, ..., bn, if there is such increasing sequence of indexes i1, i2, ..., ik (1 ≤ i1 < i2 < ... < ik ≤ n), that bij = sj. In other words, sequence s can be obtained from b by crossing out some elements.\n\nInput\n\nThe first line contains integer n (1 ≤ n ≤ 4000). The next line contains n integers b1, b2, ..., bn (1 ≤ bi ≤ 106).\n\nOutput\n\nPrint a single integer — the length of the required longest subsequence.\n\nExamples\n\nInput\n\n2\n3 5\n\n\nOutput\n\n2\n\n\nInput\n\n4\n10 20 10 30\n\n\nOutput\n\n3\n\nNote\n\nIn the first test the sequence actually is the suitable subsequence. \n\nIn the second test the following subsequence fits: 10, 20, 10."
+      },
+      {
+        "role": "assistant",
+        "content": "\n# InternBootcamp Problem Solving Workflow with FlexibleCustom Operator\nimport asyncio\nfrom typing import Dict, Any, List, Optional\nfrom pydantic import BaseModel, Field\nfrom metagpt.workflow import Workflow\nfrom metagpt.actions import ActionNode\nfrom ScoreFlow.scripts.internbootcamp.operator import FlexibleCustom\n\n\nclass InternBootcampWorkflow(Workflow):\n    \"\"\"Workflow for aalmostarithmeticalprogression using FlexibleCustom operator\"\"\"\n    \n    def __init__(self, llm):\n        super().__init__()\n        self.llm = llm\n        \n    async def run(self, problem: Dict[str, Any]) -> str:\n        # Initialize FlexibleCustom operator\n        flexible = FlexibleCustom(self.llm, problem)\n        \n        # Use iterative reasoning pattern\n        result = await flexible(\n            custom_instruction=\"Solve this aalmostarithmeticalprogression problem using logical reasoning and systematic approach.\",\n            reasoning_pattern=\"iterative\",\n            steps=[\"understand\", \"analyze\", \"solve\", \"verify\"],\n            max_iterations=3,\n            use_structured_output=True\n        )\n        \n        return result\n\n\n# The workflow is ready to solve InternBootcamp problems\n"
+      }
+    ],
+    "ability": "math_reasoning",
+    "reward_model": {
+      "task_name": "aalmostarithmeticalprogression",
+      "test_cases": [
+        {
+          "n": 19,
+          "b": [
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657,
+            842657
+          ],
+          "ans": 19
+        },
+        {
+          "n": 27,
+          "b": [
+            309461,
+            440330,
+            492384,
+            440330,
+            61135,
+            440330,
+            280515,
+            215000,
+            440330,
+            182339,
+            440330,
+            521931,
+            309461,
+            309461,
+            309461,
+            600429,
+            309461,
+            768169,
+            440330,
+            440330,
+            371857,
+            440330,
+            309461,
+            309461,
+            505051,
+            309461,
+            3898
+          ],
+          "ans": 8
+        }
+      ],
+      "average_reward": 0.0,
+      "successful_examples": 0,
+      "total_examples": 2
+    },
+    "extra_info": {
+      "entry_id": 2,
+      "task_type": "general",
+      "workflow_type": "flexible",
+      "num_examples": 2,
+      "timestamp": "2025-07-23T21:31:54.442888",
+      "generation_time": 0.0020291805267333984,
+      "workflow_file": "test_output\\dataset_test\\workflows\\aalmostarithmeticalprogression_flexible_2.py",
+      "execution_file": "test_output\\dataset_test\\execution_results\\aalmostarithmeticalprogression_flexible_2_result.json"
+    }
+  },
+  {
+    "data_source": "internbootcamp_aalmostarithmeticalprogression",
+    "prompt": [
+      {
+        "role": "system",
+        "content": "You are an expert at designing problem-solving workflows using flexible custom operators."
+      },
+      {
+        "role": "user",
+        "content": "Create a workflow to solve aalmostarithmeticalprogression problems. Task description: # \n\n### 谜题描述\nGena loves sequences of numbers. Recently, he has discovered a new type of sequences which he called an almost arithmetical progression. A sequence is an almost arithmetical progression, if its elements can be represented as:\n\n  * a1 = p, where p is some integer; \n  * ai = ai - 1 + ( - 1)i + 1·q (i > 1), where q is some integer. \n\n\n\nRight now Gena has a piece of paper with sequence b, consisting of n integers. Help Gena, find there the longest subsequence of integers that is an almost arithmetical progression.\n\nSequence s1, s2, ..., sk is a subsequence of sequence b1, b2, ..., bn, if there is such increasing sequence of indexes i1, i2, ..., ik (1 ≤ i1 < i2 < ... < ik ≤ n), that bij = sj. In other words, sequence s can be obtained from b by crossing out some elements.\n\nInput\n\nThe first line contains integer n (1 ≤ n ≤ 4000). The next line contains n integers b1, b2, ..., bn (1 ≤ bi ≤ 106).\n\nOutput\n\nPrint a single integer — the length of the required longest subsequence.\n\nExamples\n\nInput\n\n2\n3 5\n\n\nOutput\n\n2\n\n\nInput\n\n4\n10 20 10 30\n\n\nOutput\n\n3\n\nNote\n\nIn the first test the sequence actually is the suitable subsequence. \n\nIn the second test the following subsequence fits: 10, 20, 10."
+      },
+      {
+        "role": "assistant",
+        "content": "\n# InternBootcamp Problem Solving Workflow with FlexibleCustom Operator\nimport asyncio\nfrom typing import Dict, Any, List, Optional\nfrom pydantic import BaseModel, Field\nfrom metagpt.workflow import Workflow\nfrom metagpt.actions import ActionNode\nfrom ScoreFlow.scripts.internbootcamp.operator import FlexibleCustom\n\n\nclass InternBootcampWorkflow(Workflow):\n    \"\"\"Workflow for aalmostarithmeticalprogression using FlexibleCustom operator\"\"\"\n    \n    def __init__(self, llm):\n        super().__init__()\n        self.llm = llm\n        \n    async def run(self, problem: Dict[str, Any]) -> str:\n        # Initialize FlexibleCustom operator\n        flexible = FlexibleCustom(self.llm, problem)\n        \n        # Use iterative reasoning pattern\n        result = await flexible(\n            custom_instruction=\"Solve this aalmostarithmeticalprogression problem using logical reasoning and systematic approach.\",\n            reasoning_pattern=\"iterative\",\n            steps=[\"understand\", \"analyze\", \"solve\", \"verify\"],\n            max_iterations=3,\n            use_structured_output=True\n        )\n        \n        return result\n\n\n# The workflow is ready to solve InternBootcamp problems\n"
+      }
+    ],
+    "ability": "math_reasoning",
+    "reward_model": {
+      "task_name": "aalmostarithmeticalprogression",
+      "test_cases": [
+        {
+          "n": 1,
+          "b": [
+            537543
+          ],
+          "ans": 1
+        },
+        {
+          "n": 38,
+          "b": [
+            982228,
+            392500,
+            616355,
+            616355,
+            392500,
+            392500,
+            392500,
+            392500,
+            392500,
+            616355,
+            616355,
+            392500,
+            392500,
+            616355,
+            392500,
+            616355,
+            392500,
+            392500,
+            616355,
+            392500,
+            616355,
+            616355,
+            392500,
+            616355,
+            616355,
+            392500,
+            616355,
+            392500,
+            616355,
+            616355,
+            278367,
+            392500,
+            616355,
+            392500,
+            616355,
+            616355,
+            392500,
+            616355
+          ],
+          "ans": 18
+        }
+      ],
+      "average_reward": 0.0,
+      "successful_examples": 0,
+      "total_examples": 2
+    },
+    "extra_info": {
+      "entry_id": 3,
+      "task_type": "general",
+      "workflow_type": "flexible",
+      "num_examples": 2,
+      "timestamp": "2025-07-23T21:31:54.446536",
+      "generation_time": 0.0036478042602539062,
+      "workflow_file": "test_output\\dataset_test\\workflows\\aalmostarithmeticalprogression_flexible_3.py",
+      "execution_file": "test_output\\dataset_test\\execution_results\\aalmostarithmeticalprogression_flexible_3_result.json"
+    }
+  }
+]

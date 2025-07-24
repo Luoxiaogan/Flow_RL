@@ -1,0 +1,290 @@
+[
+  {
+    "entry_id": 0,
+    "task_name": "jigsaw_sudoku",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.002509593963623047
+  },
+  {
+    "entry_id": 1,
+    "task_name": "jigsaw_sudoku",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.002005338668823242
+  },
+  {
+    "entry_id": 2,
+    "task_name": "jigsaw_sudoku",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.002254486083984375
+  },
+  {
+    "entry_id": 3,
+    "task_name": "jigsaw_sudoku",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0020182132720947266
+  },
+  {
+    "entry_id": 4,
+    "task_name": "jigsaw_sudoku",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0021049976348876953
+  },
+  {
+    "entry_id": 5,
+    "task_name": "jigsaw_sudoku",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0023288726806640625
+  },
+  {
+    "entry_id": 6,
+    "task_name": "kakuro",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0010044574737548828
+  },
+  {
+    "entry_id": 7,
+    "task_name": "kakuro",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.002367734909057617
+  },
+  {
+    "entry_id": 8,
+    "task_name": "kakuro",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.002509593963623047
+  },
+  {
+    "entry_id": 9,
+    "task_name": "kakuro",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0020093917846679688
+  },
+  {
+    "entry_id": 10,
+    "task_name": "kakuro",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0020847320556640625
+  },
+  {
+    "entry_id": 11,
+    "task_name": "kakuro",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0011720657348632812
+  },
+  {
+    "entry_id": 12,
+    "task_name": "killer_sudoku",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.010824203491210938
+  },
+  {
+    "entry_id": 13,
+    "task_name": "killer_sudoku",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.015289306640625
+  },
+  {
+    "entry_id": 14,
+    "task_name": "killer_sudoku",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.009486198425292969
+  },
+  {
+    "entry_id": 15,
+    "task_name": "killer_sudoku",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.01254582405090332
+  },
+  {
+    "entry_id": 16,
+    "task_name": "killer_sudoku",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.011549711227416992
+  },
+  {
+    "entry_id": 17,
+    "task_name": "killer_sudoku",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.01019144058227539
+  },
+  {
+    "entry_id": 18,
+    "task_name": "kor_puzzle_minesweeper",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0026102066040039062
+  },
+  {
+    "entry_id": 19,
+    "task_name": "kor_puzzle_minesweeper",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0010254383087158203
+  },
+  {
+    "entry_id": 20,
+    "task_name": "kor_puzzle_minesweeper",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.001146078109741211
+  },
+  {
+    "entry_id": 21,
+    "task_name": "kor_puzzle_minesweeper",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0020093917846679688
+  },
+  {
+    "entry_id": 22,
+    "task_name": "kor_puzzle_minesweeper",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0035834312438964844
+  },
+  {
+    "entry_id": 23,
+    "task_name": "kor_puzzle_minesweeper",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.003010272979736328
+  },
+  {
+    "entry_id": 24,
+    "task_name": "minesweeper",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0036630630493164062
+  },
+  {
+    "entry_id": 25,
+    "task_name": "minesweeper",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.002580404281616211
+  },
+  {
+    "entry_id": 26,
+    "task_name": "minesweeper",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0021266937255859375
+  },
+  {
+    "entry_id": 27,
+    "task_name": "minesweeper",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0024423599243164062
+  },
+  {
+    "entry_id": 28,
+    "task_name": "minesweeper",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0021698474884033203
+  },
+  {
+    "entry_id": 29,
+    "task_name": "minesweeper",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0032744407653808594
+  },
+  {
+    "entry_id": 30,
+    "task_name": "sudoku",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.009279727935791016
+  },
+  {
+    "entry_id": 31,
+    "task_name": "sudoku",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.009918451309204102
+  },
+  {
+    "entry_id": 32,
+    "task_name": "sudoku",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.00793910026550293
+  },
+  {
+    "entry_id": 33,
+    "task_name": "sudoku",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.00944828987121582
+  },
+  {
+    "entry_id": 34,
+    "task_name": "sudoku",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.3100128173828125
+  },
+  {
+    "entry_id": 35,
+    "task_name": "sudoku",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.01243281364440918
+  }
+]

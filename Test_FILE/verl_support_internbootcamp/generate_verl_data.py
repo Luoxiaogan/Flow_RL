@@ -104,15 +104,6 @@ def generate_verl_entry(task_name: str, manager: InternBootcampManager,
             "extra_info": {
                 "entry_id": entry_id,
                 "task_type": get_task_type(task_name),
-                "num_examples": len(examples),
-                "timestamp": datetime.now().isoformat(),
-                "description_length": len(description)
-            }
-        }
-        
-        return verl_entry
-        
-    except Exception as e:
         logger.error(f"Failed to generate VERL entry for {task_name}: {e}")
         return None
 

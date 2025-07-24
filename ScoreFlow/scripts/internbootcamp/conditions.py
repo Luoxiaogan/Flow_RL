@@ -48,18 +48,47 @@ Your approach should be:
 
 Always pay attention to the exact output format required and ensure your answer is complete and correct."""
 
-# 工作流生成的开始提示
-START_PROMPT = """Based on the following problem examples, create a general workflow using MetaGPT ActionNodes that can solve similar problems:
+# 工作流生成的开始提示 - 使用预定义操作符
+START_PROMPT_PREDEFINED = """Based on the following problem examples, create a general workflow using MetaGPT ActionNodes that can solve similar problems:
 
 {prompt_text}
 
 Create a workflow class called `InternBootcampWorkflow` that:
-1. Uses appropriate operators to analyze and solve the problem
-2. Handles different problem types flexibly
-3. Ensures correct output format
-4. Can be executed with MetaGPT
+1. Uses the predefined operators (Custom, Review, Reflect, Programmer, ScEnsemble) to analyze and solve the problem
+2. Combines multiple operators for better results
+3. Handles different problem types flexibly
+4. Ensures correct output format
+5. Can be executed with MetaGPT
 
-The workflow should inherit from the base Workflow class and use the predefined operators.
+Available operators:
+- Custom: General-purpose operator for custom instructions
+- Review: Reviews and revises a solution
+- Reflect: Provides critical reflection on a solution
+- Programmer: Generates and executes Python code
+- ScEnsemble: Selects the best solution from multiple candidates
+
+The workflow should inherit from the base Workflow class and orchestrate these operators effectively.
+"""
+
+# 工作流生成的开始提示 - 使用FlexibleCustom操作符
+START_PROMPT_FLEXIBLE = """Based on the following problem examples, create a general workflow using MetaGPT ActionNodes that can solve similar problems:
+
+{prompt_text}
+
+Create a workflow class called `InternBootcampWorkflow` that:
+1. Uses the FlexibleCustom operator with custom reasoning patterns
+2. Implements problem-specific logic through custom instructions
+3. Can adapt reasoning patterns (sequential, iterative, parallel) based on problem type
+4. Ensures correct output format
+5. Can be executed with MetaGPT
+
+The FlexibleCustom operator supports:
+- Different reasoning patterns: sequential, parallel, iterative, branching
+- Custom steps for each pattern
+- Structured or unstructured output
+- Iterative refinement of solutions
+
+The workflow should inherit from the base Workflow class and leverage FlexibleCustom's flexibility.
 """
 
 # 工作流生成的结束提示
@@ -72,20 +101,56 @@ Remember:
 - The workflow will be executed in a MetaGPT environment
 """
 
-# Python执行的开始模板
-PYTHON_START = """
-# InternBootcamp Problem Solving Workflow
+# Python执行的开始模板 - 预定义操作符
+PYTHON_START_PREDEFINED = """
+# InternBootcamp Problem Solving Workflow with Predefined Operators
 import asyncio
 from typing import Dict, Any, List, Optional
 from pydantic import BaseModel, Field
 from metagpt.workflow import Workflow
 from metagpt.actions import ActionNode
+from ScoreFlow.scripts.internbootcamp.operator import Custom, Review, Reflect, Programmer, ScEnsemble
+"""
+
+# Python执行的开始模板 - FlexibleCustom操作符
+PYTHON_START_FLEXIBLE = """
+# InternBootcamp Problem Solving Workflow with FlexibleCustom Operator
+import asyncio
+from typing import Dict, Any, List, Optional
+from pydantic import BaseModel, Field
+from metagpt.workflow import Workflow
+from metagpt.actions import ActionNode
+from ScoreFlow.scripts.internbootcamp.operator import FlexibleCustom
 """
 
 # Python执行的结束模板
 PYTHON_END = """
 # The workflow is ready to solve InternBootcamp problems
 """
+
+# 选择使用哪种工作流类型
+def get_workflow_prompts(workflow_type="predefined"):
+    """
+    获取工作流生成的提示词
+    
+    Args:
+        workflow_type: "predefined" 使用预定义操作符, "flexible" 使用FlexibleCustom操作符
+    
+    Returns:
+        dict: 包含START_PROMPT和PYTHON_START的字典
+    """
+    if workflow_type == "predefined":
+        return {
+            "START_PROMPT": START_PROMPT_PREDEFINED,
+            "PYTHON_START": PYTHON_START_PREDEFINED
+        }
+    elif workflow_type == "flexible":
+        return {
+            "START_PROMPT": START_PROMPT_FLEXIBLE,
+            "PYTHON_START": PYTHON_START_FLEXIBLE
+        }
+    else:
+        raise ValueError(f"Unknown workflow type: {workflow_type}")
 
 # 任务特定的条件配置
 TASK_CONDITIONS = {

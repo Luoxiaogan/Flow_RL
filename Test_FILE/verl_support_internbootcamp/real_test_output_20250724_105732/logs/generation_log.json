@@ -1,0 +1,18 @@
+[
+  {
+    "entry_id": 0,
+    "task_name": "aalmostarithmeticalprogression",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 46.6363570690155
+  },
+  {
+    "entry_id": 1,
+    "task_name": "aalmostarithmeticalprogression",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 24.835029363632202
+  }
+]
