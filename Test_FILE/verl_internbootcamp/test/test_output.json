@@ -1,0 +1,31 @@
+{
+  "test_messages": [
+    {
+      "role": "user",
+      "content": "Based on the following problem examples, create a general workflow using MetaGPT ActionNodes that can solve similar problems:\n\nTask: sudoku_4x4_easy\n\nSolve a 4x4 Sudoku puzzle with easy difficulty\n\nCreate a workflow class called `InternBootcampWorkflow` that:\n1. Uses the predefined operators (Custom, Review, Reflect, Programmer, ScEnsemble) to analyze and solve the problem\n2. Combines multiple operators for better results\n3. Handles different problem types flexibly\n4. Ensures correct output format\n5. Can be executed with MetaGPT\n\nAvailable operators:\n- Custom: General-purpose operator for custom instructions\n- Review: Reviews and revises a solution\n- Reflect: Provides critical reflection on a solution\n- Programmer: Generates and executes Python code\n- ScEnsemble: Selects the best solution from multiple candidates\n\nThe workflow should inherit from the base Workflow class and orchestrate these operators effectively.\n\nRemember:\n- The workflow should be general enough to handle various problem types\n- Use the provided operators effectively\n- Ensure proper error handling\n- Format the output according to problem requirements\n- The workflow will be executed in a MetaGPT environment\n"
+    }
+  ],
+  "test_entry": {
+    "data_source": "internbootcamp_sudoku_4x4_easy",
+    "prompt": [
+      {
+        "role": "user",
+        "content": "Based on the following problem examples, create a general workflow using MetaGPT ActionNodes that can solve similar problems:\n\nTask: sudoku_4x4_easy\n\nTask description not available for sudoku_4x4_easy\n\nCreate a workflow class called `InternBootcampWorkflow` that:\n1. Uses the predefined operators (Custom, Review, Reflect, Programmer, ScEnsemble) to analyze and solve the problem\n2. Combines multiple operators for better results\n3. Handles different problem types flexibly\n4. Ensures correct output format\n5. Can be executed with MetaGPT\n\nAvailable operators:\n- Custom: General-purpose operator for custom instructions\n- Review: Reviews and revises a solution\n- Reflect: Provides critical reflection on a solution\n- Programmer: Generates and executes Python code\n- ScEnsemble: Selects the best solution from multiple candidates\n\nThe workflow should inherit from the base Workflow class and orchestrate these operators effectively.\n\nRemember:\n- The workflow should be general enough to handle various problem types\n- Use the provided operators effectively\n- Ensure proper error handling\n- Format the output according to problem requirements\n- The workflow will be executed in a MetaGPT environment\n"
+      }
+    ],
+    "ability": "logic_reasoning",
+    "reward_model": {
+      "task_name": "sudoku_4x4_easy",
+      "test_cases": [],
+      "score": 1.0
+    },
+    "extra_info": {
+      "entry_id": 0,
+      "task_type": "general",
+      "workflow_type": "predefined",
+      "num_examples": 0,
+      "timestamp": "2025-07-24T23:22:51.872082",
+      "generation_time": 0.0
+    }
+  }
+}

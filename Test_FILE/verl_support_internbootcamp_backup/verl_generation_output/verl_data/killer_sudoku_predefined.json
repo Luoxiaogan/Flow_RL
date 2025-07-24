@@ -1,0 +1,6149 @@
+[
+  {
+    "data_source": "internbootcamp_killer_sudoku",
+    "prompt": [
+      {
+        "role": "system",
+        "content": "You are an expert at designing problem-solving workflows using predefined operators."
+      },
+      {
+        "role": "user",
+        "content": "Create a workflow to solve killer_sudoku problems. Task description: ### 谜题描述\n\nKiller Sudoku is a logic puzzle that combines elements of Sudoku and Kakuro. The core rules are:\n\n1. **Grid Structure**: Played on a standard Sudoku grid (typically 9x9), divided into smaller subgrids (e.g., 3x3 regions). Each row, column, and subgrid must contain all digits from 1 to the grid size (e.g., 1-9) exactly once, adhering to classic Sudoku rules.\n\n2. **Cages**: The grid includes outlined groups of cells (\\\"cages\\\") marked with a target sum. \n   - Digits within a cage must be unique, even if the cage spans multiple rows, columns, or subgrids.\n   - The sum of all digits in a cage must equal the specified target.\n\n3. **No Overlaps**: Cages do not overlap, and every cell belongs to exactly one cage. Cages vary in size (from 1 cell to larger groupings) and shape.\n\n4. **Combined Constraints**: Solutions must satisfy **both** the Sudoku rules (no repeats in rows, columns, subgrids) **and** the cage sum/uniqueness rules simultaneously.\n\n\n请完成上述谜题的训练场环境类实现，包括所有必要的方法。"
+      },
+      {
+        "role": "assistant",
+        "content": "\n# InternBootcamp Problem Solving Workflow with Predefined Operators\nimport asyncio\nfrom typing import Dict, Any, List, Optional\nfrom pydantic import BaseModel, Field\nfrom metagpt.workflow import Workflow\nfrom metagpt.actions import ActionNode\nfrom ScoreFlow.scripts.internbootcamp.operator import Custom, Review, Reflect, Programmer, ScEnsemble\n\n\nclass InternBootcampWorkflow(Workflow):\n    \"\"\"Workflow for killer_sudoku using predefined operators\"\"\"\n    \n    def __init__(self, llm):\n        super().__init__()\n        self.llm = llm\n        \n    async def run(self, problem: Dict[str, Any]) -> str:\n        # Initialize operators\n        custom = Custom(self.llm, problem)\n        review = Review(self.llm, problem)\n        programmer = Programmer(self.llm, problem)\n        ensemble = ScEnsemble(self.llm, problem)\n        \n        # Generate initial solution\n        solution1 = await custom(\"Analyze the problem and provide a step-by-step solution.\")\n        \n        # Review and improve\n        solution2 = await review(solution1)\n        \n        # Generate code solution if applicable\n        solution3 = await programmer(\"Write code to solve this problem\")\n        \n        # Select best solution\n        final_solution = await ensemble([solution1, solution2, solution3])\n        \n        return final_solution\n\n\n# The workflow is ready to solve InternBootcamp problems\n"
+      }
+    ],
+    "ability": "logic_reasoning",
+    "reward_model": {
+      "task_name": "killer_sudoku",
+      "test_cases": [
+        {
+          "solution": [
+            [
+              3,
+              7,
+              8,
+              6,
+              5,
+              9,
+              2,
+              1,
+              4
+            ],
+            [
+              5,
+              4,
+              6,
+              7,
+              2,
+              1,
+              9,
+              8,
+              3
+            ],
+            [
+              2,
+              1,
+              9,
+              3,
+              8,
+              4,
+              7,
+              6,
+              5
+            ],
+            [
+              9,
+              5,
+              3,
+              2,
+              6,
+              8,
+              1,
+              4,
+              7
+            ],
+            [
+              4,
+              2,
+              7,
+              5,
+              1,
+              3,
+              6,
+              9,
+              8
+            ],
+            [
+              6,
+              8,
+              1,
+              9,
+              4,
+              7,
+              5,
+              3,
+              2
+            ],
+            [
+              8,
+              6,
+              5,
+              1,
+              3,
+              2,
+              4,
+              7,
+              9
+            ],
+            [
+              1,
+              9,
+              4,
+              8,
+              7,
+              5,
+              3,
+              2,
+              6
+            ],
+            [
+              7,
+              3,
+              2,
+              4,
+              9,
+              6,
+              8,
+              5,
+              1
+            ]
+          ],
+          "cages": [
+            {
+              "cells": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  2
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  3
+                ],
+                [
+                  0,
+                  4
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  5
+                ],
+                [
+                  1,
+                  5
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  6
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  7
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  8
+                ],
+                [
+                  1,
+                  8
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  0
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  2
+                ],
+                [
+                  1,
+                  3
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  4
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  6
+                ],
+                [
+                  1,
+                  7
+                ]
+              ],
+              "sum": 17
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  0
+                ],
+                [
+                  3,
+                  0
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  2
+                ],
+                [
+                  2,
+                  3
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  4
+                ],
+                [
+                  2,
+                  5
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  6
+                ],
+                [
+                  3,
+                  6
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  7
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  8
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  1
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  2
+                ],
+                [
+                  3,
+                  3
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  4
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  5
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  7
+                ],
+                [
+                  4,
+                  7
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  8
+                ],
+                [
+                  4,
+                  8
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  0
+                ],
+                [
+                  4,
+                  1
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  2
+                ],
+                [
+                  5,
+                  2
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  3
+                ],
+                [
+                  4,
+                  4
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  6
+                ],
+                [
+                  5,
+                  6
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  0
+                ],
+                [
+                  6,
+                  0
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  1
+                ],
+                [
+                  6,
+                  1
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  3
+                ],
+                [
+                  5,
+                  4
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  5
+                ],
+                [
+                  6,
+                  5
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  2
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  3
+                ],
+                [
+                  7,
+                  3
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  4
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  6,
+                  7
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  8
+                ],
+                [
+                  7,
+                  8
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  0
+                ],
+                [
+                  8,
+                  0
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  1
+                ],
+                [
+                  7,
+                  2
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  4
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  5
+                ],
+                [
+                  8,
+                  5
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  6
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  7
+                ],
+                [
+                  8,
+                  7
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  1
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  2
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  3
+                ],
+                [
+                  8,
+                  4
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  6
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  8
+                ]
+              ],
+              "sum": 1
+            }
+          ],
+          "size": 9,
+          "subgrid_size": 3
+        },
+        {
+          "solution": [
+            [
+              3,
+              6,
+              7,
+              4,
+              1,
+              8,
+              9,
+              2,
+              5
+            ],
+            [
+              2,
+              1,
+              8,
+              3,
+              5,
+              9,
+              6,
+              4,
+              7
+            ],
+            [
+              9,
+              5,
+              4,
+              7,
+              6,
+              2,
+              1,
+              3,
+              8
+            ],
+            [
+              5,
+              3,
+              9,
+              2,
+              4,
+              7,
+              8,
+              1,
+              6
+            ],
+            [
+              4,
+              8,
+              6,
+              9,
+              3,
+              1,
+              7,
+              5,
+              2
+            ],
+            [
+              7,
+              2,
+              1,
+              5,
+              8,
+              6,
+              4,
+              9,
+              3
+            ],
+            [
+              1,
+              4,
+              2,
+              8,
+              7,
+              3,
+              5,
+              6,
+              9
+            ],
+            [
+              6,
+              7,
+              3,
+              1,
+              9,
+              5,
+              2,
+              8,
+              4
+            ],
+            [
+              8,
+              9,
+              5,
+              6,
+              2,
+              4,
+              3,
+              7,
+              1
+            ]
+          ],
+          "cages": [
+            {
+              "cells": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  2
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  3
+                ],
+                [
+                  1,
+                  3
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  4
+                ],
+                [
+                  1,
+                  4
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  5
+                ],
+                [
+                  1,
+                  5
+                ]
+              ],
+              "sum": 17
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  6
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  7
+                ],
+                [
+                  1,
+                  7
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  8
+                ],
+                [
+                  1,
+                  8
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  2
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  6
+                ],
+                [
+                  2,
+                  6
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  1
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  2
+                ],
+                [
+                  2,
+                  3
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  4
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  5
+                ],
+                [
+                  3,
+                  5
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  7
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  8
+                ],
+                [
+                  3,
+                  8
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  0
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  1
+                ],
+                [
+                  3,
+                  2
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  3
+                ],
+                [
+                  4,
+                  3
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  4
+                ],
+                [
+                  4,
+                  4
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  6
+                ],
+                [
+                  3,
+                  7
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  0
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  1
+                ],
+                [
+                  4,
+                  2
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  5
+                ],
+                [
+                  5,
+                  5
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  6
+                ],
+                [
+                  4,
+                  7
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  8
+                ],
+                [
+                  5,
+                  8
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  0
+                ],
+                [
+                  6,
+                  0
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  1
+                ],
+                [
+                  5,
+                  2
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  3
+                ],
+                [
+                  6,
+                  3
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  4
+                ],
+                [
+                  6,
+                  4
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  6
+                ],
+                [
+                  5,
+                  7
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  1
+                ],
+                [
+                  6,
+                  2
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  5
+                ],
+                [
+                  7,
+                  5
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  6
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  7
+                ],
+                [
+                  6,
+                  8
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  0
+                ],
+                [
+                  8,
+                  0
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  1
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  2
+                ],
+                [
+                  7,
+                  3
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  4
+                ],
+                [
+                  8,
+                  4
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  7
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  8
+                ],
+                [
+                  8,
+                  8
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  1
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  2
+                ],
+                [
+                  8,
+                  3
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  5
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  6
+                ],
+                [
+                  8,
+                  7
+                ]
+              ],
+              "sum": 10
+            }
+          ],
+          "size": 9,
+          "subgrid_size": 3
+        },
+        {
+          "solution": [
+            [
+              9,
+              8,
+              7,
+              3,
+              5,
+              4,
+              6,
+              1,
+              2
+            ],
+            [
+              4,
+              1,
+              6,
+              2,
+              8,
+              9,
+              7,
+              5,
+              3
+            ],
+            [
+              5,
+              2,
+              3,
+              7,
+              6,
+              1,
+              4,
+              8,
+              9
+            ],
+            [
+              1,
+              6,
+              2,
+              9,
+              4,
+              3,
+              8,
+              7,
+              5
+            ],
+            [
+              8,
+              9,
+              4,
+              6,
+              7,
+              5,
+              3,
+              2,
+              1
+            ],
+            [
+              7,
+              3,
+              5,
+              8,
+              1,
+              2,
+              9,
+              6,
+              4
+            ],
+            [
+              6,
+              5,
+              9,
+              1,
+              3,
+              7,
+              2,
+              4,
+              8
+            ],
+            [
+              2,
+              4,
+              8,
+              5,
+              9,
+              6,
+              1,
+              3,
+              7
+            ],
+            [
+              3,
+              7,
+              1,
+              4,
+              2,
+              8,
+              5,
+              9,
+              6
+            ]
+          ],
+          "cages": [
+            {
+              "cells": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  2
+                ],
+                [
+                  1,
+                  2
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  3
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  4
+                ],
+                [
+                  0,
+                  5
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  6
+                ],
+                [
+                  1,
+                  6
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  7
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  8
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  3
+                ],
+                [
+                  2,
+                  3
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  4
+                ],
+                [
+                  1,
+                  5
+                ]
+              ],
+              "sum": 17
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  7
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  8
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  0
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  1
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  2
+                ],
+                [
+                  3,
+                  2
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  4
+                ],
+                [
+                  3,
+                  4
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  5
+                ],
+                [
+                  2,
+                  6
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  7
+                ],
+                [
+                  2,
+                  8
+                ]
+              ],
+              "sum": 17
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  0
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  1
+                ],
+                [
+                  4,
+                  1
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  3
+                ],
+                [
+                  4,
+                  3
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  3,
+                  6
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  0
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  2
+                ],
+                [
+                  5,
+                  2
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  4
+                ],
+                [
+                  4,
+                  5
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  6
+                ],
+                [
+                  4,
+                  7
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  8
+                ],
+                [
+                  5,
+                  8
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  0
+                ],
+                [
+                  5,
+                  1
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  3
+                ],
+                [
+                  6,
+                  3
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  4
+                ],
+                [
+                  6,
+                  4
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  5
+                ],
+                [
+                  6,
+                  5
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  6
+                ],
+                [
+                  5,
+                  7
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  0
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  1
+                ],
+                [
+                  7,
+                  1
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  2
+                ],
+                [
+                  7,
+                  2
+                ]
+              ],
+              "sum": 17
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  6,
+                  7
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  8
+                ],
+                [
+                  7,
+                  8
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  0
+                ],
+                [
+                  8,
+                  0
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  3
+                ],
+                [
+                  8,
+                  3
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  4
+                ],
+                [
+                  7,
+                  5
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  6
+                ],
+                [
+                  8,
+                  6
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  7
+                ],
+                [
+                  8,
+                  7
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  1
+                ],
+                [
+                  8,
+                  2
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  4
+                ],
+                [
+                  8,
+                  5
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  8
+                ]
+              ],
+              "sum": 6
+            }
+          ],
+          "size": 9,
+          "subgrid_size": 3
+        }
+      ],
+      "average_reward": 0.0,
+      "successful_examples": 0,
+      "total_examples": 3
+    },
+    "extra_info": {
+      "entry_id": 12,
+      "task_type": "general",
+      "workflow_type": "predefined",
+      "num_examples": 3,
+      "timestamp": "2025-07-23T21:33:58.354184",
+      "generation_time": 0.010824203491210938,
+      "workflow_file": "verl_generation_output\\workflows\\killer_sudoku_predefined_12.py",
+      "execution_file": "verl_generation_output\\execution_results\\killer_sudoku_predefined_12_result.json"
+    }
+  },
+  {
+    "data_source": "internbootcamp_killer_sudoku",
+    "prompt": [
+      {
+        "role": "system",
+        "content": "You are an expert at designing problem-solving workflows using predefined operators."
+      },
+      {
+        "role": "user",
+        "content": "Create a workflow to solve killer_sudoku problems. Task description: ### 谜题描述\n\nKiller Sudoku is a logic puzzle that combines elements of Sudoku and Kakuro. The core rules are:\n\n1. **Grid Structure**: Played on a standard Sudoku grid (typically 9x9), divided into smaller subgrids (e.g., 3x3 regions). Each row, column, and subgrid must contain all digits from 1 to the grid size (e.g., 1-9) exactly once, adhering to classic Sudoku rules.\n\n2. **Cages**: The grid includes outlined groups of cells (\\\"cages\\\") marked with a target sum. \n   - Digits within a cage must be unique, even if the cage spans multiple rows, columns, or subgrids.\n   - The sum of all digits in a cage must equal the specified target.\n\n3. **No Overlaps**: Cages do not overlap, and every cell belongs to exactly one cage. Cages vary in size (from 1 cell to larger groupings) and shape.\n\n4. **Combined Constraints**: Solutions must satisfy **both** the Sudoku rules (no repeats in rows, columns, subgrids) **and** the cage sum/uniqueness rules simultaneously.\n\n\n请完成上述谜题的训练场环境类实现，包括所有必要的方法。"
+      },
+      {
+        "role": "assistant",
+        "content": "\n# InternBootcamp Problem Solving Workflow with Predefined Operators\nimport asyncio\nfrom typing import Dict, Any, List, Optional\nfrom pydantic import BaseModel, Field\nfrom metagpt.workflow import Workflow\nfrom metagpt.actions import ActionNode\nfrom ScoreFlow.scripts.internbootcamp.operator import Custom, Review, Reflect, Programmer, ScEnsemble\n\n\nclass InternBootcampWorkflow(Workflow):\n    \"\"\"Workflow for killer_sudoku using predefined operators\"\"\"\n    \n    def __init__(self, llm):\n        super().__init__()\n        self.llm = llm\n        \n    async def run(self, problem: Dict[str, Any]) -> str:\n        # Initialize operators\n        custom = Custom(self.llm, problem)\n        review = Review(self.llm, problem)\n        programmer = Programmer(self.llm, problem)\n        ensemble = ScEnsemble(self.llm, problem)\n        \n        # Generate initial solution\n        solution1 = await custom(\"Analyze the problem and provide a step-by-step solution.\")\n        \n        # Review and improve\n        solution2 = await review(solution1)\n        \n        # Generate code solution if applicable\n        solution3 = await programmer(\"Write code to solve this problem\")\n        \n        # Select best solution\n        final_solution = await ensemble([solution1, solution2, solution3])\n        \n        return final_solution\n\n\n# The workflow is ready to solve InternBootcamp problems\n"
+      }
+    ],
+    "ability": "logic_reasoning",
+    "reward_model": {
+      "task_name": "killer_sudoku",
+      "test_cases": [
+        {
+          "solution": [
+            [
+              7,
+              1,
+              3,
+              9,
+              6,
+              8,
+              4,
+              5,
+              2
+            ],
+            [
+              9,
+              5,
+              2,
+              7,
+              3,
+              4,
+              1,
+              8,
+              6
+            ],
+            [
+              6,
+              4,
+              8,
+              1,
+              2,
+              5,
+              3,
+              7,
+              9
+            ],
+            [
+              5,
+              6,
+              1,
+              2,
+              4,
+              3,
+              8,
+              9,
+              7
+            ],
+            [
+              4,
+              8,
+              7,
+              6,
+              1,
+              9,
+              2,
+              3,
+              5
+            ],
+            [
+              2,
+              3,
+              9,
+              8,
+              5,
+              7,
+              6,
+              1,
+              4
+            ],
+            [
+              3,
+              7,
+              5,
+              4,
+              8,
+              6,
+              9,
+              2,
+              1
+            ],
+            [
+              8,
+              2,
+              6,
+              5,
+              9,
+              1,
+              7,
+              4,
+              3
+            ],
+            [
+              1,
+              9,
+              4,
+              3,
+              7,
+              2,
+              5,
+              6,
+              8
+            ]
+          ],
+          "cages": [
+            {
+              "cells": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  3
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  4
+                ],
+                [
+                  1,
+                  4
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  5
+                ],
+                [
+                  0,
+                  6
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  7
+                ],
+                [
+                  0,
+                  8
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  0
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  2
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  3
+                ],
+                [
+                  2,
+                  3
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  5
+                ],
+                [
+                  1,
+                  6
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  7
+                ],
+                [
+                  2,
+                  7
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  8
+                ],
+                [
+                  2,
+                  8
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  0
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  1
+                ],
+                [
+                  2,
+                  2
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  4
+                ],
+                [
+                  2,
+                  5
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  6
+                ],
+                [
+                  3,
+                  6
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  0
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  1
+                ],
+                [
+                  4,
+                  1
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  2
+                ],
+                [
+                  3,
+                  3
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  4
+                ],
+                [
+                  3,
+                  5
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  7
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  8
+                ],
+                [
+                  4,
+                  8
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  0
+                ],
+                [
+                  5,
+                  0
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  2
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  3
+                ],
+                [
+                  5,
+                  3
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  4
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  5
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  6
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  7
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  1
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  2
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  4
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  5
+                ],
+                [
+                  6,
+                  5
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  6
+                ],
+                [
+                  5,
+                  7
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  8
+                ],
+                [
+                  6,
+                  8
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  0
+                ],
+                [
+                  6,
+                  1
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  2
+                ],
+                [
+                  7,
+                  2
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  3
+                ],
+                [
+                  6,
+                  4
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  6
+                ]
+              ],
+              "sum": 16
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  7
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  0
+                ],
+                [
+                  7,
+                  1
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  3
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  4
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  5
+                ],
+                [
+                  8,
+                  5
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  7
+                ],
+                [
+                  8,
+                  7
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  8
+                ],
+                [
+                  8,
+                  8
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  0
+                ],
+                [
+                  8,
+                  1
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  2
+                ],
+                [
+                  8,
+                  3
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  4
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  6
+                ]
+              ],
+              "sum": 5
+            }
+          ],
+          "size": 9,
+          "subgrid_size": 3
+        },
+        {
+          "solution": [
+            [
+              4,
+              8,
+              7,
+              5,
+              6,
+              3,
+              2,
+              9,
+              1
+            ],
+            [
+              6,
+              3,
+              1,
+              8,
+              2,
+              9,
+              4,
+              5,
+              7
+            ],
+            [
+              9,
+              2,
+              5,
+              7,
+              1,
+              4,
+              8,
+              3,
+              6
+            ],
+            [
+              8,
+              4,
+              3,
+              9,
+              5,
+              1,
+              7,
+              6,
+              2
+            ],
+            [
+              5,
+              7,
+              6,
+              4,
+              8,
+              2,
+              3,
+              1,
+              9
+            ],
+            [
+              2,
+              1,
+              9,
+              3,
+              7,
+              6,
+              5,
+              8,
+              4
+            ],
+            [
+              1,
+              6,
+              4,
+              2,
+              3,
+              5,
+              9,
+              7,
+              8
+            ],
+            [
+              3,
+              9,
+              8,
+              1,
+              4,
+              7,
+              6,
+              2,
+              5
+            ],
+            [
+              7,
+              5,
+              2,
+              6,
+              9,
+              8,
+              1,
+              4,
+              3
+            ]
+          ],
+          "cages": [
+            {
+              "cells": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  2
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  3
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  4
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  5
+                ],
+                [
+                  0,
+                  6
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  7
+                ],
+                [
+                  0,
+                  8
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  2,
+                  0
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  2
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  3
+                ],
+                [
+                  1,
+                  4
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  5
+                ],
+                [
+                  1,
+                  6
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  7
+                ],
+                [
+                  2,
+                  7
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  8
+                ],
+                [
+                  2,
+                  8
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  2
+                ],
+                [
+                  2,
+                  3
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  4
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  5
+                ],
+                [
+                  2,
+                  6
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  0
+                ],
+                [
+                  3,
+                  1
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  2
+                ],
+                [
+                  3,
+                  3
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  4
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  3,
+                  6
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  0
+                ],
+                [
+                  4,
+                  1
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  2
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  3
+                ],
+                [
+                  4,
+                  4
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  5
+                ],
+                [
+                  4,
+                  6
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  7
+                ],
+                [
+                  4,
+                  8
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  0
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  1
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  2
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  3
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  4
+                ],
+                [
+                  6,
+                  4
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  5
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  6
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  7
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  8
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  0
+                ],
+                [
+                  6,
+                  1
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  2
+                ],
+                [
+                  7,
+                  2
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  3
+                ],
+                [
+                  7,
+                  3
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  5
+                ],
+                [
+                  6,
+                  6
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  7
+                ],
+                [
+                  7,
+                  7
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  8
+                ],
+                [
+                  7,
+                  8
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  0
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  1
+                ],
+                [
+                  8,
+                  1
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  4
+                ],
+                [
+                  7,
+                  5
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  6
+                ],
+                [
+                  8,
+                  6
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  0
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  2
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  3
+                ],
+                [
+                  8,
+                  4
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  5
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  8,
+                  8
+                ]
+              ],
+              "sum": 7
+            }
+          ],
+          "size": 9,
+          "subgrid_size": 3
+        },
+        {
+          "solution": [
+            [
+              2,
+              3,
+              8,
+              7,
+              9,
+              6,
+              1,
+              5,
+              4
+            ],
+            [
+              6,
+              4,
+              9,
+              1,
+              5,
+              2,
+              3,
+              8,
+              7
+            ],
+            [
+              7,
+              5,
+              1,
+              3,
+              4,
+              8,
+              9,
+              6,
+              2
+            ],
+            [
+              8,
+              9,
+              3,
+              5,
+              1,
+              4,
+              7,
+              2,
+              6
+            ],
+            [
+              5,
+              6,
+              2,
+              8,
+              3,
+              7,
+              4,
+              9,
+              1
+            ],
+            [
+              1,
+              7,
+              4,
+              6,
+              2,
+              9,
+              8,
+              3,
+              5
+            ],
+            [
+              9,
+              1,
+              5,
+              2,
+              7,
+              3,
+              6,
+              4,
+              8
+            ],
+            [
+              3,
+              8,
+              7,
+              4,
+              6,
+              5,
+              2,
+              1,
+              9
+            ],
+            [
+              4,
+              2,
+              6,
+              9,
+              8,
+              1,
+              5,
+              7,
+              3
+            ]
+          ],
+          "cages": [
+            {
+              "cells": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  2
+                ],
+                [
+                  1,
+                  2
+                ]
+              ],
+              "sum": 17
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  3
+                ],
+                [
+                  0,
+                  4
+                ]
+              ],
+              "sum": 16
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  5
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  6
+                ],
+                [
+                  1,
+                  6
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  7
+                ],
+                [
+                  0,
+                  8
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  3
+                ],
+                [
+                  1,
+                  4
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  5
+                ],
+                [
+                  2,
+                  5
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  7
+                ],
+                [
+                  2,
+                  7
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  8
+                ],
+                [
+                  2,
+                  8
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  1
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  2
+                ],
+                [
+                  2,
+                  3
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  4
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  6
+                ],
+                [
+                  3,
+                  6
+                ]
+              ],
+              "sum": 16
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  0
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  1
+                ],
+                [
+                  4,
+                  1
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  2
+                ],
+                [
+                  3,
+                  3
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  4
+                ],
+                [
+                  3,
+                  5
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  7
+                ],
+                [
+                  4,
+                  7
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  8
+                ],
+                [
+                  4,
+                  8
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  0
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  2
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  3
+                ],
+                [
+                  5,
+                  3
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  4
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  5
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  6
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  0
+                ],
+                [
+                  5,
+                  1
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  2
+                ],
+                [
+                  6,
+                  2
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  4
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  5
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  6
+                ],
+                [
+                  5,
+                  7
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  8
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  0
+                ],
+                [
+                  6,
+                  1
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  3
+                ],
+                [
+                  7,
+                  3
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  4
+                ],
+                [
+                  7,
+                  4
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  5
+                ],
+                [
+                  6,
+                  6
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  7
+                ],
+                [
+                  7,
+                  7
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  8
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  0
+                ],
+                [
+                  7,
+                  1
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  2
+                ],
+                [
+                  8,
+                  2
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  5
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  6
+                ],
+                [
+                  8,
+                  6
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  8
+                ],
+                [
+                  8,
+                  8
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  0
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  1
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  3
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  4
+                ],
+                [
+                  8,
+                  5
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  7
+                ]
+              ],
+              "sum": 7
+            }
+          ],
+          "size": 9,
+          "subgrid_size": 3
+        }
+      ],
+      "average_reward": 0.0,
+      "successful_examples": 0,
+      "total_examples": 3
+    },
+    "extra_info": {
+      "entry_id": 13,
+      "task_type": "general",
+      "workflow_type": "predefined",
+      "num_examples": 3,
+      "timestamp": "2025-07-23T21:33:58.369473",
+      "generation_time": 0.015289306640625,
+      "workflow_file": "verl_generation_output\\workflows\\killer_sudoku_predefined_13.py",
+      "execution_file": "verl_generation_output\\execution_results\\killer_sudoku_predefined_13_result.json"
+    }
+  },
+  {
+    "data_source": "internbootcamp_killer_sudoku",
+    "prompt": [
+      {
+        "role": "system",
+        "content": "You are an expert at designing problem-solving workflows using predefined operators."
+      },
+      {
+        "role": "user",
+        "content": "Create a workflow to solve killer_sudoku problems. Task description: ### 谜题描述\n\nKiller Sudoku is a logic puzzle that combines elements of Sudoku and Kakuro. The core rules are:\n\n1. **Grid Structure**: Played on a standard Sudoku grid (typically 9x9), divided into smaller subgrids (e.g., 3x3 regions). Each row, column, and subgrid must contain all digits from 1 to the grid size (e.g., 1-9) exactly once, adhering to classic Sudoku rules.\n\n2. **Cages**: The grid includes outlined groups of cells (\\\"cages\\\") marked with a target sum. \n   - Digits within a cage must be unique, even if the cage spans multiple rows, columns, or subgrids.\n   - The sum of all digits in a cage must equal the specified target.\n\n3. **No Overlaps**: Cages do not overlap, and every cell belongs to exactly one cage. Cages vary in size (from 1 cell to larger groupings) and shape.\n\n4. **Combined Constraints**: Solutions must satisfy **both** the Sudoku rules (no repeats in rows, columns, subgrids) **and** the cage sum/uniqueness rules simultaneously.\n\n\n请完成上述谜题的训练场环境类实现，包括所有必要的方法。"
+      },
+      {
+        "role": "assistant",
+        "content": "\n# InternBootcamp Problem Solving Workflow with Predefined Operators\nimport asyncio\nfrom typing import Dict, Any, List, Optional\nfrom pydantic import BaseModel, Field\nfrom metagpt.workflow import Workflow\nfrom metagpt.actions import ActionNode\nfrom ScoreFlow.scripts.internbootcamp.operator import Custom, Review, Reflect, Programmer, ScEnsemble\n\n\nclass InternBootcampWorkflow(Workflow):\n    \"\"\"Workflow for killer_sudoku using predefined operators\"\"\"\n    \n    def __init__(self, llm):\n        super().__init__()\n        self.llm = llm\n        \n    async def run(self, problem: Dict[str, Any]) -> str:\n        # Initialize operators\n        custom = Custom(self.llm, problem)\n        review = Review(self.llm, problem)\n        programmer = Programmer(self.llm, problem)\n        ensemble = ScEnsemble(self.llm, problem)\n        \n        # Generate initial solution\n        solution1 = await custom(\"Analyze the problem and provide a step-by-step solution.\")\n        \n        # Review and improve\n        solution2 = await review(solution1)\n        \n        # Generate code solution if applicable\n        solution3 = await programmer(\"Write code to solve this problem\")\n        \n        # Select best solution\n        final_solution = await ensemble([solution1, solution2, solution3])\n        \n        return final_solution\n\n\n# The workflow is ready to solve InternBootcamp problems\n"
+      }
+    ],
+    "ability": "logic_reasoning",
+    "reward_model": {
+      "task_name": "killer_sudoku",
+      "test_cases": [
+        {
+          "solution": [
+            [
+              8,
+              3,
+              2,
+              9,
+              7,
+              4,
+              1,
+              6,
+              5
+            ],
+            [
+              5,
+              9,
+              7,
+              6,
+              3,
+              1,
+              2,
+              8,
+              4
+            ],
+            [
+              4,
+              6,
+              1,
+              2,
+              8,
+              5,
+              9,
+              7,
+              3
+            ],
+            [
+              6,
+              2,
+              4,
+              5,
+              9,
+              8,
+              3,
+              1,
+              7
+            ],
+            [
+              1,
+              7,
+              9,
+              3,
+              2,
+              6,
+              5,
+              4,
+              8
+            ],
+            [
+              3,
+              8,
+              5,
+              4,
+              1,
+              7,
+              6,
+              2,
+              9
+            ],
+            [
+              9,
+              5,
+              6,
+              8,
+              4,
+              2,
+              7,
+              3,
+              1
+            ],
+            [
+              7,
+              4,
+              3,
+              1,
+              6,
+              9,
+              8,
+              5,
+              2
+            ],
+            [
+              2,
+              1,
+              8,
+              7,
+              5,
+              3,
+              4,
+              9,
+              6
+            ]
+          ],
+          "cages": [
+            {
+              "cells": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  0
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  3
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  4
+                ],
+                [
+                  0,
+                  5
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  6
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  7
+                ],
+                [
+                  0,
+                  8
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  2
+                ],
+                [
+                  2,
+                  2
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  3
+                ],
+                [
+                  1,
+                  4
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  5
+                ],
+                [
+                  2,
+                  5
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  6
+                ],
+                [
+                  2,
+                  6
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  7
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  8
+                ],
+                [
+                  2,
+                  8
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  0
+                ],
+                [
+                  3,
+                  0
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  1
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  3
+                ],
+                [
+                  3,
+                  3
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  4
+                ],
+                [
+                  3,
+                  4
+                ]
+              ],
+              "sum": 17
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  7
+                ],
+                [
+                  3,
+                  7
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  2
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  3,
+                  6
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  8
+                ],
+                [
+                  4,
+                  8
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  0
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  1
+                ],
+                [
+                  5,
+                  1
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  2
+                ],
+                [
+                  5,
+                  2
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  3
+                ],
+                [
+                  5,
+                  3
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  4
+                ],
+                [
+                  5,
+                  4
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  5
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  6
+                ],
+                [
+                  5,
+                  6
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  7
+                ],
+                [
+                  5,
+                  7
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  0
+                ],
+                [
+                  6,
+                  0
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  5
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  8
+                ],
+                [
+                  6,
+                  8
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  1
+                ],
+                [
+                  6,
+                  2
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  3
+                ],
+                [
+                  6,
+                  4
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  5
+                ],
+                [
+                  7,
+                  5
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  6,
+                  7
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  0
+                ],
+                [
+                  7,
+                  1
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  2
+                ],
+                [
+                  7,
+                  3
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  4
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  6
+                ],
+                [
+                  8,
+                  6
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  7
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  8
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  0
+                ],
+                [
+                  8,
+                  1
+                ]
+              ],
+              "sum": 3
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  2
+                ],
+                [
+                  8,
+                  3
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  4
+                ],
+                [
+                  8,
+                  5
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  8,
+                  8
+                ]
+              ],
+              "sum": 15
+            }
+          ],
+          "size": 9,
+          "subgrid_size": 3
+        },
+        {
+          "solution": [
+            [
+              3,
+              9,
+              8,
+              6,
+              1,
+              7,
+              5,
+              4,
+              2
+            ],
+            [
+              5,
+              6,
+              4,
+              2,
+              9,
+              3,
+              1,
+              7,
+              8
+            ],
+            [
+              7,
+              1,
+              2,
+              4,
+              5,
+              8,
+              3,
+              9,
+              6
+            ],
+            [
+              2,
+              7,
+              3,
+              9,
+              8,
+              4,
+              6,
+              5,
+              1
+            ],
+            [
+              1,
+              8,
+              9,
+              3,
+              6,
+              5,
+              7,
+              2,
+              4
+            ],
+            [
+              4,
+              5,
+              6,
+              7,
+              2,
+              1,
+              9,
+              8,
+              3
+            ],
+            [
+              6,
+              4,
+              7,
+              5,
+              3,
+              2,
+              8,
+              1,
+              9
+            ],
+            [
+              8,
+              3,
+              5,
+              1,
+              4,
+              9,
+              2,
+              6,
+              7
+            ],
+            [
+              9,
+              2,
+              1,
+              8,
+              7,
+              6,
+              4,
+              3,
+              5
+            ]
+          ],
+          "cages": [
+            {
+              "cells": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  3
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  4
+                ],
+                [
+                  0,
+                  5
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  6
+                ],
+                [
+                  0,
+                  7
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  8
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  2,
+                  0
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  2
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  3
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  4
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  5
+                ],
+                [
+                  2,
+                  5
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  6
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  7
+                ],
+                [
+                  2,
+                  7
+                ]
+              ],
+              "sum": 16
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  8
+                ],
+                [
+                  2,
+                  8
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  2
+                ],
+                [
+                  2,
+                  3
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  4
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  6
+                ],
+                [
+                  3,
+                  6
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  0
+                ],
+                [
+                  3,
+                  1
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  2
+                ],
+                [
+                  4,
+                  2
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  3
+                ],
+                [
+                  3,
+                  4
+                ]
+              ],
+              "sum": 17
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  5
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  0
+                ],
+                [
+                  4,
+                  1
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  3
+                ],
+                [
+                  5,
+                  3
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  4
+                ],
+                [
+                  5,
+                  4
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  6
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  7
+                ],
+                [
+                  4,
+                  8
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  0
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  1
+                ],
+                [
+                  5,
+                  2
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  5
+                ],
+                [
+                  5,
+                  6
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  6,
+                  7
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  8
+                ],
+                [
+                  6,
+                  8
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  0
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  1
+                ],
+                [
+                  7,
+                  1
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  2
+                ],
+                [
+                  7,
+                  2
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  3
+                ],
+                [
+                  7,
+                  3
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  4
+                ],
+                [
+                  7,
+                  4
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  5
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  6
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  0
+                ],
+                [
+                  8,
+                  0
+                ]
+              ],
+              "sum": 17
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  5
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  7
+                ],
+                [
+                  8,
+                  7
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  8
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  1
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  2
+                ],
+                [
+                  8,
+                  3
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  4
+                ],
+                [
+                  8,
+                  5
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  6
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  8
+                ]
+              ],
+              "sum": 5
+            }
+          ],
+          "size": 9,
+          "subgrid_size": 3
+        },
+        {
+          "solution": [
+            [
+              9,
+              3,
+              4,
+              1,
+              5,
+              7,
+              6,
+              8,
+              2
+            ],
+            [
+              8,
+              6,
+              5,
+              2,
+              9,
+              3,
+              1,
+              7,
+              4
+            ],
+            [
+              2,
+              7,
+              1,
+              8,
+              6,
+              4,
+              5,
+              3,
+              9
+            ],
+            [
+              5,
+              4,
+              6,
+              7,
+              2,
+              9,
+              3,
+              1,
+              8
+            ],
+            [
+              3,
+              1,
+              8,
+              5,
+              4,
+              6,
+              9,
+              2,
+              7
+            ],
+            [
+              7,
+              2,
+              9,
+              3,
+              1,
+              8,
+              4,
+              5,
+              6
+            ],
+            [
+              1,
+              9,
+              3,
+              4,
+              7,
+              2,
+              8,
+              6,
+              5
+            ],
+            [
+              6,
+              5,
+              2,
+              9,
+              8,
+              1,
+              7,
+              4,
+              3
+            ],
+            [
+              4,
+              8,
+              7,
+              6,
+              3,
+              5,
+              2,
+              9,
+              1
+            ]
+          ],
+          "cages": [
+            {
+              "cells": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  2
+                ],
+                [
+                  1,
+                  2
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  3
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  4
+                ],
+                [
+                  0,
+                  5
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  6
+                ],
+                [
+                  1,
+                  6
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  0,
+                  7
+                ],
+                [
+                  0,
+                  8
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  0
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  3
+                ],
+                [
+                  2,
+                  3
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  4
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  5
+                ],
+                [
+                  2,
+                  5
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  7
+                ],
+                [
+                  2,
+                  7
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  1,
+                  8
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  1
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  2
+                ],
+                [
+                  3,
+                  2
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  4
+                ],
+                [
+                  3,
+                  4
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  6
+                ],
+                [
+                  3,
+                  6
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  2,
+                  8
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  0
+                ],
+                [
+                  4,
+                  0
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  1
+                ],
+                [
+                  4,
+                  1
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  3
+                ],
+                [
+                  4,
+                  3
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  5
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  7
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  3,
+                  8
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  2
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  4
+                ],
+                [
+                  5,
+                  4
+                ]
+              ],
+              "sum": 5
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  6
+                ],
+                [
+                  5,
+                  6
+                ]
+              ],
+              "sum": 13
+            },
+            {
+              "cells": [
+                [
+                  4,
+                  7
+                ],
+                [
+                  4,
+                  8
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  0
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  1
+                ]
+              ],
+              "sum": 2
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  2
+                ],
+                [
+                  6,
+                  2
+                ]
+              ],
+              "sum": 12
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  3
+                ],
+                [
+                  6,
+                  3
+                ]
+              ],
+              "sum": 7
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  5
+                ],
+                [
+                  6,
+                  5
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  0
+                ]
+              ],
+              "sum": 1
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  1
+                ],
+                [
+                  7,
+                  1
+                ]
+              ],
+              "sum": 14
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  4
+                ],
+                [
+                  7,
+                  4
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  6
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  7
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  6,
+                  8
+                ],
+                [
+                  7,
+                  8
+                ]
+              ],
+              "sum": 8
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  0
+                ],
+                [
+                  8,
+                  0
+                ]
+              ],
+              "sum": 10
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  2
+                ],
+                [
+                  7,
+                  3
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  5
+                ],
+                [
+                  8,
+                  5
+                ]
+              ],
+              "sum": 6
+            },
+            {
+              "cells": [
+                [
+                  7,
+                  7
+                ]
+              ],
+              "sum": 4
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  1
+                ],
+                [
+                  8,
+                  2
+                ]
+              ],
+              "sum": 15
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  3
+                ],
+                [
+                  8,
+                  4
+                ]
+              ],
+              "sum": 9
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  6
+                ],
+                [
+                  8,
+                  7
+                ]
+              ],
+              "sum": 11
+            },
+            {
+              "cells": [
+                [
+                  8,
+                  8
+                ]
+              ],
+              "sum": 1
+            }
+          ],
+          "size": 9,
+          "subgrid_size": 3
+        }
+      ],
+      "average_reward": 0.0,
+      "successful_examples": 0,
+      "total_examples": 3
+    },
+    "extra_info": {
+      "entry_id": 14,
+      "task_type": "general",
+      "workflow_type": "predefined",
+      "num_examples": 3,
+      "timestamp": "2025-07-23T21:33:58.378959",
+      "generation_time": 0.009486198425292969,
+      "workflow_file": "verl_generation_output\\workflows\\killer_sudoku_predefined_14.py",
+      "execution_file": "verl_generation_output\\execution_results\\killer_sudoku_predefined_14_result.json"
+    }
+  }
+]

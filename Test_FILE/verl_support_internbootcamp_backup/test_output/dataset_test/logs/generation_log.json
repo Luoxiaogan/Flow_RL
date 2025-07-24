@@ -1,0 +1,66 @@
+[
+  {
+    "entry_id": 0,
+    "task_name": "aalmostarithmeticalprogression",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.004576444625854492
+  },
+  {
+    "entry_id": 1,
+    "task_name": "aalmostarithmeticalprogression",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0030059814453125
+  },
+  {
+    "entry_id": 2,
+    "task_name": "aalmostarithmeticalprogression",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0020291805267333984
+  },
+  {
+    "entry_id": 3,
+    "task_name": "aalmostarithmeticalprogression",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.0036478042602539062
+  },
+  {
+    "entry_id": 4,
+    "task_name": "adidyoumean",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.02023482322692871
+  },
+  {
+    "entry_id": 5,
+    "task_name": "adidyoumean",
+    "workflow_type": "predefined",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.002005338668823242
+  },
+  {
+    "entry_id": 6,
+    "task_name": "adidyoumean",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.010756731033325195
+  },
+  {
+    "entry_id": 7,
+    "task_name": "adidyoumean",
+    "workflow_type": "flexible",
+    "reward": 0.0,
+    "success": false,
+    "generation_time": 0.010627985000610352
+  }
+]

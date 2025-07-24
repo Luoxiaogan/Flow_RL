@@ -1,0 +1,1 @@
+请你在严格保持Test_FILE\verl_internbootcamp\generate_verl_data.py的所有函数接口不变的情况下(一定不要扰乱我的已有代码结构!!!),只增加一个新功能,调整其prompt模板,按照Test_FILE\workflow_generator.py里面的做法,并且保留task_description的部分,删除放example的部分;ScoreFlow\scripts\internbootcamp这里有你需要了解的内容;所有测试脚本和结果放在Test_FILE\verl_internbootcamp\test以避免干扰

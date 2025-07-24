@@ -75,12 +75,12 @@ class VerlDataGenerator:
                 )
                 
                 # 格式化为HuggingFace chat_template格式
-                formatted_prompt = format_chat_template(messages)
+                # formatted_prompt = format_chat_template(messages)
                 
                 # 构建VERL格式记录
                 verl_record = {
                     'data_source': benchmark_name,
-                    'prompt': formatted_prompt,
+                    'prompt': messages,
                     'ability': ability,
                     'reward_model': {
                         'ground_truth': data_indices  # 存储用于生成的问题索引
@@ -136,7 +136,7 @@ class VerlDataGenerator:
                 # 构建VERL格式记录（与训练数据完全一致的格式）
                 test_record = {
                     'data_source': benchmark_name,
-                    'prompt': formatted_prompt,
+                    'prompt': messages,
                     'ability': ability,
                     'reward_model': {
                         'ground_truth': data_indices  # 存储用于生成的问题索引

@@ -4,49 +4,21 @@ InternBootcamp工作流生成条件和模板
 
 # 元提示列表 - 用于生成多样化的工作流
 META_PROMPTS = [
-    """You are designing a general problem-solving workflow for various types of puzzles and challenges.
-The workflow should be able to handle logic puzzles, math problems, algorithms, and other computational tasks.
-Focus on creating a flexible approach that can adapt to different problem types.""",
-    
-    """Create a systematic workflow that can solve complex problems by:
-1. Understanding the problem requirements
-2. Identifying the problem type and constraints
-3. Applying appropriate solving strategies
-4. Formatting the answer correctly
-The workflow should be modular and reusable.""",
-    
-    """Design a multi-step reasoning workflow that:
-- Analyzes the given problem thoroughly
-- Breaks down complex problems into manageable steps
-- Uses appropriate algorithms or logical reasoning
-- Validates the solution before returning
-Make it general enough to handle various puzzle types.""",
-    
-    """Build a workflow that combines:
-- Problem comprehension and analysis
-- Strategic planning and execution
-- Answer extraction and formatting
-- Self-verification mechanisms
-The workflow should work for puzzles, algorithms, and mathematical problems.""",
-    
-    """Create an adaptive problem-solving workflow that can:
-- Recognize different types of challenges (logic, math, algorithm, etc.)
-- Apply domain-specific solving techniques
-- Handle various input/output formats
-- Ensure answer correctness through validation."""
+    # 1. 强调反思
+    "Your main goal is deep reflection. Use the 'Reflect and Regenerate' pattern. It's crucial to first create a solution, then critically reflect on it, and use that reflection to create a superior final answer.",
+    # 2. 强调鲁棒性
+    "Your main goal is robustness. Use the 'Parallel Ensemble' pattern. Generate at least three different solutions using varied custom instructions, then use sc_ensemble to select the most consistent one. A final review is a good practice.",
+    # 3. 强调迭代
+    "Your main goal is iterative improvement. Use the 'Iterative Refinement' pattern. Create a simple initial solution, then apply the `review` operator at least twice to progressively enhance it.",
+    # 4. 强调混合与创新
+    "Your main goal is creativity and complexity. Combine at least two different design patterns. For example, start with a 'Parallel Ensemble', reflect on the winner, and then regenerate. Or, use conditional logic based on the reflection's content.",
+    # 5. 强调效率 (生成简单工作流)
+    "Your main goal is efficiency. Create the simplest possible effective workflow. This might be a single, well-crafted `custom` call, or a `custom` followed by a single `review`. Avoid unnecessary complexity.",
 ]
 
 # 系统提示 - 用于SFT训练
-SYSTEM_PROMPT = """You are an expert problem solver capable of handling various types of puzzles and challenges including logic puzzles (Sudoku, Minesweeper), mathematical puzzles (Kakuro), algorithmic problems, and graph theory problems. 
+SYSTEM_PROMPT = "You are an expert at creating Python workflow graphs to solve multi-step mathematical reasoning problems. Given a problem, generate the Python code for an effective workflow using provided operators like Custom, Review, and Reflect."
 
-Your approach should be:
-1. Carefully analyze the problem description and requirements
-2. Identify the problem type and key constraints
-3. Apply appropriate solving strategies
-4. Format your answer according to the specified format
-5. Verify your solution meets all requirements
-
-Always pay attention to the exact output format required and ensure your answer is complete and correct."""
 
 # 工作流生成的开始提示 - 使用预定义操作符
 START_PROMPT_PREDEFINED = """Based on the following problem examples, create a general workflow using MetaGPT ActionNodes that can solve similar problems:

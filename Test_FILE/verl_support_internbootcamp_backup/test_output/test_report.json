@@ -1,0 +1,73 @@
+{
+  "test_time": "2025-07-23T21:31:54.518736",
+  "total_tests": 5,
+  "passed": 5,
+  "failed": 0,
+  "results": [
+    {
+      "component": "InternBootcamp Manager",
+      "status": "PASSED",
+      "result": {
+        "available_tasks": 1056,
+        "test_task": "aalmostarithmeticalprogression",
+        "examples_generated": 2
+      }
+    },
+    {
+      "component": "Reward Calculator",
+      "status": "PASSED",
+      "result": {
+        "total_calculations": 3,
+        "successful_calculations": 3,
+        "success_rate": 1.0,
+        "average_reward": 0.8875000000000001,
+        "max_reward": 1.0,
+        "min_reward": 0.8,
+        "std_reward": 0.08354140689901425,
+        "by_task": {
+          "sudoku_4x4_easy": {
+            "count": 2,
+            "average_reward": 0.9312499999999999,
+            "success_rate": 1.0
+          },
+          "minesweeper_5x5": {
+            "count": 1,
+            "average_reward": 0.8,
+            "success_rate": 1.0
+          }
+        }
+      }
+    },
+    {
+      "component": "Workflow Generation",
+      "status": "PASSED",
+      "result": {
+        "prompt_length": 1317,
+        "predefined_code_length": 1377,
+        "flexible_code_length": 1141
+      }
+    },
+    {
+      "component": "VERL Entry Generation",
+      "status": "PASSED",
+      "result": {
+        "test_task": "aalmostarithmeticalprogression",
+        "predefined_reward": 0.0,
+        "flexible_reward": 0.0,
+        "workflow_files": 2,
+        "execution_files": 2
+      }
+    },
+    {
+      "component": "Full Dataset Generation",
+      "status": "PASSED",
+      "result": {
+        "tasks_tested": 2,
+        "total_entries": 8,
+        "success_rate": 0.0,
+        "average_reward": 0.0,
+        "train_size": 6
+      }
+    }
+  ]
+}

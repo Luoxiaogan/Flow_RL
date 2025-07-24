@@ -12,7 +12,7 @@ from typing import List, Dict, Any, Tuple
 # 添加ScoreFlow路径
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 # ScoreFlow在Test_FILE目录下
-SCOREFLOW_PATH = os.path.dirname(CURRENT_DIR)  # Test_FILE目录
+SCOREFLOW_PATH = os.path.dirname(os.path.dirname(CURRENT_DIR))  # 上一级目录
 SCRIPTS_PATH = os.path.join(SCOREFLOW_PATH, "ScoreFlow", "scripts")
 if SCOREFLOW_PATH not in sys.path:
     sys.path.append(SCOREFLOW_PATH)
