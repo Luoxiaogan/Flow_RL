@@ -12,3 +12,5 @@ external_api_key.txt
 __pycache__/
 set_up.bash
 **/*.pyc
+.claude/settings.local.json
+.claude/settings.local.json
