@@ -4,6 +4,13 @@ export USE_SGLANG=0
 export DATA_HOME=/nas/ganluo/Flow_RL/Test_FILE/verl_support/data
 # export CUDA_DEVICE_MAX_CONNECTIONS=1 # For megatron communication/computation overlapping
 export HYDRA_FULL_ERROR=1
+
+# 添加调试和修复 NCCL 通信问题的环境变量
+export NCCL_DEBUG=INFO
+export NCCL_P2P_DISABLE=1
+export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
+export TORCH_CUDA_ARCH_LIST="8.0"
+export CUDA_LAUNCH_BLOCKING=1
 # INFO for 小狼: 这里改数据集路径
 gsm8k_train_path=$DATA_HOME/gsm8k_verl_train.parquet
 gsm8k_test_path=$DATA_HOME/gsm8k_verl_test.parquet
@@ -34,12 +41,15 @@ python3 -m verl.trainer.main_ppo --config-path=config \
     actor_rollout_ref.actor.kl_loss_type=low_var_kl \
     actor_rollout_ref.actor.entropy_coeff=0 \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
-    actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=2 \
+    actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=1 \
     actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
     actor_rollout_ref.rollout.name=vllm \
-    actor_rollout_ref.rollout.gpu_memory_utilization=0.4 \
-    actor_rollout_ref.rollout.n=4 \
-    actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=2 \
+    actor_rollout_ref.rollout.gpu_memory_utilization=0.3 \
+    actor_rollout_ref.rollout.n=2 \
+    actor_rollout_ref.rollout.enforce_eager=True \
+    actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=1 \
+    actor_rollout_ref.actor.use_torch_compile=False \
+    actor_rollout_ref.ref.use_torch_compile=False \
     algorithm.use_kl_in_reward=False \
     trainer.critic_warmup=0 \
     trainer.logger='["console","wandb"]' \
