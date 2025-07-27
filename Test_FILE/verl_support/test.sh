@@ -1,5 +1,5 @@
 set -x
-export USE_SGLANG=0
+export USE_SGLANG=1
 # export DATA_HOME=/home/lg/workflow_tooluse/Flow_RL/Test_FILE/verl_support/data
 export DATA_HOME=/nas/ganluo/Flow_RL/Test_FILE/verl_support/data
 # export CUDA_DEVICE_MAX_CONNECTIONS=1 # For megatron communication/computation overlapping
@@ -43,10 +43,10 @@ python3 -m verl.trainer.main_ppo --config-path=config \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
     actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=1 \
     actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
-    actor_rollout_ref.rollout.name=vllm \
+    actor_rollout_ref.rollout.name=sglang \
+    actor_rollout_ref.hybrid_engine=False \
     actor_rollout_ref.rollout.gpu_memory_utilization=0.3 \
     actor_rollout_ref.rollout.n=2 \
-    actor_rollout_ref.rollout.enforce_eager=True \
     actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=1 \
     actor_rollout_ref.actor.use_torch_compile=False \
     actor_rollout_ref.ref.use_torch_compile=False \
