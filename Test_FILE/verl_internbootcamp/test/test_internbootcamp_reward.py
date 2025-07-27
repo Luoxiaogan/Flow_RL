@@ -14,7 +14,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from internbootcamp_reward import compute_score, batch_compute_score
+from internbootcamp_reward_simple import compute_score, batch_compute_score
 from openai import AsyncOpenAI
 
 # 设置日志

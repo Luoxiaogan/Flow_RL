@@ -4,20 +4,18 @@ InternBootcamp工作流生成条件和模板
 
 # 元提示列表 - 用于生成多样化的工作流
 META_PROMPTS = [
-    # 1. 强调反思
-    "Your main goal is deep reflection. Use the 'Reflect and Regenerate' pattern. It's crucial to first create a solution, then critically reflect on it, and use that reflection to create a superior final answer.",
-    # 2. 强调鲁棒性
+    # 1. 强调鲁棒性
     "Your main goal is robustness. Use the 'Parallel Ensemble' pattern. Generate at least three different solutions using varied custom instructions, then use sc_ensemble to select the most consistent one. A final review is a good practice.",
-    # 3. 强调迭代
+    # 2. 强调迭代
     "Your main goal is iterative improvement. Use the 'Iterative Refinement' pattern. Create a simple initial solution, then apply the `review` operator at least twice to progressively enhance it.",
-    # 4. 强调混合与创新
+    # 3. 强调混合与创新
     "Your main goal is creativity and complexity. Combine at least two different design patterns. For example, start with a 'Parallel Ensemble', reflect on the winner, and then regenerate. Or, use conditional logic based on the reflection's content.",
-    # 5. 强调效率 (生成简单工作流)
+    # 4. 强调效率 (生成简单工作流)
     "Your main goal is efficiency. Create the simplest possible effective workflow. This might be a single, well-crafted `custom` call, or a `custom` followed by a single `review`. Avoid unnecessary complexity.",
 ]
 
 # 系统提示 - 用于SFT训练
-SYSTEM_PROMPT = "You are an expert at creating Python workflow graphs to solve multi-step mathematical reasoning problems. Given a problem, generate the Python code for an effective workflow using provided operators like Custom, Review, and Reflect."
+SYSTEM_PROMPT = "You are an expert at creating Python workflow graphs to solve multi-step mathematical reasoning problems. Given a problem, generate the Python code for an effective workflow using provided operators like Custom, Review."
 
 
 # 工作流生成的开始提示 - 使用预定义操作符
@@ -26,18 +24,62 @@ START_PROMPT_PREDEFINED = """Based on the following problem examples, create a g
 {prompt_text}
 
 Create a workflow class called `InternBootcampWorkflow` that:
-1. Uses the predefined operators (Custom, Review, Reflect, Programmer, ScEnsemble) to analyze and solve the problem
+1. Uses the predefined operators (Custom, Review, ScEnsemble...) to analyze and solve the problem
 2. Combines multiple operators for better results
 3. Handles different problem types flexibly
 4. Ensures correct output format
 5. Can be executed with MetaGPT
 
-Available operators:
-- Custom: General-purpose operator for custom instructions
-- Review: Reviews and revises a solution
-- Reflect: Provides critical reflection on a solution
-- Programmer: Generates and executes Python code
-- ScEnsemble: Selects the best solution from multiple candidates
+**Base Template:**
+
+<graph>
+class Workflow:
+    def __init__(
+        self,
+        config,
+        problem
+    ) -> None:
+        self.problem = problem
+        self.config = create(config)
+        self.custom = operator.Custom(self.config, self.problem)
+        self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
+        self.review = operator.Review(self.config, self.problem)
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem) # Flexible custom operator
+
+    async def run_workflow(self):
+        # --- YOUR DIVERSE WORKFLOW LOGIC GOES HERE ---
+        # For example, a simple one:
+        solution = await self.custom(instruction="Solve the problem step-by-step, explaining your reasoning clearly.")
+        return solution
+</graph>
+
+**Available Operators:**
+
+Here's an introduction to the operators you can use. Do not create new operators beyond this list.
+
+1.  **Custom**:
+    *   **Usage**: Generates a response based on a flexible instruction. This is your main tool for generating initial solutions or reasoning steps.
+    *   **Format**: `custom(instruction: str) -> str`
+    *   **Example**: `initial_solution = await self.custom(instruction="Solve the problem by breaking it down into smaller, manageable steps.")`
+
+2.  **ScEnsemble**:
+    *   **Usage**: Evaluates multiple solutions and selects the most accurate one.
+    *   **Format**: `sc_ensemble(solutions: List[str]) -> str`
+    *   **Example**: `best_solution = await self.sc_ensemble(solutions=solution_list)`
+
+3.  **Review**:
+    *   **Usage**: Critiques and rewrites a given solution to improve it.
+    *   **Format**: `review(pre_solution: str) -> str`
+    *   **Example**: `revised_solution = await self.review(pre_solution=initial_solution)`
+
+4.  **FlexibleCustom (Advanced Operator)**:
+    *   **Usage**: A flexible operator that supports various reasoning patterns (sequential, parallel, iterative, branching) with customizable steps. Allows for more diverse workflow generation without embedding problem-specific information.
+    *   **Format**: `flexible_custom(custom_instruction: str = "", previous_results: List[str] = None) -> str`
+    *   **Configuration Options**:
+        - `reasoning_pattern`: "sequential", "parallel", "iterative", or "branching"
+        - `steps`: List of reasoning steps like ["analyze", "plan", "solve", "verify"]
+        - `max_iterations`: Maximum iterations for iterative patterns (default: 1)
+        - `use_structured_output`: Whether to use structured output format (default: True)
 
 The workflow should inherit from the base Workflow class and orchestrate these operators effectively.
 """
@@ -54,13 +96,38 @@ Create a workflow class called `InternBootcampWorkflow` that:
 4. Ensures correct output format
 5. Can be executed with MetaGPT
 
-The FlexibleCustom operator supports:
-- Different reasoning patterns: sequential, parallel, iterative, branching
-- Custom steps for each pattern
-- Structured or unstructured output
-- Iterative refinement of solutions
+**Base Template:**
 
-The workflow should inherit from the base Workflow class and leverage FlexibleCustom's flexibility.
+<graph>
+class Workflow:
+    def __init__(
+        self,
+        config,
+        problem
+    ) -> None:
+        self.problem = problem
+        self.config = create(config)
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem) # Flexible custom operator
+
+    async def run_workflow(self):
+        # --- YOUR DIVERSE WORKFLOW LOGIC GOES HERE ---
+        # For example, a simple one:
+        solution = await self.custom(instruction="Solve the problem step-by-step, explaining your reasoning clearly.")
+        return solution
+</graph>
+
+**Available Operators:**
+
+**FlexibleCustom**:
+    *   **Usage**: A flexible operator that supports various reasoning patterns (sequential, parallel, iterative, branching) with customizable steps. Allows for more diverse workflow generation without embedding problem-specific information.
+    *   **Format**: `flexible_custom(custom_instruction: str = "", previous_results: List[str] = None) -> str`
+    *   **Configuration Options**:
+        - `reasoning_pattern`: "sequential", "parallel", "iterative", or "branching"
+        - `steps`: List of reasoning steps like ["analyze", "plan", "solve", "verify"]
+        - `max_iterations`: Maximum iterations for iterative patterns (default: 1)
+        - `use_structured_output`: Whether to use structured output format (default: True)
+
+The workflow should inherit from the base Workflow class and orchestrate these operators effectively.
 """
 
 # 工作流生成的结束提示
@@ -81,7 +148,7 @@ from typing import Dict, Any, List, Optional
 from pydantic import BaseModel, Field
 from metagpt.workflow import Workflow
 from metagpt.actions import ActionNode
-from ScoreFlow.scripts.internbootcamp.operator import Custom, Review, Reflect, Programmer, ScEnsemble
+from ScoreFlow.scripts.internbootcamp.operator import Custom, Review, ScEnsemble, FlexibleCustom
 """
 
 # Python执行的开始模板 - FlexibleCustom操作符
@@ -95,10 +162,11 @@ from metagpt.actions import ActionNode
 from ScoreFlow.scripts.internbootcamp.operator import FlexibleCustom
 """
 
-# Python执行的结束模板
-PYTHON_END = """
-# The workflow is ready to solve InternBootcamp problems
-"""
+PYTHON_END = '''
+
+    async def __call__(self):
+        TIMEOUT = {time}
+        return await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)'''
 
 # 选择使用哪种工作流类型
 def get_workflow_prompts(workflow_type="predefined"):
@@ -123,43 +191,3 @@ def get_workflow_prompts(workflow_type="predefined"):
         }
     else:
         raise ValueError(f"Unknown workflow type: {workflow_type}")
-
-# 任务特定的条件配置
-TASK_CONDITIONS = {
-    "default": {
-        "focus": "General problem solving with emphasis on understanding requirements and applying appropriate strategies",
-        "key_points": [
-            "Problem analysis and comprehension",
-            "Constraint identification", 
-            "Strategy selection",
-            "Solution validation"
-        ]
-    },
-    "logic_puzzle": {
-        "focus": "Logical reasoning and constraint satisfaction",
-        "key_points": [
-            "Grid or state representation",
-            "Constraint propagation",
-            "Deductive reasoning",
-            "Solution verification"
-        ]
-    },
-    "math_puzzle": {
-        "focus": "Mathematical computation and optimization",
-        "key_points": [
-            "Numerical constraints",
-            "Equation solving",
-            "Optimization strategies",
-            "Answer validation"
-        ]
-    },
-    "algorithm_problem": {
-        "focus": "Algorithmic thinking and implementation",
-        "key_points": [
-            "Algorithm design",
-            "Complexity analysis",
-            "Edge case handling",
-            "Output formatting"
-        ]
-    }
-}

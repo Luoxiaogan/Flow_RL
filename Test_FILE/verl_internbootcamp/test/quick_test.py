@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from internbootcamp_reward import compute_score
+from internbootcamp_reward_simple import compute_score
 
 # 测试用的workflow response
 test_response = """
@@ -61,12 +61,12 @@ try:
     print(f"\nComputed reward score: {score:.3f}")
     
     if score > 0:
-        print("✓ Test passed! Reward function is working.")
+        print("[PASS] Test passed! Reward function is working.")
     else:
-        print("✗ Test failed! Score is 0.")
+        print("[FAIL] Test failed! Score is 0.")
         
 except Exception as e:
-    print(f"✗ Test failed with error: {e}")
+    print(f"[FAIL] Test failed with error: {e}")
     import traceback
     traceback.print_exc()
 

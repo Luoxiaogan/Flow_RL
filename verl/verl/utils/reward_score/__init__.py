@@ -117,6 +117,9 @@ def default_compute_score(
         extra_info['data_source'] = actual_data_source
         
         res = workflow_scoreflow.compute_score(solution_str, ground_truth, extra_info)
+    elif data_source.startswith("internbootcamp_"):
+        from . import workflow_internbootcamp
+        res = workflow_internbootcamp.compute_score(solution_str, ground_truth, extra_info)
 
     else:
         raise NotImplementedError(f"Reward function is not implemented for {data_source=}")

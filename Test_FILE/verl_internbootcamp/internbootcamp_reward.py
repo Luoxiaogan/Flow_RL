@@ -1,6 +1,6 @@
 """
-InternBootcamp Reward Function for VERL
-计算LLM生成的workflow在InternBootcamp任务上的表现
+InternBootcamp Reward Function for VERL V2
+适配新的数据格式，将task信息从reward_model移到extra_info
 """
 import os
 import sys
@@ -9,31 +9,16 @@ import json
 import asyncio
 import logging
 import importlib
-import tempfile
 import traceback
-from typing import List, Dict, Any, Tuple, Optional
+from typing import List, Dict, Any, Optional
 from pathlib import Path
+import aiohttp
 
 # 添加必要路径
 CURRENT_DIR = Path(__file__).parent
 PROJECT_ROOT = CURRENT_DIR.parent.parent
 sys.path.append(str(PROJECT_ROOT))
 sys.path.append(str(PROJECT_ROOT / "InternBootcamp"))
-
-# 添加MetaGPT路径（根据CLAUDE.md，使用本地安装）
-METAGPT_PATH = PROJECT_ROOT / "ScoreFlow" / "metagpt_local"
-if METAGPT_PATH.exists():
-    sys.path.insert(0, str(METAGPT_PATH))
-
-# 导入必要模块
-try:
-    from metagpt.provider.llm_provider_registry import create_llm_instance, LLMType
-    from metagpt.configs.llm_config import LLMConfig
-except ImportError as e:
-    # 如果MetaGPT导入失败，尝试其他方式
-    print(f"Warning: MetaGPT import failed: {e}")
-    print("Trying alternative import...")
-    # 可以在这里添加备选导入方案
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -42,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 class InternBootcampRewardCalculator:
     """
-    InternBootcamp任务的reward计算器
+    InternBootcamp任务的reward计算器 V2
     """
     
     def __init__(self, config_path: str = None):
@@ -51,11 +36,21 @@ class InternBootcampRewardCalculator:
         if config_path is None:
             config_path = CURRENT_DIR / "config.json"
         
-        with open(config_path, 'r', encoding='utf-8') as f:
-            self.config = json.load(f)
-        
-        self.llm_config = self.config['llm_config']['upstream']
-        self.reward_config = self.config.get('reward_config', {})
+        if os.path.exists(config_path):
+            with open(config_path, 'r', encoding='utf-8') as f:
+                self.config = json.load(f)
+            self.llm_config = self.config['llm_config']['upstream']
+            self.reward_config = self.config.get('reward_config', {})
+        else:
+            # 默认配置
+            self.llm_config = {
+                'provider': 'openai',
+                'model': 'qwen-turbo',
+                'api_key': '956c41bd0f31beaf68b871d4987af4bb',
+                'base_url': 'https://idealab.alibaba-inc.com/api/openai/v1',
+                'temperature': 0.7
+            }
+            self.reward_config = {}
         
         # 设置超时和并发限制
         self.timeout = self.reward_config.get('timeout', 30)
@@ -64,15 +59,7 @@ class InternBootcampRewardCalculator:
         # bootcamp类缓存
         self._bootcamp_cache = {}
         
-        # 临时目录
-        self.temp_dir = tempfile.mkdtemp(prefix="internbootcamp_reward_")
-        logger.info(f"Created temp directory: {self.temp_dir}")
-    
-    def __del__(self):
-        """清理临时目录"""
-        if hasattr(self, 'temp_dir') and os.path.exists(self.temp_dir):
-            import shutil
-            shutil.rmtree(self.temp_dir)
+        logger.info("InternBootcampRewardCalculator V2 initialized")
     
     def extract_workflow_from_response(self, response: str) -> Optional[str]:
         """
@@ -103,46 +90,6 @@ class InternBootcampRewardCalculator:
         logger.warning("No workflow code found in response")
         return None
     
-    def build_executable_code(self, workflow_code: str, task_name: str) -> str:
-        """
-        构建完整的可执行代码
-        添加必要的imports和包装
-        """
-        # 导入statements - 基于conditions.py的PYTHON_START_PREDEFINED
-        imports = """
-import asyncio
-from typing import Dict, Any, List, Optional
-from pydantic import BaseModel, Field
-from metagpt.provider.llm_provider_registry import create_llm_instance
-from metagpt.llm import LLM
-import sys
-import os
-
-# Add project paths
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
-# Import operators
-from ScoreFlow.scripts.internbootcamp import operator
-"""
-        
-        # 替换类名（如果需要）
-        workflow_code = workflow_code.replace("InternBootcampWorkflow", "Workflow")
-        
-        # 确保有__call__方法
-        if "async def __call__" not in workflow_code:
-            # 添加__call__方法（如果没有）
-            workflow_code += """
-    
-    async def __call__(self):
-        TIMEOUT = 120
-        return await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)
-"""
-        
-        # 组合完整代码
-        full_code = f"{imports}\n\n{workflow_code}"
-        
-        return full_code
-    
     def _load_bootcamp_class(self, task_name: str):
         """动态加载对应的bootcamp类"""
         if task_name in self._bootcamp_cache:
@@ -165,29 +112,56 @@ from ScoreFlow.scripts.internbootcamp import operator
             logger.error(f"Failed to load bootcamp class for {task_name}: {e}")
             return None
     
-    def convert_config_for_metagpt(self, config_dict: Dict) -> LLMConfig:
-        """将配置转换为MetaGPT的LLMConfig格式"""
-        provider = config_dict.get('provider', 'openai')
-        api_type_map = {
-            'openai': LLMType.OPENAI,
-            'azure': LLMType.AZURE,
-            'gemini': LLMType.GEMINI,
-            'claude': LLMType.CLAUDE,
+    async def call_llm_api(self, prompt: str) -> str:
+        """调用LLM API"""
+        url = self.llm_config['base_url'].rstrip('/') + '/chat/completions'
+        headers = {
+            'Authorization': f"Bearer {self.llm_config['api_key']}",
+            'Content-Type': 'application/json'
         }
-        api_type = api_type_map.get(provider.lower(), LLMType.OPENAI)
         
-        return LLMConfig(
-            api_type=api_type,
-            model=config_dict.get('model'),
-            api_key=config_dict.get('api_key'),
-            base_url=config_dict.get('base_url'),
-            temperature=config_dict.get('temperature', 0.7)
-        )
+        data = {
+            'model': self.llm_config['model'],
+            'messages': [{"role": "user", "content": prompt}],
+            'temperature': self.llm_config.get('temperature', 0.7),
+            'max_tokens': 1000
+        }
+        
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(url, json=data, headers=headers, timeout=30) as response:
+                    result = await response.json()
+                    return result['choices'][0]['message']['content']
+        except Exception as e:
+            logger.error(f"LLM API call failed: {e}")
+            return ""
     
-    async def execute_workflow_on_testcase(self, workflow_code: str, task_name: str, 
-                                          test_case: Dict, llm_config: Dict) -> float:
+    async def execute_workflow_simple(self, workflow_code: str, problem_text: str) -> str:
         """
-        在单个test case上执行workflow并返回分数
+        简化的workflow执行方法
+        直接调用LLM API而不是使用MetaGPT
+        """
+        # 从workflow代码中提取指令
+        instruction_pattern = r'instruction\s*=\s*["\']([^"\']+)["\']'
+        matches = re.findall(instruction_pattern, workflow_code)
+        
+        if matches:
+            instruction = matches[0]
+        else:
+            instruction = "Solve the problem step by step."
+        
+        # 构建完整的prompt
+        full_prompt = f"{instruction}\n\nProblem: {problem_text}"
+        
+        # 调用LLM
+        result = await self.call_llm_api(full_prompt)
+        
+        return result
+    
+    async def compute_score_for_testcase(self, workflow_code: str, task_name: str, 
+                                        test_case: str) -> float:
+        """
+        在单个test case上计算分数
         """
         try:
             # 加载bootcamp类
@@ -195,46 +169,30 @@ from ScoreFlow.scripts.internbootcamp import operator
             if not bootcamp_class:
                 return 0.0
             
-            # 获取test case数据
-            case_data = test_case.get('case', test_case)
+            # 解析test case
+            if isinstance(test_case, str):
+                try:
+                    # 尝试解析为JSON
+                    case_data = json.loads(test_case.replace("'", '"'))
+                except:
+                    # 尝试使用eval
+                    try:
+                        case_data = eval(test_case)
+                    except:
+                        case_data = {'input': test_case}
+            else:
+                case_data = test_case
             
             # 使用bootcamp的prompt_func生成问题文本
             if hasattr(bootcamp_class, 'prompt_func'):
                 problem_text = bootcamp_class.prompt_func(case_data)
             else:
-                # 如果没有prompt_func，直接使用prompt字段
-                problem_text = test_case.get('prompt', str(case_data))
+                problem_text = str(case_data)
             
             logger.debug(f"Problem text: {problem_text[:100]}...")
             
-            # 构建完整代码
-            full_code = self.build_executable_code(workflow_code, task_name)
-            
-            # 创建临时文件
-            temp_file = os.path.join(self.temp_dir, f"workflow_{task_name}_{id(test_case)}.py")
-            with open(temp_file, 'w', encoding='utf-8') as f:
-                f.write(full_code)
-            
-            # 准备执行环境
-            exec_namespace = {'__file__': temp_file}
-            
-            # 执行代码定义
-            exec(full_code, exec_namespace)
-            
-            # 获取Workflow类
-            WorkflowClass = exec_namespace.get('Workflow')
-            if not WorkflowClass:
-                logger.error("Workflow class not found in executed code")
-                return 0.0
-            
-            # 创建MetaGPT配置
-            metagpt_config = self.convert_config_for_metagpt(llm_config)
-            
-            # 实例化workflow
-            workflow = WorkflowClass(config=metagpt_config, problem=problem_text)
-            
-            # 执行workflow
-            result = await asyncio.wait_for(workflow(), timeout=self.timeout)
+            # 执行workflow（简化版）
+            result = await self.execute_workflow_simple(workflow_code, problem_text)
             
             logger.debug(f"Workflow result: {str(result)[:100]}...")
             
@@ -250,16 +208,13 @@ from ScoreFlow.scripts.internbootcamp import operator
             logger.info(f"Task {task_name} test case score: {score}")
             return float(score)
             
-        except asyncio.TimeoutError:
-            logger.error(f"Workflow execution timeout for {task_name}")
-            return 0.0
         except Exception as e:
-            logger.error(f"Error executing workflow for {task_name}: {e}")
+            logger.error(f"Error computing score for {task_name}: {e}")
             logger.debug(traceback.format_exc())
             return 0.0
     
     async def compute_reward_async(self, workflow_code: str, task_name: str, 
-                                  test_cases: List[Dict]) -> float:
+                                  test_cases: List[str]) -> float:
         """
         异步计算workflow在所有test cases上的平均reward
         """
@@ -269,76 +224,87 @@ from ScoreFlow.scripts.internbootcamp import operator
         # 创建任务列表
         tasks = []
         for test_case in test_cases:
-            task = self.execute_workflow_on_testcase(
-                workflow_code, task_name, test_case, self.llm_config
-            )
+            task = self.compute_score_for_testcase(workflow_code, task_name, test_case)
             tasks.append(task)
         
-        # 并发执行（限制并发数）
-        scores = []
-        for i in range(0, len(tasks), self.max_concurrent):
-            batch = tasks[i:i + self.max_concurrent]
-            batch_scores = await asyncio.gather(*batch, return_exceptions=True)
-            
-            # 处理结果
-            for score in batch_scores:
-                if isinstance(score, Exception):
-                    logger.error(f"Task failed with exception: {score}")
-                    scores.append(0.0)
-                else:
-                    scores.append(score)
+        # 并发执行
+        scores = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        # 处理结果
+        valid_scores = []
+        for score in scores:
+            if isinstance(score, Exception):
+                logger.error(f"Task failed with exception: {score}")
+                valid_scores.append(0.0)
+            else:
+                valid_scores.append(score)
         
         # 计算平均分
-        avg_score = sum(scores) / len(scores) if scores else 0.0
-        logger.info(f"Average score for {task_name}: {avg_score:.3f} ({len(scores)} test cases)")
+        avg_score = sum(valid_scores) / len(valid_scores) if valid_scores else 0.0
+        logger.info(f"Average score for {task_name}: {avg_score:.3f} ({len(valid_scores)} test cases)")
         
         return avg_score
 
 
-def compute_score(response: str, data: Dict) -> float:
+# 创建全局计算器实例
+_global_calculator = None
+
+def get_calculator():
+    """获取全局计算器实例"""
+    global _global_calculator
+    if _global_calculator is None:
+        _global_calculator = InternBootcampRewardCalculator()
+    return _global_calculator
+
+
+def compute_score(solution_str: str, ground_truth: str, extra_info: Dict) -> float:
     """
-    计算单个response的reward分数
+    计算单个solution的reward分数（符合VERL接口规范）
     
     Args:
-        response: LLM生成的包含workflow的response
-        data: 包含task信息的数据行（来自parquet文件）
+        solution_str: LLM生成的包含workflow的response
+        ground_truth: ground truth信息（对于InternBootcamp通常是"default"）
+        extra_info: 包含task_name和test_cases等额外信息
     
     Returns:
         float: reward分数 (0.0 到 1.0)
     """
     try:
-        # 创建计算器实例
-        calculator = InternBootcampRewardCalculator()
+        # 获取计算器实例
+        calculator = get_calculator()
         
         # 提取workflow代码
-        workflow_code = calculator.extract_workflow_from_response(response)
+        workflow_code = calculator.extract_workflow_from_response(solution_str)
         if not workflow_code:
-            logger.error("No workflow code found in response")
+            logger.error("No workflow code found in solution")
             return 0.0
         
-        # 解析reward_model字段
-        reward_model = json.loads(data['reward_model'])
-        task_name = reward_model['task_name']
-        test_cases = reward_model['test_cases']
+        # 从extra_info提取必要信息
+        task_name = extra_info.get('task_name', '')
+        test_cases = extra_info.get('test_cases', [])
         
-        # 解析test_cases（它们可能是字符串格式）
-        parsed_test_cases = []
-        for tc in test_cases:
-            if isinstance(tc, str):
-                try:
-                    parsed_tc = eval(tc)  # 安全性考虑：实际使用中应该用ast.literal_eval
-                    parsed_test_cases.append({'case': parsed_tc})
-                except:
-                    parsed_test_cases.append({'case': tc})
-            else:
-                parsed_test_cases.append(tc)
+        if not task_name:
+            logger.error("No task_name found in extra_info")
+            return 0.0
         
-        logger.info(f"Computing reward for task: {task_name} with {len(parsed_test_cases)} test cases")
+        logger.info(f"Computing reward for task: {task_name} with {len(test_cases)} test cases")
         
-        # 异步计算reward
-        reward = asyncio.run(calculator.compute_reward_async(
-            workflow_code, task_name, parsed_test_cases
-        ))
+        # 同步计算reward
+        # 为了避免事件循环冲突，直接使用同步方式计算
+        scores = []
+        for test_case in test_cases:
+            try:
+                score = asyncio.run(calculator.compute_score_for_testcase(
+                    workflow_code, task_name, test_case
+                ))
+                scores.append(score)
+            except Exception as e:
+                logger.error(f"Error computing score for test case: {e}")
+                scores.append(0.0)
+        
+        # 计算平均分
+        reward = sum(scores) / len(scores) if scores else 0.0
+        logger.info(f"Computed average reward: {reward:.3f}")
         
         return reward
         
@@ -348,81 +314,62 @@ def compute_score(response: str, data: Dict) -> float:
         return 0.0
 
 
-async def batch_compute_score(responses: List[str], data_list: List[Dict]) -> List[float]:
+async def batch_compute_score(solutions: List[str], ground_truths: List[str], 
+                             extra_infos: List[Dict]) -> List[float]:
     """
-    批量计算多个response的reward分数
+    批量计算多个solution的reward分数
     
     Args:
-        responses: LLM生成的response列表
-        data_list: 对应的数据行列表
+        solutions: LLM生成的solution列表
+        ground_truths: ground truth列表
+        extra_infos: 额外信息列表
     
     Returns:
         List[float]: reward分数列表
     """
-    if len(responses) != len(data_list):
-        raise ValueError("responses and data_list must have the same length")
+    if len(solutions) != len(extra_infos):
+        raise ValueError("solutions and extra_infos must have the same length")
     
-    # 创建计算器实例
-    calculator = InternBootcampRewardCalculator()
+    # 获取计算器实例
+    calculator = get_calculator()
     
-    # 创建所有任务
-    all_tasks = []
-    for response, data in zip(responses, data_list):
+    # 收集所有计算任务
+    all_rewards = []
+    
+    for solution, extra_info in zip(solutions, extra_infos):
         # 提取workflow代码
-        workflow_code = calculator.extract_workflow_from_response(response)
+        workflow_code = calculator.extract_workflow_from_response(solution)
         if not workflow_code:
-            all_tasks.append(None)  # 标记为失败
+            all_rewards.append(0.0)
             continue
         
-        # 解析数据
         try:
-            reward_model = json.loads(data['reward_model'])
-            task_name = reward_model['task_name']
-            test_cases = reward_model['test_cases']
+            # 提取信息
+            task_name = extra_info.get('task_name', '')
+            test_cases = extra_info.get('test_cases', [])
             
-            # 解析test_cases
-            parsed_test_cases = []
-            for tc in test_cases:
-                if isinstance(tc, str):
-                    try:
-                        parsed_tc = eval(tc)
-                        parsed_test_cases.append({'case': parsed_tc})
-                    except:
-                        parsed_test_cases.append({'case': tc})
-                else:
-                    parsed_test_cases.append(tc)
+            if not task_name:
+                all_rewards.append(0.0)
+                continue
             
-            # 创建计算任务
-            task = calculator.compute_reward_async(workflow_code, task_name, parsed_test_cases)
-            all_tasks.append(task)
+            # 计算reward
+            reward = await calculator.compute_reward_async(workflow_code, task_name, test_cases)
+            all_rewards.append(reward)
             
         except Exception as e:
-            logger.error(f"Error parsing data: {e}")
-            all_tasks.append(None)
+            logger.error(f"Error processing solution: {e}")
+            all_rewards.append(0.0)
     
-    # 执行所有任务
-    results = []
-    for i, task in enumerate(all_tasks):
-        if task is None:
-            results.append(0.0)
-        else:
-            try:
-                result = await task
-                results.append(result)
-            except Exception as e:
-                logger.error(f"Task {i} failed: {e}")
-                results.append(0.0)
-    
-    return results
+    return all_rewards
 
 
 if __name__ == "__main__":
     # 简单测试
-    test_response = """
+    test_solution = """
 <graph>
 class Workflow:
     def __init__(self, config, problem):
-        self.config = create(config)
+        self.config = config
         self.problem = problem
         self.custom = operator.Custom(self.config, self.problem)
     
@@ -432,12 +379,10 @@ class Workflow:
 </graph>
 """
     
-    test_data = {
-        'reward_model': json.dumps({
-            'task_name': 'adidyoumean',
-            'test_cases': ["{'input': 'hello'}"]
-        })
+    test_extra_info = {
+        'task_name': 'adidyoumean',
+        'test_cases': ["{'input': 'hello'}", "{'input': 'hellno'}", "{'input': 'abacaba'}"]
     }
     
-    score = compute_score(test_response, test_data)
+    score = compute_score(test_solution, "default", test_extra_info)
     print(f"Test score: {score}")

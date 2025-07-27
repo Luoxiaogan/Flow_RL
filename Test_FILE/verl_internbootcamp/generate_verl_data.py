@@ -158,11 +158,12 @@ class VERLDataGenerator:
             "prompt": messages,  # HuggingFace chat格式
             "ability": classify_ability(task_name),
             "reward_model": {
-                "task_name": task_name,
-                "test_cases": [str(ex.get("identity", f"example_{i}")) for i, ex in enumerate(examples)] if examples else [],
-                "score": 1.0  # 默认分数
+                "ground_truth": "default"
             },
             "extra_info": {
+                "score": 1.0,  # 默认分数
+                "task_name": task_name,
+                "test_cases": [str(ex.get("identity", f"example_{i}")) for i, ex in enumerate(examples)] if examples else [],
                 "entry_id": entry_id,
                 "task_type": get_task_type(task_name),
                 "workflow_type": workflow_type,
