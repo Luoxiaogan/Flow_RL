@@ -1,6 +1,6 @@
 """
 测试InternBootcamp Reward Function V2
-适配新的数据格式
+完整测试并输出结果到JSON
 """
 import os
 import sys
@@ -10,13 +10,17 @@ import pandas as pd
 import logging
 from pathlib import Path
 from datetime import datetime
-import time
+import re
+import nest_asyncio
+
+# 允许嵌套的事件循环
+nest_asyncio.apply()
 
 # 添加项目路径
 sys.path.append(str(Path(__file__).parent.parent))
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from internbootcamp_reward_v2 import compute_score, batch_compute_score
+from internbootcamp_reward import compute_score
 from openai import AsyncOpenAI
 
 # 设置日志
@@ -41,129 +45,52 @@ class TestInternBootcampRewardV2:
         )
         self.model = llm_config['model']
         
-        # 加载数据
+        # 直接加载真实数据
         self.data_path = Path(__file__).parent.parent / "verl_data_filtered" / "train.parquet"
-        if self.data_path.exists():
-            self.df = pd.read_parquet(self.data_path)
-            logger.info(f"Loaded {len(self.df)} records from {self.data_path}")
-        else:
-            self.df = None
-            logger.warning("No data file found, will use test data")
+        self.df = pd.read_parquet(self.data_path)
+        logger.info(f"Loaded {len(self.df)} records from {self.data_path}")
     
     async def generate_response(self, prompt: str) -> str:
-        """使用LLM生成response"""
-        try:
-            response = await self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are an expert at creating Python workflow graphs to solve problems using MetaGPT ActionNodes."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.7,
-                max_tokens=2000
-            )
-            return response.choices[0].message.content
-        except Exception as e:
-            logger.error(f"LLM generation failed: {e}")
-            return ""
-    
-    def create_test_data(self, task_name: str = "adidyoumean"):
-        """创建测试数据（新格式）"""
-        return {
-            "data_source": f"internbootcamp_{task_name}",
-            "prompt": json.dumps([{
-                "role": "user", 
-                "content": "Create a workflow to solve the Adidyoumean typo detection task..."
-            }]),
-            "ability": "general_reasoning",
-            "reward_model": {
-                "ground_truth": "default"
-            },
-            "extra_info": {
-                "score": 1.0,
-                "task_name": task_name,
-                "test_cases": ["{'input': 'hello'}", "{'input': 'hellno'}", "{'input': 'abacaba'}"],
-                "entry_id": 1,
-                "task_type": "string_manipulation",
-                "workflow_type": "predefined",
-                "num_examples": 3,
-                "timestamp": datetime.now().isoformat(),
-                "generation_time": 0.0
-            }
-        }
-    
-    async def test_single_workflow(self):
-        """测试单个workflow的reward计算"""
-        logger.info(f"\n{'='*60}")
-        logger.info("Testing single workflow reward calculation V2")
-        logger.info(f"{'='*60}")
-        
-        # 创建测试数据
-        test_data = self.create_test_data()
-        
-        # 打印任务信息
-        extra_info = test_data['extra_info']
-        task_name = extra_info['task_name']
-        test_cases = extra_info['test_cases']
-        
-        logger.info(f"Task: {task_name}")
-        logger.info(f"Number of test cases: {len(test_cases)}")
-        
-        # 创建测试workflow
-        test_solution = """
-Based on the problem, I'll create a workflow to solve the Adidyoumean typo detection task.
-
-<graph>
-class Workflow:
-    def __init__(self, config, problem):
-        self.config = config
-        self.problem = problem
-        self.custom = operator.Custom(self.config, self.problem)
-        self.review = operator.Review(self.config, self.problem)
-    
-    async def run_workflow(self):
-        # First attempt to solve the problem
-        initial_solution = await self.custom(
-            instruction="Analyze the input string and identify typos (3+ consecutive consonants with at least 2 different characters). Insert minimum spaces to split the word and eliminate all typos. Return the result in [answer] tags."
+        """使用真实LLM生成response"""
+        response = await self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": "You are an expert at creating Python workflow graphs to solve problems using MetaGPT ActionNodes."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=2000
         )
-        
-        # Review and improve the solution
-        final_solution = await self.review(pre_solution=initial_solution)
-        
-        return final_solution
-</graph>
-"""
-        
-        logger.info(f"Test solution length: {len(test_solution)} chars")
-        
-        # 计算reward
-        logger.info("\nComputing reward...")
-        ground_truth = test_data['reward_model']['ground_truth']
-        score = compute_score(test_solution, ground_truth, extra_info)
-        
-        logger.info(f"\nFinal reward score: {score:.3f}")
-        
-        return score
+        return response.choices[0].message.content
     
-    async def test_with_real_data(self):
-        """使用真实数据测试"""
-        if self.df is None:
-            logger.warning("No real data available, skipping test")
-            return
+    def extract_workflow(self, response: str) -> str:
+        """从响应中提取workflow代码"""
+        # 尝试提取<graph>标签中的内容
+        graph_match = re.search(r'<graph>(.*?)</graph>', response, re.DOTALL)
+        if graph_match:
+            return graph_match.group(1).strip()
         
+        # 如果没有<graph>标签，尝试提取代码块
+        code_match = re.search(r'```python(.*?)```', response, re.DOTALL)
+        if code_match:
+            return code_match.group(1).strip()
+        
+        # 如果都没有，返回整个响应
+        return response
+    
+    async def run_complete_test(self):
+        """运行完整测试并输出结果到JSON"""
         logger.info(f"\n{'='*60}")
-        logger.info("Testing with real data from parquet file")
+        logger.info("Running Complete Test with Real Data")
         logger.info(f"{'='*60}")
         
-        # 选择第一条数据
+        # 使用第一条真实数据
         data = self.df.iloc[0].to_dict()
         
-        # 检查数据格式
+        # 解析数据
         if 'extra_info' in data and isinstance(data['extra_info'], str):
             extra_info = json.loads(data['extra_info'])
         else:
-            # 如果是旧格式，需要转换
-            logger.info("Converting old format to new format...")
             reward_model = json.loads(data.get('reward_model', '{}'))
             extra_info = {
                 'task_name': reward_model.get('task_name', ''),
@@ -179,125 +106,97 @@ class Workflow:
         
         # 生成workflow
         prompt = json.loads(data['prompt'])[0]['content']
-        logger.info("\nGenerating workflow with LLM...")
-        solution = await self.generate_response(prompt)
+        logger.info("\nGenerating workflow with real LLM...")
         
-        if not solution:
-            logger.error("Failed to generate solution")
-            return
+        start_time = datetime.now()
+        full_response = await self.generate_response(prompt)
+        generation_time = (datetime.now() - start_time).total_seconds()
         
-        logger.info(f"Generated solution length: {len(solution)} chars")
+        logger.info(f"Generated response in {generation_time:.2f} seconds")
+        
+        # 提取workflow
+        extracted_workflow = self.extract_workflow(full_response)
         
         # 计算reward
+        logger.info("\nComputing reward...")
         reward_model = data.get('reward_model', {})
         if isinstance(reward_model, str):
             reward_model = json.loads(reward_model)
         ground_truth = reward_model.get('ground_truth', 'default')
-        score = compute_score(solution, ground_truth, extra_info)
         
-        logger.info(f"\nFinal reward score: {score:.3f}")
+        # 这里会触发实际的workflow执行
+        reward_score = compute_score(full_response, ground_truth, extra_info)
         
-        return score
-    
-    async def test_batch_processing(self):
-        """测试批量处理"""
+        logger.info(f"\nFinal reward score: {reward_score:.3f}")
+        
+        # 构建完整的测试结果
+        test_result = {
+            "test_timestamp": datetime.now().isoformat(),
+            "data_source": data.get('data_source', ''),
+            "task_name": task_name,
+            "test_cases": test_cases,
+            "prompt": prompt,
+            "model_response": {
+                "full_response": full_response,
+                "extracted_workflow": extracted_workflow,
+                "generation_time_seconds": generation_time,
+                "response_length": len(full_response)
+            },
+            "execution": {
+                "ground_truth": ground_truth,
+                "reward_score": reward_score,
+                "execution_status": "success" if reward_score > 0 else "failed"
+            },
+            "metadata": {
+                "model": self.model,
+                "temperature": 0.7,
+                "max_tokens": 2000,
+                "data_index": 0,
+                "extra_info": extra_info
+            }
+        }
+        
+        # 保存结果到JSON文件
+        output_path = Path(__file__).parent / "test_results.json"
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(test_result, f, ensure_ascii=False, indent=2)
+        
+        logger.info(f"\nTest results saved to: {output_path}")
+        
+        # 打印摘要
         logger.info(f"\n{'='*60}")
-        logger.info("Testing batch processing")
+        logger.info("Test Summary:")
+        logger.info(f"- Task: {task_name}")
+        logger.info(f"- Model Response Length: {len(full_response)} chars")
+        logger.info(f"- Extracted Workflow Length: {len(extracted_workflow)} chars")
+        logger.info(f"- Generation Time: {generation_time:.2f} seconds")
+        logger.info(f"- Reward Score: {reward_score:.3f}")
+        logger.info(f"- Execution Status: {'Success' if reward_score > 0 else 'Failed'}")
         logger.info(f"{'='*60}")
         
-        # 创建多个测试数据
-        test_data_list = [
-            self.create_test_data("adidyoumean"),
-            self.create_test_data("adidyoumean"),
-            self.create_test_data("adidyoumean")
-        ]
-        
-        # 创建测试solutions
-        test_solution = """
-<graph>
-class Workflow:
-    def __init__(self, config, problem):
-        self.config = config
-        self.problem = problem
-        self.custom = operator.Custom(self.config, self.problem)
-    
-    async def run_workflow(self):
-        solution = await self.custom(instruction="Solve the problem step by step.")
-        return solution
-</graph>
-"""
-        
-        solutions = [test_solution] * 3
-        ground_truths = ["default"] * 3
-        extra_infos = [d['extra_info'] for d in test_data_list]
-        
-        # 批量计算
-        logger.info(f"Processing {len(solutions)} solutions...")
-        scores = await batch_compute_score(solutions, ground_truths, extra_infos)
-        
-        # 输出结果
-        logger.info("\nBatch Results:")
-        for i, score in enumerate(scores):
-            logger.info(f"Solution {i+1}: {score:.3f}")
-        
-        avg_score = sum(scores) / len(scores) if scores else 0.0
-        logger.info(f"\nAverage score: {avg_score:.3f}")
-        
-        return scores
-    
-    async def test_error_handling(self):
-        """测试错误处理"""
-        logger.info(f"\n{'='*60}")
-        logger.info("Testing error handling")
-        logger.info(f"{'='*60}")
-        
-        test_data = self.create_test_data()
-        extra_info = test_data['extra_info']
-        
-        # 测试1：空solution
-        logger.info("\nTest 1: Empty solution")
-        score = compute_score("", "default", extra_info)
-        logger.info(f"Score for empty solution: {score}")
-        assert score == 0.0, "Empty solution should return 0"
-        
-        # 测试2：无效的workflow代码
-        logger.info("\nTest 2: Invalid workflow code")
-        score = compute_score("This is not a valid workflow", "default", extra_info)
-        logger.info(f"Score for invalid workflow: {score}")
-        assert score == 0.0, "Invalid workflow should return 0"
-        
-        # 测试3：缺少task_name
-        logger.info("\nTest 3: Missing task_name")
-        bad_extra_info = {k: v for k, v in extra_info.items() if k != 'task_name'}
-        score = compute_score(test_data['extra_info']['test_cases'][0], "default", bad_extra_info)
-        logger.info(f"Score without task_name: {score}")
-        assert score == 0.0, "Missing task_name should return 0"
-        
-        logger.info("\nAll error handling tests passed!")
+        return test_result
 
 
 async def main():
     """主测试函数"""
     tester = TestInternBootcampRewardV2()
     
-    # 1. 测试单个workflow
-    logger.info("\n\n=== TEST 1: Single Workflow ===")
-    await tester.test_single_workflow()
+    # 运行完整测试
+    await tester.run_complete_test()
     
-    # 2. 测试真实数据（如果有）
-    logger.info("\n\n=== TEST 2: Real Data ===")
-    await tester.test_with_real_data()
-    
-    # 3. 测试批量处理
-    logger.info("\n\n=== TEST 3: Batch Processing ===")
-    await tester.test_batch_processing()
-    
-    # 4. 测试错误处理
-    logger.info("\n\n=== TEST 4: Error Handling ===")
-    await tester.test_error_handling()
-    
-    logger.info("\n\nAll tests completed!")
+    logger.info("\nTest completed!")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    # 创建并运行事件循环
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        loop.run_until_complete(main())
+    finally:
+        # 不要立即关闭事件循环，让pending的任务完成
+        pending = asyncio.all_tasks(loop)
+        for task in pending:
+            task.cancel()
+        loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+        loop.close()

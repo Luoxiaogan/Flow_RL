@@ -1,7 +1,7 @@
 {
   "generation_stats": {
-    "total_generated": 9,
-    "successful": 9,
+    "total_generated": 15,
+    "successful": 15,
     "failed": 0,
     "by_task": {
       "aalmostarithmeticalprogression": {
@@ -21,14 +21,26 @@
         "successful": 3,
         "failed": 0,
         "timeout": 0
+      },
+      "adnaalignment": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "aexams": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
       }
     }
   },
   "dataset_info": {
-    "total_entries": 9,
-    "train_entries": 7,
-    "test_entries": 2,
+    "total_entries": 15,
+    "train_entries": 12,
+    "test_entries": 3,
     "train_ratio": 0.8
   },
-  "timestamp": "2025-07-27T10:50:19.796874"
+  "timestamp": "2025-07-27T14:55:16.410724"
 }
