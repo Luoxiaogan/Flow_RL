@@ -38,7 +38,7 @@ bash /nas/ganluo/Flow_RL/my_llama3_h100/run_finetune.sh
 
 # Or with tmux
 tmux new-session -d -s verl_test
-tmux kill-session -t data
+tmux kill-session -t verl_test
 tmux send-keys -t llama_h100_training "cd /nas/ganluo/Flow_RL/my_llama3_h100" Enter
 tmux send-keys -t llama_h100_training "conda activate qzh" Enter
 tmux send-keys -t llama_h100_training "bash run_finetune.sh" Enter
