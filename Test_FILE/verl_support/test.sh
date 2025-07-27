@@ -1,6 +1,7 @@
 set -x
 export USE_SGLANG=0
-export DATA_HOME=/home/lg/workflow_tooluse/Flow_RL/Test_FILE/verl_support/data
+# export DATA_HOME=/home/lg/workflow_tooluse/Flow_RL/Test_FILE/verl_support/data
+export DATA_HOME=/nas/ganluo/Flow_RL/Test_FILE/verl_support/data
 # export CUDA_DEVICE_MAX_CONNECTIONS=1 # For megatron communication/computation overlapping
 export HYDRA_FULL_ERROR=1
 # INFO for 小狼: 这里改数据集路径
@@ -24,7 +25,7 @@ python3 -m verl.trainer.main_ppo --config-path=config \
     data.max_response_length=4096 \
     data.filter_overlong_prompts=True \
     data.truncation='error' \
-    actor_rollout_ref.model.path=/data/pretrained_models/mistral-7B-v0.1 \
+    actor_rollout_ref.model.path=/nas/models/qwen2.5-math-7B_instruct \
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.actor.ppo_mini_batch_size=1 \
     actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=1 \
