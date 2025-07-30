@@ -9,7 +9,7 @@
       "Bash(for file in generate_verl_data.py workflow_reward.py verl_complete_generator.py)",
       "Bash(do cp \"$file\" \"$file.backup\")",
       "Bash(done)",
-      "Bash(rm:*)"
+      "Bash(grep:*)"
     ],
     "deny": []
   }
