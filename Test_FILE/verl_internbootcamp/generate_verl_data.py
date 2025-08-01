@@ -305,6 +305,10 @@ async def main():
     parser.add_argument('--entries-per-task', type=int, default=5,
                        help='Number of entries per task')
     
+    # 新增：随机任务数量参数
+    parser.add_argument('--random-task-count', type=int, default=None,
+                       help='Number of random tasks to generate (overrides --tasks if specified)')
+    
     # 输出参数
     parser.add_argument('--output-dir', default='verl_data_simple',
                        help='Output directory for data files')
@@ -316,22 +320,33 @@ async def main():
     # 创建生成器
     generator = VERLDataGenerator()
     
-    # 显示可用任务
-    
+    # 获取可用任务
     available_tasks = generator.manager.get_available_tasks()
     
-    # 验证任务
-    valid_tasks = []
-    for task in args.tasks:
-        if task in available_tasks:
-            valid_tasks.append(task)
+    # 确定要使用的任务列表
+    if args.random_task_count is not None:
+        # 如果指定了随机任务数量，从可用任务中随机选择
+        if args.random_task_count > len(available_tasks):
+            logger.warning(f"Requested {args.random_task_count} tasks, but only {len(available_tasks)} available. Using all available tasks.")
+            valid_tasks = available_tasks.copy()
         else:
-            logger.warning(f"Task '{task}' not found in available tasks")
+            # 随机选择指定数量的任务
+            valid_tasks = random.sample(available_tasks, args.random_task_count)
+            logger.info(f"Randomly selected {len(valid_tasks)} tasks from {len(available_tasks)} available tasks")
+    else:
+        # 使用指定的任务列表
+        valid_tasks = []
+        for task in args.tasks:
+            if task in available_tasks:
+                valid_tasks.append(task)
+            else:
+                logger.warning(f"Task '{task}' not found in available tasks")
     
     if not valid_tasks:
         logger.error("No valid tasks specified")
         return
-                
+    
+    logger.info(f"Using {len(valid_tasks)} tasks: {valid_tasks}")
     
     # 生成数据集
     entries = await generator.generate_dataset(

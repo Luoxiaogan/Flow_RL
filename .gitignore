@@ -4,6 +4,12 @@ Test_FILE/logs/
 Test_FILE/workspace/
 Datasets/
 wandb/
+Test_FILE/verl_internbootcamp/dataset
+Test_FILE/verl_internbootcamp/SFT_support/output
+Test_FILE/verl_internbootcamp/test
+Test_FILE/verl_internbootcamp/SFT_support/test
+training_data/
+Processed_dataset/
 *.DS_Store
 Test_FILE/ScoreFlow/scripts/.DS_Store
 setup_env.sh
@@ -16,3 +22,5 @@ set_up.bash
 Test_FILE/verl_support/core-ray::WorkerDict-144415-1753628193
 Test_FILE/verl_support/core-ray::WorkerDict-158030-1753628193
 Test_FILE/verl_support/core-ray::WorkerDict-158032-1753628193
+*.parquet
+.claude
