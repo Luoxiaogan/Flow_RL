@@ -1,11 +1,9 @@
 set -x
 export USE_SGLANG=1
 # export DATA_HOME=/home/lg/workflow_tooluse/Flow_RL/Test_FILE/verl_support/data
-export DATA_HOME=/nas/ganluo/Flow_RL/Test_FILE/verl_internbootcamp/
+export DATA_HOME=/nas/ganluo/Flow_RL/Test_FILE/verl_internbootcamp
 # export CUDA_DEVICE_MAX_CONNECTIONS=1 # For megatron communication/computation overlapping
 export HYDRA_FULL_ERROR=1
-# export MASTER_PORT=12345
-export MASTER_PORT=$(python -c 'import socket; s=socket.socket(); s.bind(("",0)); print(s.getsockname()[1]); s.close()')
 
 # 添加调试和修复 NCCL 通信问题的环境变量
 export NCCL_DEBUG=INFO
@@ -26,7 +24,7 @@ test_files="['$internbootcamp_test_path']"
 
 # actor_rollout_ref.model.path设置模型路径
 #其他参数跑起来再改
-python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py --config-path=config \
+python3 -m verl.trainer.main_ppo --config-path=config \
     --config-name='ppo_trainer.yaml'\
     algorithm.adv_estimator=grpo \
     data.train_files="$train_files" \
@@ -36,7 +34,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py --config-path=config \
     data.max_response_length=8192 \
     data.filter_overlong_prompts=True \
     data.truncation='error' \
-    actor_rollout_ref.model.path=/nas/models/Qwen2.5-7B-Instruct \
+    actor_rollout_ref.model.path=/nas/models/qwen2.5_0.5b_instruct_hf \
     actor_rollout_ref.actor.optim.lr=5e-7 \
     actor_rollout_ref.actor.ppo_mini_batch_size=4 \
     actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=1 \
@@ -56,11 +54,14 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py --config-path=config \
     actor_rollout_ref.ref.use_torch_compile=False \
     algorithm.use_kl_in_reward=False \
     trainer.critic_warmup=0 \
-    trainer.logger='["console","wandb"]' \
+    trainer.logger='["console"]' \
     trainer.project_name='verl_grpo_h100_test' \
-    trainer.experiment_name='qwen2.5_7b_math_h100_8gpu_test' \
-    trainer.n_gpus_per_node=8 \
+    trainer.experiment_name='qwen2.5_0.5b_h100_8gpu_test' \
+    trainer.n_gpus_per_node=2 \
     trainer.nnodes=1 \
     trainer.save_freq=10 \
     trainer.test_freq=2 \
-    trainer.total_epochs=3 $@ 
+    trainer.total_epochs=3 \
+    ++reward_model.reward_manager=prime \
+    ++custom_reward_function.path=/nas/ganluo/Flow_RL/Test_FILE/verl_internbootcamp/internbootcamp_reward.py \
+    ++trainer.default_local_dir=/nas/ganluo/rl_out/checkpoints/test_1
