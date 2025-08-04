@@ -49,6 +49,9 @@ actor_rollout_ref:
     # Custom chat template for the model.
     custom_chat_template: null
 
+    # 新增：显式指定加载精度
+    torch_dtype: bfloat16
+
     # Whether to use shared memory (SHM) for accelerating the loading of model weights
     use_shm: false
 

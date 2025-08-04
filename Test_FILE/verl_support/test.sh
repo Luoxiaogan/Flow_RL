@@ -1,9 +1,11 @@
 set -x
 export USE_SGLANG=1
 # export DATA_HOME=/home/lg/workflow_tooluse/Flow_RL/Test_FILE/verl_support/data
-export DATA_HOME=/nas/ganluo/Flow_RL/Test_FILE/verl_support/data
+export DATA_HOME=/nas/ganluo/Flow_RL/Test_FILE/verl_internbootcamp/
 # export CUDA_DEVICE_MAX_CONNECTIONS=1 # For megatron communication/computation overlapping
 export HYDRA_FULL_ERROR=1
+# export MASTER_PORT=12345
+export MASTER_PORT=$(python -c 'import socket; s=socket.socket(); s.bind(("",0)); print(s.getsockname()[1]); s.close()')
 
 # 添加调试和修复 NCCL 通信问题的环境变量
 export NCCL_DEBUG=INFO
@@ -12,27 +14,29 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 export TORCH_CUDA_ARCH_LIST="8.0"
 export CUDA_LAUNCH_BLOCKING=1
 # INFO for 小狼: 这里改数据集路径
-gsm8k_train_path=$DATA_HOME/gsm8k_verl_train.parquet
-gsm8k_test_path=$DATA_HOME/gsm8k_verl_test.parquet
-mbpp_train_path=$DATA_HOME/mbpp_verl_train.parquet
-mbpp_test_path=$DATA_HOME/mbpp_verl_test.parquet
+# gsm8k_train_path=$DATA_HOME/gsm8k_verl_train.parquet
+# gsm8k_test_path=$DATA_HOME/gsm8k_verl_test.parquet
+# mbpp_train_path=$DATA_HOME/mbpp_verl_train.parquet
+# mbpp_test_path=$DATA_HOME/mbpp_verl_test.parquet
+internbootcamp_train_path=$DATA_HOME/verl_data_filtered/train.parquet
+internbootcamp_test_path=$DATA_HOME/verl_data_filtered/test.parquet
 
-train_files="['$gsm8k_train_path', '$mbpp_train_path']"
-test_files="['$gsm8k_test_path', '$mbpp_test_path']"
+train_files="['$internbootcamp_train_path']"
+test_files="['$internbootcamp_test_path']"
 
 # actor_rollout_ref.model.path设置模型路径
 #其他参数跑起来再改
-python3 -m verl.trainer.main_ppo --config-path=config \
+python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py --config-path=config \
     --config-name='ppo_trainer.yaml'\
     algorithm.adv_estimator=grpo \
     data.train_files="$train_files" \
     data.val_files="$test_files" \
     data.train_batch_size=16 \
-    data.max_prompt_length=1024 \
-    data.max_response_length=2048 \
+    data.max_prompt_length=4096 \
+    data.max_response_length=8192 \
     data.filter_overlong_prompts=True \
     data.truncation='error' \
-    actor_rollout_ref.model.path=/nas/models/qwen2.5-math-7B_instruct \
+    actor_rollout_ref.model.path=/nas/models/Qwen2.5-7B-Instruct \
     actor_rollout_ref.actor.optim.lr=5e-7 \
     actor_rollout_ref.actor.ppo_mini_batch_size=4 \
     actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=1 \
@@ -59,4 +63,4 @@ python3 -m verl.trainer.main_ppo --config-path=config \
     trainer.nnodes=1 \
     trainer.save_freq=10 \
     trainer.test_freq=2 \
-    trainer.total_epochs=3 $@
+    trainer.total_epochs=3 $@ 
