@@ -51,6 +51,29 @@ class Custom(Operator):
         return response["response"]
 
 
+# class CountingReasoning(Operator):
+#     """
+#     Specialized operator for counting tasks in DROP dataset.
+#     Handles counting occurrences, entities, events, etc.
+#     """
+#     def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+#         super().__init__(llm, problem)
+
+#     async def __call__(self):
+#         instruction = """Analyze the given passage and question carefully to perform counting tasks.
+#         Focus on:
+#         1. Identifying what needs to be counted (events, entities, occurrences)
+#         2. Carefully scanning the passage for all instances
+#         3. Avoiding double-counting or missing instances
+#         4. Providing the exact count as the answer
+        
+#         Problem: """
+        
+#         prompt = instruction + self.problem_text
+#         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
+        
+#         return response["response"]
+
 class CountingReasoning(Operator):
     """
     Specialized operator for counting tasks in DROP dataset.
@@ -60,19 +83,22 @@ class CountingReasoning(Operator):
         super().__init__(llm, problem)
 
     async def __call__(self):
-        instruction = """Analyze the given passage and question carefully to perform counting tasks.
-        Focus on:
-        1. Identifying what needs to be counted (events, entities, occurrences)
-        2. Carefully scanning the passage for all instances
-        3. Avoiding double-counting or missing instances
-        4. Providing the exact count as the answer
+        # 更新后的内部Prompt，指导模型进行结构化输出
+        instruction = """Analyze the given passage and question to perform a counting task.
         
-        Problem: """
+Your response MUST be a structured format.
+In the "thought" field, explain your step-by-step reasoning: what you are counting, how you are identifying instances, and how you avoid errors.
+In the "count" field, provide only the final integer number.
+
+Problem: """
         
         prompt = instruction + self.problem_text
-        response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
+        # 使用新的 CountingOp 模型，并强制使用 xml_fill
+        response = await self._fill_node(CountingOp, prompt, mode="xml_fill")
         
-        return response["response"]
+        # 返回一个包含所有信息的、格式化的字符串
+        # 或者您可以选择只返回最终结果，例如 str(response['count'])
+        return f"Thought: {response['thought']}\nFinal Count: {response['count']}"
 
 
 class ArithmeticReasoning(Operator):
@@ -84,20 +110,21 @@ class ArithmeticReasoning(Operator):
         super().__init__(llm, problem)
 
     async def __call__(self):
+        # 更新后的内部Prompt
         instruction = """Solve this problem step by step using arithmetic reasoning.
-        Focus on:
-        1. Identifying all numerical values mentioned in the passage
-        2. Understanding what arithmetic operation is needed (addition, subtraction, etc.)
-        3. Performing calculations accurately
-        4. Double-checking your arithmetic
-        5. Providing the numerical result as the answer
-        
-        Problem: """
+
+Your response MUST be a structured format.
+In the "thought" field, explain your process: which numbers you extracted and why, and the operation you chose.
+In the "equation" field, write down the mathematical expression.
+In the "result" field, provide only the final numerical result.
+
+Problem: """
         
         prompt = instruction + self.problem_text
-        response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
+        # 使用新的 ArithmeticOp 模型
+        response = await self._fill_node(ArithmeticOp, prompt, mode="xml_fill")
         
-        return response["response"]
+        return f"Thought: {response['thought']}\nEquation: {response['equation']}\nFinal Result: {response['result']}"
 
 
 class ComparisonReasoning(Operator):
@@ -109,33 +136,85 @@ class ComparisonReasoning(Operator):
         super().__init__(llm, problem)
 
     async def __call__(self):
-        instruction = """Analyze the passage to perform comparison or sorting tasks.
-        Focus on:
-        1. Identifying all entities or values that need to be compared
-        2. Extracting the comparison criteria (e.g., longest, highest, earliest)
-        3. Systematically comparing all relevant entities
-        4. Determining the maximum, minimum, or correct ordering
-        5. Providing the answer clearly
-        
-        Problem: """
+        # 更新后的内部Prompt
+        instruction = """Analyze the passage to perform a comparison or sorting task.
+
+Your response MUST be a structured format.
+In the "thought" field, explain your process: what entities you are comparing and on what basis.
+In the "result" field, provide the final answer, which could be a single name or an ordered list of names.
+
+Problem: """
         
         prompt = instruction + self.problem_text
-        response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
+        # 使用新的 ComparisonOp 模型
+        response = await self._fill_node(ComparisonOp, prompt, mode="xml_fill")
         
-        return response["response"]
+        return f"Thought: {response['thought']}\nResult: {response['result']}"
+
+# ... (Review, ScEnsemble, FlexibleCustom 类的定义保持不变) ...
+
+
+# class ArithmeticReasoning(Operator):
+#     """
+#     Specialized operator for arithmetic computations in DROP dataset.
+#     Handles addition, subtraction, and other mathematical operations.
+#     """
+#     def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+#         super().__init__(llm, problem)
+
+#     async def __call__(self):
+#         instruction = """Solve this problem step by step using arithmetic reasoning.
+#         Focus on:
+#         1. Identifying all numerical values mentioned in the passage
+#         2. Understanding what arithmetic operation is needed (addition, subtraction, etc.)
+#         3. Performing calculations accurately
+#         4. Double-checking your arithmetic
+#         5. Providing the numerical result as the answer
+        
+#         Problem: """
+        
+#         prompt = instruction + self.problem_text
+#         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
+        
+#         return response["response"]
+
+
+# class ComparisonReasoning(Operator):
+#     """
+#     Specialized operator for comparison tasks (max/min/sorting) in DROP dataset.
+#     Handles finding maximum, minimum, or ordering entities.
+#     """
+#     def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+#         super().__init__(llm, problem)
+
+#     async def __call__(self):
+#         instruction = """Analyze the passage to perform comparison or sorting tasks.
+#         Focus on:
+#         1. Identifying all entities or values that need to be compared
+#         2. Extracting the comparison criteria (e.g., longest, highest, earliest)
+#         3. Systematically comparing all relevant entities
+#         4. Determining the maximum, minimum, or correct ordering
+#         5. Providing the answer clearly
+        
+#         Problem: """
+        
+#         prompt = instruction + self.problem_text
+#         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
+        
+#         return response["response"]
 
     
-class AnswerGenerate(Operator):
-    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
-        super().__init__(llm, problem)
+# class AnswerGenerate(Operator):
+#     def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+#         super().__init__(llm, problem)
 
-    async def __call__(self) -> str:
-        prompt = ANSWER_GENERATION_PROMPT.format(input=self.problem_text)
-        response = await self._fill_node(AnswerGenerateOp, prompt, mode="xml_fill")
-        answer = response.get("answer", "")
-        thought = response.get("thought", "")
-        final_response = thought + "\n So we have the final results: " +  answer  
-        return final_response
+#     async def __call__(self) -> str:
+#         prompt = ANSWER_GENERATION_PROMPT.format(input=self.problem_text)
+#         response = await self._fill_node(AnswerGenerateOp, prompt, mode="xml_fill")
+#         answer = response.get("answer", "")
+#         thought = response.get("thought", "")
+#         final_response = thought + "\n So we have the final results: " +  answer  
+#         return final_response
 
 
 class Review(Operator):
@@ -259,3 +338,38 @@ class FlexibleCustom(Operator):
             # Use unstructured output
             response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
             return response.get("response", "")
+
+# 文件: operator.py
+
+# ... (其他import和Operator基类) ...
+
+from typing import Any
+
+class FormatAnswer(Operator):
+    """
+    An intelligent, LLM-based operator that semantically understands the raw
+    output from a workflow and formats it into a standardized final answer.
+    """
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+        super().__init__(llm, problem)
+
+    async def __call__(self, raw_result: Any) -> str:
+        """
+        Uses an LLM to intelligently extract and format the final answer.
+        """
+        raw_str = str(raw_result)
+        
+        # 构建专门的Prompt
+        prompt = FORMAT_ANSWER_PROMPT.format(
+            problem=self.problem_text, 
+            raw_result=raw_str
+        )
+        
+        # 调用LLM并强制使用Pydantic模型进行结构化输出
+        response = await self._fill_node(FormatAnswerOp, prompt, mode="xml_fill")
+        
+        # 从结构化输出中获取核心答案
+        core_answer = response.get('final_answer', '')
+        
+        # 返回最终的、带有标准前缀的格式
+        return f"Final Answer: {core_answer}"

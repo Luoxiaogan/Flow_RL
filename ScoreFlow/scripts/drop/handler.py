@@ -16,7 +16,19 @@ class DropHandler(BenchmarkHandler):
 
     def get_prompt_text(self, indices: List[int]) -> str:
         """
-        从 DROP 数据中提取问题和相关段落，用于生成工作流。
+        从 DROP 数据中提取问题和相关段落，并格式化为清晰的、
+        带有Markdown分隔符的文本, 用于生成工作流。
+        
+        新格式:
+        ---
+        PASSAGE:
+        [passage text]
+
+        QUESTION:
+        [question text]
+        ---
+
+        (如果提供多个索引，则重复此结构)
         
         格式为:
         Problem 1:
@@ -36,7 +48,14 @@ class DropHandler(BenchmarkHandler):
                 passage = problem['passage']
                 
                 # 组合问题和段落
-                formatted_problem = f"Problem {i+1}:\nQuestion: {question}\nPassage: {passage}"
+                formatted_problem = f"""
+                ---
+                **PASSAGE:**
+                {passage}
+
+                **QUESTION:**
+                {question}
+                ---"""
                 formatted_problems.append(formatted_problem)
             
             return "\n\n".join(formatted_problems)

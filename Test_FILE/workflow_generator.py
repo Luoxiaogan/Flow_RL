@@ -139,25 +139,42 @@ class WorkflowGenerator:
         selected_meta_prompt = random.choice(meta_prompts) if meta_prompts else ""
         final_end_prompt = f"\n**CRITICAL INSTRUCTION FOR THIS SPECIFIC TASK:**\n{selected_meta_prompt}\n\n" + end_prompt
         
-        # 3. 如果有已存在的工作流，添加指示生成不同逻辑的工作流
+        # 3. 构建核心的、用于SFT的instruction
+        #这个instruction是干净的，不包含任何随机或临时的指令。
+        #它由两部分组成：规格说明书模板(start_prompt) + 问题实例(problem_text)
+        sft_instruction = start_prompt + problem_text
+
+        # 4. 构建给API的、可能包含额外引导的user_prompt
+        api_user_prompt_parts = [sft_instruction]
+
+        # (可选) 添加策略引导，用于激发Gemini的多样性
+        if meta_prompts:
+            selected_meta_prompt = random.choice(meta_prompts)
+            api_user_prompt_parts.append(f"\n\n--- \n**STRATEGIC FOCUS FOR THIS TASK:** {selected_meta_prompt}")
+
+         # (可选) 添加多样性生成指令
         if existing_workflow:
             diversity_prompt = f"\n\n**CRITICAL REQUIREMENT - DIFFERENT LOGIC**: \n<existing_workflow>\n{existing_workflow}\n</existing_workflow>\n\n**You MUST generate a workflow with FUNDAMENTALLY DIFFERENT LOGIC from the above workflow.**\n\nDO NOT just change variable names (solution vs solution1) or formatting!\n\nInstead, you MUST use at least TWO of the following strategies to ensure different logic:\n1. **Different operator sequence**: Use operators in a different order (e.g., if existing uses generate->fix->review, try generate->review->ensemble)\n2. **Different control flow**: Use different conditional logic or loop structures (e.g., if existing checks result once, try multiple attempts with different strategies)\n3. **Different parallel/serial execution**: If existing runs operators serially, try parallel execution, or vice versa\n4. **Different ensemble strategy**: If existing uses ScEnsemble on all solutions, try selecting the best one first\n5. **Different error handling**: Use different approaches when solutions fail (e.g., retry with different prompts vs fix existing)\n6. **Different operator combinations**: Use operators that the existing workflow doesn't use at all\n\n**REMEMBER: The goal is LOGICAL DIFFERENCE, not cosmetic changes!**\n\n"
-            user_prompt_str = start_prompt + f"{problem_text}" + diversity_prompt + final_end_prompt
-        else:
-            user_prompt_str = start_prompt + f"{problem_text}" + final_end_prompt
+            api_user_prompt_parts.append(diversity_prompt)
+        
+        # 添加最终的引导语，告诉模型可以开始了
+        api_user_prompt_parts.append("\n\nHere is the complete and optimized Python workflow graph:")
+
+        # 组合成最终给API的user_prompt
+        api_user_prompt = "".join(api_user_prompt_parts)
 
         messages = [
             {'role': 'system', 'content': system_prompt},
-            {'role': 'user', 'content': user_prompt_str}
+            {'role': 'user', 'content': api_user_prompt}
         ]
         
-        return messages, problem_text
+        return messages, sft_instruction
 
     async def _generate_one_workflow(self, workflow_id: str, data_indices: List[int], api_config: Dict, existing_workflow: str = None):
         """生成单个工作流并保存文件。"""
         try:
             # 1. 构建 Prompt
-            messages, problem_text = self._construct_generation_prompt(data_indices, existing_workflow)
+            messages, sft_instruction = self._construct_generation_prompt(data_indices, existing_workflow)
             
             # 2. 调用 API
             logging.info(f"向 {api_config.get('provider', 'api')} 发送生成请求 (ID: {workflow_id}, Indices: {data_indices})")
@@ -176,14 +193,15 @@ class WorkflowGenerator:
                 logging.info(f"成功生成并保存工作流: {workflow_id}")
                 # 立即保存训练数据（而不是暂存）
                 if self.training_data_output:
-                    _, _, system_prompt, _ = self._load_prompt_templates()
+                    system_prompt = messages[0]['content']
+                    # _, _, system_prompt, _ = self._load_prompt_templates()
                     training_record = {
                         "workflow_id": workflow_id,  # 添加工作流ID以便后续匹配
                         "benchmark": self.benchmark_name,
                         "data_indices": data_indices,
                         "messages": [
                             {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": problem_text},
+                            {"role": "user", "content": sft_instruction}, # <-- 使用干净、一致的SFT instruction
                             {"role": "assistant", "content": code}
                         ]
                     }

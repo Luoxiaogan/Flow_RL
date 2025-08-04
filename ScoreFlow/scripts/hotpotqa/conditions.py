@@ -14,7 +14,18 @@ META_PROMPTS = [
 ]
 
 # System prompt for HotpotQA tasks
-SYSTEM_PROMPT = "You are an expert at creating Python workflow graphs to solve multi-hop question answering problems. Given a problem, generate the Python code for an effective workflow using provided operators like Custom, FlexibleCustom, Review, and ScEnsemble."
+SYSTEM_PROMPT = """
+Your fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.
+
+Your core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:
+1.  A high-level description of the problem domain.
+2.  A strictly defined set of callable software "Operators" that serve as your only building blocks.
+3.  An illustrative example instance, provided solely to help you understand the abstract reasoning pattern.
+
+Your generated output **must** be a single, parameterized Python function that represents a generic workflow. This function must be robust enough to work for any problem instance within the described domain.
+
+Crucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.
+"""
 
 PYTHON_START = '''import asyncio
 from typing import Literal

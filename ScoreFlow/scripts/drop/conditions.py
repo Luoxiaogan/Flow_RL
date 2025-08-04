@@ -14,10 +14,21 @@ META_PROMPTS = [
 ]
 
 # System prompt for DROP tasks
-SYSTEM_PROMPT = "You are an expert at creating Python workflow graphs to solve reading comprehension and discrete reasoning problems. Given a problem, generate the Python code for an effective workflow using provided operators like CountingReasoning, ArithmeticReasoning, ComparisonReasoning, Custom, and Review."
+SYSTEM_PROMPT = """
+Your fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.
+
+Your core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:
+1.  A high-level description of the problem domain.
+2.  A strictly defined set of callable software "Operators" that serve as your only building blocks.
+3.  An illustrative example instance, provided solely to help you understand the abstract reasoning pattern.
+
+Your generated output **must** be a single, parameterized Python function that represents a generic workflow. This function must be robust enough to work for any problem instance within the described domain.
+
+Crucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.
+"""
 
 PYTHON_START = '''import asyncio
-from typing import Literal
+from typing import Literal, List, Dict, Any, Union
 import ScoreFlow.scripts.drop.operator as operator
 from metagpt.provider.llm_provider_registry import create_llm_instance as create
 
@@ -26,120 +37,112 @@ from metagpt.provider.llm_provider_registry import create_llm_instance as create
 PYTHON_END = '''
 
     async def __call__(self):
+        """
+        This is the main entry point that executes the workflow.
+        It wraps the user-defined logic in `run_workflow` with a system-level
+        formatter to ensure a standardized output.
+        """
         TIMEOUT = {time}
-        return await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)'''
 
-START_PROMPT = '''Your objective is to generate a Python workflow graph for solving reading comprehension and discrete reasoning problems. You must output valid Python code based on the following template (but you must modify it):
+        try:
+            # 1. Execute the LLM-generated workflow to get the raw, logical result.
+            raw_result = await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)
 
-<graph>
-class Workflow:
-    def __init__(
-        self,
-        config,
-        problem
-    ) -> None:
-        self.problem = problem  # IMPORTANT: problem is a dictionary, not a string!
-        # If you need the problem as text, use self.problem_text:
-        self.problem_text = str(problem) if isinstance(problem, dict) else problem
-        self.config = create(config)
-        self.custom = operator.Custom(self.config, self.problem)
-        self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
-        self.answer_generate = operator.AnswerGenerate(self.config, self.problem)
-        self.review = operator.Review(self.config, self.problem)
-        self.counting_reasoning = operator.CountingReasoning(self.config, self.problem)
-        self.arithmetic_reasoning = operator.ArithmeticReasoning(self.config, self.problem)
-        self.comparison_reasoning = operator.ComparisonReasoning(self.config, self.problem)
-        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
+            # 2. Instantiate and call the system-level FormatAnswer operator.
+            #    This step is hidden from the LLM but is crucial for robust evaluation.
+            #    It ensures the final output format is always consistent.
+            formatter = operator.FormatAnswer(self.config.llm, self.problem)
+            formatted_result = await formatter(raw_result=raw_result)
+            
+            return formatted_result
 
-    async def run_workflow(self):
-        """
-        This is a workflow graph.
-        """
-        solution = await self.answer_generate()
-        
-        return solution
-</graph>
+        except asyncio.TimeoutError:
+            # Handle workflow execution timeout gracefully.
+            return "Final Answer: Error - Workflow execution timed out."
+        except Exception as e:
+            # Handle other potential errors during workflow execution.
+            import traceback
+            error_details = traceback.format_exc()
+            # It's better to return a structured error message.
+            return f"Final Answer: Error - An exception occurred during workflow execution.\\nDetails: {error_details}"
+'''
 
+START_PROMPT = '''### 1. Problem Domain Overview
+The target domain is the **DROP benchmark**. Problems in this domain require both information extraction from a text passage and subsequent discrete reasoning. This reasoning often involves arithmetic (sums, differences), counting, and comparisons over numbers or items found in the text. The final answer can be a number, a date, or a specific span of text.
 
-Here's an introduction to operators you can use: (these are all you can use, do not create new operators)
-1. Custom:
-Usage: Generates anything based on fixed input problem and modifiable instruction.
-Format MUST follow: custom(instruction: str) -> str
-You can modify the instruction prompt, such like "Can you break down the problem into smaller steps?", "Can you solve this problem by breaking it down into detailed steps and explaining the reasoning behind each step?", "Explain how to solve the problem with clear reasoning for each step", etc. For example:
-solution = await self.custom(instruction="Can you solve this problem by breaking it down into detailed steps and explaining the reasoning behind each step?")
-The output can serve as the input of next operators or the final output.
-2. AnswerGenerate:
-Usage: Directly generate answer (including thought) to the given problem.
-Format MUST follow: answer_generate() -> str
-For example:
-solution = await self.answer_generate()
-The output can serve as the input of next operators or the final output.
-3. ScEnsemble:
-Usage: Evaluate every solutions, then select the best solution in the solution list.
-Format MUST follow: sc_ensemble(solutions: List[str]) -> str
-You can ensemble few solutions, for example:
-ensembled_solution = await self.sc_ensemble(solutions=solution_list)
-The output can serve as the input of next operators or the final output.
-4. Review:
-Usage: Given previous solution, Review operator reviews the previous solution to regenerate the solution.
-Format MUST follow: review(pre_solution: str) -> str
-pre_solution should be solution from previous operator, for example
-rev_solution = await self.review(pre_solution=pre_solution)
-The output can serve as the input of next operators or the final output.
-5. CountingReasoning:
-Usage: Specialized for counting tasks (counting events, entities, occurrences).
-Format MUST follow: counting_reasoning() -> str
-For example:
-count_result = await self.counting_reasoning()
-Use this when the problem requires counting items, events, or occurrences.
-6. ArithmeticReasoning:
-Usage: Specialized for arithmetic computations (addition, subtraction, multiplication).
-Format MUST follow: arithmetic_reasoning() -> str
-For example:
-arithmetic_result = await self.arithmetic_reasoning()
-Use this when the problem requires numerical calculations.
-7. ComparisonReasoning:
-Usage: Specialized for comparison tasks (finding max/min, sorting, comparing values).
-Format MUST follow: comparison_reasoning() -> str
-For example:
-comparison_result = await self.comparison_reasoning()
-Use this when the problem requires finding maximum, minimum, or comparing entities.
-8. FlexibleCustom (Advanced Operator):
-Usage: A flexible operator that supports various reasoning patterns (sequential, parallel, iterative, branching) with customizable steps. Perfect for complex discrete reasoning without embedding problem-specific information.
-Format: flexible_custom(custom_instruction: str = "", previous_results: List[str] = None) -> str
-Configuration Options:
-- reasoning_pattern: "sequential", "parallel", "iterative", or "branching"
-- steps: List of reasoning steps like ["extract_values", "identify_operation", "perform_calculation", "verify_result"]
-- max_iterations: Maximum iterations for iterative patterns (default: 1)
-- use_structured_output: Whether to use structured output format (default: True)
-Example 1 (Sequential calculation):
-self.flexible_custom = operator.FlexibleCustom(self.agent, self.problem, 
-                                              reasoning_pattern="sequential",
-                                              steps=["identify_numbers", "determine_operation", "calculate_step_by_step", "check_answer"])
-solution = await self.flexible_custom(custom_instruction="Focus on careful numerical extraction and computation")
-Example 2 (Iterative refinement):
-self.flexible_custom_iter = operator.FlexibleCustom(self.agent, self.problem,
-                                                   reasoning_pattern="iterative", 
-                                                   steps=["initial_count", "verify_completeness", "refine_answer"],
-                                                   max_iterations=3)
-refined_answer = await self.flexible_custom_iter(custom_instruction="Count carefully and double-check for missed items")
-Use Cases:
-- Sequential: Step-by-step calculations with verification
-- Parallel: Compare multiple approaches to the same problem
-- Iterative: Progressive refinement of counts or calculations
-- Branching: Different paths based on problem type (counting vs arithmetic)
+### 2. Available Operators & Building Blocks
+Here's an introduction to the operators you must use. These are all you can use; do not create new operators.
+
+**1. Custom:**
+- **Description:** A highly flexible operator for executing a specific, non-standard instruction as a single step within a larger workflow. Use it for intermediate tasks like reformatting text, summarizing, or when no other specialized operator fits.
+- **Example Usage:** To get a general solution, you can use `await self.custom(instruction="Think step-by-step and solve the problem.")`
+- **Format:** `await self.custom(instruction: str) -> str`
+
+**2. CountingReasoning:**
+- **Description:** A specialized expert for **counting** tasks.
+- **Output:** A structured response containing a 'thought' process and a final integer 'count'.
+- **Format:** `await self.counting_reasoning() -> str`
+
+**3. ArithmeticReasoning:**
+- **Description:** A specialized expert for **arithmetic** tasks.
+- **Output:** A structured response containing a 'thought' process, the 'equation', and the final numerical 'result'.
+- **Format:** `await self.arithmetic_reasoning() -> str`
+
+**4. ComparisonReasoning:**
+- **Description:** A specialized expert for **comparison** and **sorting** tasks.
+- **Output:** A structured response containing a 'thought' process and a 'result' (which can be a single item or an ordered list).
+- **Format:** `await self.comparison_reasoning() -> str`
+
+**5. Review:**
+- **Description:** A meta-operator that **critiques and refines** a previous solution to improve its quality and correctness.
+- **Format:** `await self.review(pre_solution: str) -> str`
+
+**6. ScEnsemble:**
+- **Description:** A meta-operator that **evaluates multiple solutions** and selects the most consistent one through voting. Used to improve robustness.
+- **Format:** `await self.sc_ensemble(solutions: List[str]) -> str`
+
+**7. FlexibleCustom (Advanced Operator):**
+- **Description:** A powerful **logic configurator** that executes a multi-step reasoning process without writing Python control flow. Define the logic by providing a list of `steps` and a `reasoning_pattern`.
+- **Format:** `await self.flexible_custom(...)`
+- **Key Parameters:** `reasoning_pattern`, `steps`, `custom_instruction`.
 
 
-IMPORTANT NOTES ABOUT PROBLEM HANDLING:
-- The 'problem' parameter is a DICTIONARY, not a string! 
-- Do NOT call string methods like .lower() directly on self.problem
-- If you need to check problem content, use self.problem_text instead
-- The operators already handle the problem internally - you don't need to analyze it in the workflow
-- Avoid conditional logic based on problem content - let the operators handle that
+### 3. Output Requirements & Constraints
+Your output MUST be a single Python code block defining a class named `Workflow`. This code will be placed inside a larger script that already handles imports and execution.
 
-We have the problem input as follow. But your output graph can not contain any specific information of the this problem.
-Question: '''
+**Your generated code MUST adhere to the following rules:**
 
+- **Structure & Syntax:**
+    - The entire output must be a single Python code block wrapped in `<graph>...</graph>` tags.
+    - The code **must** define a class: `class Workflow:`.
+    - Do **not** write `import` statements. They are handled externally.
+    - Do **not** define an `__call__` method. The execution framework handles this.
+    - Do **not** write any code outside of the `class Workflow:` definition.
+
+- **`__init__` Method:**
+    - The class **must** contain an `__init__(self, config, problem)` method.
+    - Inside `__init__`, you **must** initialize all the operators you intend to use in `run_workflow`.
+    - **Efficiency Rule:** Only initialize the operators that are actually called in `run_workflow`.
+
+- **`run_workflow` Method:**
+    - The class **must** contain an `async def run_workflow(self):` method containing the core logic.
+    - The value returned by this method should be the direct result (e.g., a number, a string). It will be automatically formatted by the system.
+
+- **Logic & Strategy:**
+    - The workflow must be a generic solution, not hardcoded to the example.
+    - The complexity should be between 3 and 8 operator calls.
+    - **Crucially, AVOID `if/else` statements** that inspect the problem's text content.
+    - To enhance performance, consider using loops (e.g., `for i in range(3):`) to generate multiple solutions and then pass them to `ScEnsemble`.
+    - Ensure every operator call contributes to the final returned value.
+
+- **Custom Operator Guideline:**
+    - The `instruction` for the `Custom` operator should guide step-by-step thinking. Do not ask for multiple different answers in a single call (e.g., avoid "generate a few options").
+
+### 4. Illustrative Example
+Here are one or more concrete examples to illustrate the problem type. Your generated workflow should be a generic solution for this *type* of problem, not just the specific instances provided.
+'''
+
+# 实际上END_PROMPT没用了
 END_PROMPT = '''
 
 You need to notice:
