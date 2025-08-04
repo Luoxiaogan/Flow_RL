@@ -211,8 +211,13 @@ class DropHandler(BenchmarkHandler):
         3. 多个文本跨度（如多个球队名称）
         """
         try:
+            # 调试：打印原始输出
+            print(f"[DROP Judge] 模型原始输出: {model_output}")
+            print(f"[DROP Judge] 输出类型: {type(model_output)}")
+            
             # 从模型输出中提取答案
             model_answer = self._extract_answer_from_output(str(model_output))
+            print(f"[DROP Judge] 提取的答案: {model_answer}")
             
             # 获取标准答案
             # DROP数据集可能有 'answer' 或 'all_answers' 字段
@@ -222,11 +227,16 @@ class DropHandler(BenchmarkHandler):
             elif 'answer' in ground_truth_data:
                 true_answers = [ground_truth_data['answer']]
             else:
+                print(f"[DROP Judge] 未找到标准答案字段")
                 return False
+            
+            print(f"[DROP Judge] 标准答案: {true_answers}")
             
             # 检查模型答案是否匹配任何一个真实答案
             for true_answer in true_answers:
-                if self._compare_answers(model_answer, true_answer):
+                comparison_result = self._compare_answers(model_answer, true_answer)
+                print(f"[DROP Judge] 比较 '{model_answer}' vs '{true_answer}': {comparison_result}")
+                if comparison_result:
                     return True
             
             return False

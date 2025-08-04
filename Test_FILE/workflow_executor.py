@@ -6,6 +6,7 @@ import argparse
 import json
 import logging
 import csv
+import re
 from typing import Dict, Any, List # 增加 List 导入
 
 # --- 设置Python路径 (如果需要) ---
@@ -127,7 +128,17 @@ async def execute_and_verify(args: argparse.Namespace):
             workflow_code = f.read()
         
         # 4. 使用 Handler 构建完整的可执行脚本
-        full_script_code = handler.build_executable_script(workflow_code, args.workflow_timeout)
+        # full_script_code = handler.build_executable_script(workflow_code, args.workflow_timeout)
+        script_parts = handler.build_executable_script(workflow_code, args.workflow_timeout)
+        # 将各个部分拼接成完整的脚本
+        full_script_code = (
+            script_parts["python_start"] + "\n" +
+            script_parts["workflow_code"] + "\n" +
+            script_parts["python_end"]
+        )
+        
+        # 调试：打印脚本的前500个字符
+        logging.info(f"[{workflow_id}] 拼接后的脚本代码前500字符:\n{full_script_code[:500]}...")
         
         # 5. 准备执行环境并执行脚本
         execution_namespace = {}
@@ -177,11 +188,35 @@ async def execute_and_verify(args: argparse.Namespace):
         # 实例化并运行工作流，传入完整的 verification_data 字典
         workflow_instance = WorkflowClass(config=metagpt_llm_config, problem=verification_data)
         
-        execution_result = await workflow_instance()
+        # 调试：确认workflow实例创建成功
+        logging.info(f"[{workflow_id}] Workflow实例创建成功: {type(workflow_instance)}")
+
+        # 关键：使用 handler 提供的、正确的调用签名来执行工作流
+        # 根据 call_signature 的内容决定如何调用
+        if "timeout=" in script_parts["call_signature"]:
+            # 从 call_signature 中提取 timeout 值
+            timeout_match = re.search(r'timeout=(\d+)', script_parts["call_signature"])
+            if timeout_match:
+                timeout_value = int(timeout_match.group(1))
+                execution_result = await workflow_instance(timeout=timeout_value)
+            else:
+                # 如果无法提取，使用默认超时
+                execution_result = await workflow_instance(timeout=args.workflow_timeout)
+        else:
+            # 旧版格式，不需要传入 timeout
+            execution_result = await workflow_instance()
+        
+        # 调试：打印执行结果
+        logging.info(f"[{workflow_id}] 执行结果: {execution_result}")
+        logging.info(f"[{workflow_id}] 执行结果类型: {type(execution_result)}")
         
         # 6. 使用 Handler 进行验证
         logging.info(f"[{workflow_id}] 执行完毕，开始验证...")
         is_correct = handler.judge(execution_result, verification_data)
+        
+        # 调试：打印judge结果
+        logging.info(f"[{workflow_id}] Judge结果: {is_correct}")
+        logging.info(f"[{workflow_id}] 标准答案: {verification_data.get('answer', verification_data.get('all_answers', 'N/A'))}")
         status = "verified_correct" if is_correct else "verified_incorrect"
         logging.info(f"工作流 {workflow_id} 验证结果: {status}")
         

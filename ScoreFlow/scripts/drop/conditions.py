@@ -49,9 +49,7 @@ PYTHON_END = '''
             raw_result = await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)
 
             # 2. Instantiate and call the system-level FormatAnswer operator.
-            #    This step is hidden from the LLM but is crucial for robust evaluation.
-            #    It ensures the final output format is always consistent.
-            formatter = operator.FormatAnswer(self.config.llm, self.problem)
+            formatter = operator.FormatAnswer(self.llm, self.problem)
             formatted_result = await formatter(raw_result=raw_result)
             
             return formatted_result
@@ -62,9 +60,10 @@ PYTHON_END = '''
         except Exception as e:
             # Handle other potential errors during workflow execution.
             import traceback
-            error_details = traceback.format_exc()
-            # It's better to return a structured error message.
-            return f"Final Answer: Error - An exception occurred during workflow execution.\\nDetails: {error_details}"
+            # 错误详情在这里被定义和使用，不暴露给外部.format()
+            error_details_str = traceback.format_exc()
+            escaped_error_details = error_details_str.replace("\\n", "\\\\n").replace('"', '\\"')
+            return f"Final Answer: Error - An exception occurred during workflow execution. Details: {{escaped_error_details}}"
 '''
 
 START_PROMPT = '''### 1. Problem Domain Overview
@@ -107,10 +106,47 @@ Here's an introduction to the operators you must use. These are all you can use;
 - **Key Parameters:** `reasoning_pattern`, `steps`, `custom_instruction`.
 
 
-### 3. Output Requirements & Constraints
-Your output MUST be a single Python code block defining a class named `Workflow`. This code will be placed inside a larger script that already handles imports and execution.
+### 3. Your Task: Complete the `run_workflow` Method
+Your task is to write the Python code for the `run_workflow` method within the provided template. You must **only** modify the logic inside this method. **Do not** change the `__init__` method or any other part of the class structure.
 
-**Your generated code MUST adhere to the following rules:**
+**Base Template:**
+<graph>
+class Workflow:
+    def __init__(
+        self,
+        config,
+        problem
+    ) -> None:
+        # --- DO NOT MODIFY THIS SECTION ---
+        self.config = config
+        self.problem = problem
+        self.problem_text = str(problem) if isinstance(problem, dict) else problem
+        
+        # Create LLM instance from config
+        self.llm = create(self.config)
+
+        # All available operators are initialized here for your use.
+        self.custom = operator.Custom(self.llm, self.problem)
+        self.counting_reasoning = operator.CountingReasoning(self.llm, self.problem)
+        self.arithmetic_reasoning = operator.ArithmeticReasoning(self.llm, self.problem)
+        self.comparison_reasoning = operator.ComparisonReasoning(self.llm, self.problem)
+        self.review = operator.Review(self.llm, self.problem)
+        self.sc_ensemble = operator.ScEnsemble(self.llm, self.problem)
+        self.flexible_custom = operator.FlexibleCustom(self.llm, self.problem)
+
+    async def run_workflow(self):
+        """
+        This is where you implement the core problem-solving logic.
+        You can use any of the operators initialized above.
+        """
+        # --- REPLACE THE EXAMPLE LOGIC BELOW WITH YOUR OWN ---
+        # For example, a simple step-by-step solution:
+        initial_thought = await self.custom(instruction="First, break down the problem and identify the main task.")
+        final_result = await self.custom(instruction=f"Based on the initial thought: {initial_thought}, now solve the problem.")
+        return final_result
+</graph>
+
+### 4. Critical Rules & Constraints
 
 - **Structure & Syntax:**
     - The entire output must be a single Python code block wrapped in `<graph>...</graph>` tags.
@@ -128,17 +164,15 @@ Your output MUST be a single Python code block defining a class named `Workflow`
     - The class **must** contain an `async def run_workflow(self):` method containing the core logic.
     - The value returned by this method should be the direct result (e.g., a number, a string). It will be automatically formatted by the system.
 
-- **Logic & Strategy:**
-    - The workflow must be a generic solution, not hardcoded to the example.
-    - The complexity should be between 3 and 8 operator calls.
-    - **Crucially, AVOID `if/else` statements** that inspect the problem's text content.
-    - To enhance performance, consider using loops (e.g., `for i in range(3):`) to generate multiple solutions and then pass them to `ScEnsemble`.
-    - Ensure every operator call contributes to the final returned value.
+- **Logic & Strategy: The Principle of "Strategic Templates"**
+    - The workflow you generate is a **strategic template**. It defines the **steps** and **high-level logic** to solve a class of problems.
+    - **ALLOWED**: The `instruction` strings passed to operators (like `Custom`) **should** contain keywords and phrases distilled from the problem **type** or the illustrative **question**. This is how you define the strategy. For example, for a question about counting touchdowns, `instruction="Count the touchdowns"` is a GOOD, strategic instruction.
+    - **FORBIDDEN**: The workflow **must not** contain any hardcoded **answers** or specific data copied directly from the problem's **passage/context**. For example, `return "2"` or `instruction="The passage mentions Calvin Johnson scored, so..."` are BAD, non-generic instructions.
 
 - **Custom Operator Guideline:**
     - The `instruction` for the `Custom` operator should guide step-by-step thinking. Do not ask for multiple different answers in a single call (e.g., avoid "generate a few options").
 
-### 4. Illustrative Example
+### 5. Illustrative Example
 Here are one or more concrete examples to illustrate the problem type. Your generated workflow should be a generic solution for this *type* of problem, not just the specific instances provided.
 '''
 
@@ -170,39 +204,39 @@ Your output must be valid Python code that can be executed. Do not output XML or
 Here is the optimized Python workflow graph without any problem information: '''
 
 
-TEMP_AVOID = '''class Workflow:
-    def __init__(
-        self,
-        config,
-        problem
-    ) -> None:
-        self.problem = problem  # IMPORTANT: problem is a dictionary, not a string!
-        # If you need the problem as text, use self.problem_text:
-        self.problem_text = str(problem) if isinstance(problem, dict) else problem
-        self.config = create(config)
-        self.custom = operator.Custom(self.config, self.problem)
-        self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
-        self.answer_generate = operator.AnswerGenerate(self.config, self.problem)
-        self.review = operator.Review(self.config, self.problem)
-        self.counting_reasoning = operator.CountingReasoning(self.config, self.problem)
-        self.arithmetic_reasoning = operator.ArithmeticReasoning(self.config, self.problem)
-        self.comparison_reasoning = operator.ComparisonReasoning(self.config, self.problem)
-        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
+# TEMP_AVOID = '''class Workflow:
+#     def __init__(
+#         self,
+#         config,
+#         problem
+#     ) -> None:
+#         self.problem = problem  # IMPORTANT: problem is a dictionary, not a string!
+#         # If you need the problem as text, use self.problem_text:
+#         self.problem_text = str(problem) if isinstance(problem, dict) else problem
+#         self.config = create(config)
+#         self.custom = operator.Custom(self.config, self.problem)
+#         self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
+#         self.answer_generate = operator.AnswerGenerate(self.config, self.problem)
+#         self.review = operator.Review(self.config, self.problem)
+#         self.counting_reasoning = operator.CountingReasoning(self.config, self.problem)
+#         self.arithmetic_reasoning = operator.ArithmeticReasoning(self.config, self.problem)
+#         self.comparison_reasoning = operator.ComparisonReasoning(self.config, self.problem)
+#         self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
 
-    async def run_workflow(self):
-        """
-        This is a workflow graph.
-        """
-        solution = await self.answer_generate()
+#     async def run_workflow(self):
+#         """
+#         This is a workflow graph.
+#         """
+#         solution = await self.answer_generate()
         
-        return solution'''
+#         return solution'''
 
 
-TEST_PROMPT = "How many children are there? Note that you are given context: there are 3 children playing."
+# TEST_PROMPT = "How many children are there? Note that you are given context: there are 3 children playing."
 
-NO_EXCEPTION_LIST = ['''.split(' ')''', '''int(''']
+# NO_EXCEPTION_LIST = ['''.split(' ')''', '''int(''']
 
-TIME_LIMIT_TEST = 60
-TIME_LIMIT = 120
-sim_threshold = 0.75
+# TIME_LIMIT_TEST = 60
+# TIME_LIMIT = 120
+# sim_threshold = 0.75
 

@@ -1,0 +1,10 @@
+{
+    "id": "drop_0_0",
+    "benchmark": "drop",
+    "data_indices": [
+        1,
+        0
+    ],
+    "dataset_path": "../Processed_dataset/drop/validation.jsonl",
+    "generation_timestamp": 1754301262.936655
+}

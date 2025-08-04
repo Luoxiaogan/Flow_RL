@@ -81,13 +81,35 @@ class BenchmarkHandler(abc.ABC):
         """
         pass
 
+    # def build_executable_script(self, workflow_code: str, timeout: int) -> str:
+    #     """
+    #     将LLM生成的纯工作流代码，与特定于基准测试的模板拼接起来，
+    #     形成一个完整的、可以被 `exec()` 执行的 Python 脚本字符串。
+        
+    #     这是一个通用实现，因为它通常只需要从 `conditions.py` 加载模板。
+    #     如果某个 benchmark 需要非常特殊的拼接逻辑，可以重写此方法。
+    #     """
+    #     try:
+    #         conditions_module = importlib.import_module(f"ScoreFlow.scripts.{self.benchmark_name}.conditions")
+    #         python_start = getattr(conditions_module, "PYTHON_START", "")
+    #         python_end = getattr(conditions_module, "PYTHON_END", "")
+    #     except (ModuleNotFoundError, AttributeError) as e:
+    #         raise ImportError(f"无法为 benchmark '{self.benchmark_name}' 加载代码模板: {e}")
+
+    #     # 将工作流代码、启动和结束模板以及超时时间拼接在一起
+    #     full_script = f"{python_start}\n{workflow_code}\n{python_end.format(time=timeout)}"
+    #     return full_script
+
     def build_executable_script(self, workflow_code: str, timeout: int) -> str:
         """
         将LLM生成的纯工作流代码，与特定于基准测试的模板拼接起来，
         形成一个完整的、可以被 `exec()` 执行的 Python 脚本字符串。
-        
-        这是一个通用实现，因为它通常只需要从 `conditions.py` 加载模板。
-        如果某个 benchmark 需要非常特殊的拼接逻辑，可以重写此方法。
+
+        这个新版本是向后兼容的：
+        1. 它会检查 PYTHON_END 模板是否包含 '{time}' 占位符。
+        2. 如果包含 (旧版模板)，它会使用 .format(time=timeout) 来进行替换。
+        3. 如果不包含 (新版模板)，它会假设 __call__ 方法接收 timeout 参数，
+           并修改执行器代码来传递这个参数。
         """
         try:
             conditions_module = importlib.import_module(f"ScoreFlow.scripts.{self.benchmark_name}.conditions")
@@ -96,9 +118,30 @@ class BenchmarkHandler(abc.ABC):
         except (ModuleNotFoundError, AttributeError) as e:
             raise ImportError(f"无法为 benchmark '{self.benchmark_name}' 加载代码模板: {e}")
 
-        # 将工作流代码、启动和结束模板以及超时时间拼接在一起
-        full_script = f"{python_start}\n{workflow_code}\n{python_end.format(time=timeout)}"
-        return full_script
+        # ==================================================================
+        # =================== 核心的兼容性逻辑 =======================
+        # ==================================================================
+        
+        # 检查 PYTHON_END 模板是否是“旧版”格式
+        if '{time}' in python_end:
+            # 这是旧版模板，使用 .format() 来注入超时时间
+            final_python_end = python_end.format(time=timeout)
+            # 告诉执行器，__call__ 方法不需要参数
+            call_signature = "await workflow_instance()"
+        else:
+            # 这是新版模板，它自己处理超时，不需要 .format()
+            final_python_end = python_end
+            # 告诉执行器，__call__ 方法需要传入 timeout 参数
+            call_signature = f"await workflow_instance(timeout={timeout})"
+
+        # 我们不再直接返回拼接好的脚本，而是返回一个包含所有部分的字典
+        # 这让执行器可以更灵活地处理
+        return {
+            "python_start": python_start,
+            "workflow_code": workflow_code,
+            "python_end": final_python_end,
+            "call_signature": call_signature
+        }
 
     @abc.abstractmethod
     def judge(self, model_output: Any, ground_truth_data: Dict[str, Any]) -> bool:
