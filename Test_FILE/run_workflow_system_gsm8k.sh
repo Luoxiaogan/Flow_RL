@@ -39,18 +39,18 @@ cd "$(dirname "$0")" || exit
 API_POOL='[
     {
     "provider": "openai",
-    "model": "qwen-turbo", 
-    "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-    "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
+    "model": "qwen-turbo",
+    "api_key": "sk-2df74af0570a42059c10a3f24de1b9df",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
 }
 ]'
 
 # 执行LLM，用于【工作流内部的算子】，通常只配置一个高效、可靠的模型。
 EXEC_LLM='{
     "provider": "openai",
-    "model": "qwen-turbo", 
-    "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-    "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
+    "model": "qwen-turbo",
+    "api_key": "sk-2df74af0570a42059c10a3f24de1b9df",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
 }'
 
 # --- 路径配置 ---
@@ -69,8 +69,8 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 # ------------------------- 任务 1: GSM8K (数学推理) -------------------------
 #
 BENCHMARK="gsm8k"
-TOTAL_PROBLEMS=1000      # Testing with just 1 problem
-MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
+TOTAL_PROBLEMS=3      # Testing with just 1 problem
+MIN_SAMPLE_SIZE=3     # 每个工作流最少使用的问题样本数
 MAX_SAMPLE_SIZE=3     # 每个工作流最多使用的问题样本数
 MAX_CONCURRENT_EXECUTIONS=6  # 并行执行工作流的最大并发数
 PARALLELISM=2  # 每个数据组合生成的工作流并行度（默认2个不同版本）
@@ -78,7 +78,7 @@ MAX_CONCURRENT_GROUPS=5  # 生成阶段最大并发组数（组间并行，组�
 BATCH_SIZE=$MAX_CONCURRENT_GROUPS          # 每批次生成的工作流数量 = 最大并发组数
 # 数据集文件的路径 (推荐使用相对路径)
 # 假设数据存放在项目根目录下的 'data' 文件夹中
-DATASET_PATH="/root/lg/Flow_RL_luogan/Processed_dataset/gsm8k/1000_train.jsonl"
+DATASET_PATH="../Processed_dataset/gsm8k/1000_train.jsonl"
 # 训练数据输出文件
 TRAINING_DATA_OUTPUT="${WORKSPACE_PATH}/training_data_${BENCHMARK}.jsonl"
 
