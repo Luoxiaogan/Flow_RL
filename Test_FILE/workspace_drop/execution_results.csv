@@ -1,3 +1,0 @@
-ID,Benchmark,Data_Indices,Status,Error_Type
-drop_0_0,drop,1_0,verified_incorrect,
-drop_0_1,drop,1_0,verified_correct,
