@@ -84,25 +84,20 @@ Here's an introduction to the operators you must use. These are all you can use;
 - **Output:** A structured response containing a 'thought' process and a final integer 'count'.
 - **Format:** `await self.counting_reasoning() -> str`
 
-**3. ArithmeticReasoning:**
-- **Description:** A specialized expert for **arithmetic** tasks.
-- **Output:** A structured response containing a 'thought' process, the 'equation', and the final numerical 'result'.
-- **Format:** `await self.arithmetic_reasoning() -> str`
-
-**4. ComparisonReasoning:**
+**3. ComparisonReasoning:**
 - **Description:** A specialized expert for **comparison** and **sorting** tasks.
 - **Output:** A structured response containing a 'thought' process and a 'result' (which can be a single item or an ordered list).
 - **Format:** `await self.comparison_reasoning() -> str`
 
-**5. Review:**
+**4. Review:**
 - **Description:** A meta-operator that **critiques and refines** a previous solution to improve its quality and correctness.
 - **Format:** `await self.review(pre_solution: str) -> str`
 
-**6. ScEnsemble:**
+**5. ScEnsemble:**
 - **Description:** A meta-operator that **evaluates multiple solutions** and selects the most consistent one through voting. Used to improve robustness.
 - **Format:** `await self.sc_ensemble(solutions: List[str]) -> str`
 
-**7. FlexibleCustom (Advanced Operator):**
+**6. FlexibleCustom (Advanced Operator):**
 - **Description:** A powerful **logic configurator** that executes a multi-step reasoning process without writing Python control flow. Define the logic by providing a list of `steps` and a `reasoning_pattern`.
 - **Format:** `await self.flexible_custom(...)`
 - **Key Parameters:** `reasoning_pattern`, `steps`, `custom_instruction`.
@@ -130,7 +125,6 @@ class Workflow:
         # All available operators are initialized here for your use.
         self.custom = operator.Custom(self.llm, self.problem)
         self.counting_reasoning = operator.CountingReasoning(self.llm, self.problem)
-        self.arithmetic_reasoning = operator.ArithmeticReasoning(self.llm, self.problem)
         self.comparison_reasoning = operator.ComparisonReasoning(self.llm, self.problem)
         self.review = operator.Review(self.llm, self.problem)
         self.sc_ensemble = operator.ScEnsemble(self.llm, self.problem)
@@ -177,6 +171,13 @@ class Workflow:
 ### 5. Illustrative Example
 Here are one or more concrete examples to illustrate the problem type. Your generated workflow should be a generic solution for this *type* of problem, not just the specific instances provided.
 '''
+
+# 我们这里删掉了所有的arithmetic的operator
+# **3. ArithmeticReasoning:**
+# - **Description:** A specialized expert for **arithmetic** tasks.
+# - **Output:** A structured response containing a 'thought' process, the 'equation', and the final numerical 'result'.
+# - **Format:** `await self.arithmetic_reasoning() -> str`
+
 
 # 实际上END_PROMPT没用了
 END_PROMPT = '''
