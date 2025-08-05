@@ -223,18 +223,19 @@ class VERLDataGenerator:
     def save_to_parquet(self, entries: List[Dict[str, Any]], output_path: str):
         """保存数据为Parquet格式"""
         # 将嵌套的字典转换为JSON字符串以便存储
-        processed_entries = []
-        for entry in entries:
-            processed_entry = entry.copy()
-            # 将prompt（消息列表）转换为JSON字符串
-            processed_entry['prompt'] = json.dumps(entry['prompt'], ensure_ascii=False)
-            # 将其他嵌套字段也转换
-            processed_entry['reward_model'] = json.dumps(entry['reward_model'], ensure_ascii=False)
-            processed_entry['extra_info'] = json.dumps(entry['extra_info'], ensure_ascii=False)
-            processed_entries.append(processed_entry)
+        # processed_entries = []
+        # for entry in entries:
+        #     processed_entry = entry.copy()
+        #     # 将prompt（消息列表）转换为JSON字符串
+        #     processed_entry['prompt'] = json.dumps(entry['prompt'], ensure_ascii=False)
+        #     # 将其他嵌套字段也转换
+        #     processed_entry['reward_model'] = json.dumps(entry['reward_model'], ensure_ascii=False)
+        #     processed_entry['extra_info'] = json.dumps(entry['extra_info'], ensure_ascii=False)
+        #     processed_entries.append(processed_entry)
         
         # 创建DataFrame
-        df = pd.DataFrame(processed_entries)
+        # df = pd.DataFrame(processed_entries)
+        df = pd.DataFrame(entries)
         
         # 保存为Parquet
         df.to_parquet(output_path, index=False)

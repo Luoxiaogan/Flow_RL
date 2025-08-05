@@ -14,12 +14,23 @@ META_PROMPTS = [
 ]
 
 # 为High Level Math任务定制的SFT System Prompt
-SYSTEM_PROMPT = "You are an expert mathematician specializing in advanced problem-solving. Generate Python workflow graphs to solve complex mathematical problems requiring deep reasoning, formal proofs, and sophisticated techniques. Use provided operators like Custom, Review, Reflect, and FlexibleCustom to create comprehensive solution workflows."
+SYSTEM_PROMPT = """
+Your fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.
+
+Your core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:
+1.  A high-level description of the problem domain.
+2.  A strictly defined set of callable software "Operators" that serve as your only building blocks.
+3.  An illustrative example instance, provided solely to help you understand the abstract reasoning pattern.
+
+Your generated output **must** be a single, parameterized Python function that represents a generic workflow. This function must be robust enough to work for any problem instance within the described domain.
+
+Crucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.
+"""
 
 
 PYTHON_START = '''import asyncio
 from typing import Literal
-import ScoreFlow.scripts.high_level_math.operator as operator
+import ScoreFlow.scripts.gsm8k.operator as operator
 from metagpt.provider.llm_provider_registry import create_llm_instance as create
 
 '''
@@ -37,25 +48,17 @@ START_PROMPT = '''You objective is to generate a sophisticated and effective wor
 
 Consider these patterns tailored for high-level mathematical problem-solving:
 
-1.  **Theorem-Based Reasoning:**
-    *   Start with problem analysis to identify applicable theorems, then apply them systematically with formal proofs.
-    *   *Example*: `analysis = Custom -> theorem_application = Custom -> proof = Review -> verification = Reflect`
+1.  **Iterative Refinement:**
+    *   Generate an initial solution, then use the `Review` operator one or more times to progressively improve it. This is good for complex problems where the first attempt might miss details.
+    *   *Example*: `solution = Custom -> Review -> Review`
 
-2.  **Multi-Method Verification:**
-    *   Solve using one method, then verify using a completely different approach (e.g., algebraic then geometric).
-    *   *Example*: `algebraic_solution = Custom -> geometric_verification = Custom -> synthesis = ScEnsemble`
+2.  **Parallel Ensemble (Fan-out/Fan-in):**
+    *   Generate multiple independent solutions using loops and the `Custom` operator. Then, use `ScEnsemble` to pick the best one. This is robust against single-point failures in reasoning.
+    *   *Example*: `solutions = [Custom, Custom, ...] -> ScEnsemble`
 
-3.  **Constructive Proof Pattern:**
-    *   Build solutions incrementally with rigorous justification at each step.
-    *   *Example*: `base_case = Custom -> inductive_step = FlexibleCustom(iterative) -> generalization = Review`
-
-4.  **Case Analysis Pattern:**
-    *   Systematically analyze different cases or conditions in the problem.
-    *   *Example*: `case_identification = Custom -> [case1, case2, case3] = parallel Custom -> case_synthesis = Review`
-
-5.  **Mathematical Exploration:**
-    *   Explore problem structure, identify patterns, then formalize the solution.
-    *   *Example*: `exploration = FlexibleCustom(steps=["explore_structure", "identify_patterns", "formalize"]) -> proof = Custom`
+3.  **Reflect and Regenerate:**
+    *   Generate a solution, use the new `Reflect` operator to critique it, and then use that reflection to guide a `Custom` or `Review` operator for a better solution. This mimics a meta-cognitive loop.
+    *   *Example*: `solution = Custom -> reflection = Reflect -> final_solution = Custom(instruction="... based on the reflection: " + reflection)`
 
 **Base Template:**
 
@@ -71,46 +74,75 @@ class Workflow:
         self.custom = operator.Custom(self.config, self.problem)
         self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
         self.review = operator.Review(self.config, self.problem)
-        self.reflect = operator.Reflect(self.config, self.problem)
-        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
+        self.reflect = operator.Reflect(self.config, self.problem) # New operator
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem) # Flexible custom operator
 
     async def run_workflow(self):
         """
-        This is a workflow graph for advanced mathematical problem-solving.
+        This is a workflow graph.
         """
-        # --- YOUR SOPHISTICATED WORKFLOW LOGIC GOES HERE ---
-        # Example for high-level math:
-        initial_analysis = await self.custom(instruction="Analyze the problem structure, identify key mathematical concepts, theorems, and potential solution strategies.")
-        return initial_analysis
+        # --- YOUR DIVERSE WORKFLOW LOGIC GOES HERE ---
+        # For example, a simple one:
+        solution = await self.custom(instruction="Solve the problem step-by-step, explaining your reasoning clearly.")
+        return solution
 </graph>
 
-**Available Operators (with mathematical focus):**
+**Available Operators:**
+
+Here's an introduction to the operators you can use. Do not create new operators beyond this list.
 
 1.  **Custom**:
-    *   **Mathematical Usage**: Generate rigorous proofs, derive formulas, or perform specific calculations.
-    *   **Example**: `proof = await self.custom(instruction="Provide a formal proof using mathematical induction.")`
+    *   **Usage**: Generates a response based on a flexible instruction. This is your main tool for generating initial solutions or reasoning steps.
+    *   **Format**: `custom(instruction: str) -> str`
+    *   **Example**: `initial_solution = await self.custom(instruction="Solve the problem by breaking it down into smaller, manageable steps.")`
 
 2.  **ScEnsemble**:
-    *   **Mathematical Usage**: Compare different solution methods or proof approaches.
-    *   **Example**: `best_proof = await self.sc_ensemble(solutions=[algebraic_proof, geometric_proof, combinatorial_proof])`
+    *   **Usage**: Evaluates multiple solutions and selects the most accurate one.
+    *   **Format**: `sc_ensemble(solutions: List[str]) -> str`
+    *   **Example**: `best_solution = await self.sc_ensemble(solutions=solution_list)`
 
 3.  **Review**:
-    *   **Mathematical Usage**: Enhance mathematical rigor, fix logical gaps, or improve clarity.
-    *   **Example**: `rigorous_proof = await self.review(pre_solution=initial_proof)`
+    *   **Usage**: Critiques and rewrites a given solution to improve it.
+    *   **Format**: `review(pre_solution: str) -> str`
+    *   **Example**: `revised_solution = await self.review(pre_solution=initial_solution)`
 
-4.  **Reflect**:
-    *   **Mathematical Usage**: Identify assumptions, edge cases, or alternative approaches.
-    *   **Example**: `mathematical_insights = await self.reflect(pre_solution=solution)`
+4.  **Reflect (New Operator)**:
+    *   **Usage**: Critically reflects on a solution's potential flaws, assumptions, or alternatives *without* rewriting it. The output is a piece of text that can be used to guide subsequent steps.
+    *   **Format**: `reflect(pre_solution: str) -> str`
+    *   **Example**: `reflection_text = await self.reflect(pre_solution=initial_solution)`
+    *   **Use Case**: `final_answer = await self.custom(instruction=f"Given the initial solution and the following reflection: {reflection_text}. Now, provide a new, improved solution.")`
 
-5.  **FlexibleCustom**:
-    *   **Mathematical Usage**: Implement complex proof strategies or multi-step derivations.
-    *   **Configuration Examples**:
-        - For proofs: `reasoning_pattern="sequential", steps=["setup", "base_case", "inductive_hypothesis", "inductive_step", "conclusion"]`
-        - For problem exploration: `reasoning_pattern="iterative", steps=["simplify", "generalize", "solve_special_cases"]`
-        - For verification: `reasoning_pattern="parallel", steps=["algebraic_check", "geometric_interpretation", "numerical_verification"]`
+5.  **FlexibleCustom (Advanced Operator)**:
+    *   **Usage**: A flexible operator that supports various reasoning patterns (sequential, parallel, iterative, branching) with customizable steps. Allows for more diverse workflow generation without embedding problem-specific information.
+    *   **Format**: `flexible_custom(custom_instruction: str = "", previous_results: List[str] = None) -> str`
+    *   **Configuration Options**:
+        - `reasoning_pattern`: "sequential", "parallel", "iterative", or "branching"
+        - `steps`: List of reasoning steps like ["analyze", "plan", "solve", "verify"]
+        - `max_iterations`: Maximum iterations for iterative patterns (default: 1)
+        - `use_structured_output`: Whether to use structured output format (default: True)
+    *   **Example 1 (Sequential)**: 
+        ```python
+        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem, 
+                                                      reasoning_pattern="sequential",
+                                                      steps=["identify_knowns", "identify_unknowns", "apply_formula", "calculate"])
+        solution = await self.flexible_custom(custom_instruction="Focus on systematic problem decomposition")
+        ```
+    *   **Example 2 (Iterative)**: 
+        ```python
+        self.flexible_custom_iter = operator.FlexibleCustom(self.config, self.problem,
+                                                           reasoning_pattern="iterative", 
+                                                           steps=["initial_approach", "refine", "finalize"],
+                                                           max_iterations=3)
+        refined_solution = await self.flexible_custom_iter(custom_instruction="Start with estimation then refine")
+        ```
+    *   **Use Cases**: 
+        - Sequential: Step-by-step problem solving with defined stages
+        - Parallel: Consider multiple approaches simultaneously
+        - Iterative: Progressive refinement through multiple passes
+        - Branching: Conditional reasoning based on intermediate results
 
 **Problem Input:**
-We have the problem input below. Your generated graph **must not** contain any specific information from this problem. The graph should be a general-purpose advanced mathematical solver.
+We have the problem input below. Your generated graph **must not** contain any specific information from this problem. The graph should be a general-purpose solver.
 
 Question: '''
 

@@ -62,4 +62,6 @@ python3 -m verl.trainer.main_ppo --config-path=config \
     trainer.save_freq=10 \
     trainer.test_freq=2 \
     trainer.total_epochs=3 \
-    ++reward_model.reward_manager=prime $@
+    ++reward_model.reward_manager=prime \
+    
+    ++trainer.default_local_dir=/nas/ganluo/rl_out/checkpoints/${trainer.project_name}/${trainer.experiment_name} $@
