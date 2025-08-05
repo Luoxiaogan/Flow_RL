@@ -29,6 +29,14 @@ alibaba
     "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
 }
 
+本地的流量代理之后
+{
+    "provider": "openai",
+    "model": "qwen-turbo",
+    "api_key": "sk-70e93be8280d4cd08526438db5441bae",
+    "base_url": "http://localhost:5001"
+}
+
 
 // qzh的api: sk-2df74af0570a42059c10a3f24de1b9df
 

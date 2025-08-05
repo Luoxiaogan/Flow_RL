@@ -36,21 +36,38 @@ cd "$(dirname "$0")" || exit
 # --- API 与模型配置 (JSON格式) ---
 # API池，用于【生成阶段】，可以配置多个备用模型。
 # 注意: 我们使用 "$YOUR_API_KEY" 从环境变量中读取密钥。
+# API_POOL='[
+#     {
+#     "provider": "openai",
+#     "model": "qwen-turbo", 
+#     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+#     "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
+# }
+# ]'
+
+# # 执行LLM，用于【工作流内部的算子】，通常只配置一个高效、可靠的模型。
+# EXEC_LLM='{
+#     "provider": "openai",
+#     "model": "qwen-turbo", 
+#     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+#     "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
+# }'
+
+# ALIBABA代理
+
 API_POOL='[
     {
     "provider": "openai",
     "model": "qwen-turbo", 
     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-    "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
+    "base_url": "http://localhost:5001"
 }
 ]'
-
-# 执行LLM，用于【工作流内部的算子】，通常只配置一个高效、可靠的模型。
 EXEC_LLM='{
     "provider": "openai",
     "model": "qwen-turbo", 
     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-    "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
+    "base_url": "http://localhost:5001"
 }'
 
 # --- 路径配置 ---

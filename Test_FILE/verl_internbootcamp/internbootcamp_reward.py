@@ -10,6 +10,7 @@ import asyncio
 import logging
 import importlib
 import traceback
+import random
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 import aiohttp
@@ -23,7 +24,7 @@ sys.path.append(str(PROJECT_ROOT))
 sys.path.append(str(PROJECT_ROOT / "InternBootcamp"))
 
 # DEBUG模式控制
-DEBUG = 1  # 改为1启用debug模式
+DEBUG = 0  # 改为1启用debug模式
 DEBUG_PATH = CURRENT_DIR / "debug_logs"
 
 # 设置日志
@@ -206,7 +207,7 @@ class InternBootcampRewardCalculator:
             return None
     
     async def call_llm_api(self, prompt: str) -> str:
-        """调用LLM API"""
+        """调用LLM API，带有指数回避重试机制"""
         api_start = time.time()
         
         url = self.llm_config['base_url'].rstrip('/') + '/chat/completions'
@@ -233,54 +234,135 @@ class InternBootcampRewardCalculator:
             "max_tokens": data['max_tokens']
         })
         
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.post(url, json=data, headers=headers, timeout=30) as response:
-                    result = await response.json()
-                    content = result['choices'][0]['message']['content']
+        # 重试配置
+        max_retries = 5  # 最大重试次数
+        base_delay = 1.0  # 基础延迟（秒）
+        max_delay = 60.0  # 最大延迟（秒）
+        
+        for attempt in range(max_retries + 1):
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.post(url, json=data, headers=headers, timeout=30) as response:
+                        result = await response.json()
+                        
+                        # 检查是否是限流错误
+                        if not result.get('success', True) and result.get('code') == 'PL-002':
+                            # 这是限流错误
+                            if attempt < max_retries:
+                                # 计算延迟时间：指数回避 + 随机抖动
+                                delay = min(base_delay * (2 ** attempt), max_delay)
+                                # 添加随机抖动（0.5到1.5倍之间）
+                                jitter = random.uniform(0.5, 1.5)
+                                actual_delay = delay * jitter
+                                
+                                logger.warning(f"Rate limit hit (attempt {attempt + 1}/{max_retries + 1}), "
+                                             f"retrying in {actual_delay:.2f}s... "
+                                             f"Error: {result.get('message', 'Unknown')}")
+                                
+                                # 记录限流重试
+                                debug_log("llm_call", {
+                                    "event": "rate_limit_retry",
+                                    "attempt": attempt + 1,
+                                    "delay": actual_delay,
+                                    "error_code": result.get('code'),
+                                    "error_message": result.get('message'),
+                                    "trace_id": result.get('detailMessage', '').split('traceId: ')[-1] if 'traceId' in result.get('detailMessage', '') else None
+                                })
+                                
+                                await asyncio.sleep(actual_delay)
+                                continue
+                            else:
+                                # 超过最大重试次数
+                                logger.error(f"Rate limit persists after {max_retries} retries")
+                                debug_log("llm_call", {
+                                    "event": "rate_limit_max_retries",
+                                    "max_retries": max_retries,
+                                    "error": result
+                                }, api_start)
+                                return ""
+
+                        # 非限流错误，正常处理响应
+                        if 'choices' in result and result['choices']:
+                            content = result['choices'][0]['message']['content']
+                            
+                            # 记录API调用成功
+                            debug_log("llm_call", {
+                                "event": "llm_call_success",
+                                "attempt": attempt + 1,
+                                "response_length": len(content),
+                                "response_preview": content[:500] if len(content) > 500 else content,
+                                "usage": result.get('usage', {}),
+                                "status_code": response.status
+                            }, api_start)
+                            
+                            return content
+                        else:
+                            # 其他API错误
+                            logger.error(f"Unexpected API response: {result}")
+                            debug_log("llm_call", {
+                                "event": "llm_call_unexpected_response",
+                                "response": result,
+                                "status_code": response.status
+                            }, api_start)
+                            return ""
+                            
+            except Exception as e:
+                # 网络或其他错误
+                if attempt < max_retries:
+                    # 对于非限流错误也进行重试
+                    delay = min(base_delay * (2 ** attempt), max_delay)
+                    jitter = random.uniform(0.5, 1.5)
+                    actual_delay = delay * jitter
                     
-                    # 记录API调用成功
+                    logger.warning(f"API call failed (attempt {attempt + 1}/{max_retries + 1}), "
+                                 f"retrying in {actual_delay:.2f}s... Error: {str(e)}")
+                    
                     debug_log("llm_call", {
-                        "event": "llm_call_success",
-                        "response_length": len(content),
-                        "response_preview": content[:500] if len(content) > 500 else content,
-                        "usage": result.get('usage', {}),
-                        "status_code": response.status
+                        "event": "api_call_retry",
+                        "attempt": attempt + 1,
+                        "delay": actual_delay,
+                        "error_type": type(e).__name__,
+                        "error_message": str(e)
+                    })
+                    
+                    await asyncio.sleep(actual_delay)
+                    continue
+                else:
+                    # 超过最大重试次数
+                    error_details = {
+                        "error_type": type(e).__name__,
+                        "error_message": str(e),
+                        "traceback": traceback.format_exc()
+                    }
+                    
+                    logger.error(f"LLM API call failed after {max_retries} retries: {e}")
+                    logger.error(f"Error type: {type(e).__name__}")
+                    logger.error(f"Full traceback:\n{traceback.format_exc()}")
+                    
+                    # 记录API调用失败
+                    debug_log("llm_call", {
+                        "event": "llm_call_failed",
+                        "max_retries": max_retries,
+                        "error": error_details,
+                        "url": url,
+                        "model": self.llm_config['model'],
+                        "prompt_length": len(prompt)
                     }, api_start)
                     
-                    return content
-        except Exception as e:
-            # 获取完整的错误信息
-            error_details = {
-                "error_type": type(e).__name__,
-                "error_message": str(e),
-                "traceback": traceback.format_exc()
-            }
-            
-            logger.error(f"LLM API call failed: {e}")
-            logger.error(f"Error type: {type(e).__name__}")
-            logger.error(f"Full traceback:\n{traceback.format_exc()}")
-            
-            # 记录API调用失败
-            debug_log("llm_call", {
-                "event": "llm_call_failed",
-                "error": error_details,
-                "url": url,
-                "model": self.llm_config['model'],
-                "prompt_length": len(prompt)
-            }, api_start)
-            
-            # 同时记录到错误列表
-            debug_log("error", {
-                "function": "call_llm_api",
-                "error": error_details,
-                "context": {
-                    "url": url,
-                    "model": self.llm_config['model']
-                }
-            })
-            
-            return ""
+                    # 同时记录到错误列表
+                    debug_log("error", {
+                        "function": "call_llm_api",
+                        "error": error_details,
+                        "context": {
+                            "url": url,
+                            "model": self.llm_config['model']
+                        }
+                    })
+                    
+                    return ""
+        
+        # 不应该到达这里，但为了安全起见
+        return ""
     
     async def execute_workflow_simple(self, workflow_code: str, problem_text: str) -> str:
         """
