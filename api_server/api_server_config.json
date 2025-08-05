@@ -1,7 +1,0 @@
-{
-    "forward_url": "http://example.com/api",
-    "local_port": 5000,
-    "queue_interval": 0.1,
-    "timeout": 30,
-    "max_retries": 3
-}
