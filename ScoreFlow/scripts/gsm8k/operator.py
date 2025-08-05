@@ -8,12 +8,8 @@ import asyncio
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 # ### 修改点：将所有硬编码的 'GSM8K' 改为小写的 'gsm8k' ###
-from ScoreFlow.scripts.gsm8k.operator_an import (
-    GenerateOp, CodeGenerateOp, ScEnsembleOp, ReviewOp, ReflectOp, FlexibleCustomOp
-)
-from ScoreFlow.scripts.gsm8k.op_prompt import (
-    SC_ENSEMBLE_PROMPT, REVIEW_PROMPT, PYTHON_CODE_VERIFIER_PROMPT, REFLECT_PROMPT, FLEXIBLE_CUSTOM_PROMPT
-)
+from ScoreFlow.scripts.gsm8k.operator_an import *
+from ScoreFlow.scripts.gsm8k.op_prompt import *
 from metagpt.actions.action_node import ActionNode
 from metagpt.llm import LLM
 
@@ -48,9 +44,176 @@ class Custom(Operator):
         super().__init__(llm, problem)
 
     async def __call__(self, instruction):
+        
         prompt = instruction + self.problem_text
         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
+        
         return response["response"]
+
+
+# class CountingReasoning(Operator):
+#     """
+#     Specialized operator for counting tasks in DROP dataset.
+#     Handles counting occurrences, entities, events, etc.
+#     """
+#     def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+#         super().__init__(llm, problem)
+
+#     async def __call__(self):
+#         instruction = """Analyze the given passage and question carefully to perform counting tasks.
+#         Focus on:
+#         1. Identifying what needs to be counted (events, entities, occurrences)
+#         2. Carefully scanning the passage for all instances
+#         3. Avoiding double-counting or missing instances
+#         4. Providing the exact count as the answer
+        
+#         Problem: """
+        
+#         prompt = instruction + self.problem_text
+#         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
+        
+#         return response["response"]
+
+class CountingReasoning(Operator):
+    """
+    Specialized operator for counting tasks in DROP dataset.
+    Handles counting occurrences, entities, events, etc.
+    """
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+        super().__init__(llm, problem)
+
+    async def __call__(self):
+        # 更新后的内部Prompt，指导模型进行结构化输出
+        instruction = """Analyze the given passage and question to perform a counting task.
+        
+Your response MUST be a structured format.
+In the "thought" field, explain your step-by-step reasoning: what you are counting, how you are identifying instances, and how you avoid errors.
+In the "count" field, provide only the final integer number.
+
+Problem: """
+        
+        prompt = instruction + self.problem_text
+        # 使用新的 CountingOp 模型，并强制使用 xml_fill
+        response = await self._fill_node(CountingOp, prompt, mode="xml_fill")
+        
+        # 返回一个包含所有信息的、格式化的字符串
+        # 或者您可以选择只返回最终结果，例如 str(response['count'])
+        return f"Thought: {response['thought']}\nFinal Count: {response['count']}"
+
+
+# 文件: operator.py
+
+class ArithmeticReasoning(Operator):
+    # ...
+    async def __call__(self):
+        # 优化后的、更强硬的Prompt
+        instruction = """You are a precise math problem solver. Your response MUST be a valid XML format with three fields: 'thought', 'equation', and 'result'.
+
+- 'thought': Explain your step-by-step reasoning.
+- 'equation': Write down the final mathematical expression that leads to the answer.
+- 'result': Provide ONLY the final numerical result.
+
+EXAMPLE:
+<thought>The question asks for the difference. I found the numbers 53 and 24. I will subtract 24 from 53.</thought>
+<equation>53 - 24</equation>
+<result>29</result>
+
+Problem: """
+        
+        prompt = instruction + self.problem_text
+        response = await self._fill_node(ArithmeticOp, prompt, mode="xml_fill")
+        
+        return f"Thought: {response.get('thought', '')}\nEquation: {response.get('equation', '')}\nFinal Result: {response.get('result', '')}"
+
+
+class ComparisonReasoning(Operator):
+    """
+    Specialized operator for comparison tasks (max/min/sorting) in DROP dataset.
+    Handles finding maximum, minimum, or ordering entities.
+    """
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+        super().__init__(llm, problem)
+
+    async def __call__(self):
+        # 更新后的内部Prompt
+        instruction = """Analyze the passage to perform a comparison or sorting task.
+
+Your response MUST be a structured format.
+In the "thought" field, explain your process: what entities you are comparing and on what basis.
+In the "result" field, provide the final answer, which could be a single name or an ordered list of names.
+
+Problem: """
+        
+        prompt = instruction + self.problem_text
+        # 使用新的 ComparisonOp 模型
+        response = await self._fill_node(ComparisonOp, prompt, mode="xml_fill")
+        
+        return f"Thought: {response['thought']}\nResult: {response['result']}"
+
+# ... (Review, ScEnsemble, FlexibleCustom 类的定义保持不变) ...
+
+
+# class ArithmeticReasoning(Operator):
+#     """
+#     Specialized operator for arithmetic computations in DROP dataset.
+#     Handles addition, subtraction, and other mathematical operations.
+#     """
+#     def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+#         super().__init__(llm, problem)
+
+#     async def __call__(self):
+#         instruction = """Solve this problem step by step using arithmetic reasoning.
+#         Focus on:
+#         1. Identifying all numerical values mentioned in the passage
+#         2. Understanding what arithmetic operation is needed (addition, subtraction, etc.)
+#         3. Performing calculations accurately
+#         4. Double-checking your arithmetic
+#         5. Providing the numerical result as the answer
+        
+#         Problem: """
+        
+#         prompt = instruction + self.problem_text
+#         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
+        
+#         return response["response"]
+
+
+# class ComparisonReasoning(Operator):
+#     """
+#     Specialized operator for comparison tasks (max/min/sorting) in DROP dataset.
+#     Handles finding maximum, minimum, or ordering entities.
+#     """
+#     def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+#         super().__init__(llm, problem)
+
+#     async def __call__(self):
+#         instruction = """Analyze the passage to perform comparison or sorting tasks.
+#         Focus on:
+#         1. Identifying all entities or values that need to be compared
+#         2. Extracting the comparison criteria (e.g., longest, highest, earliest)
+#         3. Systematically comparing all relevant entities
+#         4. Determining the maximum, minimum, or correct ordering
+#         5. Providing the answer clearly
+        
+#         Problem: """
+        
+#         prompt = instruction + self.problem_text
+#         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
+        
+#         return response["response"]
+
+    
+# class AnswerGenerate(Operator):
+#     def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+#         super().__init__(llm, problem)
+
+#     async def __call__(self) -> str:
+#         prompt = ANSWER_GENERATION_PROMPT.format(input=self.problem_text)
+#         response = await self._fill_node(AnswerGenerateOp, prompt, mode="xml_fill")
+#         answer = response.get("answer", "")
+#         thought = response.get("thought", "")
+#         final_response = thought + "\n So we have the final results: " +  answer  
+#         return final_response
 
 
 class Review(Operator):
@@ -58,88 +221,16 @@ class Review(Operator):
         super().__init__(llm, problem)
 
     async def __call__(self, pre_solution):
+        
         prompt = REVIEW_PROMPT.format(problem=self.problem_text, solution=pre_solution)
         response = await self._fill_node(ReviewOp, prompt, mode="xml_fill")
         answer = response.get("revised_solution", "")
+
         return answer
 
 
-class Reflect(Operator):
-    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
-        super().__init__(llm, problem)
-
-    async def __call__(self, pre_solution: str):
-        prompt = REFLECT_PROMPT.format(problem=self.problem_text, solution=pre_solution)
-        response = await self._fill_node(ReflectOp, prompt, mode="xml_fill")
-        reflection = response.get("reflection_text", "")
-        return reflection
-
-
-def run_code(code):
-    try:
-        global_namespace = {}
-        disallowed_imports = [
-            "os", "sys", "subprocess", "multiprocessing", "matplotlib", "seaborn", 
-            "plotly", "bokeh", "ggplot", "pylab", "tkinter", "PyQt5", "wx", "pyglet"
-        ]
-        for lib in disallowed_imports:
-            if f"import {lib}" in code or f"from {lib}" in code:
-                return "Error", f"Prohibited import: {lib}"
-        exec(code, global_namespace)
-        if 'solve' in global_namespace and callable(global_namespace['solve']):
-            result = global_namespace['solve']()
-            return "Success", str(result)
-        else:
-            return "Error", "Function 'solve' not found"
-    except Exception as e:
-        tb_str = traceback.format_exc()
-        return "Error", f"Execution error: {str(e)}\n{tb_str}"
-    
-
-class Programmer(Operator):
-    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
-        super().__init__(llm, problem)
-
-    async def exec_code(self, code, timeout=30):
-        loop = asyncio.get_running_loop()
-        with concurrent.futures.ProcessPoolExecutor(max_workers=1) as executor:
-            try:
-                future = loop.run_in_executor(executor, run_code, code)
-                result = await asyncio.wait_for(future, timeout=timeout)
-                return result
-            except asyncio.TimeoutError:
-                executor.shutdown(wait=False, cancel_futures=True)
-                return "Error", "Code execution timed out"
-            except Exception as e:
-                return "Error", f"Unknown error: {str(e)}"
-
-    async def code_generate(self, problem, analysis, feedback, mode):
-        prompt = PYTHON_CODE_VERIFIER_PROMPT.format(
-            problem=problem, analysis=analysis, feedback=feedback
-        )
-        response = await self._fill_node(CodeGenerateOp, prompt, mode, function_name="solve")
-        return response
-
-    @retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
-    async def __call__(self, analysis: str = "None"):
-        code = None
-        output = None
-        feedback = ""
-        for i in range(3):
-            code_response = await self.code_generate(self.problem_text, analysis, feedback, mode="code_fill")
-            code = code_response.get("code")
-            if not code:
-                return "No code generated"
-            status, output = await self.exec_code(code)
-            if status == "Success":
-                return f"After executing the following code written by llm agent.\n{code}\nWe have the following output: {output}"
-            else:
-                print(f"Execution error on attempt {i + 1}, error message: {output}")
-                feedback = f"\nThe result of the error from the code you wrote in the previous round:\nCode: {code}\n\nStatus: {status}, {output}"
-        return f"After executing the following code written by llm agent.\n{code}\nWe have the following output: {output}"
-
-
 class ScEnsemble(Operator):
+
     def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
         super().__init__(llm, problem)
 
@@ -152,18 +243,15 @@ class ScEnsemble(Operator):
 
         prompt = SC_ENSEMBLE_PROMPT.format(problem=self.problem_text, solutions=solution_text)
         response = await self._fill_node(ScEnsembleOp, prompt, mode="xml_fill")
-        answer = response.get("solution_letter", "").strip().upper()
+        answer = response.get("solution_letter", "")
+        answer = answer.strip().upper()
         
-        if answer in answer_mapping:
-            return solutions[answer_mapping[answer]]
-        else:
-            logger.warning(f"ScEnsemble returned an invalid letter '{answer}'. Defaulting to the first solution.")
-            return solutions[0] if solutions else ""
+        return solutions[answer_mapping[answer]]
 
 
 class FlexibleCustom(Operator):
     """
-    Flexible custom operator that supports various reasoning patterns and configurations.
+    Flexible custom operator that supports various reasoning patterns for discrete reasoning tasks.
     Allows workflows to define custom logic without embedding problem information in prompts.
     """
     def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None, 
@@ -180,9 +268,10 @@ class FlexibleCustom(Operator):
             max_iterations: Maximum iterations for iterative patterns
             use_structured_output: Whether to use structured output format
         """
-        super().__init__(llm, problem)
+        super().__init__(llm)
+        self.problem = problem
         self.reasoning_pattern = reasoning_pattern
-        self.steps = steps or ["analyze", "plan", "solve", "verify"]
+        self.steps = steps or ["extract_values", "identify_operation", "perform_calculation", "verify_result"]
         self.max_iterations = max_iterations
         self.use_structured_output = use_structured_output
     
@@ -190,7 +279,7 @@ class FlexibleCustom(Operator):
                        reasoning_pattern: str = None, steps: List[str] = None, 
                        max_iterations: int = None, use_structured_output: bool = None):
         """
-        Execute the flexible custom operator.
+        Execute the flexible custom operator for discrete reasoning.
         
         Args:
             custom_instruction: Additional custom instruction from workflow
@@ -214,32 +303,72 @@ class FlexibleCustom(Operator):
             "max_iterations": actual_max_iterations
         }
         
-        # Format previous results if any
+        # Build previous context if available
         previous_context = ""
         if previous_results:
-            previous_context = "\n\nPrevious analysis:\n" + "\n---\n".join(previous_results)
+            previous_context = "\n\nPrevious Results:\n" + "\n---\n".join(previous_results)
         
-        # Create prompt using the flexible template
+        # Create the prompt
         prompt = FLEXIBLE_CUSTOM_PROMPT.format(
-            problem=self.problem_text,
+            problem=self.problem,
             custom_instruction=custom_instruction,
             config=str(config),
             previous_context=previous_context
         )
         
-        # Use appropriate response model
         if actual_use_structured_output:
+            # Use structured output with Pydantic model
             response = await self._fill_node(FlexibleCustomOp, prompt, mode="xml_fill")
             
-            # Handle different reasoning patterns
-            if actual_reasoning_pattern == "iterative" and response.get("needs_iteration", False):
-                # Recursive call for iterative patterns
-                if len(previous_results or []) < actual_max_iterations - 1:
-                    new_results = (previous_results or []) + [response.get("solution", "")]
-                    return await self.__call__(custom_instruction, new_results, reasoning_pattern, steps, max_iterations, use_structured_output)
+            # Format the response
+            result = f"Thought: {response.get('thought', '')}\n\nSolution: {response.get('solution', '')}"
             
-            return response.get("solution", "")
+            # Add intermediate results if available
+            if response.get('intermediate_results'):
+                result += f"\n\nIntermediate Results: {response.get('intermediate_results')}"
+            
+            # Handle iteration logic for iterative patterns
+            if actual_reasoning_pattern == "iterative" and response.get('needs_iteration', False):
+                # If more iterations are needed and we haven't reached max, the workflow can call again
+                result += f"\n\n[Iteration {config['iteration']}/{actual_max_iterations}] - More iterations needed"
+            
+            return result
         else:
-            # Use simple generation for non-structured output
+            # Use unstructured output
             response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
-            return response["response"]
+            return response.get("response", "")
+
+# 文件: operator.py
+
+# ... (其他import和Operator基类) ...
+
+from typing import Any
+
+class FormatAnswer(Operator):
+    """
+    An intelligent, LLM-based operator that semantically understands the raw
+    output from a workflow and formats it into a standardized final answer.
+    """
+    def __init__(self, llm: LLM, problem: Union[Dict[str, Any], str] = None):
+        super().__init__(llm, problem)
+
+    async def __call__(self, raw_result: Any) -> str:
+        """
+        Uses an LLM to intelligently extract and format the final answer.
+        """
+        raw_str = str(raw_result)
+        
+        # 构建专门的Prompt
+        prompt = FORMAT_ANSWER_PROMPT.format(
+            problem=self.problem_text, 
+            raw_result=raw_str
+        )
+        
+        # 调用LLM并强制使用Pydantic模型进行结构化输出
+        response = await self._fill_node(FormatAnswerOp, prompt, mode="xml_fill")
+        
+        # 从结构化输出中获取核心答案
+        core_answer = response.get('final_answer', '')
+        
+        # 返回最终的、带有标准前缀的格式
+        return f"Final Answer: {core_answer}"

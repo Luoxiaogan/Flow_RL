@@ -55,7 +55,7 @@ EXEC_LLM='{
 
 # --- 路径配置 ---
 # 总的工作空间，所有生成物和结果都将保存在这里
-WORKSPACE_PATH="./workspace_drop"
+WORKSPACE_PATH="./workspace_drop_test"
 
 # --- 系统配置 ---
 LOG_LEVEL="INFO"
@@ -70,7 +70,7 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 #
 BENCHMARK="drop"
 # wc -l  /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
-TOTAL_PROBLEMS=400      # Testing with just 1 problem
+TOTAL_PROBLEMS=2      # Testing with just 1 problem
 MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
 MAX_SAMPLE_SIZE=2     # 每个工作流最多使用的问题样本数
 MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
