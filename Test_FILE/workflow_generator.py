@@ -152,7 +152,8 @@ class WorkflowGenerator:
         # (可选) 添加策略引导，用于激发Gemini的多样性
         if meta_prompts:
             selected_meta_prompt = random.choice(meta_prompts)
-            api_user_prompt_parts.append(f"\n\n--- \n**STRATEGIC FOCUS FOR THIS TASK:** {selected_meta_prompt}")
+            # api_user_prompt_parts.append(f"\n\n--- \n**STRATEGIC FOCUS FOR THIS TASK:** {selected_meta_prompt}")
+            # 不使用meta_prompt了
 
          # (可选) 添加多样性生成指令
         if existing_workflow:
