@@ -70,11 +70,11 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 #
 BENCHMARK="drop"
 # wc -l  /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
-TOTAL_PROBLEMS=2      # Testing with just 1 problem
+TOTAL_PROBLEMS=200      # Testing with just 1 problem
 MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
 MAX_SAMPLE_SIZE=2     # 每个工作流最多使用的问题样本数
 MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
-PARALLELISM=2  # 每个数据组合生成的工作流并行度（默认2个不同版本）
+PARALLELISM=1  # 每个数据组合生成的工作流并行度（默认2个不同版本）
 MAX_CONCURRENT_GROUPS=5  # 生成阶段最大并发组数（组间并行，组内串行）
 BATCH_SIZE=$MAX_CONCURRENT_GROUPS          # 每批次生成的工作流数量 = 最大并发组数
 # 数据集文件的路径 (推荐使用相对路径)

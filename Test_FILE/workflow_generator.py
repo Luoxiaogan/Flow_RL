@@ -1,3 +1,5 @@
+# workflow_generator.py
+
 import os
 import sys
 import asyncio
@@ -142,7 +144,7 @@ class WorkflowGenerator:
         # 3. 构建核心的、用于SFT的instruction
         #这个instruction是干净的，不包含任何随机或临时的指令。
         #它由两部分组成：规格说明书模板(start_prompt) + 问题实例(problem_text)
-        sft_instruction = start_prompt + problem_text
+        sft_instruction = start_prompt + problem_text + "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph based on all the specifications above:"
 
         # 4. 构建给API的、可能包含额外引导的user_prompt
         api_user_prompt_parts = [sft_instruction]
@@ -158,7 +160,7 @@ class WorkflowGenerator:
             api_user_prompt_parts.append(diversity_prompt)
         
         # 添加最终的引导语，告诉模型可以开始了
-        api_user_prompt_parts.append("\n\nHere is the complete and optimized Python workflow graph:")
+        api_user_prompt_parts.append("\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph based on all the specifications above:")
 
         # 组合成最终给API的user_prompt
         api_user_prompt = "".join(api_user_prompt_parts)
