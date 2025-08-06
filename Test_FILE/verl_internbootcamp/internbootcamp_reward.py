@@ -242,7 +242,7 @@ class InternBootcampRewardCalculator:
         for attempt in range(max_retries + 1):
             try:
                 async with aiohttp.ClientSession() as session:
-                    async with session.post(url, json=data, headers=headers, timeout=30) as response:
+                    async with session.post(url, json=data, headers=headers, timeout=120) as response:
                         # 先检查HTTP状态码
                         if response.status >= 400:
                             # 尝试获取错误响应体
