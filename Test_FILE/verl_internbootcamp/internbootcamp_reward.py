@@ -235,7 +235,7 @@ class InternBootcampRewardCalculator:
         })
         
         # 重试配置
-        max_retries = 5  # 最大重试次数
+        max_retries = 0  # 最大重试次数
         base_delay = 1.0  # 基础延迟（秒）
         max_delay = 60.0  # 最大延迟（秒）
         
@@ -243,6 +243,65 @@ class InternBootcampRewardCalculator:
             try:
                 async with aiohttp.ClientSession() as session:
                     async with session.post(url, json=data, headers=headers, timeout=30) as response:
+                        # 先检查HTTP状态码
+                        if response.status >= 400:
+                            # 尝试获取错误响应体
+                            try:
+                                error_body = await response.text()
+                                error_json = json.loads(error_body)
+                            except:
+                                error_json = {"error": {"message": f"HTTP {response.status} error"}}
+                            
+                            # 构造详细的错误信息
+                            error_details = {
+                                "status": response.status,
+                                "url": str(response.url),
+                                "error_body": error_json
+                            }
+                            
+                            # 提取错误信息
+                            if "error" in error_json and isinstance(error_json["error"], dict):
+                                error_info = error_json["error"]
+                                error_code = error_info.get("code", "")
+                                error_message = error_info.get("message", "")
+                                error_type = error_info.get("type", "")
+                                
+                                logger.error(f"API returned error {response.status}: {error_code} - {error_message}")
+                                
+                                # 特殊处理content审查错误
+                                if error_code == "data_inspection_failed":
+                                    logger.error("Content inspection failed - the prompt may contain inappropriate content")
+                                    logger.error(f"Request ID: {error_json.get('request_id', 'unknown')}")
+                                
+                                debug_log("llm_call", {
+                                    "event": "api_error_response",
+                                    "status": response.status,
+                                    "error_code": error_code,
+                                    "error_message": error_message,
+                                    "error_type": error_type,
+                                    "request_id": error_json.get("request_id", ""),
+                                    "attempt": attempt + 1
+                                })
+                                
+                                # 对于4xx错误通常不需要重试
+                                if response.status < 500 and response.status != 429:
+                                    return ""
+                            
+                            # 5xx错误或429错误应该重试
+                            if attempt < max_retries and (response.status >= 500 or response.status == 429):
+                                delay = min(base_delay * (2 ** attempt), max_delay)
+                                jitter = random.uniform(0.5, 1.5)
+                                actual_delay = delay * jitter
+                                
+                                logger.warning(f"Server error {response.status} (attempt {attempt + 1}/{max_retries + 1}), "
+                                             f"retrying in {actual_delay:.2f}s...")
+                                
+                                await asyncio.sleep(actual_delay)
+                                continue
+                            else:
+                                return ""
+                        
+                        # 状态码正常，继续处理响应
                         result = await response.json()
                         
                         # 检查是否是限流错误
@@ -306,10 +365,127 @@ class InternBootcampRewardCalculator:
                             }, api_start)
                             return ""
                             
-            except Exception as e:
-                # 网络或其他错误
+            except aiohttp.ClientResponseError as e:
+                # HTTP错误，尝试获取详细的错误信息
+                error_details = {
+                    "error_type": type(e).__name__,
+                    "status": e.status,
+                    "message": e.message,
+                    "url": str(e.request_info.url) if e.request_info else url,
+                    "headers": dict(e.headers) if e.headers else {}
+                }
+                
+                # 尝试获取响应体
+                if hasattr(e, 'history') and e.history:
+                    try:
+                        response_text = await e.history[0].text()
+                        error_details["response_body"] = response_text
+                        
+                        # 尝试解析为JSON
+                        try:
+                            response_json = json.loads(response_text)
+                            error_details["response_json"] = response_json
+                            
+                            # 提取具体的错误信息
+                            if "error" in response_json:
+                                error_info = response_json["error"]
+                                if isinstance(error_info, dict):
+                                    error_details["error_code"] = error_info.get("code", "")
+                                    error_details["error_message"] = error_info.get("message", "")
+                                    error_details["error_type"] = error_info.get("type", "")
+                        except json.JSONDecodeError:
+                            pass
+                    except:
+                        pass
+                
                 if attempt < max_retries:
-                    # 对于非限流错误也进行重试
+                    delay = min(base_delay * (2 ** attempt), max_delay)
+                    jitter = random.uniform(0.5, 1.5)
+                    actual_delay = delay * jitter
+                    
+                    logger.warning(f"HTTP Error {error_details.get('status', 'unknown')} (attempt {attempt + 1}/{max_retries + 1}), "
+                                 f"retrying in {actual_delay:.2f}s...")
+                    if "error_message" in error_details:
+                        logger.warning(f"Error message: {error_details['error_message']}")
+                    
+                    debug_log("llm_call", {
+                        "event": "http_error_retry",
+                        "attempt": attempt + 1,
+                        "delay": actual_delay,
+                        "error_details": error_details
+                    })
+                    
+                    await asyncio.sleep(actual_delay)
+                    continue
+                else:
+                    logger.error(f"HTTP Error {error_details.get('status', 'unknown')} after {max_retries} retries")
+                    logger.error(f"URL: {error_details.get('url', url)}")
+                    if "error_code" in error_details:
+                        logger.error(f"Error code: {error_details['error_code']}")
+                    if "error_message" in error_details:
+                        logger.error(f"Error message: {error_details['error_message']}")
+                    if "response_body" in error_details:
+                        logger.error(f"Full response:\n{error_details['response_body']}")
+                    
+                    debug_log("llm_call", {
+                        "event": "http_error_failed",
+                        "max_retries": max_retries,
+                        "error": error_details
+                    }, api_start)
+                    
+                    return ""
+                    
+            except asyncio.TimeoutError as e:
+                # 超时错误
+                error_details = {
+                    "error_type": "TimeoutError",
+                    "timeout": 30,
+                    "url": url
+                }
+                
+                if attempt < max_retries:
+                    delay = min(base_delay * (2 ** attempt), max_delay)
+                    jitter = random.uniform(0.5, 1.5)
+                    actual_delay = delay * jitter
+                    
+                    logger.warning(f"Request timeout (attempt {attempt + 1}/{max_retries + 1}), "
+                                 f"retrying in {actual_delay:.2f}s...")
+                    
+                    debug_log("llm_call", {
+                        "event": "timeout_retry",
+                        "attempt": attempt + 1,
+                        "delay": actual_delay,
+                        "error_details": error_details
+                    })
+                    
+                    await asyncio.sleep(actual_delay)
+                    continue
+                else:
+                    logger.error(f"Request timeout after {max_retries} retries")
+                    
+                    debug_log("llm_call", {
+                        "event": "timeout_failed",
+                        "max_retries": max_retries,
+                        "error": error_details
+                    }, api_start)
+                    
+                    return ""
+                    
+            except Exception as e:
+                # 其他错误
+                error_details = {
+                    "error_type": type(e).__name__,
+                    "error_message": str(e),
+                    "traceback": traceback.format_exc()
+                }
+                
+                # 特殊处理502错误中包含的JSON解析失败
+                if "502" in str(e) and "Attempt to decode JSON" in str(e):
+                    # 尝试从错误消息中提取更多信息
+                    error_details["possible_cause"] = "Server returned HTML instead of JSON (possibly an error page)"
+                    error_details["suggestion"] = "Check if the API endpoint is correct or if there's a proxy/gateway issue"
+                
+                if attempt < max_retries:
                     delay = min(base_delay * (2 ** attempt), max_delay)
                     jitter = random.uniform(0.5, 1.5)
                     actual_delay = delay * jitter
@@ -321,25 +497,21 @@ class InternBootcampRewardCalculator:
                         "event": "api_call_retry",
                         "attempt": attempt + 1,
                         "delay": actual_delay,
-                        "error_type": type(e).__name__,
-                        "error_message": str(e)
+                        "error_details": error_details
                     })
                     
                     await asyncio.sleep(actual_delay)
                     continue
                 else:
-                    # 超过最大重试次数
-                    error_details = {
-                        "error_type": type(e).__name__,
-                        "error_message": str(e),
-                        "traceback": traceback.format_exc()
-                    }
-                    
-                    logger.error(f"LLM API call failed after {max_retries} retries: {e}")
+                    logger.error(f"LLM API call failed after {max_retries} retries")
                     logger.error(f"Error type: {type(e).__name__}")
+                    logger.error(f"Error message: {str(e)}")
+                    if "possible_cause" in error_details:
+                        logger.error(f"Possible cause: {error_details['possible_cause']}")
+                    if "suggestion" in error_details:
+                        logger.error(f"Suggestion: {error_details['suggestion']}")
                     logger.error(f"Full traceback:\n{traceback.format_exc()}")
                     
-                    # 记录API调用失败
                     debug_log("llm_call", {
                         "event": "llm_call_failed",
                         "max_retries": max_retries,
@@ -349,7 +521,6 @@ class InternBootcampRewardCalculator:
                         "prompt_length": len(prompt)
                     }, api_start)
                     
-                    # 同时记录到错误列表
                     debug_log("error", {
                         "function": "call_llm_api",
                         "error": error_details,

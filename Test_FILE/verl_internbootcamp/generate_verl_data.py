@@ -154,7 +154,7 @@ class VERLDataGenerator:
         
         # 构建VERL条目
         verl_entry = {
-            "data_source": f"internbootcamp_{task_name}",
+            "data_source": f"internbootcamp",
             "prompt": messages,  # HuggingFace chat格式
             "ability": classify_ability(task_name),
             "reward_model": {
