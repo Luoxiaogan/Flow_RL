@@ -1,3 +1,5 @@
+# workflow_executor.py
+
 import os
 import sys
 import asyncio
@@ -44,14 +46,14 @@ def parse_exec_llm(exec_llm_str: str) -> Dict:
         logging.error(f"执行LLM配置解析失败: {e}")
         sys.exit(1)
 
-def get_benchmark_handler(benchmark_name: str, dataset_path: str) -> BenchmarkHandler:
+def get_benchmark_handler(benchmark_name: str, dataset_path: str, config=None) -> BenchmarkHandler:
     """与 generator 中相同的函数，用于动态加载处理器。"""
     try:
         handler_module_path = f"ScoreFlow.scripts.{benchmark_name.lower()}.handler"
         handler_module = importlib.import_module(handler_module_path)
         handler_class_name = f"{benchmark_name.capitalize()}Handler"
         handler_class = getattr(handler_module, handler_class_name)
-        return handler_class(dataset_path=dataset_path)
+        return handler_class(dataset_path=dataset_path, config=config)
     except (ModuleNotFoundError, AttributeError, ValueError) as e:
         logging.error(f"无法为 benchmark '{benchmark_name}' 加载处理器: {e}")
         raise
@@ -87,14 +89,24 @@ def save_result_to_csv(workspace_path: str, result_data: Dict[str, Any]):
         writer = csv.writer(f)
         # 如果文件是新创建的，则写入表头
         if not file_exists:
-            writer.writerow(["ID", "Benchmark", "Data_Indices", "Status", "Error_Type"])
+            writer.writerow([
+                "ID", 
+                "Benchmark", 
+                "Data_Indices", 
+                "Status", 
+                "Error_Type",
+                "Ground_Truth",  # 新增：标准答案
+                "Model_Output"   # 新增：模型输出
+            ])
         
         writer.writerow([
             result_data["id"],
             result_data["benchmark"],
             '_'.join(map(str, result_data["data_indices"])),
             result_data["status"],
-            result_data["error"].split(':')[0] if result_data.get("error") else ""
+            result_data["error"].split(':')[0] if result_data.get("error") else "",
+            result_data.get("ground_truth", ""),  # 新增
+            result_data.get("model_output", "")   # 新增
         ])
     logging.info(f"结果已记录到: {csv_file}")
 
@@ -118,9 +130,13 @@ async def execute_and_verify(args: argparse.Namespace):
         verification_index = data_indices[0] 
 
         logging.info(f"开始处理工作流 {workflow_id} (Benchmark: {benchmark_name})...")
+        
+        # 获取执行配置，用于传递给handler
+        exec_llm_config_dict = parse_exec_llm(args.exec_llm)
+        metagpt_llm_config = convert_config_for_metagpt(exec_llm_config_dict)
 
-        # 2. 初始化 Handler 并获取验证所需数据
-        handler = get_benchmark_handler(benchmark_name, dataset_path)
+        # 2. 初始化 Handler 并获取验证所需数据（传入config）
+        handler = get_benchmark_handler(benchmark_name, dataset_path, metagpt_llm_config)
         verification_data = handler.get_verification_data(verification_index)
         
         # 3. 加载工作流代码
@@ -146,7 +162,11 @@ async def execute_and_verify(args: argparse.Namespace):
         ### --- 修改点：重构执行环境的准备过程 --- ###
 
         # 动态加载主 operator 模块
-        operator_module = importlib.import_module(f"ScoreFlow.scripts.{benchmark_name}.operator")
+        # DROP使用common operators，其他benchmark使用自己的operators
+        if benchmark_name == "drop":
+            operator_module = importlib.import_module("ScoreFlow.scripts.common.operator")
+        else:
+            operator_module = importlib.import_module(f"ScoreFlow.scripts.{benchmark_name}.operator")
         
         # 准备一个基础的全局命名空间
         exec_globals = {
@@ -182,11 +202,13 @@ async def execute_and_verify(args: argparse.Namespace):
         if not WorkflowClass:
             raise ValueError("在执行的脚本中未找到 'Workflow' 类。")
         
-        exec_llm_config_dict = parse_exec_llm(args.exec_llm)
-        metagpt_llm_config = convert_config_for_metagpt(exec_llm_config_dict)
+        # 将verification_data转换为格式化的问题文本
+        # 使用handler的get_prompt_text方法，复用已有的格式化逻辑
+        problem_index = verification_data.get('index', verification_index)
+        problem_text = handler.get_prompt_text([problem_index])
         
-        # 实例化并运行工作流，传入完整的 verification_data 字典
-        workflow_instance = WorkflowClass(config=metagpt_llm_config, problem=verification_data)
+        # 实例化并运行工作流，传入格式化的字符串
+        workflow_instance = WorkflowClass(config=metagpt_llm_config, problem=problem_text)
         
         # 调试：确认workflow实例创建成功
         logging.info(f"[{workflow_id}] Workflow实例创建成功: {type(workflow_instance)}")
@@ -212,7 +234,12 @@ async def execute_and_verify(args: argparse.Namespace):
         
         # 6. 使用 Handler 进行验证
         logging.info(f"[{workflow_id}] 执行完毕，开始验证...")
-        is_correct = handler.judge(execution_result, verification_data)
+        # 检查judge是否是协程函数，支持向后兼容
+        import inspect
+        if inspect.iscoroutinefunction(handler.judge):
+            is_correct = await handler.judge(execution_result, verification_data)
+        else:
+            is_correct = handler.judge(execution_result, verification_data)
         
         # 调试：打印judge结果
         logging.info(f"[{workflow_id}] Judge结果: {is_correct}")
@@ -226,12 +253,23 @@ async def execute_and_verify(args: argparse.Namespace):
         logging.error(f"处理工作流 {workflow_id} 时出错: {e}", exc_info=True)
 
     # 7. 无论成功与否，都记录结果
+    # 处理model_output为JSON单行格式
+    if 'execution_result' in locals() and execution_result:
+        # 将输出转换为JSON格式，替换所有换行符为空格，确保CSV每条数据占一行
+        model_output_json = json.dumps({"output": str(execution_result)}, ensure_ascii=False)
+        # 替换所有换行符和回车符为空格
+        model_output_json = model_output_json.replace('\n', ' ').replace('\r', ' ')
+    else:
+        model_output_json = '{}'
+    
     result_data = {
         "id": workflow_id,
         "benchmark": benchmark_name,
         "data_indices": data_indices,
         "status": status,
-        "error": error_msg
+        "error": error_msg,
+        "ground_truth": verification_data.get('answer', verification_data.get('all_answers', 'N/A')) if 'verification_data' in locals() else '',
+        "model_output": model_output_json  # 使用JSON格式的单行字符串
     }
     save_result_to_csv(args.workspace_path, result_data)
 

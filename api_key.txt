@@ -10,8 +10,8 @@ curl -X POST "https://idealab.alibaba-inc.com/api/openai/v1/chat/completions" \
   -H "Authorization: Bearer 956c41bd0f31beaf68b871d4987af4bb" \
   -d '{
     "model": "qwen-turbo",
-    "messages": [{"role": "user", "content": "Hello"}],
-    "max_tokens": 10
+    "messages": [{"role": "user", "content": "please read the text, and think and show the revised text in <revised><revised>. text: apple is an animal.  your answer: <revised><revised>"}],
+    "max_tokens": 100
   }'
 ```
 {
@@ -62,6 +62,16 @@ alibaba
     "api_key": "sk-D15YnLhTtgfvi4Ovzj583jkkJI1BtLqpOLXL3sZjptRl5m5x",
     "base_url": "https://api.openai-proxy.org/google"
 }
+
+
+curl -X POST "https://api.openai-proxy.org/google/chat/completions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-D15YnLhTtgfvi4Ovzj583jkkJI1BtLqpOLXL3sZjptRl5m5x" \
+  -d '{
+    "model": "gemini-2.5-pro",
+    "messages": [{"role": "user", "content": "Hello"}],
+    "max_tokens": 10
+  }'
 
 ``````````````````````````````````````````````````````````````````````
 # API池配置 (JSON格式)

@@ -15,7 +15,7 @@ class BenchmarkHandler(abc.ABC):
     4. 如何评判工作流的执行结果是否正确。
     """
 
-    def __init__(self, dataset_path: str):
+    def __init__(self, dataset_path: str, config=None):
         """
         初始化处理器。
         :param dataset_path: 指向数据集文件（例如 .jsonl）的完整路径。
@@ -25,6 +25,7 @@ class BenchmarkHandler(abc.ABC):
         self.dataset_path = dataset_path
         self.benchmark_name = self.__class__.__name__.replace("Handler", "").lower()
         self.data = self._load_data()
+        self.config = config
 
     def _load_data(self) -> List[Dict[str, Any]]:
         """
@@ -143,16 +144,99 @@ class BenchmarkHandler(abc.ABC):
             "call_signature": call_signature
         }
 
-    @abc.abstractmethod
-    def judge(self, model_output: Any, ground_truth_data: Dict[str, Any]) -> bool:
+    async def llm_judge(self, model_output: Any, ground_truth_data: Dict[str, Any]) -> bool:
         """
-        【必须被子类实现】
-        评判模型的输出是否正确。
-        这是最核心的、与 benchmark 强相关的逻辑。
-        例如，GSM8K 对比数字，MBPP 可能需要运行单元测试。
+        使用LLM进行智能判断，比较模型输出和标准答案。
+        这是一个通用方法，子类可以直接使用或覆盖。
+        
+        :param model_output: 工作流执行后返回的原始结果
+        :param ground_truth_data: 包含标准答案的完整数据
+        :return: True 如果判定为正确，否则为 False
+        """
+        from metagpt.provider.llm_provider_registry import create_llm_instance as create
 
+        print(f"[DROP Judge] 模型原始输出: {model_output}")
+        print(f"[DROP Judge] 输出类型: {type(model_output)}")
+        print(f"[DROP Judge] ground truth: {ground_truth_data}")
+        
+        # 提取问题和答案
+        question = ground_truth_data.get('question', '')
+        if not question and 'passage' in ground_truth_data:
+            # 对于某些数据集，问题可能在不同字段
+            question = ground_truth_data.get('passage', '')[:200] + "..."
+        
+        # 获取标准答案
+        if 'answer' in ground_truth_data:
+            ground_truth = ground_truth_data['answer']
+        elif 'all_answers' in ground_truth_data:
+            ground_truth = ground_truth_data['all_answers']
+        else:
+            ground_truth = str(ground_truth_data)
+        
+        # 构建判断prompt - 更严格的版本
+        prompt = f"""You are a strict judge evaluating whether a model's answer correctly addresses the specific question asked.
+
+**The Question Asked:**
+{question}
+
+**The Correct Answer:**
+{ground_truth}
+
+**The Model's Response:**
+{model_output}
+
+**Evaluation Criteria:**
+1. The model's response MUST directly answer the specific question that was asked
+2. For "Which happened first?" questions: The answer must specify which event happened first, not just describe an event
+3. For counting questions: The answer must provide the correct number
+4. For identification questions: The answer must identify the correct entity/person/place
+5. The answer must contain the key information from the expected answer
+6. Additional context is acceptable ONLY if the core answer is present and correct
+
+**Important:** 
+- An answer that describes something related but doesn't answer the actual question is INCORRECT
+- An answer missing key parts of the expected answer is INCORRECT
+- Focus on whether the question was actually answered, not just whether related information was provided
+
+**Examples of INCORRECT answers:**
+- Question: "Which happened first, A or B?" → Answer: "A was an important event" (doesn't say which was first)
+- Question: "Who won the game?" → Answer: "The game was exciting" (doesn't identify the winner)
+- Question: "What is the death of Charles?" → Answer: "Charles II of Spain" (missing "death")
+
+**Your Decision:**
+Reply with EXACTLY one word: CORRECT or INCORRECT"""
+        
+        try:
+            # 创建LLM实例并调用
+            llm = create(self.config)
+            response = await llm.aask(prompt)
+            
+            # 解析响应
+            response = response.strip().upper()
+            
+            # 判断结果 - 修复：先检查INCORRECT，避免误判
+            if "INCORRECT" in response:
+                return False
+            elif "CORRECT" in response:
+                return True
+            else:
+                # 如果既不是CORRECT也不是INCORRECT，默认为错误
+                print(f"Warning: Unexpected LLM judge response: {response}")
+                return False
+                
+        except Exception as e:
+            print(f"LLM judge failed: {e}")
+            # 如果LLM判断失败，回退到字符串比较
+            return str(model_output).lower() == str(ground_truth).lower()
+
+    async def judge(self, model_output: Any, ground_truth_data: Dict[str, Any]) -> bool:
+        """
+        评判模型的输出是否正确。
+        默认实现使用LLM进行智能判断。
+        子类可以覆盖此方法以提供特定的判断逻辑。
+        
         :param model_output: 工作流执行后返回的原始结果。
         :param ground_truth_data: 包含标准答案或测试用例的完整数据。
         :return: True 如果判定为正确，否则为 False。
         """
-        pass
+        return await self.llm_judge(model_output, ground_truth_data)
