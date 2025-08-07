@@ -7,11 +7,8 @@ from typing import Any, Dict, List, Union
 from metagpt.actions.action_node import ActionNode
 from metagpt.llm import LLM
 
-# 动态地从同级目录导入所有Pydantic模型
-# 确保 common/operator_an.py 文件已存在且内容正确
 from .operator_an import (
     EnsembleOp,
-    # ExtractOp,
     GenerateOp,
     ReviseOp,
     FormatAnswerOp
@@ -79,61 +76,6 @@ class Generate(Operator):
         response = await self._fill_node(GenerateOp, prompt, mode="single_fill")
         # 由于Pydantic模型是严格的，如果成功，'response'键必然存在
         return response["response"]
-
-
-# class Extract(Operator):
-#     """
-#     核心算子：提取。
-#     从文本中提取结构化的JSON信息。
-#     """
-#     async def __call__(self, instruction: str, context: str) -> Dict[str, Any]:
-#         prompt = f"""You are a precise Data Extraction Agent. Your task is to analyze the provided context and extract information according to the user's instruction, formatting it as a JSON object.
-
-# **User's Extraction Instruction:**
-# {instruction}
-
-# **Context to Analyze:**
-# ---
-# {context}
-# ---
-
-# Your response MUST be a valid XML containing ONLY an `<extracted_data>` tag. The content inside the `<extracted_data>` tag MUST be a single, valid JSON object string.
-
-# **EXAMPLE:**
-# If the user instruction is "extract the names and ages of all people", your response should look like this:
-# <extracted_data>
-# {{
-#   "people": [
-#     {{"name": "John Doe", "age": 30}},
-#     {{"name": "Jane Smith", "age": 25}}
-#   ]
-# }}
-# </extracted_data>
-# """
-#         # 直接调用LLM而不是使用xml_fill，以便我们可以自定义JSON解析
-#         llm_response = await self.llm.aask(prompt)
-        
-#         # 手动解析XML和JSON
-#         import re
-#         import json
-        
-#         pattern = r"<extracted_data>(.*?)</extracted_data>"
-#         match = re.search(pattern, llm_response, re.DOTALL)
-        
-#         if match:
-#             json_str = match.group(1).strip()
-#             try:
-#                 # 使用json.loads而不是eval来正确解析JSON
-#                 extracted_data = json.loads(json_str)
-#                 return extracted_data
-#             except json.JSONDecodeError as e:
-#                 logger.error(f"Failed to parse JSON from LLM response: {e}")
-#                 logger.debug(f"JSON string that failed to parse: {json_str}")
-#                 return {}
-#         else:
-#             logger.warning(f"No <extracted_data> tag found in LLM response")
-#             logger.debug(f"LLM response: {llm_response}")
-#             return {}
 
 
 class Revise(Operator):
@@ -230,36 +172,4 @@ If the instruction is "Choose the option with the most recent date." and the opt
 so notice that here in the <result><result> **is not the index, but the content of the option itself, and you should put all the selected text, not simplified.**.
 """
         response = await self._fill_node(EnsembleOp, prompt, mode="xml_fill")
-        return response["result"]
-    
-
-class FormatAnswer(Operator):
-    """
-    一个通用的、由系统框架调用的智能格式化算子。
-    它接收一个外部提供的Prompt模板，使其行为可以被特异化。
-    """
-    def __init__(self, llm: LLM, problem_text: str = ""):
-        super().__init__(llm, problem_text)
-
-    # 核心修改：__call__方法现在接收一个prompt_template
-    async def __call__(self, raw_result: Any, prompt_template: str) -> str:
-        """
-        使用一个外部提供的、可能特异化的Prompt模板来提取和格式化答案。
-        """
-        raw_str = str(raw_result)
-        
-        # 使用传入的prompt_template
-        prompt = prompt_template.format(
-            problem=self.problem_text, 
-            raw_result=raw_str
-        )
-        
-        response = await self._fill_node(FormatAnswerOp, prompt, mode="xml_fill")
-        
-        core_answer = response.get('final_answer')
-        
-        if core_answer is not None:
-            return f"Final Answer: {core_answer}"
-        else:
-            logger.error(f"FormatAnswer operator failed to extract a final answer from raw result: '{raw_str}'")
-            return f"Final Answer: Error - Failed to format the final answer."       
+        return response["result"]      

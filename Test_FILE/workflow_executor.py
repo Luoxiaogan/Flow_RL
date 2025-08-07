@@ -163,10 +163,11 @@ async def execute_and_verify(args: argparse.Namespace):
 
         # 动态加载主 operator 模块
         # DROP使用common operators，其他benchmark使用自己的operators
-        if benchmark_name == "drop":
-            operator_module = importlib.import_module("ScoreFlow.scripts.common.operator")
-        else:
-            operator_module = importlib.import_module(f"ScoreFlow.scripts.{benchmark_name}.operator")
+        # if benchmark_name == "drop":
+        #     operator_module = importlib.import_module("ScoreFlow.scripts.common.operator")
+        # else:
+        #     operator_module = importlib.import_module(f"ScoreFlow.scripts.{benchmark_name}.operator")
+        operator_module = importlib.import_module("ScoreFlow.scripts.common.operator")
         
         # 准备一个基础的全局命名空间
         exec_globals = {

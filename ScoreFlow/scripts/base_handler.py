@@ -154,10 +154,6 @@ class BenchmarkHandler(abc.ABC):
         :return: True 如果判定为正确，否则为 False
         """
         from metagpt.provider.llm_provider_registry import create_llm_instance as create
-
-        print(f"[DROP Judge] 模型原始输出: {model_output}")
-        print(f"[DROP Judge] 输出类型: {type(model_output)}")
-        print(f"[DROP Judge] ground truth: {ground_truth_data}")
         
         # 提取问题和答案
         question = ground_truth_data.get('question', '')
