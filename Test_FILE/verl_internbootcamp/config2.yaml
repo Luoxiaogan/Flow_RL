@@ -6,6 +6,8 @@
 
 # 模型列表: https://bailian.console.aliyun.com/?tab=doc#/doc/?type=model&url=https%3A%2F%2Fhelp.aliyun.com%2Fdocument_detail%2F2840914.html&renderType=iframe
 
+
+#ALIBABA——IDEALAB
 llm:
   # api_type 必须是 "openai"，因为您使用的是兼容OpenAI的接口。
   api_type: "openai"
@@ -18,3 +20,31 @@ llm:
 
   # 您的请求地址
   base_url: "https://idealab.alibaba-inc.com/api/openai/v1"
+  # base_url: "http://localhost:5001"
+
+# llm:
+#   # api_type 必须是 "openai"，因为您使用的是兼容OpenAI的接口。
+#   api_type: "openai"
+  
+#   # 您的模型名称
+#   model: "qwen-turbo"
+  
+#   # 您的API-Key
+#   api_key: "956c41bd0f31beaf68b871d4987af4bb"
+
+#   # 您的请求地址
+#   base_url: "http://localhost:5001"
+
+# 来自qzh哥哥
+# llm:
+#   # api_type 必须是 "openai"，因为您使用的是兼容OpenAI的接口。
+#   api_type: "openai"
+  
+#   # 您的模型名称
+#   model: "qwen-turbo"
+  
+#   # 您的API-Key
+#   api_key: "sk-2df74af0570a42059c10a3f24de1b9df"
+
+#   # 您的请求地址
+#   base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"

@@ -309,9 +309,6 @@ def get_workflow_prompts():
     """
     获取工作流生成的提示词
     
-    Args:
-        workflow_type: "predefined" 使用预定义操作符, "flexible" 使用FlexibleCustom操作符
-    
     Returns:
         dict: 包含START_PROMPT和PYTHON_START的字典
     """

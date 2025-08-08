@@ -23,16 +23,20 @@ class InternBootcampHandler(BenchmarkHandler):
     动态加载并调用对应的bootcamp类进行验证
     """
     
-    def __init__(self):
-        super().__init__()
-        self.data_path = Path(__file__).parent.parent.parent.parent / "InternBootcamp" / "workflow_test_v2" / "bootcamp_dataset.jsonl"
-        self.data = self._load_data()
+    def __init__(self, dataset_path=None):
+        # 如果没有提供dataset_path，使用默认路径
+        if dataset_path is None:
+            dataset_path = str(Path(__file__).parent.parent.parent.parent / "InternBootcamp" / "workflow_test_v2" / "bootcamp_dataset.jsonl")
+        
+        super().__init__(dataset_path=dataset_path)
+        # 注意：父类已经设置了self.dataset_path，所以不需要再设置self.data_path
+        # self.data也已经由父类的__init__通过调用_load_data()加载了
         self._bootcamp_cache = {}  # 缓存已加载的bootcamp类
         
     def _load_data(self) -> List[Dict]:
         """加载InternBootcamp数据集"""
         data = []
-        with open(self.data_path, 'r', encoding='utf-8') as f:
+        with open(self.dataset_path, 'r', encoding='utf-8') as f:
             for line in f:
                 data.append(json.loads(line.strip()))
         return data
@@ -161,47 +165,26 @@ Please analyze this type of problem and create a workflow to solve it."""
             
         return success
     
-    def build_executable_script(self, workflow_code: str, index: int, timeout: int = 180) -> str:
+    def build_executable_script(self, workflow_code: str, timeout: int = 180) -> dict:
         """
-        构建可执行的Python脚本
-        将工作流代码和测试数据结合
+        构建可执行的Python脚本部分
+        返回包含各部分的字典，与base_handler保持一致
         """
-        verification_data = self.get_verification_data(index)
-        if not verification_data:
-            return ""
+        # 导入conditions模块获取模板
+        from ScoreFlow.scripts.internbootcamp.conditions import PYTHON_START, PYTHON_END
         
-        # 获取第一个测试用例的prompt作为输入
-        test_case = verification_data['test_cases'][0] if verification_data['test_cases'] else {}
-        problem_prompt = test_case.get('prompt', '')
+        # 处理PYTHON_END中的超时占位符
+        if '{time}' in PYTHON_END:
+            final_python_end = PYTHON_END.format(time=timeout)
+            call_signature = "await workflow_instance()"  # 旧版格式
+        else:
+            final_python_end = PYTHON_END
+            call_signature = f"await workflow_instance(timeout={timeout})"  # 新版格式
         
-        script = f"""
-import asyncio
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
-# InternBootcamp problem
-TASK_NAME = "{verification_data['task_name']}"
-TASK_TYPE = "{verification_data['task_type']}"
-PROBLEM = '''{problem_prompt}'''
-
-# Workflow code
-{workflow_code}
-
-# Execute workflow
-async def main():
-    try:
-        workflow = InternBootcampWorkflow()
-        result = await workflow.run(PROBLEM)
-        print("WORKFLOW_RESULT:", result)
-        return result
-    except Exception as e:
-        print(f"Workflow execution failed: {{e}}")
-        import traceback
-        traceback.print_exc()
-        return None
-
-if __name__ == "__main__":
-    result = asyncio.run(main())
-"""
-        return script
+        # 返回字典格式（与base_handler保持一致）
+        return {
+            "python_start": PYTHON_START,
+            "workflow_code": workflow_code,
+            "python_end": final_python_end,
+            "call_signature": call_signature
+        }

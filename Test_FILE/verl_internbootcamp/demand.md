@@ -27,4 +27,6 @@
 
 同时,你也要改造Test_FILE\verl_internbootcamp\test\test_internbootcamp_reward.py,全流程真实llm调用真实执行
 
+补充信息: 你可以在Test_FILE\verl_internbootcamp\dataset\verl_data_filtered\test.parquet拿到测试数据;Test_FILE\metagpt_local这里是metagpt的本地地址
+
 这个任务非常复杂,请你确保阅读完所有脚本后,再输出你的详细的reward_function计划

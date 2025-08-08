@@ -11,17 +11,29 @@ import logging
 import importlib
 import traceback
 import random
+import string
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 import aiohttp
 from datetime import datetime
 import time
 
+
+
 # 添加必要路径
 CURRENT_DIR = Path(__file__).parent
 PROJECT_ROOT = CURRENT_DIR.parent.parent
 sys.path.append(str(PROJECT_ROOT))
 sys.path.append(str(PROJECT_ROOT / "InternBootcamp"))
+# 添加MetaGPT本地路径
+METAGPT_LOCAL = PROJECT_ROOT / "Test_FILE" / "metagpt_local" / "metagpt_local"
+if METAGPT_LOCAL.exists():
+    sys.path.insert(0, str(METAGPT_LOCAL))
+
+import asyncio as aio
+from typing import List as ListType
+from metagpt.provider.llm_provider_registry import create_llm_instance
+from metagpt.configs.llm_config import LLMConfig
 
 # DEBUG模式控制
 DEBUG = 0  # 改为1启用debug模式
@@ -205,216 +217,215 @@ class InternBootcampRewardCalculator:
         except Exception as e:
             logger.error(f"Failed to load bootcamp class for {task_name}: {e}")
             return None
-    
-    async def call_llm_api(self, prompt: str) -> str:
-        """调用LLM API，带有指数回避重试机制"""
-        api_start = time.time()
-        
-        url = self.llm_config['base_url'].rstrip('/') + '/chat/completions'
-        headers = {
-            'Authorization': f"Bearer {self.llm_config['api_key']}",
-            'Content-Type': 'application/json'
-        }
-        
-        data = {
-            'model': self.llm_config['model'],
-            'messages': [{"role": "user", "content": prompt}],
-            'temperature': self.llm_config.get('temperature', 0.7),
-            'max_tokens': 1000
-        }
-        
-        # 记录API调用开始
-        debug_log("llm_call", {
-            "event": "llm_call_start",
-            "url": url,
-            "model": self.llm_config['model'],
-            "prompt_length": len(prompt),
-            "prompt_preview": prompt[:500] if len(prompt) > 500 else prompt,
-            "temperature": data['temperature'],
-            "max_tokens": data['max_tokens']
-        })
-        
-        # 重试配置
-        max_retries = 5  # 最大重试次数
-        base_delay = 1.0  # 基础延迟（秒）
-        max_delay = 60.0  # 最大延迟（秒）
-        
-        for attempt in range(max_retries + 1):
-            try:
-                async with aiohttp.ClientSession() as session:
-                    async with session.post(url, json=data, headers=headers, timeout=120) as response:
-                        result = await response.json()
-                        
-                        # 检查是否是限流错误
-                        if not result.get('success', True) and result.get('code') == 'PL-002':
-                            # 这是限流错误
-                            if attempt < max_retries:
-                                # 计算延迟时间：指数回避 + 随机抖动
-                                delay = min(base_delay * (2 ** attempt), max_delay)
-                                # 添加随机抖动（0.5到1.5倍之间）
-                                jitter = random.uniform(0.5, 1.5)
-                                actual_delay = delay * jitter
-                                
-                                logger.warning(f"Rate limit hit (attempt {attempt + 1}/{max_retries + 1}), "
-                                             f"retrying in {actual_delay:.2f}s... "
-                                             f"Error: {result.get('message', 'Unknown')}")
-                                
-                                # 记录限流重试
-                                debug_log("llm_call", {
-                                    "event": "rate_limit_retry",
-                                    "attempt": attempt + 1,
-                                    "delay": actual_delay,
-                                    "error_code": result.get('code'),
-                                    "error_message": result.get('message'),
-                                    "trace_id": result.get('detailMessage', '').split('traceId: ')[-1] if 'traceId' in result.get('detailMessage', '') else None
-                                })
-                                
-                                await asyncio.sleep(actual_delay)
-                                continue
-                            else:
-                                # 超过最大重试次数
-                                logger.error(f"Rate limit persists after {max_retries} retries")
-                                debug_log("llm_call", {
-                                    "event": "rate_limit_max_retries",
-                                    "max_retries": max_retries,
-                                    "error": result
-                                }, api_start)
-                                return ""
-
-                        # 非限流错误，正常处理响应
-                        if 'choices' in result and result['choices']:
-                            content = result['choices'][0]['message']['content']
-                            
-                            # 记录API调用成功
-                            debug_log("llm_call", {
-                                "event": "llm_call_success",
-                                "attempt": attempt + 1,
-                                "response_length": len(content),
-                                "response_preview": content[:500] if len(content) > 500 else content,
-                                "usage": result.get('usage', {}),
-                                "status_code": response.status
-                            }, api_start)
-                            
-                            return content
-                        else:
-                            # 其他API错误
-                            logger.error(f"Unexpected API response: {result}")
-                            debug_log("llm_call", {
-                                "event": "llm_call_unexpected_response",
-                                "response": result,
-                                "status_code": response.status
-                            }, api_start)
-                            return ""
-                            
-            except Exception as e:
-                # 网络或其他错误
-                if attempt < max_retries:
-                    # 对于非限流错误也进行重试
-                    delay = min(base_delay * (2 ** attempt), max_delay)
-                    jitter = random.uniform(0.5, 1.5)
-                    actual_delay = delay * jitter
-                    
-                    logger.warning(f"API call failed (attempt {attempt + 1}/{max_retries + 1}), "
-                                 f"retrying in {actual_delay:.2f}s... Error: {str(e)}")
-                    
-                    debug_log("llm_call", {
-                        "event": "api_call_retry",
-                        "attempt": attempt + 1,
-                        "delay": actual_delay,
-                        "error_type": type(e).__name__,
-                        "error_message": str(e)
-                    })
-                    
-                    await asyncio.sleep(actual_delay)
-                    continue
-                else:
-                    # 超过最大重试次数
-                    error_details = {
-                        "error_type": type(e).__name__,
-                        "error_message": str(e),
-                        "traceback": traceback.format_exc()
-                    }
-                    
-                    logger.error(f"LLM API call failed after {max_retries} retries: {e}")
-                    logger.error(f"Error type: {type(e).__name__}")
-                    logger.error(f"Full traceback:\n{traceback.format_exc()}")
-                    
-                    # 记录API调用失败
-                    debug_log("llm_call", {
-                        "event": "llm_call_failed",
-                        "max_retries": max_retries,
-                        "error": error_details,
-                        "url": url,
-                        "model": self.llm_config['model'],
-                        "prompt_length": len(prompt)
-                    }, api_start)
-                    
-                    # 同时记录到错误列表
-                    debug_log("error", {
-                        "function": "call_llm_api",
-                        "error": error_details,
-                        "context": {
-                            "url": url,
-                            "model": self.llm_config['model']
-                        }
-                    })
-                    
-                    return ""
-        
-        # 不应该到达这里，但为了安全起见
-        return ""
-    
-    async def execute_workflow_simple(self, workflow_code: str, problem_text: str) -> str:
+         
+    async def execute_workflow_metagpt(self, workflow_code: str, task_name: str, 
+                                       test_case_data: Dict) -> str:
         """
-        简化的workflow执行方法
-        直接调用LLM API而不是使用MetaGPT
+        使用MetaGPT框架执行工作流
+        完全复用workflow_executor.py的执行逻辑
         """
         exec_start = time.time()
         
-        # 从workflow代码中提取指令
-        instruction_pattern = r'instruction\s*=\s*["\']([^"\']+)["\']'
-        matches = re.findall(instruction_pattern, workflow_code)
-        
-        if matches:
-            instruction = matches[0]
-        else:
-            instruction = "Solve the problem step by step."
-        
-        debug_log("workflow", {
-            "event": "execute_workflow_start",
-            "instruction": instruction,
-            "workflow_code_length": len(workflow_code),
-            "problem_text_length": len(problem_text),
-            "extracted_from_code": bool(matches)
-        })
-        
-        # 构建完整的prompt
-        full_prompt = f"{instruction}\n\nProblem: {problem_text}"
-        
-        debug_log("workflow", {
-            "event": "prompt_constructed",
-            "full_prompt": full_prompt,
-            "prompt_length": len(full_prompt)
-        })
-        
-        # 调用LLM
-        llm_start = time.time()
-        result = await self.call_llm_api(full_prompt)
-        
-        debug_log("workflow", {
-            "event": "execute_workflow_completed",
-            "llm_call_time": time.time() - llm_start,
-            "total_execution_time": time.time() - exec_start,
-            "result_length": len(result),
-            "result_empty": not bool(result)
-        })
-        
-        return result
+        try:
+            # 1. 创建临时工作空间
+            workspace_dir = Path(CURRENT_DIR/"../workspace/internbootcamp")
+            workspace_dir.mkdir(parents=True, exist_ok=True)
+            
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            random_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+            workflow_id = f"reward_{task_name}_{timestamp}_{random_id}"
+            
+            # 2. 保存工作流文件（用于调试）
+            workflow_file = workspace_dir / f"{workflow_id}.py"
+            meta_file = workspace_dir / f"{workflow_id}.meta.json"
+            
+            # 3. 获取Handler并构建脚本
+            from ScoreFlow.scripts.internbootcamp.handler import InternBootcampHandler
+            handler = InternBootcampHandler()
+            
+            # 使用修复后的build_executable_script方法
+            script_parts = handler.build_executable_script(workflow_code, timeout=180)
+            
+            # 拼接完整脚本
+            full_script_code = (
+                script_parts["python_start"] + "\n" +
+                script_parts["workflow_code"] + "\n" +
+                script_parts["python_end"]
+            )
+            
+            # 保存完整脚本用于调试
+            with open(workflow_file, 'w', encoding='utf-8') as f:
+                f.write(full_script_code)
+            
+            # 保存元数据
+            meta_data = {
+                "id": workflow_id,
+                "benchmark": "internbootcamp",
+                "task_name": task_name,
+                "test_case": test_case_data,
+                "timestamp": timestamp
+            }
+            with open(meta_file, 'w', encoding='utf-8') as f:
+                json.dump(meta_data, f, ensure_ascii=False, indent=2)
+            
+            debug_log("workflow", {
+                "event": "metagpt_execution_start",
+                "workflow_id": workflow_id,
+                "task_name": task_name,
+                "script_length": len(full_script_code),
+                "workspace": str(workspace_dir)
+            })
+            
+            # 4. 准备执行环境
+            execution_namespace = {}
+            
+            # 加载operator模块（使用common operators）
+            operator_module = importlib.import_module("ScoreFlow.scripts.common.operator")
+            
+            # 准备全局命名空间
+            exec_globals = {
+                'asyncio': aio,
+                'create': create_llm_instance,
+                'operator': operator_module,
+                'Literal': getattr(__import__('typing'), 'Literal'),
+                'List': ListType,
+            }
+            
+            # 尝试加载internbootcamp特定的operator_an（如果存在）
+            try:
+                an_module_path = "ScoreFlow.scripts.internbootcamp.operator_an"
+                operator_an_module = importlib.import_module(an_module_path)
+                
+                # 注入所有公共成员到执行环境
+                for attr_name in dir(operator_an_module):
+                    if not attr_name.startswith('_'):
+                        exec_globals[attr_name] = getattr(operator_an_module, attr_name)
+                
+                logger.debug(f"Injected {an_module_path} contents into execution environment")
+            except ModuleNotFoundError:
+                # internbootcamp可能没有特定的operator_an，使用common的
+                try:
+                    common_an_module = importlib.import_module("ScoreFlow.scripts.common.operator_an")
+                    for attr_name in dir(common_an_module):
+                        if not attr_name.startswith('_'):
+                            exec_globals[attr_name] = getattr(common_an_module, attr_name)
+                    logger.debug("Using common operator_an module")
+                except ModuleNotFoundError:
+                    logger.debug("No operator_an module found, proceeding without it")
+            
+            # 5. 执行脚本获取Workflow类
+            exec(full_script_code, exec_globals, execution_namespace)
+            
+            WorkflowClass = execution_namespace.get('Workflow')
+            if not WorkflowClass:
+                raise ValueError(f"No 'Workflow' class found in the executed script for {workflow_id}")
+            
+            # 6. 准备LLM配置
+            provider = self.llm_config.get('provider', 'openai')
+            api_type_map = {
+                'openai': 'OPENAI', 'azure': 'AZURE', 'gemini': 'GEMINI',
+                'claude': 'CLAUDE', 'moonshot': 'MOONSHOT',
+                'zhipuai': 'ZHIPUAI', 'qianfan': 'QIANFAN',
+            }
+            
+            # 转换为MetaGPT的LLMConfig
+            from metagpt.provider.llm_provider_registry import LLMType
+            
+            # 获取LLMType枚举
+            llm_type_str = api_type_map.get(provider.lower(), 'OPENAI')
+            llm_type = getattr(LLMType, llm_type_str)
+            
+            metagpt_config = LLMConfig(
+                api_type=llm_type,
+                model=self.llm_config.get('model'),
+                api_key=self.llm_config.get('api_key'),
+                base_url=self.llm_config.get('base_url')
+            )
+            
+            # 7. 格式化问题文本（使用bootcamp的prompt_func）
+            bootcamp_class = self._load_bootcamp_class(task_name)
+            if bootcamp_class and hasattr(bootcamp_class, 'prompt_func'):
+                problem_text = bootcamp_class.prompt_func(test_case_data)
+            else:
+                problem_text = str(test_case_data)
+            
+            logger.debug(f"Problem text for {workflow_id}: {problem_text[:200]}...")
+            
+            # 8. 实例化并执行工作流
+            workflow_instance = WorkflowClass(config=metagpt_config, problem=problem_text)
+            
+            debug_log("workflow", {
+                "event": "workflow_instance_created",
+                "workflow_id": workflow_id,
+                "class_type": str(type(workflow_instance))
+            })
+            
+            # 9. 根据call_signature执行（处理超时参数）
+            if "timeout=" in script_parts["call_signature"]:
+                # 新版格式，传入timeout参数
+                timeout_match = re.search(r'timeout=(\d+)', script_parts["call_signature"])
+                if timeout_match:
+                    timeout_value = int(timeout_match.group(1))
+                    execution_result = await asyncio.wait_for(
+                        workflow_instance(timeout=timeout_value),
+                        timeout=timeout_value + 10  # 额外10秒缓冲
+                    )
+                else:
+                    execution_result = await asyncio.wait_for(
+                        workflow_instance(timeout=180),
+                        timeout=190
+                    )
+            else:
+                # 旧版格式，不传timeout
+                execution_result = await asyncio.wait_for(
+                    workflow_instance(),
+                    timeout=190
+                )
+            
+            debug_log("workflow", {
+                "event": "metagpt_execution_completed",
+                "workflow_id": workflow_id,
+                "result_length": len(str(execution_result)),
+                "result_type": str(type(execution_result)),
+                "execution_time": time.time() - exec_start
+            })
+            
+            logger.info(f"MetaGPT workflow {workflow_id} executed successfully")
+            return str(execution_result)
+            
+        except asyncio.TimeoutError:
+            logger.error(f"MetaGPT workflow execution timed out for {task_name}")
+            debug_log("error", {
+                "function": "execute_workflow_metagpt",
+                "error_type": "TimeoutError",
+                "task_name": task_name,
+                "execution_time": time.time() - exec_start
+            })
+            return "Error: Workflow execution timed out"
+            
+        except Exception as e:
+            error_msg = f"MetaGPT workflow execution failed for {task_name}: {e}"
+            logger.error(error_msg)
+            logger.debug(traceback.format_exc())
+            
+            debug_log("error", {
+                "function": "execute_workflow_metagpt",
+                "task_name": task_name,
+                "error": {
+                    "error_type": type(e).__name__,
+                    "error_message": str(e),
+                    "traceback": traceback.format_exc()
+                },
+                "execution_time": time.time() - exec_start
+            })
+            
+            return f"Error: {str(e)}"
     
     async def compute_score_for_testcase(self, workflow_code: str, task_name: str, 
                                         test_case: str) -> float:
         """
         在单个test case上计算分数
+        使用MetaGPT执行而非简化执行
         """
         testcase_start = time.time()
         
@@ -422,7 +433,8 @@ class InternBootcampRewardCalculator:
             "event": "testcase_start",
             "task_name": task_name,
             "test_case": test_case,
-            "workflow_code_length": len(workflow_code)
+            "workflow_code_length": len(workflow_code),
+            "execution_mode": "metagpt"  # 新增标记
         })
         
         try:
@@ -456,32 +468,20 @@ class InternBootcampRewardCalculator:
                 "parsed_data": case_data
             })
             
-            # 使用bootcamp的prompt_func生成问题文本
-            if hasattr(bootcamp_class, 'prompt_func'):
-                problem_text = bootcamp_class.prompt_func(case_data)
-            else:
-                problem_text = str(case_data)
-            
-            logger.debug(f"Problem text: {problem_text[:100]}...")
-            
-            debug_log("task", {
-                "event": "problem_text_generated",
-                "problem_text": problem_text,
-                "has_prompt_func": hasattr(bootcamp_class, 'prompt_func')
-            })
-            
-            # 执行workflow（简化版）
+            # ===== 关键修改：使用MetaGPT执行 =====
             exec_start = time.time()
-            result = await self.execute_workflow_simple(workflow_code, problem_text)
+            
+            # 调用新的MetaGPT执行方法
+            result = await self.execute_workflow_metagpt(workflow_code, task_name, case_data)
             
             debug_log("task", {
-                "event": "workflow_executed",
+                "event": "workflow_executed_via_metagpt",  # 更新事件名
                 "execution_time": time.time() - exec_start,
                 "result_length": len(str(result)),
                 "result_preview": str(result)[:500] if len(str(result)) > 500 else str(result)
             })
             
-            logger.debug(f"Workflow result: {str(result)[:100]}...")
+            logger.debug(f"MetaGPT workflow result: {str(result)[:100]}...")
             
             # 使用bootcamp的verify_score验证结果
             verify_start = time.time()
@@ -497,16 +497,18 @@ class InternBootcampRewardCalculator:
                 "event": "score_verified",
                 "score": float(score),
                 "verification_time": time.time() - verify_start,
-                "task_name": task_name
+                "task_name": task_name,
+                "execution_mode": "metagpt"
             })
             
-            logger.info(f"Task {task_name} test case score: {score}")
+            logger.info(f"Task {task_name} test case score (MetaGPT): {score}")
             
             debug_log("task", {
                 "event": "testcase_completed",
                 "task_name": task_name,
                 "score": float(score),
-                "total_time": time.time() - testcase_start
+                "total_time": time.time() - testcase_start,
+                "execution_mode": "metagpt"
             })
             
             return float(score)
@@ -523,7 +525,8 @@ class InternBootcampRewardCalculator:
                     "error_type": type(e).__name__,
                     "error_message": str(e),
                     "traceback": traceback.format_exc()
-                }
+                },
+                "execution_mode": "metagpt"
             }, testcase_start)
             
             return 0.0
@@ -564,24 +567,14 @@ class InternBootcampRewardCalculator:
         
         async def limited_compute(test_case, index):
             async with semaphore:
-                # 添加重试机制
-                max_retries = 2
-                retry_delay = 1.0
-                
-                for attempt in range(max_retries + 1):
-                    try:
-                        score = await self.compute_score_for_testcase(workflow_code, task_name, test_case)
-                        await update_progress()
-                        return (index, score, None)
-                    except Exception as e:
-                        if attempt < max_retries:
-                            logger.warning(f"Test case {index} failed (attempt {attempt + 1}/{max_retries + 1}), retrying in {retry_delay}s...")
-                            await asyncio.sleep(retry_delay)
-                            retry_delay *= 2  # 指数退避
-                        else:
-                            logger.error(f"Test case {index} failed after {max_retries + 1} attempts")
-                            await update_progress()
-                            return (index, 0.0, e)
+                try:
+                    score = await self.compute_score_for_testcase(workflow_code, task_name, test_case)
+                    await update_progress()
+                    return (index, score, None)
+                except Exception as e:
+                    logger.error(f"Test case {index} failed: {e}")
+                    await update_progress()
+                    return (index, 0.0, e)
         
         # 使用asyncio.create_task创建更高效的任务
         tasks = [
@@ -704,6 +697,10 @@ async def _compute_score_async(solution_str: str, ground_truth: str, extra_info:
         # 从extra_info提取必要信息
         task_name = extra_info.get('task_name', '')
         test_cases = extra_info.get('test_cases', [])
+        
+        # 处理numpy array的情况
+        if hasattr(test_cases, 'tolist'):
+            test_cases = test_cases.tolist()
         
         if not task_name:
             logger.error("No task_name found in extra_info")
