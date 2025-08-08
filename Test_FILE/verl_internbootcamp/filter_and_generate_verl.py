@@ -133,13 +133,10 @@ class FilteredVERLGenerator:
             logger.info(f"  ... and {len(self.filtered_tasks) - 10} more tasks")
     
     async def generate_verl_dataset(self, entries_per_task: int = 5, 
-                                  workflow_types: List[str] = None,
                                   output_dir: str = "verl_data_filtered",
                                   max_tasks: int = None,
                                   timeout_per_task: float = 3.0) -> Dict[str, Any]:
         """生成过滤后的VERL数据集，带超时功能"""
-        if workflow_types is None:
-            workflow_types = ["predefined"]
         
         task_names = self.get_task_names()
         
@@ -158,7 +155,6 @@ class FilteredVERLGenerator:
         entries = await self.generator.generate_dataset(
             task_names, 
             entries_per_task,
-            workflow_types,
             timeout_per_task  # 添加超时参数
         )
         
@@ -176,7 +172,6 @@ class FilteredVERLGenerator:
                 'task_display_names': self.get_task_display_names(),
                 'generation_config': {
                     'entries_per_task': entries_per_task,
-                    'workflow_types': workflow_types,
                     'source_file': self.analysis_file
                 }
             }
@@ -198,16 +193,12 @@ async def main():
     
     # 输入文件参数
     parser.add_argument('--analysis-file', 
-                       default='bootcamp_analysis_20250723_190329.jsonl',
+                       default='bootcamp_analysis_filtered.jsonl',
                        help='InternBootcamp analysis JSONL file')
     
     # 生成参数
     parser.add_argument('--entries-per-task', type=int, default=3,
                        help='Number of VERL entries per task')
-    parser.add_argument('--workflow-types', nargs='+', 
-                       default=['predefined'],
-                       choices=['predefined', 'flexible'],
-                       help='Workflow types to generate')
     parser.add_argument('--max-tasks', type=int, default=None,
                        help='Maximum number of tasks to process (for testing)')
     parser.add_argument('--timeout', type=float, default=3.0,
@@ -243,7 +234,6 @@ async def main():
     # 生成VERL数据集，传递超时参数
     stats = await filtered_generator.generate_verl_dataset(
         entries_per_task=args.entries_per_task,
-        workflow_types=args.workflow_types,
         output_dir=args.output_dir,
         max_tasks=args.max_tasks,
         timeout_per_task=args.timeout  # 添加超时参数

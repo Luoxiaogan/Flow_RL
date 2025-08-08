@@ -1,1 +1,0 @@
-请你根据InternBootcamp\workflow_test_v2里面的一些示例操作,将其作为ScoreFlow下的一个benchmark引入;请你注意这是一个复杂的复合任务体系,你可能需要先详细用中文列出你的计划和你对scoreflow项目的解释,等待我审批

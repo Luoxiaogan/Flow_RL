@@ -71,10 +71,9 @@ class VERLDataGenerator:
         try:
             # 导入conditions模块
             from ScoreFlow.scripts.internbootcamp.conditions import (
-                META_PROMPTS, SYSTEM_PROMPT, START_PROMPT_PREDEFINED, 
-                START_PROMPT_FLEXIBLE, END_PROMPT
+                META_PROMPTS, SYSTEM_PROMPT, START_PROMPT, END_PROMPT
             )
-            return START_PROMPT_PREDEFINED, END_PROMPT, SYSTEM_PROMPT, META_PROMPTS
+            return START_PROMPT, END_PROMPT, SYSTEM_PROMPT, META_PROMPTS
         except ImportError as e:
             logger.warning(f"Failed to load prompt templates from conditions: {e}")
             # 使用默认值
@@ -99,20 +98,20 @@ class VERLDataGenerator:
         user_prompt_str = start_prompt.format(prompt_text=prompt_content)
         user_prompt_str += end_prompt
         
-        # 创建消息格式（只包含user消息，不包含system消息）
         messages = [
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt_str}
         ]
         
         return messages
     
     async def generate_single_entry(self, task_name: str, entry_id: int,
-                                  workflow_type: str = "predefined", timeout: float = 3.0) -> Optional[Dict[str, Any]]:
+                                  timeout: float = 3.0) -> Optional[Dict[str, Any]]:
         """生成单个VERL数据条目 - 简化版，带超时功能"""
         try:
             # 使用asyncio.wait_for添加超时
             return await asyncio.wait_for(
-                self._generate_single_entry_impl(task_name, entry_id, workflow_type),
+                self._generate_single_entry_impl(task_name, entry_id),
                 timeout=timeout
             )
         except asyncio.TimeoutError:
@@ -122,8 +121,7 @@ class VERLDataGenerator:
             logger.error(f"Failed to generate entry for {task_name}: {e}")
             return None
 
-    async def _generate_single_entry_impl(self, task_name: str, entry_id: int,
-                                    workflow_type: str = "predefined") -> Dict[str, Any]:
+    async def _generate_single_entry_impl(self, task_name: str, entry_id: int) -> Dict[str, Any]:
         """实际的生成逻辑，不包含超时处理"""
         start_time = time.time()
         
@@ -135,6 +133,8 @@ class VERLDataGenerator:
             examples = self.manager.generate_task_examples(task_name, n_examples=n_examples)
         except Exception as e:
             logger.warning(f"Failed to generate examples for {task_name}: {e}")
+            import traceback
+            traceback.print_exc()
             examples = []  # 即使没有示例也继续
         
         # 获取任务描述
@@ -166,7 +166,6 @@ class VERLDataGenerator:
                 "test_cases": [str(ex.get("identity", f"example_{i}")) for i, ex in enumerate(examples)] if examples else [],
                 "entry_id": entry_id,
                 "task_type": get_task_type(task_name),
-                "workflow_type": workflow_type,
                 "num_examples": len(examples),
                 "timestamp": datetime.now().isoformat(),
                 "generation_time": time.time() - start_time
@@ -176,17 +175,13 @@ class VERLDataGenerator:
         return verl_entry
     
     async def generate_dataset(self, tasks: List[str], entries_per_task: int,
-                             workflow_types: Optional[List[str]] = None, 
                              timeout_per_task: float = 3.0) -> List[Dict[str, Any]]:
         """生成完整的数据集，带超时功能"""
-        if workflow_types is None:
-            workflow_types = ["predefined"]
-        
         all_entries = []
         entry_id = 0
         timeout_count = 0  # 记录超时次数
         
-        total_tasks = len(tasks) * len(workflow_types) * entries_per_task
+        total_tasks = len(tasks) * entries_per_task
         logger.info(f"Generating {total_tasks} VERL entries with {timeout_per_task}s timeout per task...")
         
         for task_name in tasks:
@@ -197,25 +192,24 @@ class VERLDataGenerator:
                 "timeout": 0  # 新增超时统计
             }
             
-            for workflow_type in workflow_types:
-                for i in range(entries_per_task):
-                    entry = await self.generate_single_entry(task_name, entry_id, workflow_type, timeout_per_task)
-                    
-                    if entry:
-                        all_entries.append(entry)
-                        self.generation_stats["successful"] += 1
-                        self.generation_stats["by_task"][task_name]["successful"] += 1
-                        logger.info(f"✓ Generated entry {entry_id} for {task_name}")
-                    else:
-                        # 检查是否是超时（通过查看最近的日志或其他方式）
-                        # 简单的处理：假设None返回可能是超时或其他错误
-                        self.generation_stats["failed"] += 1
-                        self.generation_stats["by_task"][task_name]["failed"] += 1
-                        logger.warning(f"✗ Failed to generate entry {entry_id} for {task_name}")
-                    
-                    self.generation_stats["total_generated"] += 1
-                    self.generation_stats["by_task"][task_name]["total"] += 1
-                    entry_id += 1
+            for i in range(entries_per_task):
+                entry = await self.generate_single_entry(task_name, entry_id, timeout_per_task)
+                
+                if entry:
+                    all_entries.append(entry)
+                    self.generation_stats["successful"] += 1
+                    self.generation_stats["by_task"][task_name]["successful"] += 1
+                    logger.info(f"✓ Generated entry {entry_id} for {task_name}")
+                else:
+                    # 检查是否是超时（通过查看最近的日志或其他方式）
+                    # 简单的处理：假设None返回可能是超时或其他错误
+                    self.generation_stats["failed"] += 1
+                    self.generation_stats["by_task"][task_name]["failed"] += 1
+                    logger.warning(f"✗ Failed to generate entry {entry_id} for {task_name}")
+                
+                self.generation_stats["total_generated"] += 1
+                self.generation_stats["by_task"][task_name]["total"] += 1
+                entry_id += 1
         
         logger.info(f"Generation completed. Total timeouts: {timeout_count}")
         return all_entries
@@ -361,8 +355,7 @@ async def main():
     # 生成数据集
     entries = await generator.generate_dataset(
         valid_tasks, 
-        args.entries_per_task,
-        ["simple"]  # 简化的workflow类型
+        args.entries_per_task
     )
     
     if not entries:

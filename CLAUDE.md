@@ -2,6 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+This device is a windows device.
 ## Project Overview
 
 Flow_RL is a workflow generation and execution system with three main purposes:
