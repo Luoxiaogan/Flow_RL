@@ -4,8 +4,10 @@ Test_FILE/logs/
 Test_FILE/workspace/
 Test_FILE/verl_internbootcamp/metagpt
 Test_FILE/verl_internbootcamp/logs
+Test_FILE/verl_internbootcamp/workspace
 Datasets/
 wandb/
+Test_FILE/verl_support/data
 Test_FILE/verl_internbootcamp/dataset
 Test_FILE/verl_internbootcamp/SFT_support/output
 Test_FILE/verl_internbootcamp/test

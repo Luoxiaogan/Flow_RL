@@ -1,0 +1,9 @@
+{
+    "id": "test_GSM8k_7429",
+    "benchmark": "GSM8k",
+    "data_indices": [
+        7429
+    ],
+    "dataset_path": "./data/gsm8k/train.jsonl",
+    "generation_timestamp": 0
+}

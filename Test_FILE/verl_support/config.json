@@ -1,39 +1,43 @@
 {
-    "benchmarks": {
-        "gsm8k": {
-            "ability": "math_reasoning",
-            "dataset_path": "./data/gsm8k/train.jsonl",
-            "total_problems": 7473,
-            "train_ratio": 0.8,
-            "description": "Grade School Math 8K - Mathematical reasoning problems"
+    "llm_config": {
+        "upstream": {
+            "provider": "openai",
+            "model": "qwen-turbo",
+            "api_key": "sk-dc5cc6f834614e34ac5c00e6129ddbc1",
+            "base_url": "http://localhost:5001",
+            "temperature": 0.7
         },
-        "mbpp": {
-            "ability": "code_generation",
-            "dataset_path": "./data/mbpp/train.jsonl", 
-            "total_problems": 374,
-            "train_ratio": 0.8,
-            "description": "Mostly Basic Python Problems - Code generation tasks"
+        "downstream": {
+            "provider": "openai",
+            "model": "qwen-turbo",
+            "api_key": "sk-dc5cc6f834614e34ac5c00e6129ddbc1",
+            "base_url": "http://localhost:5001",
+            "temperature": 0.3
         }
     },
     "generation_config": {
-        "min_sample_size": 2,
-        "max_sample_size": 4,
+        "task_selection": {
+            "mode": "manual",
+            "manual_tasks": ["game24", "sudoku", "minesweeper"],
+            "auto_select_count": 50
+        },
+        "examples_per_task": 1,
+        "prompts_per_task": 5,
         "batch_size": 10,
-        "max_concurrent_tasks": 10
-    },
-    "api_config": {
-        "provider": "openai",
-        "model": "qwen-turbo", 
-        "api_key": "sk-2df74af0570a42059c10a3f24de1b9df",
-        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        "max_retries": 3
     },
     "verl_config": {
-        "train_samples_per_benchmark": 100,
-        "test_samples_per_benchmark": 25,
-        "chat_template_format": "huggingface"
+        "train_ratio": 0.8,
+        "output_format": "parquet",
+        "data_dir": "./data"
     },
-    "output_paths": {
-        "data_dir": "./data",
-        "temp_workspace": "./temp_workspace"
+    "reward_config": {
+        "test_cases_per_task": 3,
+        "timeout": 30,
+        "max_concurrent": 5
+    },
+    "logging": {
+        "level": "INFO",
+        "log_file": "internbootcamp_verl.log"
     }
-} 
+}

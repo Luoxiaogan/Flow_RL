@@ -1,0 +1,9 @@
+{
+    "id": "test_MBPP_108",
+    "benchmark": "MBPP",
+    "data_indices": [
+        108
+    ],
+    "dataset_path": "./data/mbpp/train.jsonl",
+    "generation_timestamp": 0
+}
