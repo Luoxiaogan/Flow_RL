@@ -28,6 +28,17 @@ METAGPT_LOCAL = PROJECT_ROOT / "Test_FILE" / "metagpt_local" / "metagpt_local"
 if METAGPT_LOCAL.exists():
     sys.path.insert(0, str(METAGPT_LOCAL))
 
+# 设置MetaGPT的工作目录和日志目录到Test_FILE
+import os
+os.environ["METAGPT_WORKSPACE"] = str(PROJECT_ROOT / "Test_FILE" / "workspace")
+os.environ["METAGPT_LOG_DIR"] = str(PROJECT_ROOT / "Test_FILE" / "logs")
+os.environ["METAGPT_DATA_PATH"] = str(PROJECT_ROOT / "Test_FILE" / "data")
+
+# 创建必要目录
+(PROJECT_ROOT / "Test_FILE" / "workspace").mkdir(parents=True, exist_ok=True)
+(PROJECT_ROOT / "Test_FILE" / "logs").mkdir(parents=True, exist_ok=True)
+(PROJECT_ROOT / "Test_FILE" / "data").mkdir(parents=True, exist_ok=True)
+
 import asyncio as aio
 from typing import List as ListType
 from metagpt.provider.llm_provider_registry import create_llm_instance
@@ -38,7 +49,7 @@ from ScoreFlow.scripts.base_handler import BenchmarkHandler
 
 # DEBUG模式控制
 DEBUG = 0  # 改为1启用debug模式
-DEBUG_PATH = CURRENT_DIR / "debug_logs"
+DEBUG_PATH = PROJECT_ROOT / "Test_FILE" / "debug_logs"  # 存储在Test_FILE目录下
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -134,6 +145,9 @@ class ScoreFlowRewardCalculator:
         # handler缓存
         self._handler_cache = {}
         
+        # 加载benchmark mapping
+        self.benchmark_mapping = self._load_benchmark_mapping()
+        
         logger.info("ScoreFlowRewardCalculator initialized")
         
         # 记录初始化完成
@@ -143,6 +157,23 @@ class ScoreFlowRewardCalculator:
             "llm_config": self.llm_config,
             "reward_config": self.reward_config
         }, init_start)
+    
+    def _load_benchmark_mapping(self) -> Dict[str, Dict]:
+        """Load benchmark mapping from jsonl file"""
+        mapping_file = PROJECT_ROOT / "ScoreFlow" / "benchmark_mapping.jsonl"
+        if not mapping_file.exists():
+            logger.warning(f"Benchmark mapping file not found: {mapping_file}, using default mapping")
+            return {}
+        
+        mapping = {}
+        with open(mapping_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                if line.strip():
+                    data = json.loads(line)
+                    benchmark = data['benchmark']
+                    mapping[benchmark] = data
+        
+        return mapping
     
     def extract_workflow_from_response(self, response: str) -> Optional[str]:
         """
@@ -205,36 +236,55 @@ class ScoreFlowRewardCalculator:
             return self._handler_cache[cache_key]
         
         try:
-            # 转换为MetaGPT的LLMConfig
             provider = self.llm_config.get('provider', 'openai')
             api_type_map = {
-                'openai': LLMType.OPENAI, 'azure': LLMType.AZURE, 
-                'gemini': LLMType.GEMINI, 'claude': LLMType.CLAUDE,
-                'moonshot': LLMType.MOONSHOT, 'zhipuai': LLMType.ZHIPUAI,
-                'qianfan': LLMType.QIANFAN,
+                'openai': 'OPENAI', 'azure': 'AZURE', 'gemini': 'GEMINI',
+                'claude': 'CLAUDE', 'moonshot': 'MOONSHOT',
+                'zhipuai': 'ZHIPUAI', 'qianfan': 'QIANFAN',
             }
-            api_type = api_type_map.get(provider.lower(), LLMType.OPENAI)
+            
+            # 转换为MetaGPT的LLMConfig
+            from metagpt.provider.llm_provider_registry import LLMType
+            
+            # 获取LLMType枚举
+            llm_type_str = api_type_map.get(provider.lower(), 'OPENAI')
+            llm_type = getattr(LLMType, llm_type_str)
             
             metagpt_config = LLMConfig(
-                api_type=api_type,
+                api_type=llm_type,
                 model=self.llm_config.get('model'),
                 api_key=self.llm_config.get('api_key'),
                 base_url=self.llm_config.get('base_url')
             )
             
+            # 查找benchmark映射信息
+            benchmark_info = self.benchmark_mapping.get(benchmark_name)
+            if benchmark_info:
+                # 使用mapping中的handler class名称和路径
+                handler_class_name = benchmark_info['handler_class']
+                handler_dir = benchmark_info['handler_dir']
+                # 将handler_dir转换为Python模块路径 (e.g., "ScoreFlow/scripts/gsm8k" -> "ScoreFlow.scripts.gsm8k")
+                handler_module_path = handler_dir.replace('/', '.') + '.handler'
+            else:
+                # 回退到默认命名规则
+                if benchmark_name.startswith("high_level_math"):
+                    handler_module_path = "ScoreFlow.scripts.high_level_math.handler"
+                    handler_class_name = "HighLevelMathHandler"
+                else:
+                    handler_module_path = f"ScoreFlow.scripts.{benchmark_name}.handler"
+                    handler_class_name = f"{benchmark_name.capitalize()}Handler"
+            
             # 导入handler模块
-            handler_module_path = f"ScoreFlow.scripts.{benchmark_name.lower()}.handler"
             handler_module = importlib.import_module(handler_module_path)
             
             # 获取handler类
-            handler_class_name = f"{benchmark_name.capitalize()}Handler"
             handler_class = getattr(handler_module, handler_class_name)
             
             # 实例化handler
             handler = handler_class(dataset_path=dataset_path, config=metagpt_config)
             
             self._handler_cache[cache_key] = handler
-            logger.info(f"Loaded handler for {benchmark_name}")
+            logger.info(f"Loaded handler {handler_class_name} for {benchmark_name}")
             return handler
             
         except Exception as e:
@@ -250,8 +300,8 @@ class ScoreFlowRewardCalculator:
         exec_start = time.time()
         
         try:
-            # 1. 创建临时工作空间
-            workspace_dir = Path(PROJECT_ROOT / "Test_FILE" / "workspace" / benchmark_name)
+            # 1. 创建临时工作空间 - 存储在Test_FILE目录下
+            workspace_dir = PROJECT_ROOT / "Test_FILE" / "workspace" / benchmark_name
             workspace_dir.mkdir(parents=True, exist_ok=True)
             
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -318,7 +368,19 @@ class ScoreFlowRewardCalculator:
             
             # 尝试加载benchmark特定的operator_an（如果存在）
             try:
-                an_module_path = f"ScoreFlow.scripts.{benchmark_name}.operator_an"
+                # 查找benchmark映射信息
+                benchmark_info = self.benchmark_mapping.get(benchmark_name)
+                if benchmark_info:
+                    handler_dir = benchmark_info['handler_dir']
+                    # 将handler_dir转换为Python模块路径
+                    an_module_path = handler_dir.replace('/', '.') + '.operator_an'
+                else:
+                    # 回退到默认命名规则
+                    if benchmark_name.startswith("high_level_math"):
+                        an_module_path = "ScoreFlow.scripts.high_level_math.operator_an"
+                    else:
+                        an_module_path = f"ScoreFlow.scripts.{benchmark_name}.operator_an"
+                
                 operator_an_module = importlib.import_module(an_module_path)
                 
                 # 注入所有公共成员到执行环境
@@ -722,14 +784,8 @@ async def _compute_score_async(data_source: str, solution_str: str, ground_truth
             test_cases = test_cases.tolist()
         
         # 解析benchmark名称（处理类似 'high_level_math_aime2024' 的情况）
-        # 如果data_source包含下划线分隔的多个部分，提取主要的benchmark名称
-        benchmark_parts = data_source.split('_')
-        if len(benchmark_parts) > 2 and benchmark_parts[0] == 'high' and benchmark_parts[1] == 'level':
-            # 特殊处理 high_level_math 系列
-            benchmark_name = 'high_level_math'
-        else:
-            # 其他情况使用第一个部分或整个名称
-            benchmark_name = benchmark_parts[0] if benchmark_parts else data_source
+        # 直接使用data_source作为benchmark名称，因为benchmark_mapping中已有完整名称
+        benchmark_name = data_source
         
         if not data_path:
             logger.error("No data_path found in extra_info")

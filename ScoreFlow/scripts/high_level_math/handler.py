@@ -4,7 +4,7 @@ from typing import List, Dict, Any
 # 导入我们在上一步中定义的抽象基类
 from ScoreFlow.scripts.base_handler import BenchmarkHandler
 
-class HighLevelMathHandler(BenchmarkHandler):
+class High_Level_MathHandler(BenchmarkHandler):
     """
     High Level Math 数据集的具体处理器。
     

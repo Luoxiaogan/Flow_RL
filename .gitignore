@@ -5,6 +5,8 @@ Test_FILE/workspace/
 Test_FILE/verl_internbootcamp/metagpt
 Test_FILE/verl_internbootcamp/logs
 Test_FILE/verl_internbootcamp/workspace
+Test_FILE/verl_support/logs
+Test_FILE/verl_support/metagpt
 Datasets/
 wandb/
 Test_FILE/verl_support/data

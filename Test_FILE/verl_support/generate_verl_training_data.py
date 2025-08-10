@@ -60,14 +60,24 @@ class VerlTrainingDataGenerator:
     def _get_benchmark_handler(self, benchmark_name: str, dataset_path: str) -> BenchmarkHandler:
         """Get handler for a specific benchmark"""
         try:
-            # Determine handler module based on benchmark type
-            if benchmark_name.startswith("high_level_math"):
-                handler_module_path = "ScoreFlow.scripts.high_level_math.handler"
-                handler_class_name = "HighLevelMathHandler"
+            # Check benchmark mapping first
+            benchmark_info = self.benchmark_mapping.get(benchmark_name)
+            if benchmark_info:
+                # Use mapping info for handler class name and path
+                handler_class_name = benchmark_info['handler_class']
+                handler_dir = benchmark_info['handler_dir']
+                # Convert handler_dir to Python module path (e.g., "ScoreFlow/scripts/gsm8k" -> "ScoreFlow.scripts.gsm8k")
+                handler_module_path = handler_dir.replace('/', '.') + '.handler'
             else:
-                handler_module_path = f"ScoreFlow.scripts.{benchmark_name}.handler"
-                handler_class_name = f"{benchmark_name.capitalize()}Handler"
+                # Fallback to default naming rules
+                if benchmark_name.startswith("high_level_math"):
+                    handler_module_path = "ScoreFlow.scripts.high_level_math.handler"
+                    handler_class_name = "HighLevelMathHandler"
+                else:
+                    handler_module_path = f"ScoreFlow.scripts.{benchmark_name}.handler"
+                    handler_class_name = f"{benchmark_name.capitalize()}Handler"
             
+            # Import handler module
             handler_module = importlib.import_module(handler_module_path)
             handler_class = getattr(handler_module, handler_class_name)
             
@@ -79,12 +89,20 @@ class VerlTrainingDataGenerator:
     def _load_prompt_templates(self, benchmark_name: str) -> Tuple[str, str, str, List[str]]:
         """Load prompt templates from conditions.py"""
         try:
-            # Determine conditions module based on benchmark type
-            if benchmark_name.startswith("high_level_math"):
-                conditions_path = "ScoreFlow.scripts.high_level_math.conditions"
+            # Check benchmark mapping first
+            benchmark_info = self.benchmark_mapping.get(benchmark_name)
+            if benchmark_info:
+                handler_dir = benchmark_info['handler_dir']
+                # Convert handler_dir to Python module path
+                conditions_path = handler_dir.replace('/', '.') + '.conditions'
             else:
-                conditions_path = f"ScoreFlow.scripts.{benchmark_name}.conditions"
+                # Fallback to default naming rules
+                if benchmark_name.startswith("high_level_math"):
+                    conditions_path = "ScoreFlow.scripts.high_level_math.conditions"
+                else:
+                    conditions_path = f"ScoreFlow.scripts.{benchmark_name}.conditions"
             
+            # Import conditions module
             conditions_module = importlib.import_module(conditions_path)
             
             return (
