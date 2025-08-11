@@ -13,6 +13,11 @@ export CUDA_LAUNCH_BLOCKING=0
 # ============================================
 MODEL_TYPE="llama"  # 修改这里来切换模型
 
+# ============================================
+# 是否启用损失掩码 (只在助手回答上计算损失)
+# ============================================
+USE_LOSS_MASK=true  # 设置为 true 启用损失掩码
+
 # --- 通用配置 ---
 export WANDB_PROJECT="${MODEL_TYPE}-8b-workflow-sft"
 DEEPSPEED_CONFIG="/nas/ganluo/Flow_RL/my_llama3_h100/configs/deepspeed_config_z3.json"
@@ -64,31 +69,42 @@ echo "Model: $MODEL_TYPE"
 echo "Dataset: $DATASET_PATH"
 echo "Output: $OUTPUT_DIR"
 echo "Global batch size: $((NUM_GPUS * PER_DEVICE_BATCH_SIZE * GRAD_ACCUM_STEPS))"
+echo "Loss masking: $USE_LOSS_MASK"
 echo "=========================================="
+
+# --- 构建命令参数 ---
+CMD_ARGS=(
+    --model_name_or_path $MODEL_NAME
+    --model_type $MODEL_TYPE
+    --dataset_path $DATASET_PATH
+    --output_dir $OUTPUT_DIR
+    --num_train_epochs 3
+    --per_device_train_batch_size $PER_DEVICE_BATCH_SIZE
+    --per_device_eval_batch_size 2
+    --gradient_accumulation_steps $GRAD_ACCUM_STEPS
+    --learning_rate $LEARNING_RATE
+    --lr_scheduler_type "cosine"
+    --warmup_ratio 0.03
+    --logging_steps 1
+    --save_strategy "steps"
+    --save_steps 500
+    --save_total_limit 3
+    --bf16 True
+    --tf32 True
+    --gradient_checkpointing True
+    --report_to "wandb"
+    --deepspeed $DEEPSPEED_CONFIG
+    --max_seq_length $MAX_SEQ_LENGTH
+    --use_flash_attention_2 True
+)
+
+# 添加损失掩码参数
+if [ "$USE_LOSS_MASK" = "true" ]; then
+    CMD_ARGS+=(--use_loss_mask True)
+fi
 
 # --- Accelerate 启动命令 ---
 python -m accelerate.commands.launch \
     --config_file /nas/ganluo/Flow_RL/my_llama3_h100/accelerate_config.yaml \
     /nas/ganluo/Flow_RL/my_llama3_h100/src/train.py \
-    --model_name_or_path $MODEL_NAME \
-    --model_type $MODEL_TYPE \
-    --dataset_path $DATASET_PATH \
-    --output_dir $OUTPUT_DIR \
-    --num_train_epochs 3 \
-    --per_device_train_batch_size $PER_DEVICE_BATCH_SIZE \
-    --per_device_eval_batch_size 2 \
-    --gradient_accumulation_steps $GRAD_ACCUM_STEPS \
-    --learning_rate $LEARNING_RATE \
-    --lr_scheduler_type "cosine" \
-    --warmup_ratio 0.03 \
-    --logging_steps 1 \
-    --save_strategy "steps" \
-    --save_steps 500 \
-    --save_total_limit 3 \
-    --bf16 True \
-    --tf32 True \
-    --gradient_checkpointing True \
-    --report_to "wandb" \
-    --deepspeed $DEEPSPEED_CONFIG \
-    --max_seq_length $MAX_SEQ_LENGTH \
-    --use_flash_attention_2 True
+    "${CMD_ARGS[@]}"
