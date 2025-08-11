@@ -60,6 +60,152 @@ bash run_finetune.sh
 tmux attach -t llama_training
 ```
 
+### SFT (Supervised Fine-Tuning) Training
+
+The `my_llama3_h100_new/` directory contains the production SFT training configuration for H100/L20Z servers.
+
+#### Key Features
+
+1. **Multi-Model Support**
+   - **Llama-3.1-8B-Instruct**: Meta's instruction-tuned model
+   - **Qwen-2.5-7B-Instruct**: Alibaba's instruction-tuned model
+   - Both models use chat templates with system, user, and assistant messages
+
+2. **Advanced Training Features**
+   - **Loss Masking**: Optional feature to compute loss only on assistant responses
+   - **DeepSpeed ZeRO-3**: Distributed training with model sharding across 8 GPUs
+   - **Flash Attention 2**: Optimized attention mechanism for faster training
+   - **BF16 Precision**: Native H100 support for brain float16
+   - **Gradient Checkpointing**: Trade compute for memory efficiency
+
+3. **Data Format**
+   ```json
+   {
+     "messages": [
+       {"role": "system", "content": "System prompt..."},
+       {"role": "user", "content": "User question..."},
+       {"role": "assistant", "content": "Assistant response..."}
+     ]
+   }
+   ```
+
+#### Running SFT Training
+
+```bash
+# Navigate to training directory
+cd my_llama3_h100_new/
+
+# Basic training (loss on all tokens)
+bash run_finetune.sh
+
+# Training with loss masking (loss only on assistant tokens)
+USE_LOSS_MASK_OVERRIDE=true bash run_llama.sh  # For Llama
+USE_LOSS_MASK_OVERRIDE=true bash run_qwen.sh   # For Qwen
+
+# Or modify run_finetune.sh directly:
+# USE_LOSS_MASK=true  # Enable loss masking
+```
+
+#### Loss Masking Feature
+
+Loss masking improves training quality by computing loss only on assistant responses:
+
+- **Without Loss Masking**: Loss computed on all tokens (system + user + assistant)
+- **With Loss Masking**: Loss computed only on assistant tokens
+- **Benefits**: Better generalization, focuses learning on actual outputs
+
+Token identification:
+- **Llama**: Identifies `<|start_header_id|>assistant<|end_header_id|>` boundaries
+- **Qwen**: Identifies `<|im_start|>assistant` boundaries
+
+Test loss masking:
+```bash
+python test_loss_mask.py  # Verify masking works correctly
+```
+
+#### Training Configuration
+
+**Hardware Setup (H100/L20Z)**:
+- 8x NVIDIA L20Z GPUs (80GB each)
+- Total GPU memory: 640GB
+- DeepSpeed ZeRO-3 for model sharding
+
+**Training Parameters**:
+```bash
+# Llama-3.1-8B
+- Batch size: 4 per device
+- Gradient accumulation: 4 steps
+- Global batch size: 128
+- Learning rate: 1e-5
+- Max sequence length: 4096
+
+# Qwen-2.5-7B
+- Batch size: 4 per device
+- Gradient accumulation: 4 steps
+- Global batch size: 128
+- Learning rate: 2e-5
+- Max sequence length: 8192
+```
+
+**DeepSpeed Configuration** (`configs/deepspeed_config_z3.json`):
+- ZeRO Stage 3 optimization
+- BF16 mixed precision
+- No CPU offloading (sufficient GPU memory)
+- Gradient clipping and accumulation
+
+#### Data Analysis Tools
+
+```bash
+# Analyze token counts with actual tokenizers
+python analysis_using_real_tokenizer.py \
+  --data_path merged_training_data_llama.jsonl \
+  --model_path meta-llama/Llama-3.2-1B-Instruct \
+  --plot
+
+# Analyze character lengths
+python analysis_training_data_first.py
+
+# Test chat templates
+python test_chat_template.py
+```
+
+#### Directory Structure
+
+```
+my_llama3_h100_new/
+├── src/
+│   ├── train.py           # Main training script
+│   ├── data_collator.py   # Custom data collators with loss masking
+│   └── utils.py           # Training utilities
+├── configs/
+│   └── deepspeed_config_z3.json  # DeepSpeed ZeRO-3 config
+├── run_finetune.sh        # Main training launcher
+├── run_llama.sh           # Llama-specific launcher
+├── run_qwen.sh            # Qwen-specific launcher
+├── accelerate_config.yaml # Accelerate/DeepSpeed config
+├── test_loss_mask.py      # Test loss masking
+├── LOSS_MASKING.md        # Loss masking documentation
+└── H100_SETUP.md          # Hardware setup details
+```
+
+#### Important Training Details
+
+1. **Chat Templates**: Both models include system prompts in training
+   - Llama adds default date/knowledge cutoff info
+   - Qwen adds default "You are Qwen" if no custom system prompt
+   - System prompts are clearly marked with special tokens
+
+2. **Model Saving**: With DeepSpeed ZeRO-3, model is sharded across GPUs
+   - Each GPU holds ~1/8 of the model
+   - Final save consolidates all shards (~15GB for 8B model)
+   - Only rank 0 saves the complete model
+
+3. **Monitoring**: Training logs include
+   - WandB integration for metrics tracking
+   - Loss masking status
+   - Token statistics per batch
+   - Checkpoint saving every 500 steps
+
 ### veRL Data Generation and Training
 
 ```bash
@@ -112,6 +258,10 @@ The system operates in three phases:
     - `utils.py`: Utility functions that reuse existing system components
     - `test_verl_system.py`: System testing script
     - `data/`: Generated parquet files for training and testing
+- `my_llama3_h100_new/`: H100/L20Z GPU training configuration (production)
+  - Full SFT training implementation with loss masking support
+  - Supports both Llama-3.1-8B and Qwen-2.5-7B models
+  - DeepSpeed ZeRO-3 distributed training across 8 GPUs
 - `my_llama3_full_finetune/`: A800 GPU training configuration
 - `my_llama3_v100/`: V100 GPU training (memory issues)
 - `my_llama3_v100_pp/`: V100 pipeline parallel training (not recommended)
@@ -212,3 +362,11 @@ print(f"Reward: {score:.3f}")
    - Uses PPO (Proximal Policy Optimization) algorithm
    - Training data paths must be adjusted in `test.sh` before running
    - Supports both GSM8K and MBPP benchmarks
+9. **SFT Training (`my_llama3_h100_new/`)**:
+   - **Environment**: Use `verl` conda environment
+   - **Import Fix**: When running directly, imports are adjusted to handle module paths
+   - **Loss Masking**: Optional feature to train only on assistant responses
+   - **Data Format**: JSONL with messages array containing system/user/assistant roles
+   - **Model Paths**: Located at `/nas/models/` on the server
+   - **Output**: Saved to `/nas/ganluo/sft_output/`
+   - **WandB**: Requires unsetting WANDB_API_KEY if issues occur

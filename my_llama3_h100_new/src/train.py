@@ -13,6 +13,9 @@ from transformers import (
 )
 from dataclasses import dataclass, field
 from typing import Optional
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from data_collator import DataCollatorForChatML, DataCollatorForCausalLMWithMasking
 
 # --- 定义参数类 ---
 @dataclass
@@ -27,6 +30,10 @@ class ModelArguments:
     use_flash_attention_2: bool = field(
         default=True, 
         metadata={"help": "Enable Flash Attention 2"}
+    )
+    use_loss_mask: bool = field(
+        default=False,
+        metadata={"help": "Only compute loss on assistant responses (loss masking)"}
     )
 
 @dataclass
@@ -139,42 +146,76 @@ def train():
         desc="Formatting prompts"
     )
     
-    # 对文本进行tokenization
-    def tokenize_function(examples):
-        return tokenizer(
-            examples["text"],
-            truncation=True,
-            padding=False,
-            max_length=data_args.max_seq_length,
-            return_overflowing_tokens=False,
+    # --- 选择 Data Collator 和准备数据集 ---
+    if model_args.use_loss_mask:
+        print(f"Using loss masking for {model_args.model_type} (only computing loss on assistant responses)")
+        
+        # For loss masking, tokenize text but keep it simple (DataCollator will handle labels)
+        def tokenize_for_masking(examples):
+            tokenized = tokenizer(
+                examples["text"],
+                truncation=True,
+                padding=False,
+                max_length=data_args.max_seq_length,
+                return_overflowing_tokens=False,
+            )
+            return tokenized
+        
+        train_dataset = formatted_dataset.map(
+            tokenize_for_masking,
+            batched=True,
+            remove_columns=["text"],
+            desc="Tokenizing for loss masking"
+        )
+        
+        data_collator = DataCollatorForChatML(
+            tokenizer=tokenizer,
+            model_type=model_args.model_type,
+            pad_to_multiple_of=8
+        )
+    else:
+        print("Using standard causal language modeling (loss on all tokens)")
+        
+        # Standard tokenization
+        def tokenize_function(examples):
+            return tokenizer(
+                examples["text"],
+                truncation=True,
+                padding=False,
+                max_length=data_args.max_seq_length,
+                return_overflowing_tokens=False,
+            )
+        
+        train_dataset = formatted_dataset.map(
+            tokenize_function,
+            batched=True,
+            remove_columns=["text"],
+            desc="Tokenizing"
+        )
+        
+        data_collator = DataCollatorForLanguageModeling(
+            tokenizer=tokenizer,
+            mlm=False,  # 因果语言建模
+            pad_to_multiple_of=8  # 优化性能
         )
     
-    tokenized_dataset = formatted_dataset.map(
-        tokenize_function,
-        batched=True,
-        remove_columns=["text"],
-        desc="Tokenizing"
-    )
-    
-    print(f"Dataset size: {len(tokenized_dataset)} samples")
+    print(f"Dataset size: {len(train_dataset)} samples")
     
     # --- 初始化 Trainer ---
     trainer = Trainer(
         model=model,
         tokenizer=tokenizer,
         args=training_args,
-        train_dataset=tokenized_dataset,
-        data_collator=DataCollatorForLanguageModeling(
-            tokenizer=tokenizer,
-            mlm=False,  # 因果语言建模
-            pad_to_multiple_of=8  # 优化性能
-        ),
+        train_dataset=train_dataset,
+        data_collator=data_collator,
     )
 
     # --- 开始训练 ---
     print(f"Starting {model_args.model_type} SFT training...")
-    print(f"Total training samples: {len(tokenized_dataset)}")
+    print(f"Total training samples: {len(train_dataset)}")
     print(f"Number of epochs: {training_args.num_train_epochs}")
+    if model_args.use_loss_mask:
+        print("Loss masking: ENABLED (only assistant tokens contribute to loss)")
     
     trainer.train()
 
@@ -194,9 +235,10 @@ def train():
             "model_type": model_args.model_type,
             "base_model": model_args.model_name_or_path,
             "max_seq_length": data_args.max_seq_length,
-            "training_samples": len(tokenized_dataset),
+            "training_samples": len(train_dataset),
             "epochs": training_args.num_train_epochs,
             "global_batch_size": training_args.per_device_train_batch_size * training_args.gradient_accumulation_steps * training_args.world_size,
+            "use_loss_mask": model_args.use_loss_mask,
         }
         with open(os.path.join(training_args.output_dir, "training_config.json"), "w") as f:
             json.dump(config_info, f, indent=2)

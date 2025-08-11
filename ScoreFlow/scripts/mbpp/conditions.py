@@ -1,40 +1,126 @@
-# ScoreFlow/scripts/mbpp/conditions.py
+TASK_PROMPT = '''### 1. Problem Domain Overview
+The target domain is the **MBPP benchmark** (Mostly Basic Python Problems). These problems test the ability to generate correct Python functions from natural language descriptions.
 
-import random
+**Core Characteristics:**
+- **Input:** Natural language description of a programming task
+- **Required Skills:** Understanding task requirements, algorithm design, Python syntax, edge case handling
+- **Answer Type:** Executable Python function code
+- **Validation:** Must pass provided test cases (assert statements)
 
-# 为代码生成任务定制的多样化策略
-META_PROMPTS = [
-    # 1. 强调测试和修复
-    "Your main goal is correctness. Use the 'Generate-Test-Fix' pattern. First, generate a single code solution. Then, use the CodeRunner operator to test it. If it fails, use the CodeFix operator with the error message to create a corrected version.",
-    # 2. 强调鲁棒性
-    "Your main goal is robustness. Use the 'Parallel Ensemble & Test' pattern. Generate at least two different code solutions using varied instructions, use ScEnsemble to select the best one, and then use CodeRunner to verify the final choice.",
-    # 3. 强调迭代修复
-    "Your main goal is iterative refinement. Use a loop with the 'Test-Fix' pattern. Generate an initial solution, then loop 2-3 times, using CodeRunner to test and CodeFix to repair it until it passes or the loop ends.",
-    # 4. 强调简单高效
-    "Your main goal is efficiency. Create the simplest possible effective workflow. This is likely a single, well-crafted `CustomCodeGenerate` call followed by a single `CodeRunner` test. This is a baseline strategy.",
-    # 5. 强调深思熟虑的生成
-    "Your main goal is thoughtful generation. Before generating the final code, use a `CustomCodeGenerate` call with an instruction to first outline the plan, algorithm, and edge cases in natural language. Then, use this plan to guide a second `CustomCodeGenerate` call to write the actual code."
-]
+**Common Problem Types:**
+- **Array/List Operations:** Finding elements, computing sums, manipulating sequences
+- **Mathematical Computations:** Prime numbers, GCD/LCM, combinatorics, number theory
+- **String Manipulation:** Pattern matching, parsing, formatting, validation
+- **Data Structure Operations:** Dictionary/set operations, tree/graph algorithms
+- **Algorithm Implementation:** Sorting variants, search algorithms, dynamic programming
 
-# 为 MBPP 任务定制的 SFT System Prompt
-SYSTEM_PROMPT = """
+**Critical Challenges:**
+- **Specification Ambiguity:** Natural language may be imprecise or allow multiple interpretations
+- **Edge Cases:** Must handle empty inputs, boundary values, special cases
+- **Efficiency Requirements:** Some problems have implicit performance expectations
+- **Python Idioms:** Solutions should be Pythonic and follow best practices
+- **Function Signature:** Must infer correct parameter names and return types
+- **Import Dependencies:** Must include necessary import statements for standard library modules
+
+**Key Success Factors:**
+- Understanding the exact requirements from the description
+- Identifying all edge cases and constraints
+- Writing clean, efficient, and correct Python code
+- Ensuring the function signature matches test expectations
+- Handling type conversions and input validation appropriately
+- **Including all necessary import statements** (e.g., `import math`, `import re`, `from collections import Counter`)
+
+**Common Pitfalls:**
+- Off-by-one errors in indexing or range operations
+- Incorrect handling of empty or None inputs
+- Type mismatches (returning string instead of int, etc.)
+- Missing base cases in recursive solutions
+- Incorrect variable scoping or mutation of inputs
+- **Forgetting to import required modules** (e.g., using `math.sqrt()` without `import math`)
+
+**CRITICAL Workflow Design Considerations for MBPP:**
+
+### ⚠️ Understanding Operator Return Types (MUST READ!)
+**ALL operators (Generate, Revise, Summarize, Ensemble) ALWAYS return STRINGS, never structured data!**
+
+❌ **WRONG - This will cause TypeError:**
+```python
+# Generate returns a string, NOT a dictionary!
+result = await self.generate(instruction="Return JSON with keys 'name' and 'age'", context="")
+name = result["name"]  # TypeError: string indices must be integers
+```
+
+✅ **CORRECT Option 1 - Parse JSON string:**
+```python
+import json  # Remember to import json at the beginning of run_workflow
+result_json = await self.generate(instruction="Return JSON with keys 'name' and 'age'", context="")
+result = json.loads(result_json)  # Parse string to dict
+name = result["name"]  # Now this works
+```
+
+✅ **BETTER Option 2 - Use simple text (RECOMMENDED for MBPP):**
+```python
+# Ask for simple, directly usable text instead of JSON
+func_name = await self.generate(
+    instruction="Extract the function name from the test cases. Return ONLY the function name, nothing else.",
+    context=""
+)
+# Now func_name is directly usable: "first_repeated_char"
+```
+
+### Recommended MBPP Workflow Pattern:
+```python
+async def run_workflow(self):
+    import asyncio
+    # Import any needed modules here
+    
+    # Step 1: Simple extraction (returns plain text)
+    func_name = await self.generate(
+        instruction="What is the function name in the test cases? Return ONLY the name.",
+        context=""
+    )
+    
+    # Step 2: Generate code with comprehensive instructions
+    code = await self.generate(
+        instruction=f"""
+        Write a Python function named '{func_name}' that solves this task.
+        Requirements:
+        1. Include ALL necessary import statements at the top
+        2. Handle edge cases (empty inputs, None, boundaries)
+        3. Return ONLY the executable Python code, no explanations
+        """,
+        context=""
+    )
+    
+    # Step 3: Revise if needed
+    final_code = await self.revise(
+        instruction="Check for missing imports and edge cases. Fix any issues. Return only the corrected code.",
+        context=code
+    )
+    
+    return final_code
+```
+
+'''
+
+SYSTEM_PROMPT = '''
 Your fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.
 
 Your core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:
-1.  A high-level description of the problem domain.
-2.  A strictly defined set of callable software "Operators" that serve as your only building blocks.
-3.  An illustrative example instance, provided solely to help you understand the abstract reasoning pattern.
+1. A high-level description of the problem domain
+2. A strictly defined set of callable software "Operators" that serve as your only building blocks
+3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern
 
-Your generated output **must** be a single, parameterized Python function that represents a generic workflow. This function must be robust enough to work for any problem instance within the described domain.
+**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**
+
+Your generated Python workflow must be robust enough to work for any problem instance within the described domain.
 
 Crucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.
-"""
+'''
 
-# Python 脚本模板保持不变
 PYTHON_START = '''import asyncio
-from typing import List, Literal
-from ScoreFlow.scripts.mbpp.operator_an import CodeRunnerResult
-import ScoreFlow.scripts.mbpp.operator as operator
+from typing import Literal, List, Dict, Any, Union
+import ScoreFlow.scripts.common.operator as operator
 from metagpt.provider.llm_provider_registry import create_llm_instance as create
 
 '''
@@ -42,155 +128,203 @@ from metagpt.provider.llm_provider_registry import create_llm_instance as create
 PYTHON_END = '''
 
     async def __call__(self):
+        """
+        This is the main entry point that executes the workflow.
+        It returns the raw result from the workflow execution.
+        """
         TIMEOUT = {time}
-        return await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)'''
 
+        try:
+            # Execute the LLM-generated workflow to get the raw result.
+            raw_result = await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)
+            
+            # Return the raw result directly - answer extraction is now handled in handler
+            return raw_result
 
-# 主 Prompt，现在完全为代码生成和新 Operators 定制
-START_PROMPT = '''You are an expert in designing AI workflows for code generation. Your objective is to generate a diverse and effective workflow graph in Python to solve a given programming problem. Instead of generating the same simple graph every time, you must explore different problem-solving structures using the operators provided.
+        except asyncio.TimeoutError:
+            # Handle workflow execution timeout gracefully.
+            return "Final Answer: Error - Workflow execution timed out."
+        except Exception as e:
+            # Handle other potential errors during workflow execution.
+            import traceback
+            # 错误详情在这里被定义和使用，不暴露给外部.format()
+            error_details_str = traceback.format_exc()
+            escaped_error_details = error_details_str.replace("\\n", "\\\\n").replace('"', '\\"')
+            return f"Final Answer: Error - An exception occurred during workflow execution. Details: {{escaped_error_details}}"
+'''
 
-**Workflow Design Patterns (for inspiration):**
+START_PROMPT = '''### 2. Available Operators & Building Blocks
 
-To encourage diversity, consider these patterns. You can use them directly, combine them, or create your own novel structures.
+All operators follow a consistent interface pattern and are initialized with the problem text. They are available as `self.operator_name`.
 
-1.  **Generate-Test-Fix:**
-    *   The most fundamental pattern for code. Generate a single solution, test it, and if it fails, use the error to guide a fix.
-    *   *Example*: 
-        ```python
-        code = await self.code_generate(instruction="Provide a straightforward solution.")
-        test_result = await self.code_runner(code_to_test=code)
-        if not test_result.is_correct:
-            code = await self.code_fix(code=code, error_message=test_result.error_message)
-        return code
-        ```
+**Important Note:** The operators are pre-initialized with `self.problem_text`. Each operator automatically includes it in their prompts (you'll see it as "**Original Problem:**" in their internal prompts). You don't need to worry about losing the problem context - it's always available to every operator call behind the scenes, regardless of what you pass as the context parameter.
 
-2.  **Iterative Refinement (Test-Fix Loop):**
-    *   For complex problems, one fix may not be enough. Loop the Test-Fix cycle a few times.
-    *   *Example*:
-        ```python
-        code = await self.code_generate(instruction="Initial attempt to solve the problem.")
-        for _ in range(2): # Loop for refinement
-            test_result = await self.code_runner(code_to_test=code)
-            if test_result.is_correct:
-                break
-            code = await self.code_fix(code=code, error_message=test_result.error_message)
-        return code
-        ```
+#### 🔴 **CRITICAL: ALL OPERATORS RETURN STRINGS!**
 
-3.  **Parallel Ensemble & Test:**
-    *   Generate multiple independent solutions to guard against flawed initial reasoning. Select the best, then test it.
-    *   *Example*:
-        ```python
-        solutions = [
-            await self.code_generate(instruction="Solve using a recursive approach."),
-            await self.code_generate(instruction="Solve using an iterative approach.")
-        ]
-        best_code = await self.sc_ensemble(solutions=solutions)
-        # Optional: Test the winner
-        # test_result = await self.code_runner(code_to_test=best_code)
-        return best_code
-        ```
+**This is the #1 source of errors in workflows!** Every operator (Generate, Revise, Summarize, Ensemble) returns a STRING, not a dictionary, list, or any other data structure.
+
+❌ **WRONG - These will ALL cause TypeError:**
+```python
+# Trying to access string as dictionary
+result = await self.generate(instruction="Return JSON", context="")
+value = result["key"]  # TypeError!
+
+# Trying to access string as list
+items = await self.generate(instruction="List items", context="")
+first = items[0]  # TypeError unless you mean first character!
+
+# Assuming structured data
+data = await self.generate(instruction="Return data", context="")
+for item in data:  # This iterates over characters, not items!
+```
+
+✅ **CORRECT - How to handle operator outputs:**
+```python
+# Option 1: Parse JSON if you need structured data
+import json  # Add this at the start of run_workflow
+json_str = await self.generate(instruction="Return valid JSON", context="")
+data = json.loads(json_str)  # Now it's a dict/list
+
+# Option 2 (PREFERRED): Request simple text
+name = await self.generate(
+    instruction="Return ONLY the function name, nothing else",
+    context=""
+)
+# 'name' is now a simple string like "calculate_sum"
+
+# Option 3: Use string operations
+result = await self.generate(instruction="List items separated by commas", context="")
+items = result.split(",")  # Convert string to list
+```
+
+#### 🔑 **Understanding Parameters**
+
+**The `instruction` Parameter (Required for all operators):**
+- **Purpose:** Contains the COMPLETE strategic directive that fully specifies what the operator should do
+- **Content:** Should be **comprehensive and detailed** - think of it as a full prompt that leaves nothing ambiguous
+- **Length:** Can and SHOULD be long when needed (100-500+ words is perfectly acceptable and often necessary)
+- **Dynamic Construction:** Can include information extracted from previous steps using f-strings
+- **Key Principle:** Instructions guide the operation; context provides the data
+
+**The `context` Parameter (Required for all operators except Generate):**
+- **Purpose:** Provides the INPUT DATA that the instruction will operate on
+- **Content:** The actual text, data, or results from previous operations
+- **Type:** String for Generate/Revise/Summarize operators
+- **Usage:** Think of it as the "working material" that the instruction processes
+- **Note:** Ensemble uses `contexts` (plural) which takes List[str] instead of a single string
+
+### Core Operators
+
+**1. Generate: CREATE new information**
+- **Signature:** `await self.generate(instruction: str, context: str = "") -> str`
+- **Returns:** STRING (always!)
+- **Purpose:** Produces new text, analysis, or reasoning based on strategic instructions
+
+**2. Revise: IMPROVE existing information**
+- **Signature:** `await self.revise(instruction: str, context: str) -> str`
+- **Returns:** STRING (always!)
+- **Purpose:** Critiques and refines existing text based on specific improvement criteria
+
+**3. Summarize: COMPRESS information**
+- **Signature:** `await self.summarize(instruction: str, context: str) -> str`
+- **Returns:** STRING (always!)
+- **Purpose:** Condenses text while preserving key information relevant to the problem
+
+**4. Ensemble: DECIDE between or synthesize options**
+- **Signature:** `await self.ensemble(instruction: str, contexts: List[str]) -> str`
+- **Returns:** STRING (always!)
+- **Purpose:** Evaluates, compares, or merges multiple candidate solutions
+
+### 3. Key Design Principles
+
+**Import Management:**
+```python
+async def run_workflow(self):
+    import asyncio
+    import json  # Import here if you need JSON parsing
+    import re    # Import here if you need regex
+    # Add all imports at the beginning of run_workflow
+```
+
+**Dynamic Instruction Construction:**
+```python
+# Extract as simple text, then embed in f-strings
+func_name = await self.generate(
+    instruction="Extract only the function name from test cases",
+    context=""
+)
+code = await self.generate(
+    instruction=f"Write a function named '{func_name}' that solves this",
+    context=""
+)
+```
+
+**Parallel Execution:**
+```python
+results = await asyncio.gather(
+    self.generate(instruction="Approach 1...", context=""),
+    self.generate(instruction="Approach 2...", context="")
+)
+final = await self.ensemble(instruction="Select best...", contexts=results)
+```
+
+**Common Pitfalls:**
+- ❌ Don't assume operators return anything other than strings
+- ❌ Don't forget to import modules (json, re, etc.) inside run_workflow
+- ❌ Don't hardcode problem-specific data in workflow code
+- ✅ Do parse JSON strings with json.loads() if needed
+- ✅ Do prefer simple text extraction over complex JSON
+- ✅ Do use detailed instructions (100-500+ words when needed)
+
+### 4. Your Task: Complete the `run_workflow` Method
+
+Your task is to write the Python code for the `run_workflow` method within the provided template. Focus on creating a robust, reusable workflow that leverages detailed instructions.
 
 **Base Template:**
-
-<graph>
+<think>
+[Your step-by-step reasoning about the workflow strategy, why you chose specific operators, and how you'll use instructions effectively. Remember that all operators return strings!]
+</think>
+<code>
 class Workflow:
-    def __init__(
-        self,
-        config,
-        problem
-    ) -> None:
-        self.problem = problem
-        self.config = create(config)
-        # --- Initialize your chosen operators here ---
-        self.code_generate = operator.CustomCodeGenerate(self.config, self.problem)
-        self.code_runner = operator.CodeRunner(self.config, self.problem)
-        self.code_fix = operator.CodeFix(self.config, self.problem)
-        self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
-        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
+    def __init__(self, config, problem) -> None:
+        # --- DO NOT MODIFY THIS SECTION ---
+        self.config = config
+        self.problem_text = problem
+        self.llm = create(config)
+        
+        self.generate = operator.Generate(self.llm, self.problem_text)
+        self.revise = operator.Revise(self.llm, self.problem_text)
+        self.summarize = operator.Summarize(self.llm, self.problem_text)
+        self.ensemble = operator.Ensemble(self.llm, self.problem_text)
 
     async def run_workflow(self):
         """
-        This is a workflow graph for code generation.
-        The final return value of this function should be a string containing the correct Python code.
+        Implement the core problem-solving logic here.
+        Remember: 
+        - ALL operators return STRINGS
+        - Import modules (json, re, etc.) at the beginning
+        - Use detailed, comprehensive instructions
+        - Parse JSON with json.loads() if needed
         """
-        # --- YOUR DIVERSE WORKFLOW LOGIC GOES HERE ---
-        # For example, a simple Generate-Test pattern:
-        solution_code = await self.code_generate(instruction="Solve the problem step-by-step, explaining your reasoning clearly in comments.")
-        test_result = await self.code_runner(code_to_test=solution_code)
-        if not test_result.is_correct:
-            # Handle failure if necessary
-            pass
-        return solution_code
-</graph>
+        import asyncio
+        # import json  # Uncomment if you need JSON parsing
+        # import re    # Uncomment if you need regex
+        
+        # --- YOUR WORKFLOW LOGIC HERE ---
+        # Remember: all operator outputs are strings!
+</code>
 
-**Available Operators:**
+### 5. Critical Rules
 
-Here are the operators you MUST use. Do not create new ones.
+**A. Return Types:** ALL operators return STRINGS - parse with json.loads() if needed
+**B. Imports:** Add all needed imports (json, re, etc.) at start of run_workflow
+**C. Instructions:** Use comprehensive, detailed instructions (100-500+ words OK)
+**D. Parameters:** `instruction` (str) + `context` (str) for most; `contexts` (List[str]) for Ensemble
+**E. Control Flow:** Branch on operator results, not direct problem_text parsing
+**F. Response Format:** ONLY `<think>...</think>` followed by `<code>...</code>`
 
-1.  **CustomCodeGenerate**:
-    *   **Usage**: Generates Python code based on an instruction.
-    *   **Signature**: `code_generate(instruction: str) -> str`
-    *   **Example**: `initial_code = await self.code_generate(instruction="Generate a Python function to solve the problem.")`
+### 6. Illustrative Example(s)
 
-2.  **CodeRunner**:
-    *   **Usage**: Executes the provided code against a hidden set of test cases.
-    *   **Signature**: `code_runner(code_to_test: str) -> CodeRunnerResult`
-    *   **Returns**: An object `result` where you can check `result.is_correct` (boolean) and access `result.error_message` (string) if it fails.
-    *   **Example**: `test_result = await self.code_runner(code_to_test=initial_code)`
+The following examples help you understand the problem type. Create a workflow for the *class* of problems, not just these instances.
 
-3.  **CodeFix**:
-    *   **Usage**: Takes a failing piece of code and its error message, then generates a corrected version.
-    *   **Signature**: `code_fix(code: str, error_message: str) -> str`
-    *   **Example**: `fixed_code = await self.code_fix(code=initial_code, error_message=test_result.error_message)`
-
-4.  **ScEnsemble**:
-    *   **Usage**: Evaluates multiple code solutions and selects the best one.
-    *   **Signature**: `sc_ensemble(solutions: List[str]) -> str`
-    *   **Example**: `best_code = await self.sc_ensemble(solutions=[code1, code2])`
-
-5.  **FlexibleCustom (Advanced Operator)**:
-    *   **Usage**: A flexible operator that supports various code generation patterns (incremental, test_driven, modular, recursive) with customizable strategies. Perfect for exploring diverse approaches without embedding problem-specific information.
-    *   **Signature**: `flexible_custom(custom_instruction: str = "", previous_results: List[str] = None) -> str`
-    *   **Configuration Options**:
-        - `generation_pattern`: "incremental", "test_driven", "modular", or "recursive"
-        - `strategies`: List of generation strategies like ["analyze_requirements", "handle_edge_cases", "optimize_solution"]
-        - `max_refinements`: Maximum refinement iterations (default: 1)
-        - `use_structured_output`: Whether to use structured output format (default: True)
-    *   **Example 1 (Test-Driven)**:
-        ```python
-        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem, 
-                                                      generation_pattern="test_driven",
-                                                      strategies=["understand_tests", "implement_minimum", "refactor"])
-        code = await self.flexible_custom(custom_instruction="Focus on passing tests incrementally")
-        ```
-    *   **Example 2 (Modular)**:
-        ```python
-        self.flexible_custom_mod = operator.FlexibleCustom(self.config, self.problem,
-                                                          generation_pattern="modular", 
-                                                          strategies=["decompose_problem", "implement_helpers", "combine_solution"])
-        modular_code = await self.flexible_custom_mod(custom_instruction="Break down into reusable functions")
-        ```
-    *   **Use Cases**:
-        - Test-Driven: Write code to pass tests incrementally
-        - Incremental: Build solution step by step
-        - Modular: Decompose into helper functions
-        - Recursive: Solve with recursive approaches
-
-**Problem Input:**
-The programming problem will be provided. Your generated graph **must not** contain any specific information from this problem (e.g., function names, variable values). The graph should be a general-purpose solver.
-
-TASK: '''
-
-END_PROMPT = '''
-
-**Final Instructions:**
-
-1.  **Embrace Diversity**: Your primary goal is to create a workflow that is **different** from a simple, single `code_generate` call. Use the design patterns as inspiration.
-2.  **Be Logical**: The flow must be logical. The `CodeFix` operator requires an `error_message` from a failed `CodeRunner` call. Use `if not test_result.is_correct:` blocks correctly.
-3.  **Use Control Flow**: You **must** use Python's `for` loops and `if/else` statements to create intelligent, reactive workflows. The complexity of the logic should match the pattern you are trying to implement.
-4.  **Final Output**: The `run_workflow` function must always return a string containing the final Python code.
-5.  **No Problem-Specifics**: Your final graph must be completely generic.
-
-Now, output the optimized and diverse graph. Remember to enclose it in `<graph>` and `</graph>` tags.
 '''

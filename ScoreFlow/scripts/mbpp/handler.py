@@ -1,113 +1,347 @@
-# ### 修改点 1: 不再需要 traceback，因为它已移至 unsafe_execute 内部 ###
-# import traceback 
+## 2. MbppHandler (handler.py)
+
+from typing import List, Dict, Any
+import ast
+import traceback
+import asyncio
+import sys
+from io import StringIO
 import contextlib
-import io
-import multiprocessing
-import signal
-from typing import List, Dict, Any, Tuple
 
 # 导入基类
 from ScoreFlow.scripts.base_handler import BenchmarkHandler
-# ### 修改点 2: 从共享的 utils 模块导入 unsafe_execute 函数 ###
-from ScoreFlow.scripts.utils.code_executor import unsafe_execute
-
-# ### 修改点 3: 移除整个本地的 unsafe_execute 函数定义 ###
-# def unsafe_execute(code: str, tests: List[str], result_queue: multiprocessing.Queue):
-#     """
-#     ... 此函数已被移至 ScoreFlow/scripts/utils/code_executor.py ...
-#     """
-#     pass
 
 class MbppHandler(BenchmarkHandler):
     """
-    MBPP (Mostly Basic Python Programming) 数据集的具体处理器。
+    MBPP (Mostly Basic Python Problems) 数据集的具体处理器。
+    
+    处理代码生成任务，需要生成Python函数并通过测试用例验证。
     """
-
+    
     def get_prompt_text(self, indices: List[int]) -> str:
         """
-        从 MBPP 数据中提取问题描述文本（'text'字段）。
+        从 MBPP 数据中提取编程任务描述，并格式化为清晰的文本用于生成工作流。
         
         格式:
-        Problem 1:
-        [problem description text]
-
-        Problem 2:
-        [problem description text]
+        ---
+        **TASK:**
+        [task description]
+        
+        **TEST CASES:**
+        [test case 1]
+        [test case 2]
         ...
+        ---
+        
+        (如果提供多个索引，则重复此结构)
         """
         try:
             problems = [self._get_problem_by_index(i) for i in indices]
-            # MBPP 的问题描述在 'text' 字段中
-            return "\n\n".join([f"Problem {i+1}:\n{p['text']}" for i, p in enumerate(problems)])
+            formatted_problems = []
+            
+            for problem in problems:
+                # 提取任务描述和测试用例
+                task_description = problem.get('text', problem.get('question', ''))
+                test_cases = problem.get('test_list', [])
+                
+                # 格式化测试用例
+                test_cases_text = "**TEST CASES:**\n"
+                if test_cases:
+                    for test_case in test_cases:
+                        test_cases_text += f"{test_case}\n"
+                else:
+                    test_cases_text += "No test cases provided.\n"
+                
+                # 组合任务描述和测试用例
+                formatted_problem = f"""---
+**TASK:**
+{task_description}
+
+{test_cases_text.strip()}
+---"""
+                formatted_problems.append(formatted_problem)
+            
+            return "\n\n".join(formatted_problems)
         except (KeyError, IndexError) as e:
             raise ValueError(f"从MBPP数据中提取问题时出错: {e}")
 
     def get_verification_data(self, index: int) -> Dict[str, Any]:
         """
         获取单个 MBPP 问题的完整数据，用于后续的执行和验证。
+        这包括任务描述、测试用例、参考答案等信息。
         """
         return self._get_problem_by_index(index)
-
-    def _execute_and_test(self, generated_code: str, test_list: List[str], timeout: int = 5) -> Tuple[bool, str]:
+    
+    def _execute_code_with_tests(self, code: str, test_cases: List[str], test_setup: str = "") -> tuple[bool, str]:
         """
-        在一个独立的、有时间限制的进程中执行生成的代码并验证测试用例。
-        """
-        if not generated_code or not test_list:
-            return False, "Generated code or test list is empty."
-
-        result_queue = multiprocessing.Queue()
-        process = multiprocessing.Process(
-            target=unsafe_execute, # 这里现在使用的是从外部导入的函数
-            args=(generated_code, test_list, result_queue)
-        )
+        安全地执行代码并运行测试用例。
         
-        process.start()
-        process.join(timeout=timeout)
-
-        if process.is_alive():
-            # 超时，终止进程
-            process.terminate()
-            process.join()
-            return False, f"Execution timed out after {timeout} seconds."
-
-        if process.exitcode != 0:
-            return False, f"Execution process exited with non-zero code: {process.exitcode}."
+        返回: (是否全部通过, 错误信息)
+        """
+        # 创建一个执行环境，包含必要的内置函数
+        # 注意：assert 是关键字，会在 exec 中自动可用，不需要也不能显式传递
+        import builtins
+        
+        # 预导入常用的标准库模块，以防生成的代码忘记import
+        # 这些是MBPP中常用的模块
+        import math
+        import re
+        import collections
+        import itertools
+        import functools
+        import string
+        import datetime
+        import random
+        import heapq
+        import bisect
+        import copy
+        
+        exec_globals = {
+            '__builtins__': builtins,
+            # 预先提供常用模块，以防代码忘记import
+            'math': math,
+            're': re,
+            'collections': collections,
+            'itertools': itertools,
+            'functools': functools,
+            'string': string,
+            'datetime': datetime,
+            'random': random,
+            'heapq': heapq,
+            'bisect': bisect,
+            'copy': copy,
+            # 也支持from X import Y的常用情况
+            'Counter': collections.Counter,
+            'defaultdict': collections.defaultdict,
+            'deque': collections.deque,
+            'OrderedDict': collections.OrderedDict,
+            'chain': itertools.chain,
+            'combinations': itertools.combinations,
+            'permutations': itertools.permutations,
+            'product': itertools.product,
+            'reduce': functools.reduce,
+        }
         
         try:
-            status, message = result_queue.get_nowait()
-            return status == "success", message
-        except multiprocessing.queues.Empty:
-            return False, "Result queue was empty. Unknown execution error."
+            # 预处理代码，自动添加可能缺失的import
+            code = self._preprocess_code_with_imports(code)
 
-
-    def judge(self, model_output: Any, ground_truth_data: Dict[str, Any]) -> bool:
-        """
-        评判模型生成的代码是否能通过 MBPP 的单元测试。
-        
-        1. `model_output` 应该是一个包含 Python 代码的字符串。
-        2. `ground_truth_data` 是完整的 MBPP 问题条目，包含 'test_list'。
-        """
-        try:
-            # 假设 model_output 是一个 workflow 的最终产出，它是一个包含 Python 代码的字符串
-            generated_code = str(model_output)
+            print(f"[MBPP]🚀: 生成的code是:\n{code}")
             
-            # 从标准答案数据中获取测试用例列表
-            test_list = ground_truth_data.get('test_list')
-            if not test_list:
-                # 如果没有测试用例，我们无法验证，判定为失败
-                return False
-
-            # 执行代码并进行测试
-            is_correct, message = self._execute_and_test(generated_code, test_list)
+            # 首先执行测试前置代码（如果有）
+            if test_setup:
+                exec(test_setup, exec_globals)
             
-            if not is_correct:
-                # 打印失败信息以便调试
-                # 为了保持输出简洁，可以注释掉这行
-                # print(f"MBPP Judge: Test failed. Reason: {message}")
-                pass
+            # 执行生成的代码
+            exec(code, exec_globals)
             
-            return is_correct
+            # 运行每个测试用例
+            passed_tests = 0
+            failed_tests = []
+            
+            for i, test_case in enumerate(test_cases):
+                print(f"[MBPP]🚀: 测试用例:\n{test_case}")
+                try:
+                    # 捕获stdout用于调试
+                    with contextlib.redirect_stdout(StringIO()):
+                        exec(test_case, exec_globals)
+                    passed_tests += 1
+                except AssertionError as e:
+                    failed_tests.append(f"Test {i+1} failed: {test_case}")
+                    print(f"[MBPP]🚀: 测试用例失败:\n{test_case}")
+                except Exception as e:
+                    failed_tests.append(f"Test {i+1} error: {test_case} - {str(e)}")
+                    print(f"[MBPP]🚀: 测试用例错误:\n{test_case} - {str(e)}")
 
+            if failed_tests:
+                return False, f"Passed {passed_tests}/{len(test_cases)} tests. Failed: {'; '.join(failed_tests)}"
+            else:
+                return True, f"All {passed_tests} tests passed!"
+                
+        except SyntaxError as e:
+            return False, f"Syntax error in code: {str(e)}"
         except Exception as e:
-            print(f"MBPP Judge: An unexpected error occurred during judgment: {e}")
+            return False, f"Execution error: {str(e)}\n{traceback.format_exc()}"
+    
+    def _preprocess_code_with_imports(self, code: str) -> str:
+        """
+        预处理代码，自动添加可能缺失的import语句。
+        通过分析代码中使用的模块，智能添加必要的import。
+        """
+        import re
+        
+        # 需要检查的标准库模块及其常用属性
+        module_patterns = {
+            'math': ['sqrt', 'ceil', 'floor', 'pow', 'exp', 'log', 'sin', 'cos', 'tan', 'pi', 'e', 'gcd', 'factorial'],
+            're': ['match', 'search', 'findall', 'sub', 'compile', 'split'],
+            'collections': ['Counter', 'defaultdict', 'deque', 'OrderedDict', 'namedtuple'],
+            'itertools': ['chain', 'combinations', 'permutations', 'product', 'cycle', 'repeat', 'groupby'],
+            'functools': ['reduce', 'partial', 'lru_cache', 'wraps'],
+            'datetime': ['datetime', 'date', 'time', 'timedelta'],
+            'random': ['random', 'randint', 'choice', 'shuffle', 'sample', 'uniform'],
+            'heapq': ['heappush', 'heappop', 'heapify', 'heappushpop', 'nlargest', 'nsmallest'],
+            'bisect': ['bisect_left', 'bisect_right', 'insort_left', 'insort_right'],
+        }
+        
+        # 检查代码中是否已经import了这些模块
+        imported_modules = set()
+        import_lines = []
+        
+        # 查找已有的import语句
+        for line in code.split('\n'):
+            if line.strip().startswith('import ') or line.strip().startswith('from '):
+                import_lines.append(line)
+                # 提取模块名
+                if 'import ' in line:
+                    parts = line.replace('from ', '').replace('import ', '').split()
+                    if parts:
+                        imported_modules.add(parts[0].split('.')[0])
+        
+        # 检查代码中使用了哪些模块
+        needed_imports = []
+        for module, attributes in module_patterns.items():
+            if module in imported_modules:
+                continue  # 已经导入了
+            
+            # 检查是否使用了该模块的属性
+            for attr in attributes:
+                # 检查 module.attr 的使用
+                if re.search(rf'\b{module}\.{attr}\b', code):
+                    needed_imports.append(f'import {module}')
+                    break
+                # 检查直接使用的函数（可能需要from ... import）
+                if re.search(rf'\b{attr}\s*\(', code) and module not in imported_modules:
+                    # 检查是否是该模块特有的函数
+                    if module == 'collections' and attr in ['Counter', 'defaultdict', 'deque']:
+                        needed_imports.append(f'from {module} import {attr}')
+                    elif module == 'itertools' and attr in ['chain', 'combinations', 'permutations', 'product']:
+                        needed_imports.append(f'from {module} import {attr}')
+                    elif module == 'functools' and attr == 'reduce':
+                        needed_imports.append(f'from {module} import {attr}')
+        
+        # 如果需要添加import，将它们加到代码开头
+        if needed_imports:
+            # 去重
+            needed_imports = list(dict.fromkeys(needed_imports))
+            return '\n'.join(needed_imports) + '\n\n' + code
+        
+        return code
+    
+    def _extract_code_from_response(self, response: str) -> str:
+        """
+        从模型响应中提取Python代码。
+        处理各种可能的格式：markdown代码块、纯代码等。
+        """
+        # 移除前导/尾随空白
+        response = response.strip()
+        
+        # 尝试提取markdown代码块
+        if "```python" in response:
+            # 找到第一个python代码块
+            parts = response.split("```python")
+            if len(parts) > 1:
+                code_part = parts[1].split("```")[0]
+                return code_part.strip()
+        elif "```" in response:
+            # 通用代码块
+            parts = response.split("```")
+            if len(parts) >= 2:
+                # 取第一个代码块
+                code_part = parts[1]
+                # 如果代码块以语言标识符开头，移除它
+                lines = code_part.split('\n')
+                if lines and lines[0].strip().lower() in ['python', 'py']:
+                    code_part = '\n'.join(lines[1:])
+                return code_part.strip()
+        
+        # 如果响应看起来像是Python代码（包含def关键字），直接返回
+        if "def " in response:
+            return response
+        
+        # 尝试提取"Final Answer:"后的内容
+        if "final answer:" in response.lower():
+            parts = response.lower().split("final answer:")
+            if len(parts) > 1:
+                code = parts[-1].strip()
+                # 递归调用以处理可能的代码块格式
+                return self._extract_code_from_response(code)
+        
+        # 默认返回整个响应
+        return response
+        """
+        从模型响应中提取Python代码。
+        处理各种可能的格式：markdown代码块、纯代码等。
+        """
+        # 移除前导/尾随空白
+        response = response.strip()
+        
+        # 尝试提取markdown代码块
+        if "```python" in response:
+            # 找到第一个python代码块
+            parts = response.split("```python")
+            if len(parts) > 1:
+                code_part = parts[1].split("```")[0]
+                return code_part.strip()
+        elif "```" in response:
+            # 通用代码块
+            parts = response.split("```")
+            if len(parts) >= 2:
+                # 取第一个代码块
+                code_part = parts[1]
+                # 如果代码块以语言标识符开头，移除它
+                lines = code_part.split('\n')
+                if lines and lines[0].strip().lower() in ['python', 'py']:
+                    code_part = '\n'.join(lines[1:])
+                return code_part.strip()
+        
+        # 如果响应看起来像是Python代码（包含def关键字），直接返回
+        if "def " in response:
+            return response
+        
+        # 尝试提取"Final Answer:"后的内容
+        if "final answer:" in response.lower():
+            parts = response.lower().split("final answer:")
+            if len(parts) > 1:
+                code = parts[-1].strip()
+                # 递归调用以处理可能的代码块格式
+                return self._extract_code_from_response(code)
+        
+        # 默认返回整个响应
+        return response
+    
+    async def judge(self, model_output: Any, ground_truth_data: Dict[str, Any]) -> bool:
+        """
+        评判模型生成的代码是否正确。
+        通过运行测试用例来验证代码的正确性。
+        
+        :param model_output: 工作流执行后返回的代码
+        :param ground_truth_data: 包含测试用例的完整数据
+        :return: True 如果所有测试通过，否则为 False
+        """
+        try:
+            # 提取代码
+            generated_code = self._extract_code_from_response(str(model_output))
+            
+            # 获取测试用例
+            test_cases = ground_truth_data.get('test_list', [])
+            test_setup = ground_truth_data.get('test_setup_code', '')
+            
+            if not test_cases:
+                # 如果没有测试用例，回退到LLM判断
+                print("Warning: No test cases found, falling back to LLM judge")
+                return await self.llm_judge(model_output, ground_truth_data)
+            
+            # 执行代码并运行测试
+            passed, message = self._execute_code_with_tests(
+                generated_code, 
+                test_cases, 
+                test_setup
+            )
+            
+            print(f"Code execution result: {message}")
+            return passed
+            
+        except Exception as e:
+            print(f"Error in MBPP judge: {e}")
+            # 如果执行失败，认为答案错误
             return False

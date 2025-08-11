@@ -7,6 +7,6 @@ machine_rank: 0
 main_process_ip: null
 main_process_port: null
 deepspeed_config:
-  deepspeed_config_file: /nas/ganluo/Flow_RL/my_llama3_h100/configs/deepspeed_config_z3.json
+  deepspeed_config_file: /nas/ganluo/Flow_RL/my_llama3_h100_new/configs/deepspeed_config_z3.json
   zero3_init_flag: true
 use_cpu: false

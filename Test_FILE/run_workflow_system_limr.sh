@@ -93,7 +93,7 @@ EXEC_LLM='{
 
 # --- 路径配置 ---
 # 总的工作空间，所有生成物和结果都将保存在这里
-WORKSPACE_PATH="./workspace_gsm8k_COT"
+WORKSPACE_PATH="./workspace_LIMR_COT"
 
 # --- 系统配置 ---
 LOG_LEVEL="INFO"
@@ -106,7 +106,7 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 
 # ------------------------- 任务 1: GSM8K (数学推理) -------------------------
 #
-BENCHMARK="gsm8k"
+BENCHMARK="high_level_math_ganluo"
 TOTAL_PROBLEMS=1000      # Testing with just 1 problem
 MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
 MAX_SAMPLE_SIZE=2     # 每个工作流最多使用的问题样本数
@@ -116,7 +116,7 @@ MAX_CONCURRENT_GROUPS=5  # 生成阶段最大并发组数（组间并行，组�
 BATCH_SIZE=$MAX_CONCURRENT_GROUPS          # 每批次生成的工作流数量 = 最大并发组数
 # 数据集文件的路径 (推荐使用相对路径)
 # 假设数据存放在项目根目录下的 'data' 文件夹中
-DATASET_PATH="../Processed_dataset/gsm8k/1000_train.jsonl"
+DATASET_PATH="../Processed_dataset/high_level_math/limr_1000.jsonl"
 # 训练数据输出文件
 TRAINING_DATA_OUTPUT="${WORKSPACE_PATH}/training_data_${BENCHMARK}.jsonl"
 

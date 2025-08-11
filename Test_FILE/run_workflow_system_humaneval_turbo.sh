@@ -36,26 +36,71 @@ cd "$(dirname "$0")" || exit
 # --- API 与模型配置 (JSON格式) ---
 # API池，用于【生成阶段】，可以配置多个备用模型。
 # 注意: 我们使用 "$YOUR_API_KEY" 从环境变量中读取密钥。
-API_POOL='[
-    {
-        "provider": "openai",
-        "model": "qwen-turbo",
-        "api_key": "sk-2df74af0570a42059c10a3f24de1b9df",
-        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    }
-]'
+# API_POOL='[
+#     {
+#     "provider": "openai",
+#     "model": "qwen-turbo", 
+#     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+#     "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
+# }
+# ]'
+
+# # 执行LLM，用于【工作流内部的算子】，通常只配置一个高效、可靠的模型。
+# EXEC_LLM='{
+#     "provider": "openai",
+#     "model": "qwen-turbo", 
+#     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+#     "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
+# }'
+
+# ALIBABA代理
+
+# API_POOL='[
+#     {
+#     "provider": "openai",
+#     "model": "qwen-turbo", 
+#     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+#     "base_url": "http://localhost:5001"
+# }
+# ]'
+# EXEC_LLM='{
+#     "provider": "openai",
+#     "model": "qwen-turbo", 
+#     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+#     "base_url": "http://localhost:5001"
+# }'
+
+API_POOL='[{
+    "provider": "openai",
+    "model": "qwen-turbo", 
+    "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+    "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
+}]'
+
+# API_POOL='[
+#     {
+#         "provider": "openai",
+#         "model": "qwen-max-latest",
+#         "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+#         "base_url": "https://idealab.alibaba-inc.com/api/openai/v1",
+#         "stream": false,
+#         "stream_options": {"include_usage": true},
+#         "enable_thinking": true,
+#         "thinking_budget": 2000
+#     }
+# ]'
 
 # 执行LLM，用于【工作流内部的算子】，通常只配置一个高效、可靠的模型。
 EXEC_LLM='{
     "provider": "openai",
-    "model": "qwen-turbo",
-    "api_key": "sk-2df74af0570a42059c10a3f24de1b9df",
-    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    "model": "qwen-turbo", 
+    "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+    "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
 }'
 
 # --- 路径配置 ---
 # 总的工作空间，所有生成物和结果都将保存在这里
-WORKSPACE_PATH="./workspace_human_eval"
+WORKSPACE_PATH="./workspace_humaneval_COT_qwen_turbo"
 
 # --- 系统配置 ---
 LOG_LEVEL="INFO"
@@ -66,16 +111,15 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 # ============================ 任务配置 =======================================
 # 说明: 一次只取消注释一个任务块来运行。
 
-# ------------------------- 任务 1: GSM8K (数学推理) -------------------------
+# ------------------------- 任务 1: HotPotQA (多跳问答) -------------------------
 #
 BENCHMARK="humaneval"
-# wc -l  /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
 TOTAL_PROBLEMS=164      # Testing with just 1 problem
-MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
-MAX_SAMPLE_SIZE=3     # 每个工作流最多使用的问题样本数
+MIN_SAMPLE_SIZE=1     # 每个工作流最少使用的问题样本数
+MAX_SAMPLE_SIZE=1     # 每个工作流最多使用的问题样本数
 MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
-PARALLELISM=2  # 每个数据组合生成的工作流并行度（默认2个不同版本）
-MAX_CONCURRENT_GROUPS=3  # 生成阶段最大并发组数（组间并行，组内串行）
+PARALLELISM=1  # 每个数据组合生成的工作流并行度（默认2个不同版本）
+MAX_CONCURRENT_GROUPS=5  # 生成阶段最大并发组数（组间并行，组内串行）
 BATCH_SIZE=$MAX_CONCURRENT_GROUPS          # 每批次生成的工作流数量 = 最大并发组数
 # 数据集文件的路径 (推荐使用相对路径)
 # 假设数据存放在项目根目录下的 'data' 文件夹中

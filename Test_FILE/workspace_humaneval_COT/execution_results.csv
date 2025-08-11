@@ -1,0 +1,10 @@
+ID,Benchmark,Data_Indices,Status,Error_Type,Ground_Truth,Model_Output
+humaneval_0_0,humaneval,0_1,verified_correct,,"    for idx, elem in enumerate(numbers):
+        for idx2, elem2 in enumerate(numbers):
+            if idx != idx2:
+                distance = abs(elem - elem2)
+                if distance < threshold:
+                    return True
+
+    return False
+","{""output"": ""from typing import List\n\n\ndef has_close_elements(numbers: List[float], threshold: float) -> bool:\n    for i in range(len(numbers)):\n        for j in range(i + 1, len(numbers)):\n            if abs(numbers[i] - numbers[j]) < threshold:\n                return True\n    return False""}"

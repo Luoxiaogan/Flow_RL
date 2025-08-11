@@ -23,7 +23,7 @@ def select_random_data(input_file, output_file, num_samples=400):
     print(f"已从 {input_file} 中随机选择 {len(selected_lines)} 行数据保存到 {output_file}")
 
 if __name__ == "__main__":
-    input_file = "/nas/ganluo/Flow_RL/Processed_dataset/drop/train.jsonl"
-    output_file = "/nas/ganluo/Flow_RL/Processed_dataset/drop/train_select_1000.jsonl"
+    input_file = "train.jsonl"
+    output_file = "train_select_1000.jsonl"
     
     select_random_data(input_file, output_file, 1000)
