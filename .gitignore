@@ -7,6 +7,7 @@ Test_FILE/verl_internbootcamp/logs
 Test_FILE/verl_internbootcamp/workspace
 Test_FILE/verl_support/logs
 Test_FILE/verl_support/metagpt
+Test_FILE/verl_support/workspace
 Datasets/
 wandb/
 Test_FILE/verl_support/data
@@ -29,3 +30,4 @@ Test_FILE/verl_support/core-ray::WorkerDict-158032-1753628193
 *.parquet
 .claude
 Test_FILE/verl_support/checkpoints/
+metagpt_root/

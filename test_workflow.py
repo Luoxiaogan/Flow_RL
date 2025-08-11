@@ -11,23 +11,26 @@ import json
 import importlib
 from typing import Dict, Any
 import logging
+from pathlib import Path
 
 # 添加项目路径
-sys.path.append('/Users/luogan/Code/workflow_generation/Flow_RL')
-os.chdir('/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE')
-
+# sys.path.append('/Users/luogan/Code/workflow_generation/Flow_RL')
+# os.chdir('/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE')
+METAGPT_LOCAL = Path(__file__).parent / "Test_FILE" / "metagpt_local" / "metagpt_local"
+if METAGPT_LOCAL.exists():
+    sys.path.insert(0, str(METAGPT_LOCAL))
 # ========================================
 #           配 置 区
 # ========================================
 
 # Workflow文件路径
-WORKFLOW_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE/workspace_mbpp_COT/generated_workflows/mbpp/mbpp_0_0.py"
+WORKFLOW_PATH = "测试_CLAUDE_4_的_workflow.py"
 
 # Benchmark名称（可以从workflow路径自动推断）
 BENCHMARK = "mbpp"  # gsm8k, mbpp, drop, etc.
 
 # 数据集路径
-DATASET_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/mbpp/train.jsonl"
+DATASET_PATH = "Processed_dataset/drop/train_select_400.jsonl"
 
 # 测试数据的索引
 TEST_INDEX = 5

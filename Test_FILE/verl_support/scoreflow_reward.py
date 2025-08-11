@@ -22,7 +22,7 @@ CURRENT_DIR = Path(__file__).parent
 PROJECT_ROOT = CURRENT_DIR.parent.parent
 sys.path.append(str(PROJECT_ROOT))
 sys.path.append(str(PROJECT_ROOT / "Test_FILE"))
-
+METAGPT_PROJECT_ROOT = Path(os.environ["METAGPT_PROJECT_ROOT"])
 # 添加MetaGPT本地路径
 METAGPT_LOCAL = PROJECT_ROOT / "Test_FILE" / "metagpt_local" / "metagpt_local"
 if METAGPT_LOCAL.exists():
@@ -30,14 +30,14 @@ if METAGPT_LOCAL.exists():
 
 # 设置MetaGPT的工作目录和日志目录到Test_FILE
 import os
-os.environ["METAGPT_WORKSPACE"] = str(PROJECT_ROOT / "Test_FILE" / "workspace")
-os.environ["METAGPT_LOG_DIR"] = str(PROJECT_ROOT / "Test_FILE" / "logs")
-os.environ["METAGPT_DATA_PATH"] = str(PROJECT_ROOT / "Test_FILE" / "data")
+os.environ["METAGPT_WORKSPACE"] = str(METAGPT_PROJECT_ROOT / "workspace")
+os.environ["METAGPT_LOG_DIR"] = str(METAGPT_PROJECT_ROOT / "logs")
+os.environ["METAGPT_DATA_PATH"] = str(METAGPT_PROJECT_ROOT / "data")
 
 # 创建必要目录
-(PROJECT_ROOT / "Test_FILE" / "workspace").mkdir(parents=True, exist_ok=True)
-(PROJECT_ROOT / "Test_FILE" / "logs").mkdir(parents=True, exist_ok=True)
-(PROJECT_ROOT / "Test_FILE" / "data").mkdir(parents=True, exist_ok=True)
+(METAGPT_PROJECT_ROOT / "workspace").mkdir(parents=True, exist_ok=True)
+(METAGPT_PROJECT_ROOT / "logs").mkdir(parents=True, exist_ok=True)
+(METAGPT_PROJECT_ROOT / "data").mkdir(parents=True, exist_ok=True)
 
 import asyncio as aio
 from typing import List as ListType
