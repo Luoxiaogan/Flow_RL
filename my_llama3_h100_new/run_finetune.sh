@@ -11,7 +11,7 @@ export CUDA_LAUNCH_BLOCKING=0
 # ============================================
 # 选择模型类型: "qwen" 或 "llama"
 # ============================================
-MODEL_TYPE="qwen"  # 修改这里来切换模型
+MODEL_TYPE="llama"  # 修改这里来切换模型
 
 # ============================================
 # 是否启用损失掩码 (只在助手回答上计算损失)
@@ -35,7 +35,7 @@ if [ "$MODEL_TYPE" = "qwen" ]; then
     
     # Qwen 推荐的训练参数
     PER_DEVICE_BATCH_SIZE=4
-    GRAD_ACCUM_STEPS=4
+    GRAD_ACCUM_STEPS=1
     LEARNING_RATE=2e-5
     MAX_SEQ_LENGTH=8192  # Qwen支持更长的序列
     
@@ -47,9 +47,9 @@ elif [ "$MODEL_TYPE" = "llama" ]; then
     
     # Llama 推荐的训练参数
     PER_DEVICE_BATCH_SIZE=4
-    GRAD_ACCUM_STEPS=4
-    LEARNING_RATE=1e-5
-    MAX_SEQ_LENGTH=4096
+    GRAD_ACCUM_STEPS=1
+    LEARNING_RATE=2e-5
+    MAX_SEQ_LENGTH=8192
 else
     echo "Error: MODEL_TYPE must be 'qwen' or 'llama'"
     exit 1
@@ -78,7 +78,7 @@ CMD_ARGS=(
     --model_type $MODEL_TYPE
     --dataset_path $DATASET_PATH
     --output_dir $OUTPUT_DIR
-    --num_train_epochs 3
+    --num_train_epochs 5
     --per_device_train_batch_size $PER_DEVICE_BATCH_SIZE
     --per_device_eval_batch_size 2
     --gradient_accumulation_steps $GRAD_ACCUM_STEPS

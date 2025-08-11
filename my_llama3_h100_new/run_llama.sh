@@ -2,7 +2,7 @@
 # 训练 Llama
 
 # 可选: 启用损失掩码 (取消注释下一行)
-# export USE_LOSS_MASK_OVERRIDE=true
+export USE_LOSS_MASK_OVERRIDE=true
 
 # 设置模型类型为 Llama
 sed -i 's/MODEL_TYPE=".*"/MODEL_TYPE="llama"/' run_finetune.sh
