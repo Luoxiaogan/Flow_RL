@@ -1,6 +1,6 @@
 # Workflow ID: hotpotqa_0_0
 # Benchmark: hotpotqa
-# Data Indices: [1, 0]
+# Data Indices: [1, 2]
 
 class Workflow:
     def __init__(self, config, problem) -> None:
@@ -16,134 +16,101 @@ class Workflow:
     async def run_workflow(self):
         import asyncio
         
-        # Step 1: Identify the core question type and target entity
+        # Step 1: Identify the question type and core query
         instruction_1 = """
-        Analyze the question carefully and determine:
-        - What is the main entity or concept being asked about?
-        - Is this a bridge question, comparison question, or compositional question?
-        - If it's a bridge question, identify the likely bridge entity that connects two or more documents.
-        - If it's a comparison question, identify the two entities being compared.
-        - If it's a compositional question, break down the required facts into sub-questions.
-
-        Output your analysis as a JSON object with keys:
-        - 'question_type': string ("bridge", "comparison", or "compositional")
-        - 'target_entity': string (the primary subject of the question)
-        - 'bridge_entity': string (if applicable, else null)
-        - 'comparison_entities': list of strings (if applicable, else empty list)
-        - 'sub_questions': list of strings (if applicable, else empty list)
+        Analyze the question carefully. Determine what type of reasoning is required:
+        - Bridge Question: Requires connecting two pieces of information through a shared entity
+        - Comparison Question: Requires comparing properties of two entities
+        - Compositional Question: Requires combining multiple facts to derive an answer
+        
+        Also, identify the primary entity or concept being queried (e.g., person, place, event).
+        Return your result in JSON format with keys: 'question_type', 'primary_entity'.
+        Example: {"question_type": "bridge", "primary_entity": "William Prescott"}
         """
-        analysis_json_str = await self.generate(instruction=instruction_1, context=self.problem_text)
+        analysis_result = await self.generate(instruction=instruction_1, context=self.problem_text)
         
-        # Parse the JSON output from the first step
-        try:
-            import json
-            analysis = json.loads(analysis_json_str)
-        except json.JSONDecodeError:
-            raise ValueError("Failed to parse analysis JSON from generate step.")
+        # Step 2: Extract the key entity mentioned in the question
+        instruction_2 = f"""
+        Based on the analysis above, extract the exact phrase(s) that refer to the main subject of the question.
+        For example, if the question is about the birthplace of someone, extract their name.
+        If it's a comparison, extract both entities being compared.
+        Return only the raw text of the entity or entities involved in the question.
+        Do NOT add explanations or formatting — just the string(s).
+        """
+        entity_result = await self.generate(instruction=instruction_2, context=analysis_result)
         
-        # Step 2: Based on the identified type, extract relevant documents and bridge info
-        if analysis['question_type'] == 'bridge':
-            instruction_2 = f"""
-            You have determined this is a bridge question targeting '{analysis['target_entity']}' 
-            connected via the bridge entity '{analysis['bridge_entity']}'. 
-
-            Now, scan all context documents to find:
-            - Which documents mention the bridge entity?
-            - From those documents, extract sentences that contain information about the target entity.
-            - Also extract any supporting facts that help link the bridge entity to the target entity.
-
-            Format your response as a JSON array of objects with keys:
-            - 'document_id': int (the index of the document in the original list)
-            - 'relevant_sentences': list of strings (sentences containing relevant info)
-            - 'supporting_facts': list of strings (facts that support the connection between bridge and target)
-            """
-            bridge_info_json_str = await self.generate(instruction=instruction_2, context=self.problem_text)
-            try:
-                bridge_info = json.loads(bridge_info_json_str)
-            except json.JSONDecodeError:
-                raise ValueError("Failed to parse bridge info JSON from generate step.")
-
-            # Step 3: Synthesize the answer using the extracted facts
-            facts_str = "\n".join([
-                f"Doc {doc['document_id']}: {fact}"
-                for doc in bridge_info
-                for fact in doc['supporting_facts']
-            ])
-            
-            instruction_3 = f"""
-            Using the following supporting facts, derive the final answer:
-
-            {facts_str}
-
-            The question was: "{self.problem_text}"
-
-            Provide a concise, precise answer that directly addresses the question.
-            Include the exact span(s) of text from the documents that support your answer.
-            Format as:
-            - Answer: [your answer]
-            - Supporting Facts: [list of sentence spans that justify the answer]
-            """
-            final_answer = await self.generate(instruction=instruction_3, context="")
-            
-        elif analysis['question_type'] == 'comparison':
-            instruction_2 = f"""
-            This is a comparison question comparing entities: {', '.join(analysis['comparison_entities'])}.
-            Identify the property being compared (e.g., founding date, nationality, etc.).
-
-            For each entity, locate the relevant document(s) that provide the comparative value.
-            Extract the specific values from those documents.
-
-            Output as a JSON object:
-            - 'property': string (the attribute being compared)
-            - 'values': dict mapping entity name to its value
-            """  
-            comparison_data_json_str = await self.generate(instruction=instruction_2, context=self.problem_text)
-            try:
-                comparison_data = json.loads(comparison_data_json_str)
-            except json.JSONDecodeError:
-                raise ValueError("Failed to parse comparison data JSON from generate step.")
-            
-            instruction_3 = f"""
-            Given these values:
-            {json.dumps(comparison_data, indent=2)}
-
-            Determine which entity has the higher/lower value (depending on the property).
-            Provide a clear answer stating which entity wins the comparison.
-            Include the exact sentence from the source documents that supports the value used.
-            """
-            final_answer = await self.generate(instruction=instruction_3, context="")
-
-        elif analysis['question_type'] == 'compositional':
-            instruction_2 = f"""
-            This is a compositional question requiring multiple facts. Break it down into sub-questions:
-            {', '.join(analysis['sub_questions'])}
-
-            For each sub-question, find the document(s) that contain the answer.
-            Extract the relevant sentence(s) for each sub-question.
-
-            Output as a JSON array of objects:
-            - 'sub_question': string
-            - 'answer': string
-            - 'source_sentence': string (the sentence from the document that contains the answer)
-            """
-            sub_q_results_json_str = await self.generate(instruction=instruction_2, context=self.problem_text)
-            try:
-                sub_q_results = json.loads(sub_q_results_json_str)
-            except json.JSONDecodeError:
-                raise ValueError("Failed to parse sub-question results JSON from generate step.")
-            
-            instruction_3 = f"""
-            Combine the following answers to form a complete response to the original question:
-            {json.dumps(sub_q_results, indent=2)}
-
-            Original question: "{self.problem_text}"
-
-            Provide a concise answer that integrates all pieces of information.
-            Cite the source sentences for each piece of information used.
-            """
-            final_answer = await self.generate(instruction=instruction_3, context="")
-
-        else:
-            raise ValueError(f"Unknown question type: {analysis['question_type']}")
-
+        # Step 3: Find documents containing this entity
+        instruction_3 = f"""
+        Search all provided context documents for mentions of the following entity: "{entity_result}".
+        List each document number (1-based index) where the entity appears.
+        Include brief context from each matching document (first sentence or two).
+        Format as a list of dictionaries: [{{"doc_id": int, "context": str}}]
+        """
+        doc_matches = await self.generate(instruction=instruction_3, context=self.problem_text)
+        
+        # Step 4: For bridge questions, find the next hop (the connecting entity)
+        instruction_4 = f"""
+        You are solving a {analysis_result['question_type']} question involving the entity "{entity_result}".
+        From the matched documents, identify which other document(s) contain additional relevant facts that help answer the original question.
+        Specifically, look for:
+        - Documents that mention the same entity but in a different context (e.g., birthplace, profession, affiliations)
+        - Documents that introduce a new entity that connects to the original one (e.g., "born in X" → "X has prep schools")
+        
+        Output a list of potential bridge documents with short descriptions of how they relate to the original entity.
+        Format as: [{{"doc_id": int, "reason": str}}]
+        """
+        bridge_candidates = await self.generate(instruction=instruction_4, context=doc_matches)
+        
+        # Step 5: Build full reasoning chain (for bridge questions)
+        instruction_5 = f"""
+        Construct a step-by-step reasoning chain that leads from the original question to the final answer.
+        Start with the entity "{entity_result}".
+        Then describe how you move from Document A to Document B via a bridge entity or fact.
+        Finally, state the answer derived from the chain.
+        
+        Your output must be structured like this:
+        Chain: 
+        1. Entity: {entity_result}
+        2. From Document X: [fact about entity]
+        3. This connects to Document Y via [bridge entity/fact]
+        4. From Document Y: [supporting fact for answer]
+        5. Therefore, the answer is: [final answer]
+        """
+        reasoning_chain = await self.generate(instruction=instruction_5, context=bridge_candidates)
+        
+        # Step 6: Validate and refine the chain
+        instruction_6 = f"""
+        Review the reasoning chain below. Critique it for logical gaps, missing steps, or ambiguous references.
+        If any part lacks clarity or support, revise it accordingly.
+        Ensure every claim is grounded in the provided documents.
+        
+        Original Chain:
+        {reasoning_chain}
+        
+        Provide the revised chain in the same structure as before.
+        """
+        refined_chain = await self.revise(instruction=instruction_6, context=reasoning_chain)
+        
+        # Step 7: Extract precise answer span from the final document
+        instruction_7 = f"""
+        From the final document in the reasoning chain, locate the specific sentence(s) that directly support the conclusion.
+        Extract only the exact answer span (a short phrase or word) that answers the original question.
+        Do not paraphrase — return the original wording found in the text.
+        """
+        answer_span = await self.generate(instruction=instruction_7, context=refined_chain)
+        
+        # Step 8: Final ensemble check – if multiple candidates exist, choose best
+        instruction_8 = f"""
+        You have produced one candidate answer: "{answer_span}".
+        However, due to ambiguity in some cases, generate up to three alternative interpretations or answer spans based on the same reasoning chain.
+        Then, evaluate them against the original question and supporting facts to select the most accurate and well-supported one.
+        
+        Output format:
+        - Candidate 1: [text]
+        - Candidate 2: [text]
+        - Candidate 3: [text]
+        - Best Answer: [chosen answer]
+        """  
+        final_answer = await self.ensemble(instruction=instruction_8, contexts=[answer_span])
+        
         return final_answer
