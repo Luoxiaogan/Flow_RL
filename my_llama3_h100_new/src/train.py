@@ -13,7 +13,9 @@ from transformers import (
 )
 from dataclasses import dataclass, field
 from typing import Optional
-from .data_collator import DataCollatorForChatML, DataCollatorForCausalLMWithMasking
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from data_collator import DataCollatorForChatML, DataCollatorForCausalLMWithMasking
 
 # --- 定义参数类 ---
 @dataclass
