@@ -1,0 +1,10 @@
+{
+    "id": "high_level_math_ganluo_15_0",
+    "benchmark": "high_level_math_ganluo",
+    "data_indices": [
+        22,
+        424
+    ],
+    "dataset_path": "../Processed_dataset/high_level_math/limr_1000.jsonl",
+    "generation_timestamp": 1754901669.1629534
+}

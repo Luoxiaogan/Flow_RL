@@ -70,7 +70,7 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 #
 BENCHMARK="drop"
 # wc -l  /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
-TOTAL_PROBLEMS=400      # Testing with just 1 problem
+TOTAL_PROBLEMS=1000      # Testing with just 1 problem
 MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
 MAX_SAMPLE_SIZE=2     # 每个工作流最多使用的问题样本数
 MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
@@ -79,7 +79,7 @@ MAX_CONCURRENT_GROUPS=5  # 生成阶段最大并发组数（组间并行，组�
 BATCH_SIZE=$MAX_CONCURRENT_GROUPS          # 每批次生成的工作流数量 = 最大并发组数
 # 数据集文件的路径 (推荐使用相对路径)
 # 假设数据存放在项目根目录下的 'data' 文件夹中
-DATASET_PATH="../Processed_dataset/drop/train_select_400.jsonl"
+DATASET_PATH="../Processed_dataset/drop/train_select_1000.jsonl"
 # 训练数据输出文件
 TRAINING_DATA_OUTPUT="${WORKSPACE_PATH}/training_data_${BENCHMARK}.jsonl"
 
