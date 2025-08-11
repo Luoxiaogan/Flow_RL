@@ -89,7 +89,7 @@ EXEC_LLM='{
 
 # --- 路径配置 ---
 # 总的工作空间，所有生成物和结果都将保存在这里
-WORKSPACE_PATH="./workspace_gsm8k_test"
+WORKSPACE_PATH="./workspace_gsm8k_COT"
 
 # --- 系统配置 ---
 LOG_LEVEL="INFO"
@@ -103,10 +103,10 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 # ------------------------- 任务 1: GSM8K (数学推理) -------------------------
 #
 BENCHMARK="gsm8k"
-TOTAL_PROBLEMS=2      # Testing with just 1 problem
+TOTAL_PROBLEMS=1000      # Testing with just 1 problem
 MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
 MAX_SAMPLE_SIZE=2     # 每个工作流最多使用的问题样本数
-MAX_CONCURRENT_EXECUTIONS=6  # 并行执行工作流的最大并发数
+MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
 PARALLELISM=1  # 每个数据组合生成的工作流并行度（默认2个不同版本）
 MAX_CONCURRENT_GROUPS=5  # 生成阶段最大并发组数（组间并行，组内串行）
 BATCH_SIZE=$MAX_CONCURRENT_GROUPS          # 每批次生成的工作流数量 = 最大并发组数

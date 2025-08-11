@@ -10,9 +10,7 @@ curl -X POST "https://idealab.alibaba-inc.com/api/openai/v1/chat/completions" \
   -H "Authorization: Bearer 956c41bd0f31beaf68b871d4987af4bb" \
   -d '{
     "model": "qwen-turbo",
-    "messages": [{"role": "user", "content": "
-    please read the text, and think and show thinking test in <thik><think>, and the revised text in <revised><revised>. text: apple is an animal.  your answer: <thik><think>, <revised><revised>
-    "}],
+    "messages": [{"role": "user", "content": "please read the text, and think and show thinking test in <thik><think>, and the revised text in <revised><revised>. text: apple is an animal.  your answer: <thik><think>, <revised><revised>"}],
     "max_tokens": 100
   }'
 ```

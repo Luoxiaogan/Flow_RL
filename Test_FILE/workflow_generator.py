@@ -185,16 +185,33 @@ class WorkflowGenerator:
             
             # 3. 提取代码
             # 优先提取 <graph> 标签内的内容，否则剥离 ```python ```
-            if "<graph>" in response_content:
-                code = response_content.split('<graph>')[1].split('</graph>')[0].strip()
-            else:
-                code = response_content.strip().strip('```python').strip('```').strip()
+            # if "<graph>" in response_content:
+            #     code = response_content.split('<graph>')[1].split('</graph>')[0].strip()
+            # else:
+            #     code = response_content.strip().strip('```python').strip('```').strip()
 
+            # 3. 准备SFT训练数据和执行器代码
+            assistant_content_for_sft = response_content.strip()
+            # 从完整响应中提取用于执行器的代码
+            code_for_executor = ""
+            if '<code>' in assistant_content_for_sft and '</code>' in assistant_content_for_sft:
+                # 优先使用新的 <code> 标签提取
+                code_for_executor = assistant_content_for_sft.split('<code>', 1)[1].split('</code>', 1)[0].strip()
+            elif '<graph>' in assistant_content_for_sft and '</graph>' in assistant_content_for_sft:
+                # 向后兼容，如果模型输出了旧的 <graph> 标签
+                logging.warning(f"工作流 {workflow_id} 使用了旧的 <graph> 标签。")
+                code_for_executor = assistant_content_for_sft.split('<graph>', 1)[1].split('</graph>', 1)[0].strip()
+            else:
+                # 最后的备用方案，如果模型完全没有按要求输出标签
+                logging.warning(f"在 {workflow_id} 的响应中未能找到 <code> 或 <graph> 标签，将尝试剥离 markdown。")
+                code_for_executor = assistant_content_for_sft.strip().strip('```python').strip('```').strip()
+            
             # 4. 保存结果
-            if code:
-                self._save_workflow_files(workflow_id, code, data_indices)
+            if code_for_executor:
+                # 保存 .py 文件时，只使用干净的代码
+                self._save_workflow_files(workflow_id, code_for_executor, data_indices)
                 logging.info(f"成功生成并保存工作流: {workflow_id}")
-                # 立即保存训练数据（而不是暂存）
+                # 保存训练数据时，使用完整的 <thought>...<code>...</code> 内容
                 if self.training_data_output:
                     system_prompt = messages[0]['content']
                     # _, _, system_prompt, _ = self._load_prompt_templates()
@@ -205,11 +222,11 @@ class WorkflowGenerator:
                         "messages": [
                             {"role": "system", "content": system_prompt},
                             {"role": "user", "content": sft_instruction}, # <-- 使用干净、一致的SFT instruction
-                            {"role": "assistant", "content": code}
+                            {"role": "assistant", "content": assistant_content_for_sft} 
                         ]
                     }
                     self._save_single_training_record(training_record)
-                return code  # 返回生成的代码供后续使用
+                return code_for_executor  # 返回干净的代码供后续步骤（如生成多样性工作流）使用
             else:
                 raise ValueError("API响应中未能提取有效代码。")
 
