@@ -221,10 +221,9 @@ class Workflow:
     def __init__(self, config, problem):
         self.config = config
         self.problem = problem
-        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
     
     async def run_workflow(self):
-        solution = await self.flexible_custom(
+        solution = await self.custom(
             custom_instruction="Analyze and solve this problem systematically"
         )
         return solution

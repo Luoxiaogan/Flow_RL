@@ -40,6 +40,11 @@ def default_compute_score(
     Raises:
         NotImplementedError: If the reward function is not implemented for the given data source.
     """
+    if data_source.startswith("workflow_"):
+        data_source = data_source.replace("workflow_", "")
+        from . import workflow_scoreflow
+        res = workflow_scoreflow.compute_score(data_source, solution_str, ground_truth, extra_info)
+        return res
     if data_source == "openai/gsm8k":
         from . import gsm8k
 
@@ -101,22 +106,6 @@ def default_compute_score(
         from . import search_r1_like_qa_em
 
         res = search_r1_like_qa_em.compute_score(solution_str, ground_truth)
-    elif data_source.startswith("scoreflow_") or data_source in [
-        "gsm8k", "mbpp", "humaneval", "mmlu", "arc", "hellaswag", "winogrande", "truthfulqa",
-        "scoreflow_gsm8k", "scoreflow_mbpp", "scoreflow_humaneval"
-    ]:
-        # ScoreFlow Workflow Reward Integration
-        from . import workflow_scoreflow
-        
-        # Prepare extra_info for ScoreFlow
-        if extra_info is None:
-            extra_info = {}
-        
-        # Extract the actual data source name (remove scoreflow_ prefix if present)
-        actual_data_source = data_source.replace("scoreflow_", "") if data_source.startswith("scoreflow_") else data_source
-        extra_info['data_source'] = actual_data_source
-        
-        res = workflow_scoreflow.compute_score(solution_str, ground_truth, extra_info)
     elif data_source.startswith("internbootcamp_"):
         from . import workflow_internbootcamp
         res = workflow_internbootcamp.compute_score(solution_str, ground_truth, extra_info)

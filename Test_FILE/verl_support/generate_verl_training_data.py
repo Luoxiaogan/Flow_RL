@@ -231,7 +231,7 @@ class VerlTrainingDataGenerator:
                     
                     # Build VERL record
                     record = {
-                        'data_source': benchmark_name,
+                        'data_source': f"workflow_{benchmark_name}",
                         'prompt': messages,  # HuggingFace chat format
                         'ability': 'workflow',
                         'reward_model': {
