@@ -57,7 +57,7 @@ class Generate(Operator):
     核心算子：创造。
     根据指令和上下文，生成新的、非结构化的文本。
     """
-    async def __call__(self, instruction: str, context: str = "") -> str:
+    async def __call__(self, instruction: str = "", context: str = "") -> str:
         print("=" * 60)
         print("\n🚀 执行 operator: Generate")
         prompt = f"""You are a helpful assistant. Follow the instruction to generate a response.
@@ -83,7 +83,7 @@ class Revise(Operator):
     核心算子：改进。
     根据指令，对一个已有的文本（草稿）进行审查和修订。
     """
-    async def __call__(self, instruction: str, context: str) -> str:
+    async def __call__(self, instruction: str = "", context: str = "") -> str:
         print("=" * 60)
         print("\n🚀 执行 operator: Revise")
         prompt = f"""You are an expert editor. Your task is to revise the provided text based on the given instruction, and the goal is to improve the performance on answering the original problem.
@@ -118,7 +118,7 @@ class Summarize(Operator):
     核心算子：压缩。
     将长文本缩减为核心要点。
     """
-    async def __call__(self, instruction: str, context: str) -> str:
+    async def __call__(self, instruction: str = "", context: str = "") -> str:
         print("=" * 60)
         print("\n🚀 执行 operator: Summarize")
         prompt = f"""You are an expert summarizer. Your task is to read the following text and summarize its key points, especially those relevant to the original problem.
@@ -145,7 +145,7 @@ class Ensemble(Operator):
     核心算子：决策。
     根据指令，从多个候选项中选择或融合。
     """
-    async def __call__(self, instruction: str, contexts: List[str]) -> str:
+    async def __call__(self, instruction: str = "", contexts: List[str] = []) -> str:
         print("=" * 60)
         print("\n🚀 执行 operator: Ensemble")
         formatted_contexts = ""

@@ -72,11 +72,15 @@ cd "$(dirname "$0")" || exit
 
 API_POOL='[
     {
-    "provider": "openai",
-    "model": "qwen-turbo", 
-    "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-    "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
-}
+        "provider": "openai",
+        "model": "qwen-max-latest",
+        "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+        "base_url": "https://idealab.alibaba-inc.com/api/openai/v1",
+        "stream": false,
+        "stream_options": {"include_usage": true},
+        "enable_thinking": true,
+        "thinking_budget": 2000
+    }
 ]'
 
 # 执行LLM，用于【工作流内部的算子】，通常只配置一个高效、可靠的模型。

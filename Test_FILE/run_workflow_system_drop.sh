@@ -50,16 +50,6 @@ API_POOL='[
 ]'
 
 # 执行LLM，用于【工作流内部的算子】，通常只配置一个高效、可靠的模型。
-# EXEC_LLM='{
-#     "provider": "openai",
-#     "model": "qwen-max-latest",
-#     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-#     "base_url": "https://idealab.alibaba-inc.com/api/openai/v1",
-#     "stream": false,
-#     "stream_options": {"include_usage": true},
-#     "enable_thinking": true,
-#     "thinking_budget": 1000
-# }'
 EXEC_LLM='{
     "provider": "openai",
     "model": "qwen-turbo", 
@@ -84,7 +74,7 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 #
 BENCHMARK="drop"
 # wc -l  /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
-TOTAL_PROBLEMS=2     # Testing with just 1 problem
+TOTAL_PROBLEMS=1000      # Testing with just 1 problem
 MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
 MAX_SAMPLE_SIZE=2     # 每个工作流最多使用的问题样本数
 MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
