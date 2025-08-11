@@ -83,7 +83,7 @@ class Revise(Operator):
     核心算子：改进。
     根据指令，对一个已有的文本（草稿）进行审查和修订。
     """
-    async def __call__(self, instruction: str, context: str) -> str:
+    async def __call__(self, instruction: str, context_to_revise: str) -> str:
         print("=" * 60)
         print("\n🚀 执行 operator: Revise")
         prompt = f"""You are an expert editor. Your task is to revise the provided text based on the given instruction, and the goal is to improve the performance on answering the original problem.
@@ -93,18 +93,18 @@ class Revise(Operator):
 
 **Original Text to Revise:**
 ---
-{context if context else "No context provided."}
+{context_to_revise}
 ---
 
 **Original Problem:**
 {self.problem_text}
 
-Your response MUST be a valid XML format with two fields: 'think' and 'revised_context'.
-- In the "think" field, explain your step-by-step revision process.
+Your response MUST be a valid XML format with two fields: 'thought' and 'revised_context'.
+- In the "thought" field, explain your step-by-step revision process.
 - In the "revised_context" field, provide ONLY the final, improved version of the text.
 
 **EXAMPLE:**
-<think>The user asked to make the tone more formal. I will change 'guys' to 'team' and 'awesome' to 'excellent'.</think>
+<thought>The user asked to make the tone more formal. I will change 'guys' to 'team' and 'awesome' to 'excellent'.</thought>
 <revised_context>The team's performance was excellent.</revised_context>
 
 **notice that the revise should not change the original meaning, but rather improve clarity, correctness, or style.**
@@ -118,21 +118,18 @@ class Summarize(Operator):
     核心算子：压缩。
     将长文本缩减为核心要点。
     """
-    async def __call__(self, instruction: str, context: str) -> str:
+    async def __call__(self, context_to_summarize: str) -> str:
         print("=" * 60)
         print("\n🚀 执行 operator: Summarize")
         prompt = f"""You are an expert summarizer. Your task is to read the following text and summarize its key points, especially those relevant to the original problem.
 
-**Instruction on how to summarize:**
-{instruction}
+**Original Problem:**
+{self.problem_text}
 
 **Text to Summarize:**
 ---
-{context if context else "No context provided."}
+{context_to_summarize}
 ---
-
-**Original Problem:**
-{self.problem_text}
 
 **Your Summary:**
 """
@@ -145,11 +142,11 @@ class Ensemble(Operator):
     核心算子：决策。
     根据指令，从多个候选项中选择或融合。
     """
-    async def __call__(self, instruction: str, contexts: List[str]) -> str:
+    async def __call__(self, instruction: str, contexts_to_ensemble: List[str]) -> str:
         print("=" * 60)
         print("\n🚀 执行 operator: Ensemble")
         formatted_contexts = ""
-        for i, context in enumerate(contexts):
+        for i, context in enumerate(contexts_to_ensemble):
             formatted_contexts += f"<option index='{i+1}'>\n{context}\n</option>\n\n"
 
         prompt = f"""You are an expert at evaluating, comparing, and synthesizing information from multiple sources. Your task is to follow the given strategic instruction to process a list of options.
@@ -163,16 +160,16 @@ class Ensemble(Operator):
 **Options to Process:**
 {formatted_contexts}
 
-Your response MUST be a valid XML format with two fields: 'think' and 'result'.
-- In the "think" field, explain your step-by-step reasoning process based on the instruction.
+Your response MUST be a valid XML format with two fields: 'thought' and 'result'.
+- In the "thought" field, explain your step-by-step reasoning process based on the instruction.
 - In the "result" field, provide the final output of your operation. This could be one of the original options or a newly synthesized result.
 
 **EXAMPLE:**
 If the instruction is "Choose the option with the most recent date." and the options are "<option index='1'>Event A happened on 2023-05-10.</option>" and "<option index='2'>Event B occurred on 2024-01-22.</option>", your response should be:
-<think>The instruction is to find the most recent date. Comparing the two options, 2024-01-22 is later than 2023-05-10. Therefore, I will select the content of option 2.</think>
+<thought>The instruction is to find the most recent date. Comparing the two options, 2024-01-22 is later than 2023-05-10. Therefore, I will select the content of option 2.</thought>
 <result>Event B occurred on 2024-01-22.</result>
 
-so notice that here in the <result></result> **is not the index, but the content of the option itself, and you should put all the selected text, not simplified.**.
+so notice that here in the <result><result> **is not the index, but the content of the option itself, and you should put all the selected text, not simplified.**.
 """
         response = await self._fill_node(EnsembleOp, prompt, mode="xml_fill")
         return response["result"]      

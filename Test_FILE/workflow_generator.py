@@ -90,10 +90,29 @@ def get_benchmark_handler(benchmark_name: str, dataset_path: str) -> BenchmarkHa
         raise
 
 async def call_openai_compatible_api(api_config: Dict, messages: List[Dict]) -> str:
-    # 这个函数保持不变
     try:
         client = AsyncOpenAI(api_key=api_config.get("api_key"), base_url=api_config.get("base_url"))
-        completion = await client.chat.completions.create(model=api_config.get("model"), messages=messages)
+        
+        # Build kwargs with required parameters
+        kwargs = {
+            "model": api_config.get("model"),
+            "messages": messages
+        }
+        
+        # Add optional parameters if they exist in api_config
+        if "stream" in api_config:
+            kwargs["stream"] = api_config["stream"]
+        if "stream_options" in api_config:
+            kwargs["stream_options"] = api_config["stream_options"]
+        if "enable_thinking" in api_config:
+            # Note: enable_thinking might need to be passed as extra_body depending on the API
+            kwargs["extra_body"] = kwargs.get("extra_body", {})
+            kwargs["extra_body"]["enable_thinking"] = api_config["enable_thinking"]
+        if "thinking_budget" in api_config:
+            kwargs["extra_body"] = kwargs.get("extra_body", {})
+            kwargs["extra_body"]["thinking_budget"] = api_config["thinking_budget"]
+        
+        completion = await client.chat.completions.create(**kwargs)
         return completion.choices[0].message.content
     except Exception as e:
         logging.error(f"调用API时出错 (model: {api_config.get('model')}): {e}")
@@ -122,9 +141,10 @@ class WorkflowGenerator:
             conditions_module = importlib.import_module(f"ScoreFlow.scripts.{self.benchmark_name}.conditions")
             return (
                 getattr(conditions_module, "START_PROMPT", ""), 
-                getattr(conditions_module, "END_PROMPT", ""),
+                # getattr(conditions_module, "END_PROMPT", ""),
                 getattr(conditions_module, "SYSTEM_PROMPT", "You are a helpful AI assistant."),
-                getattr(conditions_module, "META_PROMPTS", [])
+                # getattr(conditions_module, "META_PROMPTS", [])
+                getattr(conditions_module, "TASK_PROMPT", [])
             )
         except (ModuleNotFoundError, AttributeError) as e:
             logging.error(f"无法为 benchmark '{self.benchmark_name}' 加载脚本模板: {e}")
@@ -132,28 +152,28 @@ class WorkflowGenerator:
 
     def _construct_generation_prompt(self, data_indices: List[int], existing_workflow: str = None) -> Tuple[List[Dict], str]:
         """使用 Handler 构建生成请求的 Prompt。"""
-        start_prompt, end_prompt, system_prompt, meta_prompts = self._load_prompt_templates()
+        start_prompt, system_prompt, task_prompt = self._load_prompt_templates()
         
         # 1. 使用 handler 获取问题文本
         problem_text = self.handler.get_prompt_text(data_indices)
         
         # 2. 构建 Prompt
-        selected_meta_prompt = random.choice(meta_prompts) if meta_prompts else ""
-        final_end_prompt = f"\n**CRITICAL INSTRUCTION FOR THIS SPECIFIC TASK:**\n{selected_meta_prompt}\n\n" + end_prompt
+        # selected_meta_prompt = random.choice(meta_prompts) if meta_prompts else ""
+        # final_end_prompt = f"\n**CRITICAL INSTRUCTION FOR THIS SPECIFIC TASK:**\n{selected_meta_prompt}\n\n" + end_prompt
         
         # 3. 构建核心的、用于SFT的instruction
         #这个instruction是干净的，不包含任何随机或临时的指令。
         #它由两部分组成：规格说明书模板(start_prompt) + 问题实例(problem_text)
-        sft_instruction = start_prompt + problem_text + "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph based on all the specifications above:"
+        sft_instruction = task_prompt + start_prompt + problem_text + "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:"
 
         # 4. 构建给API的、可能包含额外引导的user_prompt
         api_user_prompt_parts = [sft_instruction]
 
         # (可选) 添加策略引导，用于激发Gemini的多样性
-        if meta_prompts:
-            selected_meta_prompt = random.choice(meta_prompts)
-            # api_user_prompt_parts.append(f"\n\n--- \n**STRATEGIC FOCUS FOR THIS TASK:** {selected_meta_prompt}")
-            # 不使用meta_prompt了
+        # if meta_prompts:
+        #     selected_meta_prompt = random.choice(meta_prompts)
+        #     # api_user_prompt_parts.append(f"\n\n--- \n**STRATEGIC FOCUS FOR THIS TASK:** {selected_meta_prompt}")
+        #     # 不使用meta_prompt了
 
          # (可选) 添加多样性生成指令
         if existing_workflow:
@@ -161,7 +181,7 @@ class WorkflowGenerator:
             api_user_prompt_parts.append(diversity_prompt)
         
         # 添加最终的引导语，告诉模型可以开始了
-        api_user_prompt_parts.append("\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph based on all the specifications above:")
+        api_user_prompt_parts.append("\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:")
 
         # 组合成最终给API的user_prompt
         api_user_prompt = "".join(api_user_prompt_parts)
@@ -211,7 +231,7 @@ class WorkflowGenerator:
                 # 保存 .py 文件时，只使用干净的代码
                 self._save_workflow_files(workflow_id, code_for_executor, data_indices)
                 logging.info(f"成功生成并保存工作流: {workflow_id}")
-                # 保存训练数据时，使用完整的 <thought>...<code>...</code> 内容
+                # 保存训练数据时，使用完整的 <think>...<code>...</code> 内容
                 if self.training_data_output:
                     system_prompt = messages[0]['content']
                     # _, _, system_prompt, _ = self._load_prompt_templates()

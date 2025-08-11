@@ -31,7 +31,7 @@ class ReviseOp(BaseModel):
     `Revise` 算子的结构化输出。
     包含思考过程和修订后的最终文本。
     """
-    think: str = Field(
+    thought: str = Field(
         ..., 
         description="A step-by-step explanation of the revisions made and the reasoning behind them."
     )
@@ -45,7 +45,7 @@ class EnsembleOp(BaseModel):
     `Ensemble` 算子的结构化输出。
     包含决策或融合过程的思考，以及最终的结果。
     """
-    think: str = Field(
+    thought: str = Field(
         ..., 
         description="The reasoning process for making the choice or synthesis, based on the provided instruction."
     )
