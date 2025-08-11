@@ -47,7 +47,17 @@ def parse_arguments():
 
 def parse_api_pool(api_pool_str: str) -> List[Dict]:
     try:
-        return json.loads(api_pool_str)
+        parsed = json.loads(api_pool_str)
+        # Handle both single object (old format) and array (new format)
+        if isinstance(parsed, dict):
+            # Single API config - wrap in list for backward compatibility
+            return [parsed]
+        elif isinstance(parsed, list):
+            # Already a list of API configs
+            return parsed
+        else:
+            logging.error(f"API池配置格式错误: 期望字典或列表，但得到 {type(parsed)}")
+            sys.exit(1)
     except json.JSONDecodeError as e:
         logging.error(f"API池配置解析失败: {e}")
         sys.exit(1)

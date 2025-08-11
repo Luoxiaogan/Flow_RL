@@ -21,16 +21,16 @@ os.chdir('/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE')
 # ========================================
 
 # Workflow文件路径
-WORKFLOW_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/测试_CLAUDE_4_的_workflow.py"
+WORKFLOW_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE/workspace_mbpp_COT/generated_workflows/mbpp/mbpp_0_0.py"
 
 # Benchmark名称（可以从workflow路径自动推断）
-BENCHMARK = "drop"  # gsm8k, mbpp, drop, etc.
+BENCHMARK = "mbpp"  # gsm8k, mbpp, drop, etc.
 
 # 数据集路径
-DATASET_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/drop/train_select_400.jsonl"
+DATASET_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/mbpp/train.jsonl"
 
 # 测试数据的索引
-TEST_INDEX = 19
+TEST_INDEX = 1
 
 # LLM配置
 LLM_CONFIG = {
@@ -41,7 +41,7 @@ LLM_CONFIG = {
 }
 
 # 工作流执行超时（秒）
-WORKFLOW_TIMEOUT = 180
+WORKFLOW_TIMEOUT = 360
 
 # 日志级别
 LOG_LEVEL = "INFO"
@@ -161,10 +161,11 @@ async def test_workflow():
     print("⚙️  准备执行环境...")
     
     # 导入必要的模块
-    if benchmark == "drop":
-        operator_module = importlib.import_module("ScoreFlow.scripts.common.operator")
-    else:
-        operator_module = importlib.import_module(f"ScoreFlow.scripts.{benchmark}.operator")
+    # if benchmark == "drop":
+    #     operator_module = importlib.import_module("ScoreFlow.scripts.common.operator")
+    # else:
+    #     operator_module = importlib.import_module(f"ScoreFlow.scripts.{benchmark}.operator")
+    operator_module = importlib.import_module("ScoreFlow.scripts.common.operator")
     
     # 准备全局命名空间
     exec_globals = {

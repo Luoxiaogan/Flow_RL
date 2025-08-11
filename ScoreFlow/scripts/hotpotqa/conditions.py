@@ -1,35 +1,55 @@
-import random
+TASK_PROMPT = '''### 1. Problem Domain Overview
+The target domain is the **HotPotQA benchmark** (Multi-hop Question Answering). These problems test multi-document reasoning and information synthesis across Wikipedia articles.
 
-META_PROMPTS = [
-    # 1. 强调多跳推理
-    "Your main goal is multi-hop reasoning. Use the 'Sequential Multi-Hop' pattern with FlexibleCustom to trace connections step-by-step through the context. Focus on bridging information from different sources.",
-    # 2. 强调鲁棒性验证
-    "Your main goal is robust multi-hop QA. Generate multiple reasoning paths using different Custom instructions, then use sc_ensemble to select the most well-supported answer. Consider adding Review for final verification.",
-    # 3. 强调迭代推理
-    "Your main goal is iterative multi-hop reasoning. Start with AnswerGenerate for initial hypothesis, then use Review iteratively to verify facts and refine the answer based on context.",
-    # 4. 强调混合策略
-    "Your main goal is comprehensive multi-hop QA. Combine FlexibleCustom with sequential reasoning pattern for fact extraction and connection, followed by Custom for synthesis and Review for validation.",
-    # 5. 强调效率
-    "Your main goal is efficient multi-hop reasoning. Create a streamlined workflow using FlexibleCustom with key steps like 'extract_entities', 'find_connections', 'synthesize_answer' to solve the problem effectively.",
-]
+**Core Characteristics:**
+- **Input:** Multiple context documents (Wikipedia article excerpts) paired with a question requiring multi-hop reasoning
+- **Required Skills:** Cross-document inference, entity tracking, fact chaining, and logical reasoning
+- **Answer Types:** Short text spans (entity names, phrases), yes/no answers, or brief factual responses
 
-# System prompt for HotpotQA tasks
-SYSTEM_PROMPT = """
+**Question Types:**
+- **Bridge Questions:** Require connecting information from multiple documents through shared entities
+- **Comparison Questions:** Compare properties of entities mentioned across different documents
+- **Compositional Questions:** Combine multiple facts to derive the answer
+
+**Common Question Patterns:**
+- **Bridge Entity:** "Who wrote the screenplay for [movie that actor X was in]?"
+- **Property Comparison:** "Which was founded first, [Company A] or [Company B]?"
+- **Multi-hop Facts:** "What nationality is the director of [movie]?"
+- **Date/Time Questions:** "When did [person who did X] die?"
+
+**Critical Challenges:**
+- **Document Selection:** Identifying which documents contain relevant information
+- **Entity Resolution:** Matching entities across different documents (same entity, different mentions)
+- **Reasoning Chain:** Building correct inference chains from Document A → Bridge Entity → Document B
+- **Supporting Facts:** Identifying specific sentences that support the answer
+
+**Key Success Factors:**
+- Identifying the reasoning type (bridge vs. comparison)
+- Finding the "bridge entity" that connects documents
+- Tracking entity mentions across multiple contexts
+- Building explicit reasoning chains before answering
+- Extracting precise answer spans from the text
+
+'''
+
+SYSTEM_PROMPT = '''
 Your fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.
 
 Your core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:
-1.  A high-level description of the problem domain.
-2.  A strictly defined set of callable software "Operators" that serve as your only building blocks.
-3.  An illustrative example instance, provided solely to help you understand the abstract reasoning pattern.
+1. A high-level description of the problem domain
+2. A strictly defined set of callable software "Operators" that serve as your only building blocks
+3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern
 
-Your generated output **must** be a single, parameterized Python function that represents a generic workflow. This function must be robust enough to work for any problem instance within the described domain.
+**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**
+
+Your generated Python workflow must be robust enough to work for any problem instance within the described domain.
 
 Crucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.
-"""
+'''
 
 PYTHON_START = '''import asyncio
-from typing import Literal
-import ScoreFlow.scripts.hotpotqa.operator as operator
+from typing import Literal, List, Dict, Any, Union
+import ScoreFlow.scripts.common.operator as operator
 from metagpt.provider.llm_provider_registry import create_llm_instance as create
 
 '''
@@ -37,143 +57,189 @@ from metagpt.provider.llm_provider_registry import create_llm_instance as create
 PYTHON_END = '''
 
     async def __call__(self):
+        """
+        This is the main entry point that executes the workflow.
+        It returns the raw result from the workflow execution.
+        """
         TIMEOUT = {time}
-        return await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)'''
 
-START_PROMPT = '''Your objective is to generate a Python workflow graph for solving multi-hop question answering problems. You must output valid Python code based on the following template (but you must modify it):
+        try:
+            # Execute the LLM-generated workflow to get the raw result.
+            raw_result = await asyncio.wait_for(self.run_workflow(), timeout=TIMEOUT)
+            
+            # Return the raw result directly - answer extraction is now handled in handler
+            return raw_result
 
-<graph>
+        except asyncio.TimeoutError:
+            # Handle workflow execution timeout gracefully.
+            return "Final Answer: Error - Workflow execution timed out."
+        except Exception as e:
+            # Handle other potential errors during workflow execution.
+            import traceback
+            # 错误详情在这里被定义和使用，不暴露给外部.format()
+            error_details_str = traceback.format_exc()
+            escaped_error_details = error_details_str.replace("\\n", "\\\\n").replace('"', '\\"')
+            return f"Final Answer: Error - An exception occurred during workflow execution. Details: {{escaped_error_details}}"
+'''
+
+START_PROMPT = '''### 2. Available Operators & Building Blocks
+
+All operators follow a consistent interface pattern and are initialized with the problem text. They are available as `self.operator_name`.
+
+**Important Note:** The operators are pre-initialized with `self.problem_text`. Each operator automatically includes it in their prompts (you'll see it as "**Original Problem:**" in their internal prompts). You don't need to worry about losing the problem context - it's always available to every operator call behind the scenes, regardless of what you pass as the context parameter.
+
+
+#### 🔑 **CRITICAL: Understanding Parameters**
+
+**The `instruction` Parameter (Required for all operators):**
+- **Purpose:** Contains the COMPLETE strategic directive that fully specifies what the operator should do
+- **Content:** Should be **comprehensive and detailed** - think of it as a full prompt that leaves nothing ambiguous
+- **Length:** Can and SHOULD be long when needed (100-500+ words is perfectly acceptable and often necessary)
+- **Dynamic Construction:** Can include information extracted from previous steps, specific constraints, detailed reasoning strategies, and formatted requirements
+- **Key Principle:** Since we're building reusable workflows, problem-specific information cannot be hardcoded in the workflow structure. While instructions can dynamically incorporate relevant extracted information to guide the operation, the main data to be processed should remain in the context parameter.
+
+**The `context` Parameter (Required for all operators except Generate):**
+- **Purpose:** Provides the INPUT DATA that the instruction will operate on
+- **Content:** The actual text, data, or results from previous operations - this is the primary information source
+- **Type:** String for Generate/Revise/Summarize operators
+- **Usage:** Think of it as the "working material" that the instruction processes
+- **Note:** Ensemble uses `contexts` (plural) which takes List[str] instead of a single string
+
+### Core Operators
+
+**1. Generate: CREATE new information**
+- **Signature:** `await self.generate(instruction: str, context: str = "") -> str`
+- **Purpose:** Produces new text, analysis, or reasoning based on strategic instructions
+
+**2. Revise: IMPROVE existing information**
+- **Signature:** `await self.revise(instruction: str, context: str) -> str`
+- **Purpose:** Critiques and refines existing text based on specific improvement criteria
+
+**3. Summarize: COMPRESS information**
+- **Signature:** `await self.summarize(instruction: str, context: str) -> str`
+- **Purpose:** Condenses text while preserving key information relevant to the problem
+
+**4. Ensemble: DECIDE between or synthesize options**
+- **Signature:** `await self.ensemble(instruction: str, contexts: List[str]) -> str`
+- **Purpose:** Evaluates, compares, or merges multiple candidate solutions
+
+### 3. Key Design Principles
+
+**Dynamic Instruction Construction:**
+Extract information early, then incorporate it into subsequent instructions using f-strings:
+```python
+extraction = await self.generate(instruction="Extract all numerical values...", context=self.problem_text)
+analysis = await self.generate(
+    instruction=f"Given these extracted values: {extraction}\nNow solve step by step...",
+    context=self.problem_text
+)
+```
+
+**Parallel Execution:**
+Use `asyncio.gather()` for independent operations:
+```python
+results = await asyncio.gather(
+    self.generate(instruction="Approach 1...", context=...),
+    self.generate(instruction="Approach 2...", context=...)
+)
+final = await self.ensemble(instruction="Select best...", contexts=results)
+```
+
+**Common Pitfalls:**
+- ❌ Don't hardcode problem-specific data in workflow code
+- ❌ Don't use `await` inside list comprehensions (blocks parallelism)
+- ✅ Do use detailed instructions (100-500+ words when needed)
+- ✅ Do extract info dynamically and incorporate into instructions
+
+#### **🚀 Innovation Guidelines:**
+
+**Maximize the power of instructions by:**
+- Building multi-paragraph instructions that leave nothing to interpretation
+- Dynamically incorporating ALL relevant extracted information
+- Creating instruction templates that adapt based on detected patterns
+- Using instructions to implement complex reasoning strategies
+- Including specific formatting requirements and output structures
+
+**Remember:**
+- Instructions are mini-prompts - make them as detailed as needed
+- Extract early, enrich instructions throughout
+- The workflow provides structure; instructions provide intelligence
+- Never hardcode problem-specific data in the workflow code itself
+- Always pass context appropriately - empty string for initial Generate, List for Ensemble
+- If you want to use some function, remember to import the module at the beginning of the function `async def run_workflow(self)`. For example, you want to use the `json.loads`, then you need to add `import json` beginning of the function `async def run_workflow(self)`.
+
+#### **Common Pitfalls to Avoid:**
+
+```python
+# ❌ WRONG: Hardcoding problem-specific information
+result = await self.generate(
+    instruction="Count how many field goals the Patriots scored",  # Too specific!
+    context=self.problem_text
+)
+
+# ✅ CORRECT: Generic instruction that works for any problem
+result = await self.generate(
+    instruction="Identify what the question is asking for, then count or calculate the requested value",
+    context=self.problem_text
+)
+
+# ❌ WRONG: Sequential execution when parallel is possible
+result1 = await self.generate(...)  # Waits
+result2 = await self.generate(...)  # Then waits again
+
+# ✅ CORRECT: Parallel execution for independent operations
+results = await asyncio.gather(
+    self.generate(...),
+    self.generate(...)
+)
+```
+
+### 4. Your Task: Complete the `run_workflow` Method
+
+Your task is to write the Python code for the `run_workflow` method within the provided template. Focus on creating a robust, reusable workflow that leverages detailed instructions.
+
+**Base Template:**
+<think>
+[Your step-by-step reasoning about the workflow strategy, why you chose specific operators, and how you'll use instructions effectively]
+</think>
+<code>
 class Workflow:
-    def __init__(
-        self,
-        config,
-        problem
-    ) -> None:
-        self.problem = problem
-        self.config = create(config)
-        self.custom = operator.Custom(self.config, self.problem)
-        self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
-        self.answer_generate = operator.AnswerGenerate(self.config, self.problem)
-        self.review = operator.Review(self.config, self.problem)
-        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
+    def __init__(self, config, problem) -> None:
+        # --- DO NOT MODIFY THIS SECTION ---
+        self.config = config
+        self.problem_text = problem
+        self.llm = create(config)
+        
+        self.generate = operator.Generate(self.llm, self.problem_text)
+        self.revise = operator.Revise(self.llm, self.problem_text)
+        self.summarize = operator.Summarize(self.llm, self.problem_text)
+        self.ensemble = operator.Ensemble(self.llm, self.problem_text)
 
     async def run_workflow(self):
         """
-        This is a workflow graph for multi-hop question answering.
+        Implement the core problem-solving logic here.
+        Remember: 
+        - Use detailed, comprehensive instructions
+        - Dynamic instruction construction is powerful
+        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]
         """
-        solution = await self.answer_generate()
-        
-        return solution
-</graph>
+        import asyncio
+        # import json
+        # Here you can import the module you need.
+        # --- YOUR WORKFLOW LOGIC HERE ---
+</code>
 
+### 5. Critical Rules
 
-Here's an introduction to operators you can use: (these are all you can use, do not create new operators)
-1. Custom:
-Usage: Generates anything based on fixed input problem and modifiable instruction.
-Format MUST follow: custom(instruction: str) -> str
-You can modify the instruction prompt, such like "Can you break down the problem into smaller steps?", "Can you solve this problem by breaking it down into detailed steps and explaining the reasoning behind each step?", "Explain how to solve the problem with clear reasoning for each step", etc. For example:
-solution = await self.custom(instruction="Can you solve this problem by breaking it down into detailed steps and explaining the reasoning behind each step?")
-The output can serve as the input of next operators or the final output.
-2. AnswerGenerate:
-Usage: Directly generate answer (including thought) to the given problem.
-Format MUST follow: answer_generate() -> str
-For example:
-solution = await self.answer_generate()
-The output can serve as the input of next operators or the final output.
-3. ScEnsemble:
-Usage: Evaluate every solutions, then select the best solution in the solution list.
-Format MUST follow: sc_ensemble(solutions: List[str]) -> str
-You can ensemble few solutions, for example:
-ensembled_solution = await self.sc_ensemble(solutions=solution_list)
-The output can serve as the input of next operators or the final output.
-4. Review:
-Usage: Given previous solution, Review operator reviews the previous solution to regenerate the solution.
-Format MUST follow: review(pre_solution: str) -> str
-pre_solution should be solution from previous operator, for example
-rev_solution = await self.review(pre_solution=pre_solution)
-The output can serve as the input of next operators or the final output.
-5. FlexibleCustom (Advanced Operator):
-Usage: A flexible operator that supports various reasoning patterns (sequential, parallel, iterative, branching) with customizable steps. Ideal for multi-hop reasoning without embedding problem-specific information.
-Format: flexible_custom(custom_instruction: str = "", previous_results: List[str] = None) -> str
-Configuration Options:
-- reasoning_pattern: "sequential", "parallel", "iterative", or "branching"
-- steps: List of reasoning steps like ["identify_entities", "find_connections", "trace_reasoning_path", "synthesize_answer"]
-- max_iterations: Maximum iterations for iterative patterns (default: 1)
-- use_structured_output: Whether to use structured output format (default: True)
-Example 1 (Sequential multi-hop):
-self.flexible_custom = operator.FlexibleCustom(self.agent, self.problem, 
-                                              reasoning_pattern="sequential",
-                                              steps=["extract_facts", "identify_bridges", "connect_information", "derive_answer"])
-solution = await self.flexible_custom(custom_instruction="Focus on connecting information across different parts of the context")
-Example 2 (Iterative refinement):
-self.flexible_custom_iter = operator.FlexibleCustom(self.agent, self.problem,
-                                                   reasoning_pattern="iterative", 
-                                                   steps=["initial_hypothesis", "verify_facts", "refine_answer"],
-                                                   max_iterations=3)
-refined_answer = await self.flexible_custom_iter(custom_instruction="Start with initial answer then verify against context")
-Use Cases:
-- Sequential: Step-by-step tracing through multi-hop connections
-- Parallel: Explore multiple reasoning paths simultaneously
-- Iterative: Progressive refinement of answer with fact-checking
-- Branching: Conditional reasoning based on intermediate findings
+**A. Generality:** Create templates for problem CLASSES, not specific instances
+**B. Instructions:** Use comprehensive, detailed instructions (100-500+ words OK)
+**C. Parameters:** `instruction` (str) + `context` (str) for most; `contexts` (List[str]) for Ensemble
+**D. Control Flow:** Branch on operator results, not direct problem_text parsing
+**E. Complexity:** Typically 3-8 operator calls, parallelize when possible
+**F. Response Format:** ONLY `<think>...</think>` followed by `<code>...</code>`
 
+### 6. Illustrative Example(s)
 
-We have the problem input as follow. But your output graph can not contain any specific information of the this problem.
-Question: '''
+The following examples help you understand the problem type. Create a workflow for the *class* of problems, not just these instances.
 
-END_PROMPT = '''
-
-You need to notice:
-
-**Ensure your graph is based on the given template and is correct to avoid runtime failures.** Do NOT import the modules operator and create, which have already been automatically imported. Do not load the operators not provided.
-
-**Introducing multiple operators at appropriate points can enhance performance.** Consider Python's loops (for, list comprehensions) to generate multiple solutions to ensemble.
-
-**Every operator(agent)'s output should contribute to the final return output, otherwise, do not use them.**
-
-**The graph complexity may corelate with the problem complexity.** The graph complexity must between 3 and 8. Considering information loss, complex graphs may yield better results, but insufficient information transmission can omit the solution.
-
-**As for the instruction prompt for custom operator. Your instruction prompt should focus on encouraging agent to think step by step. Do not ask agent to generate multiple (a few, some, etc) answers in one operator's instruction. Also note that different agents are independent, so do not use prompts like "generate another/alternative/different answer", "generate the first/second answer", etc.**
-
-**Your output graph must be optimized and different from the given template graph. Do not output graph without modification!**
-
-**Your output graph can not contain any information of the given problem due to project requirement. All the information of this problem will be given as input "problem" (self.problem) and other agents will execute this workflow.**
-
-Only output the optimized Python code graph (remember to add <graph> and </graph> tags around your Python code, and the output can not contain any information of the given problem).
-
-Your output must be valid Python code that can be executed. Do not output XML or any other format.
-
-Here is the optimized Python workflow graph without any problem information: '''
-
-
-TEMP_AVOID = '''class Workflow:
-    def __init__(
-        self,
-        config,
-        problem
-    ) -> None:
-        self.problem = problem
-        self.config = create(config)
-        self.custom = operator.Custom(self.config, self.problem)
-        self.sc_ensemble = operator.ScEnsemble(self.config, self.problem)
-        self.answer_generate = operator.AnswerGenerate(self.config, self.problem)
-        self.review = operator.Review(self.config, self.problem)
-        self.flexible_custom = operator.FlexibleCustom(self.config, self.problem)
-
-    async def run_workflow(self):
-        """
-        This is a workflow graph for multi-hop question answering.
-        """
-        solution = await self.answer_generate()
-        
-        return solution'''
-
-
-TEST_PROMPT = "How many children are there? Note that you are given context: there are 3 children playing."
-
-NO_EXCEPTION_LIST = ['''.split(' ')''', '''int(''']
-
-TIME_LIMIT_TEST = 60
-TIME_LIMIT = 120
-sim_threshold = 0.75
-
+'''
