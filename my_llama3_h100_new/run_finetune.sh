@@ -11,16 +11,16 @@ export CUDA_LAUNCH_BLOCKING=0
 # ============================================
 # 选择模型类型: "qwen" 或 "llama"
 # ============================================
-MODEL_TYPE="llama"  # 修改这里来切换模型
+MODEL_TYPE="qwen"  # 修改这里来切换模型
 
 # ============================================
 # 是否启用损失掩码 (只在助手回答上计算损失)
 # ============================================
-USE_LOSS_MASK=true  # 设置为 true 启用损失掩码
+USE_LOSS_MASK=true
 
 # --- 通用配置 ---
 export WANDB_PROJECT="${MODEL_TYPE}-8b-workflow-sft"
-DEEPSPEED_CONFIG="/nas/ganluo/Flow_RL/my_llama3_h100/configs/deepspeed_config_z3.json"
+DEEPSPEED_CONFIG="/nas/ganluo/Flow_RL/my_llama3_h100_new/configs/deepspeed_config_z3.json"
 
 # H100服务器配置
 NUM_GPUS=8
@@ -105,6 +105,6 @@ fi
 
 # --- Accelerate 启动命令 ---
 python -m accelerate.commands.launch \
-    --config_file /nas/ganluo/Flow_RL/my_llama3_h100/accelerate_config.yaml \
-    /nas/ganluo/Flow_RL/my_llama3_h100/src/train.py \
+    --config_file /nas/ganluo/Flow_RL/my_llama3_h100_new/accelerate_config.yaml \
+    /nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py \
     "${CMD_ARGS[@]}"
