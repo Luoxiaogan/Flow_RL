@@ -114,7 +114,7 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 # ------------------------- 任务 1: HotPotQA (多跳问答) -------------------------
 #
 BENCHMARK="hotpotqa"
-TOTAL_PROBLEMS=1000      # Testing with just 1 problem
+TOTAL_PROBLEMS=4      # Testing with just 1 problem
 MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
 MAX_SAMPLE_SIZE=2     # 每个工作流最多使用的问题样本数
 MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
