@@ -17,16 +17,21 @@ from pathlib import Path
 from datetime import datetime
 import time
 
+print("-"*60)
 # 添加必要路径
 CURRENT_DIR = Path(__file__).parent
 PROJECT_ROOT = CURRENT_DIR.parent.parent
+print(f"\n🚀目前的PROJECT_ROOT是:{PROJECT_ROOT}")
 # 重要：首先添加PROJECT_ROOT，使得ScoreFlow可以被正确导入
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.append(str(PROJECT_ROOT / "metagpt_root"))
 # 设置METAGPT_PROJECT_ROOT环境变量（如果没有设置）
+print(os.environ["METAGPT_PROJECT_ROOT"])
 if "METAGPT_PROJECT_ROOT" not in os.environ:
-    os.environ["METAGPT_PROJECT_ROOT"] = str(PROJECT_ROOT / "Test_FILE")
+    os.environ["METAGPT_PROJECT_ROOT"] = str(PROJECT_ROOT / "metagpt_root")
+    print("\n 不在环境变量里面，手动加入了")
 METAGPT_PROJECT_ROOT = Path(os.environ["METAGPT_PROJECT_ROOT"])
+print("METAGPT_PROJECT_ROOT是:", METAGPT_PROJECT_ROOT)
 # 添加MetaGPT本地路径
 METAGPT_LOCAL = PROJECT_ROOT / "Test_FILE" / "metagpt_local" / "metagpt_local"
 if METAGPT_LOCAL.exists():
@@ -124,13 +129,17 @@ class ScoreFlowRewardCalculator:
         
         # 加载配置
         if config_path is None:
-            config_path = CURRENT_DIR / "config.json"
+            #config_path = CURRENT_DIR / "config.json"
+            config_path = METAGPT_PROJECT_ROOT / "config.json"
+            print("\n🚀孩子们, config_path目前是", config_path)
         
         if os.path.exists(config_path):
             with open(config_path, 'r', encoding='utf-8') as f:
                 self.config = json.load(f)
             self.llm_config = self.config['llm_config']['upstream']
+            print("\n🚀孩子们, llm_config是:\n", self.llm_config)
             self.reward_config = self.config.get('reward_config', {})
+            print("\n🚀孩子们, reward_config是:\n", self.reward_config)
         else:
             # 默认配置
             self.llm_config = {
@@ -362,11 +371,12 @@ class ScoreFlowRewardCalculator:
             })
             
             # 4. 准备执行环境
+            print("/n 🚀开始准备执行环境")
             execution_namespace = {}
             
             # 加载operator模块（使用common operators）
             operator_module = importlib.import_module("ScoreFlow.scripts.common.operator")
-            
+            print("/n 🚀加载common operator成功")
             # 准备全局命名空间
             exec_globals = {
                 'asyncio': aio,
@@ -377,38 +387,41 @@ class ScoreFlowRewardCalculator:
             }
             
             # 尝试加载benchmark特定的operator_an（如果存在）
+            # try:
+            #     # 查找benchmark映射信息
+            #     benchmark_info = self.benchmark_mapping.get(benchmark_name)
+            #     if benchmark_info:
+            #         handler_dir = benchmark_info['handler_dir']
+            #         # 将handler_dir转换为Python模块路径
+            #         an_module_path = handler_dir.replace('/', '.') + '.operator_an'
+            #     else:
+            #         # 回退到默认命名规则
+            #         if benchmark_name.startswith("high_level_math"):
+            #             an_module_path = "ScoreFlow.scripts.high_level_math.operator_an"
+            #         else:
+            #             an_module_path = f"ScoreFlow.scripts.{benchmark_name}.operator_an"
+                
+            #     operator_an_module = importlib.import_module(an_module_path)
+                
+            #     # 注入所有公共成员到执行环境
+            #     for attr_name in dir(operator_an_module):
+            #         if not attr_name.startswith('_'):
+            #             exec_globals[attr_name] = getattr(operator_an_module, attr_name)
+                
+            #     logger.debug(f"Injected {an_module_path} contents into execution environment")
+            # except ModuleNotFoundError:
+            # 如果没有特定的operator_an，尝试使用common的
             try:
-                # 查找benchmark映射信息
-                benchmark_info = self.benchmark_mapping.get(benchmark_name)
-                if benchmark_info:
-                    handler_dir = benchmark_info['handler_dir']
-                    # 将handler_dir转换为Python模块路径
-                    an_module_path = handler_dir.replace('/', '.') + '.operator_an'
-                else:
-                    # 回退到默认命名规则
-                    if benchmark_name.startswith("high_level_math"):
-                        an_module_path = "ScoreFlow.scripts.high_level_math.operator_an"
-                    else:
-                        an_module_path = f"ScoreFlow.scripts.{benchmark_name}.operator_an"
-                
-                operator_an_module = importlib.import_module(an_module_path)
-                
-                # 注入所有公共成员到执行环境
-                for attr_name in dir(operator_an_module):
+                common_an_module = importlib.import_module("ScoreFlow.scripts.common.operator_an")
+                print("/n 🚀🚀🚀加载common operator_an 成功")
+                for attr_name in dir(common_an_module):
                     if not attr_name.startswith('_'):
-                        exec_globals[attr_name] = getattr(operator_an_module, attr_name)
-                
-                logger.debug(f"Injected {an_module_path} contents into execution environment")
+                        exec_globals[attr_name] = getattr(common_an_module, attr_name)
+                print("/n 🚀加载common operator_an的模块成功")
+                logger.debug("Using common operator_an module")
             except ModuleNotFoundError:
-                # 如果没有特定的operator_an，尝试使用common的
-                try:
-                    common_an_module = importlib.import_module("ScoreFlow.scripts.common.operator_an")
-                    for attr_name in dir(common_an_module):
-                        if not attr_name.startswith('_'):
-                            exec_globals[attr_name] = getattr(common_an_module, attr_name)
-                    logger.debug("Using common operator_an module")
-                except ModuleNotFoundError:
-                    logger.debug("No operator_an module found, proceeding without it")
+                logger.debug("No operator_an module found, proceeding without it")
+                print("/n 🚀 未找到可选的 'operator_an.py' 模块，跳过注入。")
             
             # 5. 执行脚本获取Workflow类
             exec(full_script_code, exec_globals, execution_namespace)
@@ -418,7 +431,9 @@ class ScoreFlowRewardCalculator:
                 raise ValueError(f"No 'Workflow' class found in the executed script for {workflow_id}")
             
             # 6. 准备LLM配置
+            print(f"\n 🚀 我们输出llm_config = \n{self.llm_config}\n")
             provider = self.llm_config.get('provider', 'openai')
+            print(f"\n 🚀 我们输出从llm_config得到的provider = \n{provider}\n")
             api_type_map = {
                 'openai': LLMType.OPENAI, 'azure': LLMType.AZURE, 
                 'gemini': LLMType.GEMINI, 'claude': LLMType.CLAUDE,

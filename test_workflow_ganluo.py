@@ -13,21 +13,21 @@ from typing import Dict, Any
 import logging
 
 # 添加项目路径
-sys.path.append('/Users/luogan/Code/workflow_generation/Flow_RL')
-os.chdir('/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE')
+sys.path.append('/nas/ganluo/Flow_RL')
+os.chdir('/nas/ganluo/Flow_RL/Test_FILE')
 
 # ========================================
 #           配 置 区
 # ========================================
 
 # Workflow文件路径
-WORKFLOW_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE/workspace_mbpp_COT/generated_workflows/mbpp/mbpp_0_0.py"
+WORKFLOW_PATH = "/nas/ganluo/reward_drop_20250812_073453_511in2.py"
 
 # Benchmark名称（可以从workflow路径自动推断）
-BENCHMARK = "mbpp"  # gsm8k, mbpp, drop, etc.
+BENCHMARK = "drop"  # gsm8k, mbpp, drop, etc.
 
 # 数据集路径
-DATASET_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/mbpp/train.jsonl"
+DATASET_PATH = "/nas/ganluo/Flow_RL/Processed_dataset/drop/train.jsonl"
 
 # 测试数据的索引
 TEST_INDEX = 5
