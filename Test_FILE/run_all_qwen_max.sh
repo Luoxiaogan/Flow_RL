@@ -6,6 +6,15 @@ set -u  # 使用未定义变量时报错
 
 echo "开始执行所有测试..."
 
+echo "执行 MBPP 数据合成..."
+bash /nas/ganluo/Flow_RL/Test_FILE/run_workflow_system_mbpp_max.sh
+
+echo "执行 HUMANEVAL 测试..."
+bash /nas/ganluo/Flow_RL/Test_FILE/run_workflow_system_humaneval_max.sh
+
+echo "执行 HOTPOTQA 测试..."
+bash /nas/ganluo/Flow_RL/Test_FILE/run_workflow_system_hotpotqa_max.sh
+
 echo "执行 DROP 测试..."
 bash /nas/ganluo/Flow_RL/Test_FILE/run_workflow_system_drop.sh
 

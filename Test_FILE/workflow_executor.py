@@ -263,13 +263,22 @@ async def execute_and_verify(args: argparse.Namespace):
     else:
         model_output_json = '{}'
     
+    # 处理ground_truth为JSON单行格式（与model_output保持一致）
+    if 'verification_data' in locals() and verification_data:
+        ground_truth_value = verification_data.get('answer', verification_data.get('all_answers', 'N/A'))
+        ground_truth_json = json.dumps({"answer": str(ground_truth_value)}, ensure_ascii=False)
+        # 替换所有换行符和回车符为空格
+        ground_truth_json = ground_truth_json.replace('\n', ' ').replace('\r', ' ')
+    else:
+        ground_truth_json = '{}'
+    
     result_data = {
         "id": workflow_id,
         "benchmark": benchmark_name,
         "data_indices": data_indices,
         "status": status,
         "error": error_msg,
-        "ground_truth": verification_data.get('answer', verification_data.get('all_answers', 'N/A')) if 'verification_data' in locals() else '',
+        "ground_truth": ground_truth_json,  # 使用JSON格式的单行字符串
         "model_output": model_output_json  # 使用JSON格式的单行字符串
     }
     save_result_to_csv(args.workspace_path, result_data)
