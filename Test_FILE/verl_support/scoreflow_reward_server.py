@@ -19,7 +19,7 @@ CURRENT_DIR = Path(__file__).parent
 sys.path.insert(0, str(CURRENT_DIR))
 
 # 导入scoreflow_reward模块
-from scoreflow_reward import compute_score, get_calculator
+from scoreflow_reward_utils import compute_score, get_calculator
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

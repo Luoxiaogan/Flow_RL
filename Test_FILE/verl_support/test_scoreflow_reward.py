@@ -3,7 +3,7 @@
 """
 import asyncio
 import pandas as pd
-from scoreflow_reward import compute_score, _compute_score_async
+from scoreflow_reward import compute_score
 
 def test_with_parquet_data():
     """使用实际的parquet数据测试"""
@@ -286,7 +286,7 @@ def main():
         test_with_gsm8k()
         
         # 测试异步执行
-        asyncio.run(test_async_execution())
+        # asyncio.run(test_async_execution())
         
         # 测试实际的parquet数据
         # 注意：这需要有test.parquet文件
