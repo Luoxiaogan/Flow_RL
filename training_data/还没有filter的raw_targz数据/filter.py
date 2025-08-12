@@ -53,13 +53,13 @@ def save_jsonl(records: List[Dict[str, Any]], filepath: str):
 
 def main():
     # Configuration (hardcoded)
-    jsonl_path = '/Users/luogan/Code/workflow_generation/Flow_RL/training_data/还没有filter的raw数据/workspace_gsm8k_new/training_data_gsm8k.jsonl'
-    csv_path = '/Users/luogan/Code/workflow_generation/Flow_RL/training_data/还没有filter的raw数据/workspace_gsm8k_new/execution_results.csv'
+    jsonl_path = '/Users/luogan/Code/workflow_generation/Flow_RL/training_data/workspace_mbpp_COT_qwen_max/training_data_mbpp.jsonl'
+    csv_path = '/Users/luogan/Code/workflow_generation/Flow_RL/training_data/workspace_mbpp_COT_qwen_max/execution_results.csv'
     csv_key = 'ID'
     jsonl_key = 'workflow_id'
     csv_target_key = 'Status'
     want_info = 'verified_correct'
-    output_dir = '/Users/luogan/Code/workflow_generation/Flow_RL/training_data/还没有filter的raw数据/workspace_gsm8k_new'
+    output_dir = '/Users/luogan/Code/workflow_generation/Flow_RL/training_data/workspace_mbpp_COT_qwen_max'
     output_filename = 'filtered_training_data.jsonl'
     
     # Load JSONL records

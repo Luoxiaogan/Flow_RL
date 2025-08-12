@@ -23,6 +23,12 @@ else:
     print("🚀 队列模式: 先进先出 (FIFO)")
     task_queue = Queue()
 
+# --- 初始化计数器 ---
+sent_to_api = 0
+received_from_api = 0
+sent_to_client = 0
+counter_lock = threading.Lock()
+
 app = Flask(__name__)
 # 进度条现在表示已分发的任务数
 bar = tqdm(total=0, desc="Dispatching Queue", unit="req")
@@ -47,12 +53,18 @@ def get_queue_size():
 # 在 rl_proxy_final_v3.py 中，替换整个 process_request 函数
 
 def process_request(request_data, result_queue, path):
+    global sent_to_api, received_from_api
     target_url = f"{TARGET_BASE_URL}/{path}"
     try:
         headers = {k: v for k, v in request_data['headers'].items() if k.lower() != 'host'}
         
         # 为了调试，我们打印将要发送的请求信息
         # print(f"[DEBUG] Sending to {target_url} with headers: {headers}")
+
+        # 增加发送到API的计数
+        with counter_lock:
+            sent_to_api += 1
+            update_bar_description()
 
         resp = requests.request(
             method=request_data['method'],
@@ -71,6 +83,11 @@ def process_request(request_data, result_queue, path):
         # 关键检查点
         resp.raise_for_status()
         
+        # 增加从API接收的计数
+        with counter_lock:
+            received_from_api += 1
+            update_bar_description()
+        
         # 成功，放入结果队列
         result_queue.put(resp)
 
@@ -86,6 +103,10 @@ def process_request(request_data, result_queue, path):
         else:
             print("    Upstream response object is missing!")
         print("="*50 + "\n")
+        # 即使出错也算作接收到了响应
+        with counter_lock:
+            received_from_api += 1
+            update_bar_description()
         result_queue.put(e)
 
     except requests.exceptions.RequestException as e:
@@ -95,6 +116,10 @@ def process_request(request_data, result_queue, path):
         print(f"    Exception Type: {type(e).__name__}")
         print(f"    Error Message: {e}")
         print("="*50 + "\n")
+        # 即使出错也算作接收到了响应
+        with counter_lock:
+            received_from_api += 1
+            update_bar_description()
         result_queue.put(e)
 
     except Exception as e:
@@ -105,7 +130,17 @@ def process_request(request_data, result_queue, path):
         print("    Traceback:")
         traceback.print_exc()
         print("="*50 + "\n")
+        # 即使出错也算作接收到了响应
+        with counter_lock:
+            received_from_api += 1
+            update_bar_description()
         result_queue.put(e)
+
+def update_bar_description():
+    """更新进度条描述以显示所有计数器"""
+    pending = sent_to_api - received_from_api
+    desc = f"Dispatching | Sent: {sent_to_api} | Received: {received_from_api} | Pending: {pending} | Returned: {sent_to_client}"
+    bar.set_description(desc)
 
 # (新) 调度器：按固定速率从队列取任务，并交给线程池
 def dispatcher(executor):
@@ -141,6 +176,12 @@ def proxy(path):
     
     # 主线程在这里阻塞，等待这个特定请求的结果
     result = result_queue.get()
+
+    # 增加发送给客户端的计数
+    global sent_to_client
+    with counter_lock:
+        sent_to_client += 1
+        update_bar_description()
 
     if isinstance(result, requests.Response):
         resp = result
