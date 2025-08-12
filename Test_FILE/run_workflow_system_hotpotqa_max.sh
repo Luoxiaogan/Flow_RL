@@ -70,25 +70,25 @@ cd "$(dirname "$0")" || exit
 #     "base_url": "http://localhost:5001"
 # }'
 
-API_POOL='[{
-    "provider": "openai",
-    "model": "qwen-turbo", 
-    "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-    "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
-}]'
+# API_POOL='[{
+#     "provider": "openai",
+#     "model": "qwen-turbo", 
+#     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+#     "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
+# }]'
 
-# API_POOL='[
-#     {
-#         "provider": "openai",
-#         "model": "qwen-max-latest",
-#         "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-#         "base_url": "https://idealab.alibaba-inc.com/api/openai/v1",
-#         "stream": false,
-#         "stream_options": {"include_usage": true},
-#         "enable_thinking": true,
-#         "thinking_budget": 2000
-#     }
-# ]'
+API_POOL='[
+    {
+        "provider": "openai",
+        "model": "qwen-max-latest",
+        "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+        "base_url": "https://idealab.alibaba-inc.com/api/openai/v1",
+        "stream": false,
+        "stream_options": {"include_usage": true},
+        "enable_thinking": true,
+        "thinking_budget": 2000
+    }
+]'
 
 # 执行LLM，用于【工作流内部的算子】，通常只配置一个高效、可靠的模型。
 EXEC_LLM='{
@@ -100,7 +100,7 @@ EXEC_LLM='{
 
 # --- 路径配置 ---
 # 总的工作空间，所有生成物和结果都将保存在这里
-WORKSPACE_PATH="./workspace_hotpotqa_COT"
+WORKSPACE_PATH="./workspace_hotpotqa_COT_qwen_max"
 
 # --- 系统配置 ---
 LOG_LEVEL="INFO"
@@ -114,9 +114,9 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 # ------------------------- 任务 1: HotPotQA (多跳问答) -------------------------
 #
 BENCHMARK="hotpotqa"
-TOTAL_PROBLEMS=4      # Testing with just 1 problem
-MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
-MAX_SAMPLE_SIZE=2     # 每个工作流最多使用的问题样本数
+TOTAL_PROBLEMS=400      # Testing with just 1 problem
+MIN_SAMPLE_SIZE=1     # 每个工作流最少使用的问题样本数
+MAX_SAMPLE_SIZE=1     # 每个工作流最多使用的问题样本数
 MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
 PARALLELISM=1  # 每个数据组合生成的工作流并行度（默认2个不同版本）
 MAX_CONCURRENT_GROUPS=5  # 生成阶段最大并发组数（组间并行，组内串行）
