@@ -70,7 +70,7 @@ class VERLDataGenerator:
         """加载prompt模板，类似workflow_generator的方法"""
         try:
             # 导入conditions模块
-            from ScoreFlow.scripts.internbootcamp.conditions import (
+            from ScoreFlow.scripts.internbootcamp.conditions_rl import (
                 META_PROMPTS, SYSTEM_PROMPT, START_PROMPT, END_PROMPT
             )
             return START_PROMPT, END_PROMPT, SYSTEM_PROMPT, META_PROMPTS

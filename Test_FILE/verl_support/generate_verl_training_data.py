@@ -87,20 +87,20 @@ class VerlTrainingDataGenerator:
             raise
     
     def _load_prompt_templates(self, benchmark_name: str) -> Tuple[str, str, str, List[str]]:
-        """Load prompt templates from conditions.py"""
+        """Load prompt templates from conditions_rl.py"""
         try:
             # Check benchmark mapping first
             benchmark_info = self.benchmark_mapping.get(benchmark_name)
             if benchmark_info:
                 handler_dir = benchmark_info['handler_dir']
                 # Convert handler_dir to Python module path
-                conditions_path = handler_dir.replace('/', '.') + '.conditions'
+                conditions_path = handler_dir.replace('/', '.') + '.conditions_rl'
             else:
                 # Fallback to default naming rules
                 if benchmark_name.startswith("high_level_math"):
-                    conditions_path = "ScoreFlow.scripts.high_level_math.conditions"
+                    conditions_path = "ScoreFlow.scripts.high_level_math.conditions_rl"
                 else:
-                    conditions_path = f"ScoreFlow.scripts.{benchmark_name}.conditions"
+                    conditions_path = f"ScoreFlow.scripts.{benchmark_name}.conditions_rl"
             
             # Import conditions module
             conditions_module = importlib.import_module(conditions_path)

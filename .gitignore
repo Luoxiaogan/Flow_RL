@@ -12,6 +12,7 @@ Datasets/
 wandb/
 Test_FILE/verl_support/data
 Test_FILE/verl_internbootcamp/dataset
+Test_FILE/verl_internbootcamp/data
 Test_FILE/verl_internbootcamp/SFT_support/output
 Test_FILE/verl_internbootcamp/test
 Test_FILE/verl_internbootcamp/SFT_support/test
