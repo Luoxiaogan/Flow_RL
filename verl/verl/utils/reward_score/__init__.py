@@ -106,7 +106,7 @@ def default_compute_score(
         from . import search_r1_like_qa_em
 
         res = search_r1_like_qa_em.compute_score(solution_str, ground_truth)
-    elif data_source.startswith("internbootcamp_"):
+    elif data_source.startswith("internbootcamp"):
         from . import workflow_internbootcamp
         res = workflow_internbootcamp.compute_score(solution_str, ground_truth, extra_info)
 
