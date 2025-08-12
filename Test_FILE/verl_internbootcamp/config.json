@@ -4,14 +4,14 @@
             "provider": "openai",
             "model": "qwen-turbo",
             "api_key": "sk-dc5cc6f834614e34ac5c00e6129ddbc1",
-            "base_url": "http://localhost:5001",
+            "base_url": "http://localhost:5009",
             "temperature": 0.7
         },
         "downstream": {
             "provider": "openai",
             "model": "qwen-turbo",
             "api_key": "sk-dc5cc6f834614e34ac5c00e6129ddbc1",
-            "base_url": "http://localhost:5001",
+            "base_url": "http://localhost:5009",
             "temperature": 0.3
         }
     },
@@ -33,7 +33,7 @@
     },
     "reward_config": {
         "test_cases_per_task": 3,
-        "timeout": 30,
+        "timeout": 300,
         "max_concurrent": 5
     },
     "logging": {

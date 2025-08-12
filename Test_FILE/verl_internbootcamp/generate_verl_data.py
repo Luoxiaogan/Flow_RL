@@ -70,7 +70,7 @@ class VERLDataGenerator:
         """加载prompt模板，类似workflow_generator的方法"""
         try:
             # 导入conditions模块
-            from ScoreFlow.scripts.internbootcamp.conditions_rl import (
+            from ScoreFlow.scripts.internbootcamp.conditions import (
                 META_PROMPTS, SYSTEM_PROMPT, START_PROMPT, END_PROMPT
             )
             return START_PROMPT, END_PROMPT, SYSTEM_PROMPT, META_PROMPTS
@@ -88,14 +88,14 @@ class VERLDataGenerator:
         # 构建prompt内容，包含task_description和一个example
         prompt_content = f"Task: {task_name}\n\n{task_description}"
         
-        # 添加一个example（如果有的话）
+        # 使用start_prompt模板
+        user_prompt_str = start_prompt.format(prompt_text=prompt_content)
+                # 添加一个example（如果有的话）
         if examples and len(examples) > 0:
             example = examples[0]  # 只取第一个example
             example_content = example.get('prompt', json.dumps(example, indent=2, ensure_ascii=False))
-            prompt_content += f"\n\nExample:\n{example_content}"
+            user_prompt_str += f"\n\nExample:\n{example_content}"
         
-        # 使用start_prompt模板
-        user_prompt_str = start_prompt.format(prompt_text=prompt_content)
         user_prompt_str += end_prompt
         
         messages = [

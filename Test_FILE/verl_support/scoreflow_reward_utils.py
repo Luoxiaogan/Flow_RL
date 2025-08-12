@@ -21,17 +21,13 @@ print("-"*60)
 # 添加必要路径
 CURRENT_DIR = Path(__file__).parent
 PROJECT_ROOT = CURRENT_DIR.parent.parent
-print(f"\n🚀目前的PROJECT_ROOT是:{PROJECT_ROOT}")
 # 重要：首先添加PROJECT_ROOT，使得ScoreFlow可以被正确导入
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.append(str(PROJECT_ROOT / "metagpt_root"))
 # 设置METAGPT_PROJECT_ROOT环境变量（如果没有设置）
-print(os.environ["METAGPT_PROJECT_ROOT"])
 if "METAGPT_PROJECT_ROOT" not in os.environ:
     os.environ["METAGPT_PROJECT_ROOT"] = str(PROJECT_ROOT / "metagpt_root")
-    print("\n 不在环境变量里面，手动加入了")
 METAGPT_PROJECT_ROOT = Path(os.environ["METAGPT_PROJECT_ROOT"])
-print("METAGPT_PROJECT_ROOT是:", METAGPT_PROJECT_ROOT)
 # 添加MetaGPT本地路径
 METAGPT_LOCAL = PROJECT_ROOT / "Test_FILE" / "metagpt_local" / "metagpt_local"
 if METAGPT_LOCAL.exists():

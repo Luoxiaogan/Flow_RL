@@ -29,7 +29,9 @@ sys.path.append(str(PROJECT_ROOT / "InternBootcamp"))
 METAGPT_LOCAL = PROJECT_ROOT / "Test_FILE" / "metagpt_local" / "metagpt_local"
 if METAGPT_LOCAL.exists():
     sys.path.insert(0, str(METAGPT_LOCAL))
-
+if "METAGPT_PROJECT_ROOT" not in os.environ:
+    os.environ["METAGPT_PROJECT_ROOT"] = str(PROJECT_ROOT / "metagpt_root")
+METAGPT_PROJECT_ROOT = Path(os.environ["METAGPT_PROJECT_ROOT"])
 import asyncio as aio
 from typing import List as ListType
 from metagpt.provider.llm_provider_registry import create_llm_instance
@@ -37,7 +39,7 @@ from metagpt.configs.llm_config import LLMConfig
 
 # DEBUG模式控制
 DEBUG = 0  # 改为1启用debug模式
-DEBUG_PATH = CURRENT_DIR / "debug_logs"
+DEBUG_PATH = PROJECT_ROOT / "Test_FILE" / "debug_logs"
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -145,7 +147,7 @@ class InternBootcampRewardCalculator:
     def extract_workflow_from_response(self, response: str) -> Optional[str]:
         """
         从LLM response中提取workflow代码
-        查找<graph>标签内的内容
+        查找<code>标签内的内容
         """
         extract_start = time.time()
         
@@ -158,21 +160,21 @@ class InternBootcampRewardCalculator:
             return None
         
         # 尝试提取<code>标签内的代码
-        graph_pattern = r'<code>(.*?)</code>'
-        matches = re.findall(graph_pattern, response, re.DOTALL)
+        code_pattern = r'<code>(.*?)</code>'
+        matches = re.findall(code_pattern, response, re.DOTALL)
         
         if matches:
             workflow_code = matches[0].strip()
             logger.debug(f"Extracted workflow code: {len(workflow_code)} chars")
             debug_log("workflow", {
                 "event": "extract_workflow_success",
-                "method": "graph_tag",
+                "method": "code_tag",
                 "workflow_length": len(workflow_code),
                 "response_length": len(response)
             }, extract_start)
             return workflow_code
         
-        # 如果没有找到graph标签，尝试查找class Workflow定义
+        # 如果没有找到code标签，尝试查找class Workflow定义
         class_pattern = r'(class\s+(?:InternBootcampWorkflow|Workflow).*?)(?=class\s+\w+|$)'
         matches = re.findall(class_pattern, response, re.DOTALL)
         
@@ -769,7 +771,7 @@ async def _compute_score_async(solution_str: str, ground_truth: str, extra_info:
 if __name__ == "__main__":
     # 简单测试
     test_solution = """
-<graph>
+<code>
 class Workflow:
     def __init__(self, config, problem):
         self.config = config
@@ -779,7 +781,7 @@ class Workflow:
     async def run_workflow(self):
         solution = await self.custom(instruction="Solve the problem step by step.")
         return solution
-</graph>
+</code>
 """
     
     test_extra_info = {

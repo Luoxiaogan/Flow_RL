@@ -193,6 +193,10 @@ class VerlTrainingDataGenerator:
             data = self._load_jsonl_data(str(full_path))
             total_size = len(data)
             
+            # Always shuffle data for better randomization
+            random.shuffle(data)
+            logging.info(f"Applied shuffle to {benchmark_name} {dtype} dataset")
+            
             # Determine number of entries to generate for this specific dataset type
             if num_entries is not None:
                 entries_to_generate = min(num_entries, total_size)

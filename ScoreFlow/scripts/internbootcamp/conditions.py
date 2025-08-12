@@ -5,14 +5,7 @@ InternBootcamp工作流生成条件和模板
 
 # 元提示列表 - 用于生成多样化的工作流
 META_PROMPTS = [
-    # 1. 强调鲁棒性
-    "Your main goal is robustness. Use the 'Parallel Ensemble' pattern. Generate at least three different solutions using varied custom instructions, then use sc_ensemble to select the most consistent one. A final review is a good practice.",
-    # 2. 强调迭代
-    "Your main goal is iterative improvement. Use the 'Iterative Refinement' pattern. Create a simple initial solution, then apply the `review` operator at least twice to progressively enhance it.",
-    # 3. 强调混合与创新
-    "Your main goal is creativity and complexity. Combine at least two different design patterns. For example, start with a 'Parallel Ensemble', reflect on the winner, and then regenerate. Or, use conditional logic based on the reflection's content.",
-    # 4. 强调效率 (生成简单工作流)
-    "Your main goal is efficiency. Create the simplest possible effective workflow. This might be a single, well-crafted `custom` call, or a `custom` followed by a single `review`. Avoid unnecessary complexity.",
+''
 ]
 
 # 系统提示 - 用于SFT训练
@@ -20,13 +13,13 @@ SYSTEM_PROMPT = """
 Your fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.
 
 Your core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:
-1.  A high-level description of the problem domain.
-2.  A strictly defined set of callable software "Operators" that serve as your only building blocks.
-3.  An illustrative example instance, provided solely to help you understand the abstract reasoning pattern.
+1. A high-level description of the problem domain
+2. A strictly defined set of callable software "Operators" that serve as your only building blocks
+3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern
 
-Your generated output **must** be a single, parameterized Python function that represents a generic workflow. This function must be robust enough to work for any problem instance within the described domain.
+**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**
 
-Crucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.
+Your generated Python workflow must be robust enough to work for any problem instance within the described domain.
 """
 
 
@@ -43,146 +36,132 @@ Create a workflow class called `InternBootcampWorkflow` that:
 5. Can be executed with MetaGPT
 
 ### 2. Available Operators & Building Blocks
-Here's an introduction to the core reasoning operators you must use. They are all initialized and available as `self.operator_name`.
 
-**1. Generate:**
-- **Core Function:** **CREATE** information.
-- **Description:** A general-purpose operator that generates new, unstructured text based on a strategic instruction and optional context from a previous step. It is the primary tool for analysis, reasoning, drafting solutions, and creative tasks.
+All operators follow a consistent interface pattern and are initialized with the problem text. They are available as `self.operator_name`.
+
+**Important Note:** The operators are pre-initialized with `self.problem_text`. Each operator automatically includes it in their prompts (you'll see it as "**Original Problem:**" in their internal prompts). You don't need to worry about losing the problem context - it's always available to every operator call behind the scenes, regardless of what you pass as the context parameter.
+
+
+#### 🔑 **CRITICAL: Understanding Parameters**
+
+**The `instruction` Parameter (Required for all operators):**
+- **Purpose:** Contains the COMPLETE strategic directive that fully specifies what the operator should do
+- **Content:** Should be **comprehensive and detailed** - think of it as a full prompt that leaves nothing ambiguous
+- **Length:** Can and SHOULD be long when needed (100-500+ words is perfectly acceptable and often necessary)
+- **Dynamic Construction:** Can include information extracted from previous steps, specific constraints, detailed reasoning strategies, and formatted requirements
+- **Key Principle:** Since we're building reusable workflows, problem-specific information cannot be hardcoded in the workflow structure. While instructions can dynamically incorporate relevant extracted information to guide the operation, the main data to be processed should remain in the context parameter.
+
+**The `context` Parameter (Required for all operators except Generate):**
+- **Purpose:** Provides the INPUT DATA that the instruction will operate on
+- **Content:** The actual text, data, or results from previous operations - this is the primary information source
+- **Type:** String for Generate/Revise/Summarize operators
+- **Usage:** Think of it as the "working material" that the instruction processes
+- **Note:** Ensemble uses `contexts` (plural) which takes List[str] instead of a single string
+
+### Core Operators
+
+**1. Generate: CREATE new information**
 - **Signature:** `await self.generate(instruction: str, context: str = "") -> str`
+- **Purpose:** Produces new text, analysis, or reasoning based on strategic instructions
 
-**2. Revise:**
-- **Core Function:** **IMPROVE** information.
-- **Description:** A meta-operator that critiques and refines a previous solution or text based on a specific instruction. It is essential for iterative improvement and self-correction.
-- **Signature:** `await self.revise(instruction: str, context_to_revise: str) -> str`
+**2. Revise: IMPROVE existing information**
+- **Signature:** `await self.revise(instruction: str, context: str) -> str`
+- **Purpose:** Critiques and refines existing text based on specific improvement criteria
 
-**3. Summarize:**
-- **Core Function:** **COMPRESS** information.
-- **Description:** A specialized operator that condenses a potentially long text into its key points, focusing on aspects relevant to the original problem. Use this to manage context length and maintain focus in long reasoning chains.
-- **Signature:** `await self.summarize(context_to_summarize: str) -> str`
+**3. Summarize: COMPRESS information**
+- **Signature:** `await self.summarize(instruction: str, context: str) -> str`
+- **Purpose:** Condenses text while preserving key information relevant to the problem
 
-**4. Ensemble:**
-- **Core Function:** **DECIDE** on information.
-- **Description:** A meta-operator that evaluates, compares, or synthesizes multiple candidate contexts based on a strategic instruction. It is the key to handling uncertainty and improving robustness.
-- **Signature:** `await self.ensemble(instruction: str, contexts_to_ensemble: List[str]) -> str`
+**4. Ensemble: DECIDE between or synthesize options**
+- **Signature:** `await self.ensemble(instruction: str, contexts: List[str]) -> str`
+- **Purpose:** Evaluates, compares, or merges multiple candidate solutions
 
-### 3. Workflow Design Patterns & Strategies
+### 3. Key Design Principles
 
-Below are proven patterns to inspire your workflow design. **You are STRONGLY ENCOURAGED to innovate** — combine these patterns creatively or invent entirely new ones based on the problem's unique characteristics.
+**Dynamic Instruction Construction:**
+Extract information early, then incorporate it into subsequent instructions using f-strings:
+```python
+extraction = await self.generate(instruction="Extract all numerical values...", context=self.problem_text)
+analysis = await self.generate(
+    instruction=f"Given these extracted values: {extraction}\nNow solve step by step...",
+    context=self.problem_text
+)
+```
 
-#### **Foundation Patterns:**
+**Parallel Execution:**
+Use `asyncio.gather()` for independent operations:
+```python
+results = await asyncio.gather(
+    self.generate(instruction="Approach 1...", context=...),
+    self.generate(instruction="Approach 2...", context=...)
+)
+final = await self.ensemble(instruction="Select best...", contexts=results)
+```
 
-**A. Linear Decomposition:**
-- **When:** Sequential dependencies exist
-- **Pattern:** `step1 = await self.generate(...)` → `step2 = await self.generate(..., context=step1)`
-
-**B. Iterative Refinement:**
-- **When:** Need high precision through self-correction
-- **Pattern:** Generate → Loop with `self.revise()` using different error-checking angles
-
-**C. Parallel Exploration:**
-- **When:** Multiple valid approaches or ambiguous problems
-- **Pattern:** `import asyncio` → Create task list → `await asyncio.gather(*tasks)` → `self.ensemble()`
-
-**D. Extract-Then-Reason:**
-- **When:** Dense text with structured information
-- **Pattern:** `self.extract()` for clean data → `self.generate()` on structured facts
-
-#### **Advanced Patterns:**
-
-**E. Diverge-Converge:**
-- **When:** Need both breadth and precision
-- **Pattern:** Generate multiple diverse perspectives in parallel → Summarize commonalities → Ensemble for final answer
-
-**F. Hypothesis-Testing:**
-- **When:** Multiple possible interpretations exist
-- **Pattern:** Generate competing hypotheses → Test each against evidence → Select best-supported one
-
-**G. Recursive Decomposition:**
-- **When:** Problems have nested sub-problems
-- **Pattern:** Break into sub-problems → Solve each (potentially in parallel) → Combine sub-solutions
-
-**H. Context Switching:**
-- **When:** Different aspects require different reasoning modes
-- **Pattern:** Analyze with "mathematical lens" → Switch to "logical lens" → Switch to "linguistic lens" → Integrate insights
-
-**I. Bidirectional Verification:**
-- **When:** High-stakes accuracy needed
-- **Pattern:** Solve forward → Generate inverse problem → Check if inverse leads back to original
-
-**J. Progressive Narrowing:**
-- **When:** Large solution space
-- **Pattern:** Generate broad possibilities → Filter by criteria → Refine remaining candidates → Select final
-
-#### **Creative Combinations (Examples):**
-
-**K. Parallel-Extract-Then-Compete:**
-- Extract different data types in parallel → Generate solutions from each data type → Ensemble competing solutions
-
-**L. Conditional Branching Flow:**
-- Initial analysis → `if "mathematical" in analysis:` math_path `else:` logic_path → Merge paths
-
-**M. Cascading Ensemble:**
-- Generate 5+ solutions → First ensemble to top 3 → Revise each → Final ensemble
+**Common Pitfalls:**
+- ❌ Don't hardcode problem-specific data in workflow code
+- ❌ Don't use `await` inside list comprehensions (blocks parallelism)
+- ✅ Do use detailed instructions (100-500+ words when needed)
+- ✅ Do extract info dynamically and incorporate into instructions
 
 #### **🚀 Innovation Guidelines:**
 
-**You SHOULD create novel patterns by:**
-- **Mixing operators creatively:** What if you Summarize → Extract → Generate in parallel branches?
-- **Using conditional logic:** Branch based on problem characteristics detected at runtime
-- **Creating feedback loops:** Use output quality to trigger additional refinement cycles
-- **Inventing meta-strategies:** E.g., first generate the "best workflow strategy" then execute it
-- **Exploiting parallelism:** Any independent operations should run simultaneously
-- **Building adaptive flows:** Adjust operator count based on problem complexity
+**Maximize the power of instructions by:**
+- Building multi-paragraph instructions that leave nothing to interpretation
+- Dynamically incorporating ALL relevant extracted information
+- Creating instruction templates that adapt based on detected patterns
+- Using instructions to implement complex reasoning strategies
+- Including specific formatting requirements and output structures
 
 **Remember:**
-- `import asyncio` at the start when using `await asyncio.gather()`
-- Combine 3-8 operators for optimal results
-- Your workflow should reflect the problem's unique structure
-- **There is no "correct" pattern — innovate based on what works best**
-- **Challenge yourself:** Can you create a pattern that uses all four operators in a novel arrangement? Can you design a workflow that adapts its strategy based on intermediate results?
+- Instructions are mini-prompts - make them as detailed as needed
+- Extract early, enrich instructions throughout
+- The workflow provides structure; instructions provide intelligence
+- Never hardcode problem-specific data in the workflow code itself
+- Always pass context appropriately - empty string for initial Generate, List for Ensemble
 
-##### Asyncio Usage: Common Mistakes and Correct Patterns
+#### **Common Pitfalls to Avoid:**
+
 ```python
-# WRONG: await inside list - this executes sequentially!
-results = [
-    await self.generate("approach 1"),
-    await self.generate("approach 2")
-]
+# ❌ WRONG: Hardcoding problem-specific information
+result = await self.generate(
+    instruction="Count how many field goals the Patriots scored",  # Too specific!
+    context=self.problem_text
+)
 
-# WRONG: await in list comprehension - also sequential!
-results = [await self.generate(f"approach {{i}}") for i in range(3)]
+# ✅ CORRECT: Generic instruction that works for any problem
+result = await self.generate(
+    instruction="Identify what the question is asking for, then count or calculate the requested value",
+    context=self.problem_text
+)
+
+# ❌ WRONG: Sequential execution when parallel is possible
+result1 = await self.generate(...)  # Waits
+result2 = await self.generate(...)  # Then waits again
+
+# ✅ CORRECT: Parallel execution for independent operations
+results = await asyncio.gather(
+    self.generate(...),
+    self.generate(...)
+)
 ```
-and
-**Pattern 1: Create tasks first, then gather**
-```python
-import asyncio
-
-# Create task references WITHOUT await, this is the right way
-task1 = self.generate("approach 1")
-task2 = self.generate("approach 2")
-task3 = self.generate("approach 3")
-
-# Execute all tasks in parallel, this is the right way
-results = await asyncio.gather(task1, task2, task3)
-
 
 ### 4. Your Task: Complete the `run_workflow` Method
-Your task is to write the Python code for the `run_workflow` method within the provided template. You must **only** modify the logic inside this method. **Do not** change the `__init__` method.
 
-#### **Base Template:**
-<graph>
+Your task is to write the Python code for the `run_workflow` method within the provided template. Focus on creating a robust, reusable workflow that leverages detailed instructions.
+
+**Base Template:**
+<think>
+[Your step-by-step reasoning about the workflow strategy, why you chose specific operators, and how you'll use instructions effectively]
+</think>
+<code>
 class Workflow:
-    def __init__(
-        self,
-        config,
-        problem
-    ) -> None:
+    def __init__(self, config, problem) -> None:
         # --- DO NOT MODIFY THIS SECTION ---
         self.config = config
-        self.problem_text = problem # Assumes problem is a pre-processed string
+        self.problem_text = problem
         self.llm = create(config)
-
-        # All available operators are initialized here for your use.
+        
         self.generate = operator.Generate(self.llm, self.problem_text)
         self.revise = operator.Revise(self.llm, self.problem_text)
         self.summarize = operator.Summarize(self.llm, self.problem_text)
@@ -190,71 +169,28 @@ class Workflow:
 
     async def run_workflow(self):
         """
-        This is where you implement the core problem-solving logic.
-        You can use any of the operators initialized above.
-        """
-        # --- REPLACE THE EXAMPLE LOGIC BELOW WITH YOUR OWN DYNAMIC WORKFLOW ---
-        import asyncio
-        # Example: A simple analysis and generation flow.
-        analysis = await self.generate(instruction="First, analyze the original problem to understand its core requirements.")
-        solution = await self.generate(instruction="Based on the analysis, now generate a step-by-step solution.", context=analysis)
-        return solution
-</graph>
-
-### 5. Critical Rules & Constraints
-Your generated workflow must be a robust, generic template. Adhere strictly to these rules:
-
-**A. On Generality (The Core Principle):**
-- **Your Goal:** You are creating a **strategic template**, not a one-off solution. The logic inside `run_workflow` must define the *steps* to solve a class of problems.
-- **ALLOWED Content:** The `instruction` strings passed to operators **should** contain keywords and phrases distilled from the problem **type** or the illustrative **question**. This defines the strategy. (e.g., for a question about finding a difference, `instruction="Calculate the difference between the two values."` is GOOD).
-- **FORBIDDEN Content:** The workflow **must not** contain hardcoded **answers** (e.g., `return "42"`) or specific data copied directly from the problem's **context/passage** (e.g., `instruction="Since the passage mentions John has 5 apples, ..."`).
-
-**B. On Logic & Control Flow (Exposing the Topology):**
-- **You ARE ENCOURAGED** to use Python's native control flow constructs (`if/else`, `for` loops, `asyncio.gather`) to build the logical topology of your solution.
-- **Guideline for `if/else`:** Conditions for branching **must** be based on the **results of previous operator calls**. Do not parse `self.problem_text` directly in a condition.
-    - **GOOD:** `analysis = await self.generate(...)` -> `if "math" in analysis:`
-    - **BAD:** `if "how many" in self.problem_text:`
-- **Guideline for Loops:** Consider using `for` loops to iterate a process (e.g., with `Revise`) or to process multiple items extracted from the context.
-
-**C. On Operator Usage:**
-- **Complexity:** The workflow should generally consist of **3 to 8 operator calls**.
-- **Efficiency:** Ensure every operator call contributes meaningfully to the final returned value.
-
-- **Final Output Rule:** Your response MUST contain **nothing** other than the Python code inside the `<graph>` tags. Do not add any introductory sentences, concluding remarks, or self-evaluations like "Why This Works". Your entire response should start with `<graph>` and end with `</graph>`.
-
----
-**CODE TO COMPLETE**
----
-<graph>
-class Workflow:
-    def __init__(
-        self,
-        config,
-        problem
-    ) -> None:
-        # --- DO NOT MODIFY THIS SECTION ---
-        self.config = config
-        self.problem_text = problem # Assumes problem is a pre-processed string
-        self.llm = create(config)
-
-        # All available operators are initialized here for your use.
-        self.generate = operator.Generate(self.llm, self.problem_text)
-        self.revise = operator.Revise(self.llm, self.problem_text)
-        self.summarize = operator.Summarize(self.llm, self.problem_text)
-        self.ensemble = operator.Ensemble(self.llm, self.problem_text)
-
-    async def run_workflow(self):
-        """
-        This is where you implement the core problem-solving logic.
-        You can use any of the operators initialized above.
+        Implement the core problem-solving logic here.
+        Remember: 
+        - Use detailed, comprehensive instructions
+        - Dynamic instruction construction is powerful
+        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]
         """
         import asyncio
-        # --- YOUR PYTHON LOGIC GOES HERE. REPLACE THE EXAMPLE. ---
-<graph>
+        # --- YOUR WORKFLOW LOGIC HERE ---
+</code>
+
+### 5. Critical Rules
+
+**A. Generality:** Create templates for problem CLASSES, not specific instances
+**B. Instructions:** Use comprehensive, detailed instructions (100-500+ words OK)
+**C. Parameters:** `instruction` (str) + `context` (str) for most; `contexts` (List[str]) for Ensemble
+**D. Control Flow:** Branch on operator results, not direct problem_text parsing
+**E. Complexity:** Typically 3-8 operator calls, parallelize when possible
+**F. Response Format:** ONLY `<think>...</think>` followed by `<code>...</code>`
 
 ### 6. Illustrative Example(s)
-To help you understand the problem type, the following are one or more concrete examples.
-Remember, your task is to create a workflow that solves this *class* of problem, not just these specific instances.
+
+The following examples help you understand the problem type. Create a workflow for the *class* of problems, not just these instances.
 '''
 
 
