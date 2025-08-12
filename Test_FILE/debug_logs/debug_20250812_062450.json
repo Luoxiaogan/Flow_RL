@@ -1,0 +1,3066 @@
+{
+  "start_time": "2025-08-12T06:24:47.442489",
+  "end_time": "2025-08-12T06:24:50.565969",
+  "total_duration": 3.12348,
+  "total_tasks": [
+    {
+      "event": "compute_score_start",
+      "data_source": "humaneval",
+      "ground_truth": "default",
+      "extra_info": {
+        "answer": "    if not numbers:\n        return []\n\n    result = []\n\n    for n in numbers[:-1]:\n        result.append(n)\n        result.append(delimeter)\n\n    result.append(numbers[-1])\n\n    return result\n",
+        "data_path": "Processed_dataset/human_eval/test.jsonl",
+        "raw_data": 5,
+        "test_cases": [
+          143,
+          41,
+          0,
+          151,
+          46
+        ]
+      },
+      "solution_length": 3097,
+      "timestamp": "2025-08-12T06:24:47.420113"
+    },
+    {
+      "event": "compute_score_start",
+      "data_source": "hotpotqa",
+      "ground_truth": "default",
+      "extra_info": {
+        "answer": "Achimenes",
+        "data_path": "Processed_dataset/hotpotqa/validation.jsonl",
+        "raw_data": 789,
+        "test_cases": [
+          1330,
+          792,
+          586,
+          580,
+          216
+        ]
+      },
+      "solution_length": 3004,
+      "timestamp": "2025-08-12T06:24:47.420862"
+    },
+    {
+      "event": "compute_score_start",
+      "data_source": "drop",
+      "ground_truth": "default",
+      "extra_info": {
+        "answer": "Spanish",
+        "data_path": "Processed_dataset/drop/validation.jsonl",
+        "raw_data": 1552,
+        "test_cases": [
+          202,
+          1177,
+          1797,
+          1439,
+          707
+        ]
+      },
+      "solution_length": 2647,
+      "timestamp": "2025-08-12T06:24:47.421918"
+    },
+    {
+      "event": "compute_score_start",
+      "data_source": "gsm8k",
+      "ground_truth": "default",
+      "extra_info": {
+        "answer": "Let X be the amount of what the first took.\nThe second took X+<<+80=80>>80.\nThe third took (X+80)*2.\nThe total amount X + (X+80) + (X+80)*2 = 1920.\nX + X + 80 + 2*X + 80*2 = 1920\nX*4 + 240 = 1920.\nX*4 = 1680.\nX = <<420=420>>420.\n#### 420",
+        "data_path": "Processed_dataset/gsm8k/test.jsonl",
+        "raw_data": 1045,
+        "test_cases": [
+          1236,
+          945,
+          857,
+          665,
+          411
+        ]
+      },
+      "solution_length": 3418,
+      "timestamp": "2025-08-12T06:24:47.425322"
+    },
+    {
+      "event": "compute_score_start",
+      "data_source": "drop",
+      "ground_truth": "default",
+      "extra_info": {
+        "answer": "99.71",
+        "data_path": "Processed_dataset/drop/validation.jsonl",
+        "raw_data": 610,
+        "test_cases": [
+          1706,
+          269,
+          1472,
+          1661,
+          1386
+        ]
+      },
+      "solution_length": 3181,
+      "timestamp": "2025-08-12T06:24:47.433062"
+    },
+    {
+      "event": "task_details",
+      "data_source": "hotpotqa",
+      "benchmark_name": "hotpotqa",
+      "num_test_cases": 5,
+      "test_cases": [
+        1330,
+        792,
+        586,
+        580,
+        216
+      ],
+      "data_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "workflow_code_length": 2178,
+      "timestamp": "2025-08-12T06:24:47.439647"
+    },
+    {
+      "event": "batch_compute_start",
+      "benchmark_name": "hotpotqa",
+      "num_test_cases": 5,
+      "test_cases": [
+        1330,
+        792,
+        586,
+        580,
+        216
+      ],
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "max_concurrent": 5,
+      "timestamp": "2025-08-12T06:24:47.439652"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 1330,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "workflow_code_length": 2178,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:47.439870"
+    },
+    {
+      "event": "task_details",
+      "data_source": "humaneval",
+      "benchmark_name": "humaneval",
+      "num_test_cases": 5,
+      "test_cases": [
+        143,
+        41,
+        0,
+        151,
+        46
+      ],
+      "data_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "workflow_code_length": 1943,
+      "timestamp": "2025-08-12T06:24:47.440278"
+    },
+    {
+      "event": "batch_compute_start",
+      "benchmark_name": "humaneval",
+      "num_test_cases": 5,
+      "test_cases": [
+        143,
+        41,
+        0,
+        151,
+        46
+      ],
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "max_concurrent": 5,
+      "timestamp": "2025-08-12T06:24:47.440284"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "humaneval",
+      "test_case_index": 143,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "workflow_code_length": 1943,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:47.440401"
+    },
+    {
+      "event": "task_details",
+      "data_source": "drop",
+      "benchmark_name": "drop",
+      "num_test_cases": 5,
+      "test_cases": [
+        202,
+        1177,
+        1797,
+        1439,
+        707
+      ],
+      "data_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "workflow_code_length": 1971,
+      "timestamp": "2025-08-12T06:24:47.440846"
+    },
+    {
+      "event": "batch_compute_start",
+      "benchmark_name": "drop",
+      "num_test_cases": 5,
+      "test_cases": [
+        202,
+        1177,
+        1797,
+        1439,
+        707
+      ],
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "max_concurrent": 5,
+      "timestamp": "2025-08-12T06:24:47.440851"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "drop",
+      "test_case_index": 202,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "workflow_code_length": 1971,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:47.440951"
+    },
+    {
+      "event": "task_details",
+      "data_source": "gsm8k",
+      "benchmark_name": "gsm8k",
+      "num_test_cases": 5,
+      "test_cases": [
+        1236,
+        945,
+        857,
+        665,
+        411
+      ],
+      "data_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "workflow_code_length": 2439,
+      "timestamp": "2025-08-12T06:24:47.441516"
+    },
+    {
+      "event": "batch_compute_start",
+      "benchmark_name": "gsm8k",
+      "num_test_cases": 5,
+      "test_cases": [
+        1236,
+        945,
+        857,
+        665,
+        411
+      ],
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "max_concurrent": 5,
+      "timestamp": "2025-08-12T06:24:47.441524"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 1236,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "workflow_code_length": 2439,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:47.441706"
+    },
+    {
+      "event": "task_details",
+      "data_source": "drop",
+      "benchmark_name": "drop",
+      "num_test_cases": 5,
+      "test_cases": [
+        1706,
+        269,
+        1472,
+        1661,
+        1386
+      ],
+      "data_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "workflow_code_length": 2046,
+      "timestamp": "2025-08-12T06:24:47.442614"
+    },
+    {
+      "event": "batch_compute_start",
+      "benchmark_name": "drop",
+      "num_test_cases": 5,
+      "test_cases": [
+        1706,
+        269,
+        1472,
+        1661,
+        1386
+      ],
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "max_concurrent": 5,
+      "timestamp": "2025-08-12T06:24:47.442620"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "drop",
+      "test_case_index": 1706,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "workflow_code_length": 2046,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:47.442733"
+    },
+    {
+      "event": "compute_score_start",
+      "data_source": "hotpotqa",
+      "ground_truth": "default",
+      "extra_info": {
+        "answer": "Anglo-Saxon Chronicle",
+        "data_path": "Processed_dataset/hotpotqa/validation.jsonl",
+        "raw_data": 546,
+        "test_cases": [
+          24,
+          413,
+          1333,
+          382,
+          712
+        ]
+      },
+      "solution_length": 3752,
+      "timestamp": "2025-08-12T06:24:47.446251"
+    },
+    {
+      "event": "task_details",
+      "data_source": "hotpotqa",
+      "benchmark_name": "hotpotqa",
+      "num_test_cases": 5,
+      "test_cases": [
+        24,
+        413,
+        1333,
+        382,
+        712
+      ],
+      "data_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "workflow_code_length": 2530,
+      "timestamp": "2025-08-12T06:24:47.446401"
+    },
+    {
+      "event": "batch_compute_start",
+      "benchmark_name": "hotpotqa",
+      "num_test_cases": 5,
+      "test_cases": [
+        24,
+        413,
+        1333,
+        382,
+        712
+      ],
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "max_concurrent": 5,
+      "timestamp": "2025-08-12T06:24:47.446405"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 24,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "workflow_code_length": 2530,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:47.446477"
+    },
+    {
+      "event": "compute_score_start",
+      "data_source": "humaneval",
+      "ground_truth": "default",
+      "extra_info": {
+        "answer": "    l = len(b)\n    pat = b + b\n    for i in range(len(a) - l + 1):\n        for j in range(l + 1):\n            if a[i:i+l] == pat[j:j+l]:\n                return True\n    return False\n",
+        "data_path": "Processed_dataset/human_eval/test.jsonl",
+        "raw_data": 154,
+        "test_cases": [
+          55,
+          46,
+          127,
+          138,
+          72
+        ]
+      },
+      "solution_length": 3126,
+      "timestamp": "2025-08-12T06:24:47.451195"
+    },
+    {
+      "event": "task_details",
+      "data_source": "humaneval",
+      "benchmark_name": "humaneval",
+      "num_test_cases": 5,
+      "test_cases": [
+        55,
+        46,
+        127,
+        138,
+        72
+      ],
+      "data_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "workflow_code_length": 1938,
+      "timestamp": "2025-08-12T06:24:47.451320"
+    },
+    {
+      "event": "batch_compute_start",
+      "benchmark_name": "humaneval",
+      "num_test_cases": 5,
+      "test_cases": [
+        55,
+        46,
+        127,
+        138,
+        72
+      ],
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "max_concurrent": 5,
+      "timestamp": "2025-08-12T06:24:47.451325"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "humaneval",
+      "test_case_index": 55,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "workflow_code_length": 1938,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:47.451396"
+    },
+    {
+      "event": "compute_score_start",
+      "data_source": "gsm8k",
+      "ground_truth": "default",
+      "extra_info": {
+        "answer": "Let x be the number of silver coins Gretchen has\nGretchen has x+30 gold coins.\nx+x+30=110\n2*x=80\nx=<<40=40>>40\nGretchen has 40+30=<<40+30=70>>70 gold coins\n#### 70",
+        "data_path": "Processed_dataset/gsm8k/test.jsonl",
+        "raw_data": 33,
+        "test_cases": [
+          1062,
+          226,
+          102,
+          725,
+          1033
+        ]
+      },
+      "solution_length": 3042,
+      "timestamp": "2025-08-12T06:24:47.459959"
+    },
+    {
+      "event": "task_details",
+      "data_source": "gsm8k",
+      "benchmark_name": "gsm8k",
+      "num_test_cases": 5,
+      "test_cases": [
+        1062,
+        226,
+        102,
+        725,
+        1033
+      ],
+      "data_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "workflow_code_length": 2136,
+      "timestamp": "2025-08-12T06:24:47.460099"
+    },
+    {
+      "event": "batch_compute_start",
+      "benchmark_name": "gsm8k",
+      "num_test_cases": 5,
+      "test_cases": [
+        1062,
+        226,
+        102,
+        725,
+        1033
+      ],
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "max_concurrent": 5,
+      "timestamp": "2025-08-12T06:24:47.460104"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 1062,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "workflow_code_length": 2136,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:47.460182"
+    },
+    {
+      "event": "compute_score_start",
+      "data_source": "mbpp",
+      "ground_truth": "default",
+      "extra_info": {
+        "answer": "def is_octagonal(n): \r\n\treturn 3 * n * n - 2 * n ",
+        "data_path": "Processed_dataset/mbpp/test.jsonl",
+        "raw_data": 48,
+        "test_cases": [
+          203,
+          377,
+          150,
+          106,
+          19
+        ]
+      },
+      "solution_length": 2640,
+      "timestamp": "2025-08-12T06:24:47.467976"
+    },
+    {
+      "event": "task_details",
+      "data_source": "mbpp",
+      "benchmark_name": "mbpp",
+      "num_test_cases": 5,
+      "test_cases": [
+        203,
+        377,
+        150,
+        106,
+        19
+      ],
+      "data_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "workflow_code_length": 2024,
+      "timestamp": "2025-08-12T06:24:47.468121"
+    },
+    {
+      "event": "batch_compute_start",
+      "benchmark_name": "mbpp",
+      "num_test_cases": 5,
+      "test_cases": [
+        203,
+        377,
+        150,
+        106,
+        19
+      ],
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "max_concurrent": 5,
+      "timestamp": "2025-08-12T06:24:47.468129"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "mbpp",
+      "test_case_index": 203,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "workflow_code_length": 2024,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:47.468211"
+    },
+    {
+      "event": "compute_score_start",
+      "data_source": "mbpp",
+      "ground_truth": "default",
+      "extra_info": {
+        "answer": "def extract_symmetric(test_list):\r\n  temp = set(test_list) & {(b, a) for a, b in test_list}\r\n  res = {(a, b) for a, b in temp if a < b}\r\n  return (res) ",
+        "data_path": "Processed_dataset/mbpp/test.jsonl",
+        "raw_data": 479,
+        "test_cases": [
+          43,
+          489,
+          162,
+          314,
+          247
+        ]
+      },
+      "solution_length": 3705,
+      "timestamp": "2025-08-12T06:24:47.478190"
+    },
+    {
+      "event": "task_details",
+      "data_source": "mbpp",
+      "benchmark_name": "mbpp",
+      "num_test_cases": 5,
+      "test_cases": [
+        43,
+        489,
+        162,
+        314,
+        247
+      ],
+      "data_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "workflow_code_length": 1948,
+      "timestamp": "2025-08-12T06:24:47.478326"
+    },
+    {
+      "event": "batch_compute_start",
+      "benchmark_name": "mbpp",
+      "num_test_cases": 5,
+      "test_cases": [
+        43,
+        489,
+        162,
+        314,
+        247
+      ],
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "max_concurrent": 5,
+      "timestamp": "2025-08-12T06:24:47.478331"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "mbpp",
+      "test_case_index": 43,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "workflow_code_length": 1948,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:47.478402"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 1236,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:47.526661"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 1330,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:47.562083"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 143,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:47.707359"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 24,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:47.708222"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 1706,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:47.724127"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 1062,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:47.728708"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 203,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:47.735569"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 202,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:47.756813"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 55,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:47.757204"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 43,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:47.761526"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 2.2434585094451904,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 48)",
+      "timestamp": "2025-08-12T06:24:49.967596"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 2.4423959255218506,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 65)",
+      "timestamp": "2025-08-12T06:24:49.969069"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 2.2081243991851807,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 57)",
+      "timestamp": "2025-08-12T06:24:49.969662"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.0038404464721679688,
+      "benchmark_name": "mbpp",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:49.973508"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "mbpp",
+      "test_case_index": 43,
+      "score": 0.0,
+      "total_time": 2.495180606842041,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:49.973582"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "mbpp",
+      "test_case_index": 489,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "workflow_code_length": 1948,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:49.973669"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 489,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:49.973768"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 2.239287853240967,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 57)",
+      "timestamp": "2025-08-12T06:24:49.974866"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 2.4139814376831055,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 49)",
+      "timestamp": "2025-08-12T06:24:49.976076"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 2.2683842182159424,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:49.976618"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 2.220264434814453,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 50)",
+      "timestamp": "2025-08-12T06:24:49.977086"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.002470731735229492,
+      "benchmark_name": "mbpp",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:49.977345"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 2.2490017414093018,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 54)",
+      "timestamp": "2025-08-12T06:24:49.977719"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "mbpp",
+      "test_case_index": 203,
+      "score": 0.0,
+      "total_time": 2.5101535320281982,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:49.978365"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "mbpp",
+      "test_case_index": 377,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "workflow_code_length": 2024,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:49.978746"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 377,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:49.978797"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 2.2220728397369385,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:49.979286"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.00020122528076171875,
+      "benchmark_name": "humaneval",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:49.979491"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "humaneval",
+      "test_case_index": 55,
+      "score": 0.0,
+      "total_time": 2.528158187866211,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:49.979554"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "humaneval",
+      "test_case_index": 46,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "workflow_code_length": 1938,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:49.979619"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 46,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:49.979637"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 2.2725744247436523,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:49.979950"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.0003190040588378906,
+      "benchmark_name": "humaneval",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:49.980276"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "humaneval",
+      "test_case_index": 143,
+      "score": 0.0,
+      "total_time": 2.53995418548584,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:49.980355"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "humaneval",
+      "test_case_index": 41,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "workflow_code_length": 1943,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:49.980431"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 41,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:49.980453"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 945,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "workflow_code_length": 2439,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.149384"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 945,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.149501"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 413,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "workflow_code_length": 2530,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.153184"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 413,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.153428"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 226,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "workflow_code_length": 2136,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.158092"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 226,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.158132"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 792,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "workflow_code_length": 2178,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.164544"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 792,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.164913"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "drop",
+      "test_case_index": 1177,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "workflow_code_length": 1971,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.165743"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 1177,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.165964"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "drop",
+      "test_case_index": 269,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "workflow_code_length": 2046,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.166190"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 269,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.166266"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.19852161407470703,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 57)",
+      "timestamp": "2025-08-12T06:24:50.172293"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.0003116130828857422,
+      "benchmark_name": "mbpp",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.172611"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.1932358741760254,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:50.172876"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.00018858909606933594,
+      "benchmark_name": "humaneval",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.173069"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "mbpp",
+      "test_case_index": 489,
+      "score": 0.0,
+      "total_time": 0.19959783554077148,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.173267"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "humaneval",
+      "test_case_index": 46,
+      "score": 0.0,
+      "total_time": 0.19376015663146973,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.173379"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "mbpp",
+      "test_case_index": 162,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "workflow_code_length": 1948,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.173469"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 162,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.173508"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "humaneval",
+      "test_case_index": 127,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "workflow_code_length": 1938,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.173591"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 127,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.173618"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.20424556732177734,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 57)",
+      "timestamp": "2025-08-12T06:24:50.183045"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.0001780986785888672,
+      "benchmark_name": "mbpp",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.183228"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "mbpp",
+      "test_case_index": 377,
+      "score": 0.0,
+      "total_time": 0.20453500747680664,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.183280"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "mbpp",
+      "test_case_index": 150,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "workflow_code_length": 2024,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.183332"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 150,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.183359"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.2037975788116455,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:50.184255"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.00024366378784179688,
+      "benchmark_name": "humaneval",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.184506"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "humaneval",
+      "test_case_index": 41,
+      "score": 0.0,
+      "total_time": 0.20413470268249512,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.184565"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "humaneval",
+      "test_case_index": 0,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "workflow_code_length": 1943,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.184633"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 0,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.184641"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.04177093505859375,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 65)",
+      "timestamp": "2025-08-12T06:24:50.191276"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.04306983947753906,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:50.196504"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 857,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "workflow_code_length": 2439,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.200981"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 857,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.201066"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.043929100036621094,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 54)",
+      "timestamp": "2025-08-12T06:24:50.202064"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 1333,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "workflow_code_length": 2530,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.211065"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 1333,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.212280"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 102,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "workflow_code_length": 2136,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.420436"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 102,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.420468"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.2565135955810547,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 50)",
+      "timestamp": "2025-08-12T06:24:50.422482"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.2584569454193115,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 49)",
+      "timestamp": "2025-08-12T06:24:50.423375"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.250774621963501,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:50.424396"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.00022172927856445312,
+      "benchmark_name": "humaneval",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.424623"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "humaneval",
+      "test_case_index": 127,
+      "score": 0.0,
+      "total_time": 0.25107502937316895,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.424666"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "humaneval",
+      "test_case_index": 138,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "workflow_code_length": 1938,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.424730"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 138,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.424763"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.2528572082519531,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 57)",
+      "timestamp": "2025-08-12T06:24:50.426370"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.00018525123596191406,
+      "benchmark_name": "mbpp",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.426559"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "mbpp",
+      "test_case_index": 162,
+      "score": 0.0,
+      "total_time": 0.25313305854797363,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.426600"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "mbpp",
+      "test_case_index": 314,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "workflow_code_length": 1948,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.426656"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 314,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.426734"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.26128411293029785,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 48)",
+      "timestamp": "2025-08-12T06:24:50.427553"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "drop",
+      "test_case_index": 1797,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "workflow_code_length": 1971,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.432509"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 1797,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.432958"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 586,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "workflow_code_length": 2178,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.437301"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 586,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.437545"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "drop",
+      "test_case_index": 1472,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "workflow_code_length": 2046,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.441033"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 1472,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.441399"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.25777101516723633,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:50.442415"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.0001742839813232422,
+      "benchmark_name": "humaneval",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.442593"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "humaneval",
+      "test_case_index": 0,
+      "score": 0.0,
+      "total_time": 0.25800251960754395,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.442635"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "humaneval",
+      "test_case_index": 151,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "workflow_code_length": 1943,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.442689"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 151,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.442727"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.2425391674041748,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 65)",
+      "timestamp": "2025-08-12T06:24:50.443609"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.2612645626068115,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 57)",
+      "timestamp": "2025-08-12T06:24:50.444627"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.00018095970153808594,
+      "benchmark_name": "mbpp",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.444812"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "mbpp",
+      "test_case_index": 150,
+      "score": 0.0,
+      "total_time": 0.2615199089050293,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.444852"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "mbpp",
+      "test_case_index": 106,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "workflow_code_length": 2024,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.444908"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 106,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.444926"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 665,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "workflow_code_length": 2439,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.453622"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 665,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.453701"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.04052543640136719,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:50.465291"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.00023984909057617188,
+      "benchmark_name": "humaneval",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.465536"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "humaneval",
+      "test_case_index": 138,
+      "score": 0.0,
+      "total_time": 0.04086756706237793,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.465597"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "humaneval",
+      "test_case_index": 72,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "workflow_code_length": 1938,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.465666"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 72,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.465685"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.2560081481933594,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:50.468296"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.05286383628845215,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 54)",
+      "timestamp": "2025-08-12T06:24:50.473335"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.048575639724731445,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 57)",
+      "timestamp": "2025-08-12T06:24:50.475314"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.00017833709716796875,
+      "benchmark_name": "mbpp",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.475497"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "mbpp",
+      "test_case_index": 314,
+      "score": 0.0,
+      "total_time": 0.048891305923461914,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.475547"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "mbpp",
+      "test_case_index": 247,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "workflow_code_length": 1948,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.475602"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 247,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.475634"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 382,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "workflow_code_length": 2530,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.478848"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 382,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.479005"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.04631185531616211,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 50)",
+      "timestamp": "2025-08-12T06:24:50.479276"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.04300880432128906,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 49)",
+      "timestamp": "2025-08-12T06:24:50.480558"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 725,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "workflow_code_length": 2136,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.484371"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 725,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.484455"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.04927682876586914,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 48)",
+      "timestamp": "2025-08-12T06:24:50.490680"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 580,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "workflow_code_length": 2178,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.494407"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 580,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.494585"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "drop",
+      "test_case_index": 1439,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "workflow_code_length": 1971,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.498763"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 1439,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.498991"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "drop",
+      "test_case_index": 1661,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "workflow_code_length": 2046,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.502415"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 1661,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.502644"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.06147313117980957,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:50.504204"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.00019407272338867188,
+      "benchmark_name": "humaneval",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.504402"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "humaneval",
+      "test_case_index": 151,
+      "score": 0.0,
+      "total_time": 0.061766862869262695,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.504456"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "humaneval",
+      "test_case_index": 46,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl",
+      "workflow_code_length": 1943,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.504509"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 46,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.504526"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.05485177040100098,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 65)",
+      "timestamp": "2025-08-12T06:24:50.508557"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.06667804718017578,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 57)",
+      "timestamp": "2025-08-12T06:24:50.511607"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.0001823902130126953,
+      "benchmark_name": "mbpp",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.511794"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "mbpp",
+      "test_case_index": 106,
+      "score": 0.0,
+      "total_time": 0.06692767143249512,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.511836"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "mbpp",
+      "test_case_index": 19,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/mbpp/test.jsonl",
+      "workflow_code_length": 2024,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.511889"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 19,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.511897"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.04715132713317871,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:50.512839"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.0002703666687011719,
+      "benchmark_name": "humaneval",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.513116"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "humaneval",
+      "test_case_index": 72,
+      "score": 0.0,
+      "total_time": 0.04751110076904297,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.513176"
+    },
+    {
+      "event": "batch_compute_completed",
+      "benchmark_name": "humaneval",
+      "scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "average_score": 0.0,
+      "num_test_cases": 5,
+      "failed_count": 0,
+      "success_rate": 1.0,
+      "batch_duration": 3.0620455741882324,
+      "timestamp": "2025-08-12T06:24:50.513371"
+    },
+    {
+      "event": "compute_score_completed",
+      "data_source": "humaneval",
+      "benchmark_name": "humaneval",
+      "average_reward": 0.0,
+      "num_test_cases": 5,
+      "timestamp": "2025-08-12T06:24:50.513419",
+      "duration": 3.0622293949127197
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 411,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "workflow_code_length": 2439,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.517540"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 411,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.517592"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.05525326728820801,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 57)",
+      "timestamp": "2025-08-12T06:24:50.530890"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.00017547607421875,
+      "benchmark_name": "mbpp",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.531069"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "mbpp",
+      "test_case_index": 247,
+      "score": 0.0,
+      "total_time": 0.055511474609375,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.531113"
+    },
+    {
+      "event": "batch_compute_completed",
+      "benchmark_name": "mbpp",
+      "scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "average_score": 0.0,
+      "num_test_cases": 5,
+      "failed_count": 0,
+      "success_rate": 1.0,
+      "batch_duration": 3.0529167652130127,
+      "timestamp": "2025-08-12T06:24:50.531248"
+    },
+    {
+      "event": "compute_score_completed",
+      "data_source": "mbpp",
+      "benchmark_name": "mbpp",
+      "average_reward": 0.0,
+      "num_test_cases": 5,
+      "timestamp": "2025-08-12T06:24:50.531278",
+      "duration": 3.0530929565429688
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.05269289016723633,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:50.531701"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.05072736740112305,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 54)",
+      "timestamp": "2025-08-12T06:24:50.535187"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 712,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "workflow_code_length": 2530,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.541644"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 712,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.541844"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.0490877628326416,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 49)",
+      "timestamp": "2025-08-12T06:24:50.543677"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.04575920104980469,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 50)",
+      "timestamp": "2025-08-12T06:24:50.544757"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 1033,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl",
+      "workflow_code_length": 2136,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.547913"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 1033,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.548011"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.04505276679992676,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 58)",
+      "timestamp": "2025-08-12T06:24:50.549583"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.00017189979553222656,
+      "benchmark_name": "humaneval",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.549760"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "humaneval",
+      "test_case_index": 46,
+      "score": 0.0,
+      "total_time": 0.04529166221618652,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.549801"
+    },
+    {
+      "event": "batch_compute_completed",
+      "benchmark_name": "humaneval",
+      "scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "average_score": 0.0,
+      "num_test_cases": 5,
+      "failed_count": 0,
+      "success_rate": 1.0,
+      "batch_duration": 3.109645366668701,
+      "timestamp": "2025-08-12T06:24:50.549929"
+    },
+    {
+      "event": "compute_score_completed",
+      "data_source": "humaneval",
+      "benchmark_name": "humaneval",
+      "average_reward": 0.0,
+      "num_test_cases": 5,
+      "timestamp": "2025-08-12T06:24:50.549963",
+      "duration": 3.1298575401306152
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.05183553695678711,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 48)",
+      "timestamp": "2025-08-12T06:24:50.554484"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 216,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/validation.jsonl",
+      "workflow_code_length": 2178,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.559311"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 216,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.559376"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.04771924018859863,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 57)",
+      "timestamp": "2025-08-12T06:24:50.559620"
+    },
+    {
+      "event": "score_verified",
+      "score": 0.0,
+      "is_correct": false,
+      "verification_time": 0.00019693374633789062,
+      "benchmark_name": "mbpp",
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.559822"
+    },
+    {
+      "event": "testcase_completed",
+      "benchmark_name": "mbpp",
+      "test_case_index": 19,
+      "score": 0.0,
+      "total_time": 0.04799246788024902,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.559881"
+    },
+    {
+      "event": "batch_compute_completed",
+      "benchmark_name": "mbpp",
+      "scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "average_score": 0.0,
+      "num_test_cases": 5,
+      "failed_count": 0,
+      "success_rate": 1.0,
+      "batch_duration": 3.091884136199951,
+      "timestamp": "2025-08-12T06:24:50.560012"
+    },
+    {
+      "event": "compute_score_completed",
+      "data_source": "mbpp",
+      "benchmark_name": "mbpp",
+      "average_reward": 0.0,
+      "num_test_cases": 5,
+      "timestamp": "2025-08-12T06:24:50.560044",
+      "duration": 3.092071771621704
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "drop",
+      "test_case_index": 707,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "workflow_code_length": 1971,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.563746"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 707,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.563827"
+    },
+    {
+      "event": "testcase_start",
+      "benchmark_name": "drop",
+      "test_case_index": 1386,
+      "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/drop/validation.jsonl",
+      "workflow_code_length": 2046,
+      "execution_mode": "metagpt",
+      "timestamp": "2025-08-12T06:24:50.569255"
+    },
+    {
+      "event": "verification_data_loaded",
+      "test_case_index": 1386,
+      "has_answer": true,
+      "timestamp": "2025-08-12T06:24:50.569426"
+    },
+    {
+      "event": "workflow_executed_via_metagpt",
+      "execution_time": 0.058302879333496094,
+      "result_length": 41,
+      "result_preview": "Error: invalid syntax (<string>, line 65)",
+      "timestamp": "2025-08-12T06:24:50.575899"
+    }
+  ],
+  "workflows": [
+    {
+      "event": "extract_workflow_success",
+      "method": "class_pattern",
+      "workflow_length": 2178,
+      "response_length": 3004,
+      "timestamp": "2025-08-12T06:24:47.439584",
+      "duration": 0.0002887248992919922
+    },
+    {
+      "event": "extract_workflow_success",
+      "method": "class_pattern",
+      "workflow_length": 1943,
+      "response_length": 3097,
+      "timestamp": "2025-08-12T06:24:47.440200",
+      "duration": 5.817413330078125e-05
+    },
+    {
+      "event": "extract_workflow_success",
+      "method": "class_pattern",
+      "workflow_length": 1971,
+      "response_length": 2647,
+      "timestamp": "2025-08-12T06:24:47.440786",
+      "duration": 5.7697296142578125e-05
+    },
+    {
+      "event": "extract_workflow_success",
+      "method": "class_pattern",
+      "workflow_length": 2439,
+      "response_length": 3418,
+      "timestamp": "2025-08-12T06:24:47.441447",
+      "duration": 8.20159912109375e-05
+    },
+    {
+      "event": "extract_workflow_success",
+      "method": "class_pattern",
+      "workflow_length": 2046,
+      "response_length": 3181,
+      "timestamp": "2025-08-12T06:24:47.442558",
+      "duration": 6.151199340820312e-05
+    },
+    {
+      "event": "extract_workflow_success",
+      "method": "class_pattern",
+      "workflow_length": 2530,
+      "response_length": 3752,
+      "timestamp": "2025-08-12T06:24:47.446334",
+      "duration": 7.581710815429688e-05
+    },
+    {
+      "event": "extract_workflow_success",
+      "method": "class_pattern",
+      "workflow_length": 1938,
+      "response_length": 3126,
+      "timestamp": "2025-08-12T06:24:47.451266",
+      "duration": 6.532669067382812e-05
+    },
+    {
+      "event": "extract_workflow_success",
+      "method": "class_pattern",
+      "workflow_length": 2136,
+      "response_length": 3042,
+      "timestamp": "2025-08-12T06:24:47.460032",
+      "duration": 6.413459777832031e-05
+    },
+    {
+      "event": "extract_workflow_success",
+      "method": "class_pattern",
+      "workflow_length": 2024,
+      "response_length": 2640,
+      "timestamp": "2025-08-12T06:24:47.468055",
+      "duration": 7.176399230957031e-05
+    },
+    {
+      "event": "extract_workflow_success",
+      "method": "class_pattern",
+      "workflow_length": 1948,
+      "response_length": 3705,
+      "timestamp": "2025-08-12T06:24:47.478266",
+      "duration": 6.818771362304688e-05
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_gsm8k_20250812_062447_h13v48",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 1236,
+      "script_length": 3774,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/gsm8k",
+      "timestamp": "2025-08-12T06:24:47.780332"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_hotpotqa_20250812_062447_3dmzel",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 1330,
+      "script_length": 3513,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/hotpotqa",
+      "timestamp": "2025-08-12T06:24:47.782636"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_gsm8k_20250812_062447_y1cinb",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 1062,
+      "script_length": 3471,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/gsm8k",
+      "timestamp": "2025-08-12T06:24:47.788740"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_drop_20250812_062447_x7xrua",
+      "benchmark_name": "drop",
+      "test_case_index": 1706,
+      "script_length": 3381,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/drop",
+      "timestamp": "2025-08-12T06:24:47.791782"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_hotpotqa_20250812_062447_wdev5a",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 24,
+      "script_length": 3865,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/hotpotqa",
+      "timestamp": "2025-08-12T06:24:47.792390"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_humaneval_20250812_062447_501pvr",
+      "benchmark_name": "humaneval",
+      "test_case_index": 143,
+      "script_length": 3278,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/humaneval",
+      "timestamp": "2025-08-12T06:24:47.796369"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_drop_20250812_062447_h2j36c",
+      "benchmark_name": "drop",
+      "test_case_index": 202,
+      "script_length": 3306,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/drop",
+      "timestamp": "2025-08-12T06:24:47.802037"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_mbpp_20250812_062447_qbcu14",
+      "benchmark_name": "mbpp",
+      "test_case_index": 203,
+      "script_length": 3359,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/mbpp",
+      "timestamp": "2025-08-12T06:24:47.803196"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_humaneval_20250812_062447_hhrklv",
+      "benchmark_name": "humaneval",
+      "test_case_index": 55,
+      "script_length": 3273,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/humaneval",
+      "timestamp": "2025-08-12T06:24:47.803961"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_mbpp_20250812_062447_45f9ed",
+      "benchmark_name": "mbpp",
+      "test_case_index": 43,
+      "script_length": 3283,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/mbpp",
+      "timestamp": "2025-08-12T06:24:47.816413"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_mbpp_20250812_062449_mgy7ab",
+      "benchmark_name": "mbpp",
+      "test_case_index": 489,
+      "script_length": 3283,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/mbpp",
+      "timestamp": "2025-08-12T06:24:50.170587"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_humaneval_20250812_062449_tw8t0d",
+      "benchmark_name": "humaneval",
+      "test_case_index": 46,
+      "script_length": 3273,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/humaneval",
+      "timestamp": "2025-08-12T06:24:50.170719"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_mbpp_20250812_062449_ctsmob",
+      "benchmark_name": "mbpp",
+      "test_case_index": 377,
+      "script_length": 3359,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/mbpp",
+      "timestamp": "2025-08-12T06:24:50.182361"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_humaneval_20250812_062449_lop0yx",
+      "benchmark_name": "humaneval",
+      "test_case_index": 41,
+      "script_length": 3278,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/humaneval",
+      "timestamp": "2025-08-12T06:24:50.183397"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_gsm8k_20250812_062450_ovefrf",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 945,
+      "script_length": 3774,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/gsm8k",
+      "timestamp": "2025-08-12T06:24:50.190294"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_hotpotqa_20250812_062450_43cxnp",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 413,
+      "script_length": 3865,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/hotpotqa",
+      "timestamp": "2025-08-12T06:24:50.195429"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_gsm8k_20250812_062450_7yl2ne",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 226,
+      "script_length": 3471,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/gsm8k",
+      "timestamp": "2025-08-12T06:24:50.201131"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_drop_20250812_062450_ur986w",
+      "benchmark_name": "drop",
+      "test_case_index": 1177,
+      "script_length": 3306,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/drop",
+      "timestamp": "2025-08-12T06:24:50.212053"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_hotpotqa_20250812_062450_9morcf",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 792,
+      "script_length": 3513,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/hotpotqa",
+      "timestamp": "2025-08-12T06:24:50.417546"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_humaneval_20250812_062450_ai9cad",
+      "benchmark_name": "humaneval",
+      "test_case_index": 127,
+      "script_length": 3273,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/humaneval",
+      "timestamp": "2025-08-12T06:24:50.422991"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_mbpp_20250812_062450_4nc0sn",
+      "benchmark_name": "mbpp",
+      "test_case_index": 162,
+      "script_length": 3283,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/mbpp",
+      "timestamp": "2025-08-12T06:24:50.425621"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_drop_20250812_062450_om9d0z",
+      "benchmark_name": "drop",
+      "test_case_index": 269,
+      "script_length": 3381,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/drop",
+      "timestamp": "2025-08-12T06:24:50.426780"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_humaneval_20250812_062450_7izl06",
+      "benchmark_name": "humaneval",
+      "test_case_index": 0,
+      "script_length": 3278,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/humaneval",
+      "timestamp": "2025-08-12T06:24:50.441457"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_gsm8k_20250812_062450_lqohhh",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 857,
+      "script_length": 3774,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/gsm8k",
+      "timestamp": "2025-08-12T06:24:50.442779"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_mbpp_20250812_062450_g449oz",
+      "benchmark_name": "mbpp",
+      "test_case_index": 150,
+      "script_length": 3359,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/mbpp",
+      "timestamp": "2025-08-12T06:24:50.443880"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_humaneval_20250812_062450_c642dz",
+      "benchmark_name": "humaneval",
+      "test_case_index": 138,
+      "script_length": 3273,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/humaneval",
+      "timestamp": "2025-08-12T06:24:50.464406"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_hotpotqa_20250812_062450_i1adzv",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 1333,
+      "script_length": 3865,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/hotpotqa",
+      "timestamp": "2025-08-12T06:24:50.467535"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_gsm8k_20250812_062450_ajjcwq",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 102,
+      "script_length": 3471,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/gsm8k",
+      "timestamp": "2025-08-12T06:24:50.471926"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_mbpp_20250812_062450_2tqirt",
+      "benchmark_name": "mbpp",
+      "test_case_index": 314,
+      "script_length": 3283,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/mbpp",
+      "timestamp": "2025-08-12T06:24:50.472020"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_drop_20250812_062450_yjek64",
+      "benchmark_name": "drop",
+      "test_case_index": 1797,
+      "script_length": 3306,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/drop",
+      "timestamp": "2025-08-12T06:24:50.474024"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_hotpotqa_20250812_062450_69cx0w",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 586,
+      "script_length": 3513,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/hotpotqa",
+      "timestamp": "2025-08-12T06:24:50.479558"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_drop_20250812_062450_cx1wtm",
+      "benchmark_name": "drop",
+      "test_case_index": 1472,
+      "script_length": 3381,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/drop",
+      "timestamp": "2025-08-12T06:24:50.489841"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_humaneval_20250812_062450_zgd2d8",
+      "benchmark_name": "humaneval",
+      "test_case_index": 151,
+      "script_length": 3278,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/humaneval",
+      "timestamp": "2025-08-12T06:24:50.502784"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_gsm8k_20250812_062450_f6r2vj",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 665,
+      "script_length": 3774,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/gsm8k",
+      "timestamp": "2025-08-12T06:24:50.507758"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_mbpp_20250812_062450_l9hl3a",
+      "benchmark_name": "mbpp",
+      "test_case_index": 106,
+      "script_length": 3359,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/mbpp",
+      "timestamp": "2025-08-12T06:24:50.510925"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_humaneval_20250812_062450_fs3eau",
+      "benchmark_name": "humaneval",
+      "test_case_index": 72,
+      "script_length": 3273,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/humaneval",
+      "timestamp": "2025-08-12T06:24:50.511937"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_mbpp_20250812_062450_tn07r0",
+      "benchmark_name": "mbpp",
+      "test_case_index": 247,
+      "script_length": 3283,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/mbpp",
+      "timestamp": "2025-08-12T06:24:50.529472"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_hotpotqa_20250812_062450_io3oaq",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 382,
+      "script_length": 3865,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/hotpotqa",
+      "timestamp": "2025-08-12T06:24:50.529568"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_gsm8k_20250812_062450_szlzyx",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 725,
+      "script_length": 3471,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/gsm8k",
+      "timestamp": "2025-08-12T06:24:50.534409"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_hotpotqa_20250812_062450_3n11mm",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 580,
+      "script_length": 3513,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/hotpotqa",
+      "timestamp": "2025-08-12T06:24:50.541936"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_drop_20250812_062450_zi83xf",
+      "benchmark_name": "drop",
+      "test_case_index": 1439,
+      "script_length": 3306,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/drop",
+      "timestamp": "2025-08-12T06:24:50.543244"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_humaneval_20250812_062450_5prh3l",
+      "benchmark_name": "humaneval",
+      "test_case_index": 46,
+      "script_length": 3278,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/humaneval",
+      "timestamp": "2025-08-12T06:24:50.548658"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_drop_20250812_062450_0xqn48",
+      "benchmark_name": "drop",
+      "test_case_index": 1661,
+      "script_length": 3381,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/drop",
+      "timestamp": "2025-08-12T06:24:50.553688"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_mbpp_20250812_062450_mh1d2x",
+      "benchmark_name": "mbpp",
+      "test_case_index": 19,
+      "script_length": 3359,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/mbpp",
+      "timestamp": "2025-08-12T06:24:50.555765"
+    },
+    {
+      "event": "metagpt_execution_start",
+      "workflow_id": "reward_gsm8k_20250812_062450_abv7sc",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 411,
+      "script_length": 3774,
+      "workspace": "/nas/ganluo/Flow_RL/Test_FILE/workspace/gsm8k",
+      "timestamp": "2025-08-12T06:24:50.575001"
+    }
+  ],
+  "llm_calls": [],
+  "errors": [
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "drop",
+      "test_case_index": 1706,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 48)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 48\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 2.2434253692626953,
+      "timestamp": "2025-08-12T06:24:49.967570"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 1236,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 65)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 65\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 2.4423651695251465,
+      "timestamp": "2025-08-12T06:24:49.969045"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "mbpp",
+      "test_case_index": 43,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 57)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 57\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 2.208099365234375,
+      "timestamp": "2025-08-12T06:24:49.969641"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "mbpp",
+      "test_case_index": 203,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 57)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 57\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 2.2392632961273193,
+      "timestamp": "2025-08-12T06:24:49.974844"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 1330,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 49)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 49\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 2.4139516353607178,
+      "timestamp": "2025-08-12T06:24:49.976051"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 24,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 2.2683513164520264,
+      "timestamp": "2025-08-12T06:24:49.976599"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "drop",
+      "test_case_index": 202,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 50)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 50\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 2.220243215560913,
+      "timestamp": "2025-08-12T06:24:49.977069"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 1062,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 54)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 54\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 2.248981475830078,
+      "timestamp": "2025-08-12T06:24:49.977701"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "humaneval",
+      "test_case_index": 55,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 2.2220511436462402,
+      "timestamp": "2025-08-12T06:24:49.979266"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "humaneval",
+      "test_case_index": 143,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 2.272545337677002,
+      "timestamp": "2025-08-12T06:24:49.979926"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "mbpp",
+      "test_case_index": 489,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 57)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 57\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.19849610328674316,
+      "timestamp": "2025-08-12T06:24:50.172270"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "humaneval",
+      "test_case_index": 46,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.19321608543395996,
+      "timestamp": "2025-08-12T06:24:50.172857"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "mbpp",
+      "test_case_index": 377,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 57)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 57\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.20422768592834473,
+      "timestamp": "2025-08-12T06:24:50.183028"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "humaneval",
+      "test_case_index": 41,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.20376253128051758,
+      "timestamp": "2025-08-12T06:24:50.184222"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 945,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 65)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 65\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.04175305366516113,
+      "timestamp": "2025-08-12T06:24:50.191260"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 413,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.04304862022399902,
+      "timestamp": "2025-08-12T06:24:50.196485"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 226,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 54)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 54\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.04391026496887207,
+      "timestamp": "2025-08-12T06:24:50.202047"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "drop",
+      "test_case_index": 1177,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 50)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 50\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.25649118423461914,
+      "timestamp": "2025-08-12T06:24:50.422462"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 792,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 49)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 49\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.25843000411987305,
+      "timestamp": "2025-08-12T06:24:50.423351"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "humaneval",
+      "test_case_index": 127,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.25075697898864746,
+      "timestamp": "2025-08-12T06:24:50.424380"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "mbpp",
+      "test_case_index": 162,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 57)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 57\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.2528388500213623,
+      "timestamp": "2025-08-12T06:24:50.426353"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "drop",
+      "test_case_index": 269,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 48)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 48\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.26126766204833984,
+      "timestamp": "2025-08-12T06:24:50.427538"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "humaneval",
+      "test_case_index": 0,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.2577533721923828,
+      "timestamp": "2025-08-12T06:24:50.442398"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 857,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 65)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 65\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.24252080917358398,
+      "timestamp": "2025-08-12T06:24:50.443592"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "mbpp",
+      "test_case_index": 150,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 57)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 57\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.2612485885620117,
+      "timestamp": "2025-08-12T06:24:50.444611"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "humaneval",
+      "test_case_index": 138,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.04050946235656738,
+      "timestamp": "2025-08-12T06:24:50.465276"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 1333,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.25599074363708496,
+      "timestamp": "2025-08-12T06:24:50.468281"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 102,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 54)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 54\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.05284261703491211,
+      "timestamp": "2025-08-12T06:24:50.473317"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "mbpp",
+      "test_case_index": 314,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 57)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 57\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.04855775833129883,
+      "timestamp": "2025-08-12T06:24:50.475296"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "drop",
+      "test_case_index": 1797,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 50)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 50\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.04629182815551758,
+      "timestamp": "2025-08-12T06:24:50.479257"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 586,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 49)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 49\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.042990922927856445,
+      "timestamp": "2025-08-12T06:24:50.480542"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "drop",
+      "test_case_index": 1472,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 48)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 48\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.049259185791015625,
+      "timestamp": "2025-08-12T06:24:50.490664"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "humaneval",
+      "test_case_index": 151,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.06145596504211426,
+      "timestamp": "2025-08-12T06:24:50.504188"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 665,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 65)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 65\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.054833412170410156,
+      "timestamp": "2025-08-12T06:24:50.508541"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "mbpp",
+      "test_case_index": 106,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 57)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 57\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.06666278839111328,
+      "timestamp": "2025-08-12T06:24:50.511592"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "humaneval",
+      "test_case_index": 72,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.047129154205322266,
+      "timestamp": "2025-08-12T06:24:50.512819"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "mbpp",
+      "test_case_index": 247,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 57)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 57\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.05523800849914551,
+      "timestamp": "2025-08-12T06:24:50.530876"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 382,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.052675485610961914,
+      "timestamp": "2025-08-12T06:24:50.531686"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 725,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 54)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 54\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.05071067810058594,
+      "timestamp": "2025-08-12T06:24:50.535171"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "hotpotqa",
+      "test_case_index": 580,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 49)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 49\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.04906773567199707,
+      "timestamp": "2025-08-12T06:24:50.543659"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "drop",
+      "test_case_index": 1439,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 50)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 50\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.045739173889160156,
+      "timestamp": "2025-08-12T06:24:50.544740"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "humaneval",
+      "test_case_index": 46,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 58)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 58\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.045037269592285156,
+      "timestamp": "2025-08-12T06:24:50.549568"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "drop",
+      "test_case_index": 1661,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 48)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 48\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.0518190860748291,
+      "timestamp": "2025-08-12T06:24:50.554469"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "mbpp",
+      "test_case_index": 19,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 57)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 57\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.04769635200500488,
+      "timestamp": "2025-08-12T06:24:50.559599"
+    },
+    {
+      "function": "execute_workflow_metagpt",
+      "benchmark_name": "gsm8k",
+      "test_case_index": 411,
+      "error": {
+        "error_type": "SyntaxError",
+        "error_message": "invalid syntax (<string>, line 65)",
+        "traceback": "Traceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 745, in compute_score\n    loop = asyncio.get_running_loop()\nRuntimeError: no running event loop\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/nas/ganluo/Flow_RL/Test_FILE/verl_support/scoreflow_reward_utils.py\", line 408, in execute_workflow_metagpt\n    exec(full_script_code, exec_globals, execution_namespace)\n  File \"<string>\", line 65\n    </code>\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      "execution_time": 0.05828404426574707,
+      "timestamp": "2025-08-12T06:24:50.575882"
+    }
+  ]
+}

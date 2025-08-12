@@ -52,7 +52,7 @@ from metagpt.configs.llm_config import LLMConfig, LLMType
 from ScoreFlow.scripts.base_handler import BenchmarkHandler
 
 # DEBUG模式控制
-DEBUG = 0  # 改为1启用debug模式
+DEBUG = 1  # 改为1启用debug模式
 DEBUG_PATH = PROJECT_ROOT / "Test_FILE" / "debug_logs"  # 存储在Test_FILE目录下
 
 # 设置日志

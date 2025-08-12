@@ -1,7 +1,7 @@
 set -x
 export USE_SGLANG=1
 # export DATA_HOME=/home/lg/workflow_tooluse/Flow_RL/Test_FILE/verl_support/data
-export DATA_HOME=/nas/ganluo/Flow_RL/Test_FILE/verl_internbootcamp/data
+export DATA_HOME=/nas/ganluo/Flow_RL/Test_FILE/verl_support/data/test_new_test
 # export CUDA_DEVICE_MAX_CONNECTIONS=1 # For megatron communication/computation overlapping
 export HYDRA_FULL_ERROR=1
 
@@ -29,12 +29,12 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py --config-path=config \
     algorithm.adv_estimator=grpo \
     data.train_files="$train_files" \
     data.val_files="$test_files" \
-    data.train_batch_size=32 \
+    data.train_batch_size=16 \
     data.max_prompt_length=8192 \
-    data.max_response_length=16384 \
+    data.max_response_length=8192 \
     data.filter_overlong_prompts=True \
     data.truncation='error' \
-    actor_rollout_ref.model.path=/nas/models/qwen2.5_0.5b_instruct_hf \
+    actor_rollout_ref.model.path=/nas/models/Qwen2.5-7B-Instruct \
     actor_rollout_ref.actor.optim.lr=5e-7 \
     actor_rollout_ref.actor.ppo_mini_batch_size=8 \
     actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=2 \
@@ -56,7 +56,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py --config-path=config \
     trainer.critic_warmup=0 \
     trainer.logger='["console"]' \
     trainer.project_name='verl_grpo_h100_test' \
-    trainer.experiment_name='qwen2.5_0.5b_h100_8gpu_test' \
+    trainer.experiment_name='qwen2.5_7b_h100_8gpu_test' \
     trainer.n_gpus_per_node=8 \
     trainer.nnodes=1 \
     trainer.save_freq=10 \

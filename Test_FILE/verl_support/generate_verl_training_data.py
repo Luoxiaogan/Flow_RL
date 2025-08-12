@@ -117,7 +117,7 @@ class VerlTrainingDataGenerator:
     def _construct_prompt(self, handler: BenchmarkHandler, data_indices: List[int], 
                          benchmark_name: str) -> Tuple[List[Dict], str]:
         """Construct prompt messages in HuggingFace chat format"""
-        start_prompt, system_prompt, task_prompt = self._load_prompt_templates()
+        start_prompt, system_prompt, task_prompt = self._load_prompt_templates(benchmark_name)
         
         # 1. 使用 handler 获取问题文本
         problem_text = handler.get_prompt_text(data_indices)
