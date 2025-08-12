@@ -30,7 +30,7 @@ Crucially, the skill you are developing must be transferable. You should be prep
 
 PYTHON_START = '''import asyncio
 from typing import Literal
-import ScoreFlow.scripts.gsm8k.operator as operator
+import ScoreFlow.scripts.common.operator as operator
 from metagpt.provider.llm_provider_registry import create_llm_instance as create
 
 '''

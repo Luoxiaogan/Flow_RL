@@ -20,8 +20,12 @@ import time
 # 添加必要路径
 CURRENT_DIR = Path(__file__).parent
 PROJECT_ROOT = CURRENT_DIR.parent.parent
-sys.path.append(str(PROJECT_ROOT))
-sys.path.append(str(PROJECT_ROOT / "Test_FILE"))
+# 重要：首先添加PROJECT_ROOT，使得ScoreFlow可以被正确导入
+sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.append(str(PROJECT_ROOT / "metagpt_root"))
+# 设置METAGPT_PROJECT_ROOT环境变量（如果没有设置）
+if "METAGPT_PROJECT_ROOT" not in os.environ:
+    os.environ["METAGPT_PROJECT_ROOT"] = str(PROJECT_ROOT / "Test_FILE")
 METAGPT_PROJECT_ROOT = Path(os.environ["METAGPT_PROJECT_ROOT"])
 # 添加MetaGPT本地路径
 METAGPT_LOCAL = PROJECT_ROOT / "Test_FILE" / "metagpt_local" / "metagpt_local"
@@ -735,7 +739,8 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
     Returns:
         float: reward分数 (0.0 到 1.0)
     """
-    # 检查是否已经在事件循环中
+    if data_source.startswith("workflow_"):
+        data_source = data_source.replace("workflow_", "")
     try:
         loop = asyncio.get_running_loop()
         # 如果已经在事件循环中，创建任务并等待
