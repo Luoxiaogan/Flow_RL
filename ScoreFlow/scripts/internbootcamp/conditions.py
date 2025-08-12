@@ -83,7 +83,7 @@ Extract information early, then incorporate it into subsequent instructions usin
 ```python
 extraction = await self.generate(instruction="Extract all numerical values...", context=self.problem_text)
 analysis = await self.generate(
-    instruction=f"Given these extracted values: {extraction}\nNow solve step by step...",
+    instruction=f"Given these extracted values: {{extraction}}\\nNow solve step by step...",
     context=self.problem_text
 )
 ```
@@ -212,7 +212,7 @@ from metagpt.provider.llm_provider_registry import create_llm_instance as create
 
 '''
 
-PYTHON_END = '''
+PYTHON_END = r'''
 
     async def __call__(self):
         """

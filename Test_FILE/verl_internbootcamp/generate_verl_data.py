@@ -95,7 +95,6 @@ class VERLDataGenerator:
             example = examples[0]  # 只取第一个example
             example_content = example.get('prompt', json.dumps(example, indent=2, ensure_ascii=False))
             user_prompt_str += f"\n\nExample:\n{example_content}"
-        
         user_prompt_str += end_prompt
         
         messages = [
@@ -118,7 +117,8 @@ class VERLDataGenerator:
             logger.warning(f"⏰ Task {task_name} timed out after {timeout} seconds, skipping...")
             return None
         except Exception as e:
-            logger.error(f"Failed to generate entry for {task_name}: {e}")
+            import traceback
+            logger.error(f"Failed to generate entry for {task_name}: {e}\n{traceback.format_exc()}")
             return None
 
     async def _generate_single_entry_impl(self, task_name: str, entry_id: int) -> Dict[str, Any]:

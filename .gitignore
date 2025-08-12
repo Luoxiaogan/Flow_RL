@@ -32,5 +32,5 @@ Test_FILE/verl_support/core-ray::WorkerDict-158032-1753628193
 .claude
 Test_FILE/verl_support/checkpoints/
 metagpt_root/
-**/debug_logs
 training_data/
+**/debug_logs
