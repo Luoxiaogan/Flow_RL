@@ -87,29 +87,28 @@ class VerlTrainingDataGenerator:
             raise
     
     def _load_prompt_templates(self, benchmark_name: str) -> Tuple[str, str, str, List[str]]:
-        """Load prompt templates from conditions_rl.py"""
+        """Load prompt templates from conditions.py"""
         try:
             # Check benchmark mapping first
             benchmark_info = self.benchmark_mapping.get(benchmark_name)
             if benchmark_info:
                 handler_dir = benchmark_info['handler_dir']
                 # Convert handler_dir to Python module path
-                conditions_path = handler_dir.replace('/', '.') + '.conditions_rl'
+                conditions_path = handler_dir.replace('/', '.') + '.conditions'
             else:
                 # Fallback to default naming rules
                 if benchmark_name.startswith("high_level_math"):
-                    conditions_path = "ScoreFlow.scripts.high_level_math.conditions_rl"
+                    conditions_path = "ScoreFlow.scripts.high_level_math.conditions"
                 else:
-                    conditions_path = f"ScoreFlow.scripts.{benchmark_name}.conditions_rl"
+                    conditions_path = f"ScoreFlow.scripts.{benchmark_name}.conditions"
             
             # Import conditions module
             conditions_module = importlib.import_module(conditions_path)
             
             return (
-                getattr(conditions_module, "START_PROMPT", ""),
-                getattr(conditions_module, "END_PROMPT", ""),
+                getattr(conditions_module, "START_PROMPT", ""), 
                 getattr(conditions_module, "SYSTEM_PROMPT", "You are a helpful AI assistant."),
-                getattr(conditions_module, "META_PROMPTS", [])
+                getattr(conditions_module, "TASK_PROMPT", [])
             )
         except Exception as e:
             logging.error(f"Failed to load prompt templates for {benchmark_name}: {e}")
@@ -118,13 +117,13 @@ class VerlTrainingDataGenerator:
     def _construct_prompt(self, handler: BenchmarkHandler, data_indices: List[int], 
                          benchmark_name: str) -> Tuple[List[Dict], str]:
         """Construct prompt messages in HuggingFace chat format"""
-        start_prompt, end_prompt, system_prompt, meta_prompts = self._load_prompt_templates(benchmark_name)
+        start_prompt, system_prompt, task_prompt = self._load_prompt_templates()
         
-        # Get problem text using handler
+        # 1. 使用 handler 获取问题文本
         problem_text = handler.get_prompt_text(data_indices)
         
         # Build instruction (clean version for SFT)
-        instruction = start_prompt + problem_text + "\\n\\n### 6. Your Response\\nNow, provide the complete and optimized Python workflow graph based on all the specifications above:"
+        instruction = task_prompt + start_prompt + problem_text + "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:"
         
         # Build messages in chat format
         messages = [
@@ -426,4 +425,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-    # python generate_verl_training_data.py --num-train-entries 2 --num-test-entries 1 --output-dir data/test_1 --benchmarks all
+    # python generate_verl_training_data.py --num-train-entries 20 --num-test-entries 2 --output-dir data/test_new --benchmarks all
