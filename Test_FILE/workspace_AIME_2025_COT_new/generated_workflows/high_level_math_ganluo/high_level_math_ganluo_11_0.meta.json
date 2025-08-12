@@ -1,0 +1,9 @@
+{
+    "id": "high_level_math_ganluo_11_0",
+    "benchmark": "high_level_math_ganluo",
+    "data_indices": [
+        29
+    ],
+    "dataset_path": "../Processed_dataset/high_level_math/aime_2025.jsonl",
+    "generation_timestamp": 1754972385.5830517
+}

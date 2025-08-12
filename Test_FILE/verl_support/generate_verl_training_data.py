@@ -426,4 +426,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-    # python generate_verl_training_data.py --num-train-entries 2 --num-test-entries 1 --output-dir data/test_gen --benchmarks all
+    # python generate_verl_training_data.py --num-train-entries 2 --num-test-entries 1 --output-dir data/test_1 --benchmarks all
