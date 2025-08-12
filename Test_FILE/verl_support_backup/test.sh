@@ -1,7 +1,7 @@
 set -x
 export USE_SGLANG=1
 # export DATA_HOME=/home/lg/workflow_tooluse/Flow_RL/Test_FILE/verl_support/data
-export DATA_HOME=/nas/ganluo/Flow_RL/Test_FILE/verl_internbootcamp
+export DATA_HOME=/nas/ganluo/Flow_RL/Test_FILE/verl_internbootcamp/data
 # export CUDA_DEVICE_MAX_CONNECTIONS=1 # For megatron communication/computation overlapping
 export HYDRA_FULL_ERROR=1
 
@@ -16,8 +16,8 @@ export CUDA_LAUNCH_BLOCKING=1
 # gsm8k_test_path=$DATA_HOME/gsm8k_verl_test.parquet
 # mbpp_train_path=$DATA_HOME/mbpp_verl_train.parquet
 # mbpp_test_path=$DATA_HOME/mbpp_verl_test.parquet
-internbootcamp_train_path=$DATA_HOME/verl_data_filtered/train.parquet
-internbootcamp_test_path=$DATA_HOME/verl_data_filtered/test.parquet
+internbootcamp_train_path=$DATA_HOME/train.parquet
+internbootcamp_test_path=$DATA_HOME/test.parquet
 
 train_files="['$internbootcamp_train_path']"
 test_files="['$internbootcamp_test_path']"
@@ -30,8 +30,8 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py --config-path=config \
     data.train_files="$train_files" \
     data.val_files="$test_files" \
     data.train_batch_size=32 \
-    data.max_prompt_length=4096 \
-    data.max_response_length=8192 \
+    data.max_prompt_length=8192 \
+    data.max_response_length=16384 \
     data.filter_overlong_prompts=True \
     data.truncation='error' \
     actor_rollout_ref.model.path=/nas/models/qwen2.5_0.5b_instruct_hf \
