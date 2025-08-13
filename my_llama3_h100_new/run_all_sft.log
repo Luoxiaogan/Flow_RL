@@ -1,0 +1,257 @@
+nohup: ignoring input
+Training Qwen-2.5-7B-Instruct...
+==========================================
+Model: qwen
+Dataset: /nas/ganluo/training_data/0813_filter之后的COT_SFT数据/merged_training_data_qwen.jsonl
+Output: /nas/ganluo/sft_output/Qwen2.5-7B-workflow-sft
+Global batch size: 32
+Loss masking: true
+==========================================
+ipex flag is deprecated, will be removed in Accelerate v1.10. From 2.7.0, PyTorch has all needed optimizations for Intel CPU and XPU.
+[2025-08-12 10:11:39,547] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:11:41,189] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+W0812 10:11:41.838000 218749 site-packages/torch/distributed/run.py:793] 
+W0812 10:11:41.838000 218749 site-packages/torch/distributed/run.py:793] *****************************************
+W0812 10:11:41.838000 218749 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0812 10:11:41.838000 218749 site-packages/torch/distributed/run.py:793] *****************************************
+[2025-08-12 10:11:50,441] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:11:51,371] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:11:51,376] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-12 10:11:51,376] [INFO] [comm.py:707:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+[W812 10:11:51.599281453 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:11:52,481] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:11:52,925] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:11:52,977] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:11:52,985] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:11:53,045] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:11:53,065] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:11:53,139] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Loading qwen model from /nas/models/Qwen2.5-7B-Instruct...
+[2025-08-12 10:11:53,424] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 249, in <module>
+[rank0]:     train()
+[rank0]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 129, in train
+[rank0]:     model = load_model(model_args)
+[rank0]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 85, in load_model
+[rank0]:     model = AutoModelForCausalLM.from_pretrained(
+[rank0]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 564, in from_pretrained
+[rank0]:     return model_class.from_pretrained(
+[rank0]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/modeling_utils.py", line 4090, in from_pretrained
+[rank0]:     config = cls._autoset_attn_implementation(
+[rank0]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1616, in _autoset_attn_implementation
+[rank0]:     cls._check_and_enable_flash_attn_2(
+[rank0]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1746, in _check_and_enable_flash_attn_2
+[rank0]:     raise ImportError(f"{preface} the package flash_attn seems to be not installed. {install_message}")
+[rank0]: ImportError: FlashAttention2 has been toggled on, but it cannot be used due to the following error: the package flash_attn seems to be not installed. Please refer to the documentation of https://huggingface.co/docs/transformers/perf_infer_gpu_one#flashattention-2 to install Flash Attention 2.
+[2025-08-12 10:11:53,457] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:11:53,462] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:11:53.685489007 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[rank0]:[W812 10:11:53.105878775 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[2025-08-12 10:11:53,972] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:11:53,977] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:11:53.199861421 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:11:54,030] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:11:54,035] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:11:54.257973496 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:11:54,050] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:11:54,055] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:11:54.276381766 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:11:54,088] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:11:54,093] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:11:54.315133707 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:11:54,105] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:11:54,110] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:11:54.332355344 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:11:54,248] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:11:54,253] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:11:54.475779563 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+W0812 10:11:54.476000 218749 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 219615 closing signal SIGTERM
+W0812 10:11:54.476000 218749 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 219616 closing signal SIGTERM
+W0812 10:11:54.476000 218749 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 219617 closing signal SIGTERM
+W0812 10:11:54.477000 218749 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 219618 closing signal SIGTERM
+W0812 10:11:54.477000 218749 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 219619 closing signal SIGTERM
+W0812 10:11:54.477000 218749 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 219620 closing signal SIGTERM
+W0812 10:11:54.477000 218749 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 219621 closing signal SIGTERM
+E0812 10:11:55.093000 218749 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 219614) of binary: /root/miniforge3/envs/lg_workflow/bin/python
+Traceback (most recent call last):
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1209, in <module>
+    main()
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1205, in main
+    launch_command(args)
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1184, in launch_command
+    deepspeed_launcher(args)
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/accelerate/commands/launch.py", line 868, in deepspeed_launcher
+    distrib_run.run(args)
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2025-08-12_10:11:54
+  host      : ctyun172022236189.et1032-ctyun
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 219614)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+Training Llama-3.1-8B-Instruct...
+==========================================
+Model: llama
+Dataset: /nas/ganluo/training_data/0813_filter之后的COT_SFT数据/merged_training_data_llama.jsonl
+Output: /nas/ganluo/sft_output/Llama-3.1-8B-workflow-sft
+Global batch size: 32
+Loss masking: true
+==========================================
+ipex flag is deprecated, will be removed in Accelerate v1.10. From 2.7.0, PyTorch has all needed optimizations for Intel CPU and XPU.
+[2025-08-12 10:11:58,224] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:11:59,877] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+W0812 10:12:00.426000 221825 site-packages/torch/distributed/run.py:793] 
+W0812 10:12:00.426000 221825 site-packages/torch/distributed/run.py:793] *****************************************
+W0812 10:12:00.426000 221825 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0812 10:12:00.426000 221825 site-packages/torch/distributed/run.py:793] *****************************************
+[2025-08-12 10:12:08,516] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:12:09,407] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:12:09,453] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:12:09,458] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:12:09.680578703 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:12:10,490] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:12:10,495] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:12:10.717312115 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:12:10,569] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:12:10,598] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:12:10,900] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:12:11,294] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:12:11,514] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:12:11,581] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-12 10:12:11,582] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:12:11,587] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:12:11.810226193 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:12:11,618] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:12:11,622] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-12 10:12:11,623] [INFO] [comm.py:707:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+[W812 10:12:11.844101783 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:12:11,880] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:12:11,885] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:12:11.107689768 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:12:12,331] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:12:12,336] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:12:12.558685970 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:12:12,568] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:12:12,573] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:12:12.795313928 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[2025-08-12 10:12:12,639] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-12 10:12:12,644] [INFO] [comm.py:676:init_distributed] cdb=None
+[W812 10:12:12.866627027 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+Loading llama model from /nas/models/Meta-Llama-3-8B-Instruct...
+[2025-08-12 10:12:13,463] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 249, in <module>
+[rank5]:     train()
+[rank5]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 129, in train
+[rank5]:     model = load_model(model_args)
+[rank5]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 85, in load_model
+[rank5]:     model = AutoModelForCausalLM.from_pretrained(
+[rank5]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 564, in from_pretrained
+[rank5]:     return model_class.from_pretrained(
+[rank5]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/modeling_utils.py", line 4090, in from_pretrained
+[rank5]:     config = cls._autoset_attn_implementation(
+[rank5]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1616, in _autoset_attn_implementation
+[rank5]:     cls._check_and_enable_flash_attn_2(
+[rank5]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1746, in _check_and_enable_flash_attn_2
+[rank5]:     raise ImportError(f"{preface} the package flash_attn seems to be not installed. {install_message}")
+[rank5]: ImportError: FlashAttention2 has been toggled on, but it cannot be used due to the following error: the package flash_attn seems to be not installed. Please refer to the documentation of https://huggingface.co/docs/transformers/perf_infer_gpu_one#flashattention-2 to install Flash Attention 2.
+Loading llama model from /nas/models/Meta-Llama-3-8B-Instruct...
+Loading llama model from /nas/models/Meta-Llama-3-8B-Instruct...
+[2025-08-12 10:12:14,047] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 249, in <module>
+[rank1]:     train()
+[rank1]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 129, in train
+[rank1]:     model = load_model(model_args)
+[rank1]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 85, in load_model
+[rank1]:     model = AutoModelForCausalLM.from_pretrained(
+[rank1]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 564, in from_pretrained
+[rank1]:     return model_class.from_pretrained(
+[rank1]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/modeling_utils.py", line 4090, in from_pretrained
+[rank1]:     config = cls._autoset_attn_implementation(
+[rank1]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1616, in _autoset_attn_implementation
+[rank1]:     cls._check_and_enable_flash_attn_2(
+[rank1]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1746, in _check_and_enable_flash_attn_2
+[rank1]:     raise ImportError(f"{preface} the package flash_attn seems to be not installed. {install_message}")
+[rank1]: ImportError: FlashAttention2 has been toggled on, but it cannot be used due to the following error: the package flash_attn seems to be not installed. Please refer to the documentation of https://huggingface.co/docs/transformers/perf_infer_gpu_one#flashattention-2 to install Flash Attention 2.
+[2025-08-12 10:12:14,130] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 249, in <module>
+[rank0]:     train()
+[rank0]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 129, in train
+[rank0]:     model = load_model(model_args)
+[rank0]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 85, in load_model
+[rank0]:     model = AutoModelForCausalLM.from_pretrained(
+[rank0]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 564, in from_pretrained
+[rank0]:     return model_class.from_pretrained(
+[rank0]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/modeling_utils.py", line 4090, in from_pretrained
+[rank0]:     config = cls._autoset_attn_implementation(
+[rank0]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1616, in _autoset_attn_implementation
+[rank0]:     cls._check_and_enable_flash_attn_2(
+[rank0]:   File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1746, in _check_and_enable_flash_attn_2
+[rank0]:     raise ImportError(f"{preface} the package flash_attn seems to be not installed. {install_message}")
+[rank0]: ImportError: FlashAttention2 has been toggled on, but it cannot be used due to the following error: the package flash_attn seems to be not installed. Please refer to the documentation of https://huggingface.co/docs/transformers/perf_infer_gpu_one#flashattention-2 to install Flash Attention 2.
+[rank0]:[W812 10:12:14.810876837 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W0812 10:12:15.065000 221825 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 222483 closing signal SIGTERM
+W0812 10:12:15.065000 221825 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 222484 closing signal SIGTERM
+W0812 10:12:15.065000 221825 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 222485 closing signal SIGTERM
+W0812 10:12:15.065000 221825 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 222486 closing signal SIGTERM
+W0812 10:12:15.066000 221825 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 222487 closing signal SIGTERM
+W0812 10:12:15.066000 221825 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 222489 closing signal SIGTERM
+W0812 10:12:15.066000 221825 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 222490 closing signal SIGTERM
+E0812 10:12:16.099000 221825 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 5 (pid: 222488) of binary: /root/miniforge3/envs/lg_workflow/bin/python
+Traceback (most recent call last):
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1209, in <module>
+    main()
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1205, in main
+    launch_command(args)
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1184, in launch_command
+    deepspeed_launcher(args)
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/accelerate/commands/launch.py", line 868, in deepspeed_launcher
+    distrib_run.run(args)
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/miniforge3/envs/lg_workflow/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2025-08-12_10:12:15
+  host      : ctyun172022236189.et1032-ctyun
+  rank      : 5 (local_rank: 5)
+  exitcode  : 1 (pid: 222488)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

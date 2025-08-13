@@ -30,26 +30,26 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 if [ "$MODEL_TYPE" = "qwen" ]; then
     echo "Training Qwen-2.5-7B-Instruct..."
     MODEL_NAME="/nas/models/Qwen2.5-7B-Instruct"  # 需要确认实际路径
-    DATASET_PATH="/nas/ganluo/Flow_RL/training_data/0807_SFT_没有filter就合并/merged_training_data_qwen.jsonl"
-    OUTPUT_DIR="/nas/ganluo/sft_output/Qwen2.5-7B-workflow-sft"
+    DATASET_PATH="/nas/ganluo/training_data/0813_filter之后的COT_SFT数据/merged_training_data_qwen.jsonl"
+    OUTPUT_DIR="/nas/ganluo/sft_output/Qwen2.5-7B-workflow-sft_new"
     
     # Qwen 推荐的训练参数
     PER_DEVICE_BATCH_SIZE=4
     GRAD_ACCUM_STEPS=1
     LEARNING_RATE=2e-5
-    MAX_SEQ_LENGTH=8192  # Qwen支持更长的序列
+    MAX_SEQ_LENGTH=6500  # Qwen支持更长的序列
     
 elif [ "$MODEL_TYPE" = "llama" ]; then
     echo "Training Llama-3.1-8B-Instruct..."
     MODEL_NAME="/nas/models/Meta-Llama-3-8B-Instruct"
-    DATASET_PATH="/nas/ganluo/Flow_RL/training_data/0807_SFT_没有filter就合并/merged_training_data_llama.jsonl"
+    DATASET_PATH="/nas/ganluo/training_data/0813_filter之后的COT_SFT数据/merged_training_data_llama.jsonl"
     OUTPUT_DIR="/nas/ganluo/sft_output/Llama-3.1-8B-workflow-sft"
     
     # Llama 推荐的训练参数
     PER_DEVICE_BATCH_SIZE=4
     GRAD_ACCUM_STEPS=1
     LEARNING_RATE=2e-5
-    MAX_SEQ_LENGTH=8192
+    MAX_SEQ_LENGTH=6500
 else
     echo "Error: MODEL_TYPE must be 'qwen' or 'llama'"
     exit 1
@@ -78,7 +78,7 @@ CMD_ARGS=(
     --model_type $MODEL_TYPE
     --dataset_path $DATASET_PATH
     --output_dir $OUTPUT_DIR
-    --num_train_epochs 5
+    --num_train_epochs 10
     --per_device_train_batch_size $PER_DEVICE_BATCH_SIZE
     --per_device_eval_batch_size 2
     --gradient_accumulation_steps $GRAD_ACCUM_STEPS
@@ -87,7 +87,7 @@ CMD_ARGS=(
     --warmup_ratio 0.03
     --logging_steps 1
     --save_strategy "steps"
-    --save_steps 500
+    --save_steps 200
     --save_total_limit 3
     --bf16 True
     --tf32 True
