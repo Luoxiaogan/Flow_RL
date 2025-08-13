@@ -18,6 +18,11 @@ MODEL_TYPE="llama"  # 修改这里来切换模型
 # ============================================
 USE_LOSS_MASK=true
 
+# ============================================
+# 是否仅保存模型权重 (不保存优化器状态，大幅减少检查点大小)
+# ============================================
+SAVE_ONLY_MODEL=true
+
 # --- 通用配置 ---
 export WANDB_PROJECT="${MODEL_TYPE}-8b-workflow-sft"
 DEEPSPEED_CONFIG="/nas/ganluo/Flow_RL/my_llama3_h100_new/configs/deepspeed_config_z3.json"
@@ -70,6 +75,7 @@ echo "Dataset: $DATASET_PATH"
 echo "Output: $OUTPUT_DIR"
 echo "Global batch size: $((NUM_GPUS * PER_DEVICE_BATCH_SIZE * GRAD_ACCUM_STEPS))"
 echo "Loss masking: $USE_LOSS_MASK"
+echo "Save only model: $SAVE_ONLY_MODEL"
 echo "=========================================="
 
 # --- 构建命令参数 ---
@@ -101,6 +107,12 @@ CMD_ARGS=(
 # 添加损失掩码参数
 if [ "$USE_LOSS_MASK" = "true" ]; then
     CMD_ARGS+=(--use_loss_mask True)
+fi
+
+# 添加仅保存模型参数
+if [ "$SAVE_ONLY_MODEL" = "true" ]; then
+    CMD_ARGS+=(--save_only_model True)
+    echo "⚡ 启用仅保存模型权重模式（检查点大小将从~60GB减少到~15GB）"
 fi
 
 # --- Accelerate 启动命令 ---

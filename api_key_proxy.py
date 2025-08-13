@@ -10,8 +10,8 @@ from concurrent.futures import ThreadPoolExecutor
 TARGET_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 HOST            = "localhost"
 PORT            = 5009
-RATE_PER_SECOND = 5      # 每秒分发10个任务
-MAX_CONCURRENCY = 10      # 最多允许20个请求同时在执行 (并行数)
+RATE_PER_SECOND = 3      # 每秒分发10个任务
+MAX_CONCURRENCY = 6      # 最多允许20个请求同时在执行 (并行数)
 QUEUE_TYPE      = "default" # 可选: "default" | "random"
 # --------------------------
 
