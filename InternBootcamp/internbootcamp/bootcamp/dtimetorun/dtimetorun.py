@@ -192,10 +192,10 @@ assert test == K
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Dtimetorunbootcamp(Basebootcamp):
     def __init__(self, min_n=1, max_n=50, min_m=1, max_m=50, possible_prob=0.5, max_k=10**4):

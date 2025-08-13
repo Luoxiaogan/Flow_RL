@@ -15,7 +15,7 @@
 ### 类方法实现要求
 
 ```python
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class {PuzzleName}bootcamp(Basebootcamp):
     def __init__(self, **params):
@@ -337,11 +337,11 @@ Please provide the answer in the format [[]].
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
 from collections import OrderedDict
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class KorLogicPredicateLogicFormalizationbootcamp(Basebootcamp):
     def __init__(self, num_problems=3, max_quantifiers=3):

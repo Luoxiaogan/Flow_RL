@@ -78,11 +78,11 @@ for _ in xrange(RN()):
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import math
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cmodifiedgcdbootcamp(Basebootcamp):
     def __init__(self, min_d=1, max_d=100, min_mult=1, max_mult=100, min_queries=3, max_queries=5):

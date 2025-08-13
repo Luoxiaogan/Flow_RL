@@ -76,12 +76,12 @@ for x in range(t):
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 from typing import Dict, Any, List, Optional, Set, Tuple
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Csearchingforgraphbootcamp(Basebootcamp):
     def __init__(self, min_n: int = 5, max_n: int = 24, max_t: int = 5):

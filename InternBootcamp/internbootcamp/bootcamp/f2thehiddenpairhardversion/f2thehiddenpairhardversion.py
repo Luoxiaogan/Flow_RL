@@ -211,10 +211,10 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class F2thehiddenpairhardversionbootcamp(Basebootcamp):
     def __init__(self, min_nodes=2, max_nodes=1000):

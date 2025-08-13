@@ -62,10 +62,10 @@ print ','.join(map(lambda x:str(x[0]) if x[0]==x[1] else str(x[0])+'-'+str(x[1])
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cpagenumbersbootcamp(Basebootcamp):
     def __init__(self, max_length=100, max_number=1000):

@@ -229,12 +229,12 @@ else:
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
 import subprocess
 from typing import Dict, Any, List
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Dportalsbootcamp(Basebootcamp):
     def __init__(self, max_n=4, max_m=3, max_k=5000):

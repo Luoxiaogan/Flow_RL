@@ -110,11 +110,11 @@ print ' '.join(map(str, res))
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import string
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Fencodingbootcamp(Basebootcamp):
     def __init__(self, min_s_length=5, max_s_length=20, max_t_ratio=0.5, pair_prob=0.3):

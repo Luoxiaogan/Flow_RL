@@ -15,7 +15,7 @@
 ### 类方法实现要求
 
 ```python
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class {PuzzleName}bootcamp(Basebootcamp):
     def __init__(self, **params):
@@ -334,12 +334,12 @@ The answer is a matrix, write it in this form:[[((a,b),(c,d))]].
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 import math
 import ast
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class KorOperationUnicode20acbootcamp(Basebootcamp):
     def __init__(self, matrix_shape=(2,2), min_val=-10, max_val=10):

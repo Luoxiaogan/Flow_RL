@@ -101,10 +101,10 @@ else:
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cserejaandthearrangementofnumbersbootcamp(Basebootcamp):
     def __init__(self, max_n=2000000, max_m=100000, default_n=100, default_m=10):

@@ -71,12 +71,12 @@ print sol
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 import math
 from functools import reduce
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Evasyaandbeautifularraysbootcamp(Basebootcamp):
     def __init__(self, min_d=1, max_d=50, min_n=1, max_n=10, min_k=1, max_k=10, a_max=1000):

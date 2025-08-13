@@ -181,11 +181,11 @@ stdout.write(' '.join(out))
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import math
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Eleavingthebarbootcamp(Basebootcamp):
     def __init__(self, min_n=1, max_n=100, vector_max_magnitude=1e6):

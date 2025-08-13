@@ -116,10 +116,10 @@ if __name__ == \"__main__\":
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import math
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Ehelpgregthedwarfbootcamp(Basebootcamp):
     def __init__(self, a_max=10**4, b_max=10**4, l_max=10**4):

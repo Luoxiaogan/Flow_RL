@@ -127,12 +127,12 @@ if __name__ == \"__main__\":
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import json
 import random
 from typing import Dict, List, Any
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Dmrkitayutascolorfulgraphbootcamp(Basebootcamp):
     def __init__(self, n: int = 5, m: int = 7, q: int = 5, c_max: int = 3):

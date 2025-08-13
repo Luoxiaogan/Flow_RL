@@ -15,7 +15,7 @@
 ### 类方法实现要求
 
 ```python
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class {PuzzleName}bootcamp(Basebootcamp):
     def __init__(self, **params):
@@ -207,10 +207,10 @@ Please provide multiple inputs that satisfy this condition in the format [[];[];
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 from itertools import product
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class KorLogicCircuitDiagrambootcamp(Basebootcamp):
     def __init__(self, gate_types=('NOT', 'AND', 'OR'), max_variables=4):

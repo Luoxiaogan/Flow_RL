@@ -15,7 +15,7 @@
 ### 类方法实现要求
 
 ```python
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class {PuzzleName}bootcamp(Basebootcamp):
     def __init__(self, **params):
@@ -215,10 +215,10 @@ Wrap your final answer in double square brackets, like this: [[a + b / c - d]].
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class KorPuzzle24Pointsbootcamp(Basebootcamp):
     def __init__(self, min_num=1, max_num=13, allow_repeats=True):

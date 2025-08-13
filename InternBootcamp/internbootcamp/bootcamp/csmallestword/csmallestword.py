@@ -74,10 +74,10 @@ print ' '.join(out)
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Csmallestwordbootcamp(Basebootcamp):
     def __init__(self, min_length=4, max_length=10, seed=None, alternate_prob=0.3):

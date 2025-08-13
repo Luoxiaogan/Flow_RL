@@ -94,9 +94,9 @@ print(\" \".join(map(lambda a: str(a), res)))
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Csequencetransformationbootcamp(Basebootcamp):
     def __init__(self, n=None, min_n=1, max_n=10):

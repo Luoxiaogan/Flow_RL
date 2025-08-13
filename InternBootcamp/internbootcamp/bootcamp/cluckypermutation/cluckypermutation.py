@@ -107,7 +107,7 @@ print solve(n-m) + len([1 for a, b in zip(lst, range(n-m+1,n+1)) if lucky(a) and
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 from math import factorial
 import random
 import re

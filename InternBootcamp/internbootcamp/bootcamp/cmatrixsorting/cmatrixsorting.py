@@ -210,13 +210,13 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 from copy import deepcopy
 from typing import List, Union
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cmatrixsortingbootcamp(Basebootcamp):
     def __init__(self, n: int = 3, m: int = 3, has_solution_prob: float = 0.5):

@@ -95,11 +95,11 @@ for i in xrange(len(ans)):
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
 from string import ascii_lowercase
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Crunningtrackbootcamp(Basebootcamp):
     def __init__(self, s_min_length=3, s_max_length=10, allow_unsolvable=False, unsolvable_prob=0.2):

@@ -140,11 +140,11 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 from collections import defaultdict
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def prime_factors(n):
     """返回唯一质因数列表（已排序）"""

@@ -15,7 +15,7 @@
 ### 类方法实现要求
 
 ```python
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class {PuzzleName}bootcamp(Basebootcamp):
     def __init__(self, **params):
@@ -199,11 +199,11 @@ Please ensure the answer is a single number and wrap it in double square bracket
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random  # 新增缺失的模块导入
 from fractions import Fraction
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class KorOperationUnicode0032bootcamp(Basebootcamp):
     def __init__(self, min_val=1, max_val=20, equation_prob=0.5):

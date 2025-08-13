@@ -78,10 +78,10 @@ print \" \".join(str(x) for x in ans);
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cphotographerbootcamp(Basebootcamp):
     def __init__(self, n_clients=5, d=100, a=2, b=3):

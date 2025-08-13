@@ -15,7 +15,7 @@
 ### 类方法实现要求
 
 ```python
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class {PuzzleName}bootcamp(Basebootcamp):
     def __init__(self, **params):
@@ -201,12 +201,12 @@ Please wrap the answer in double square brackets, like this: [[your answer]].
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
 from numbers import Number
 from typing import Union
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class KorOperationUnicode0023bootcamp(Basebootcamp):
     def __init__(self, compute_range=(0, 20), solve_range=(0, 30)):

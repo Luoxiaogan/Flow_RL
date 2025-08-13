@@ -121,10 +121,10 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Esubsetsumsbootcamp(Basebootcamp):
     def __init__(self, n_max=5, m_max=3, q_max=5, max_element=10, min_element=-10, set_size_min=1, set_size_max=5, query_prob=0.3):

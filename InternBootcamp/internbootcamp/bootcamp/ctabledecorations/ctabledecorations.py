@@ -58,10 +58,10 @@ print min(r+g,g+b,r+b,(r+b+g)/3)
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Ctabledecorationsbootcamp(Basebootcamp):
     def __init__(self, **params):

@@ -86,11 +86,11 @@ else:
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
 from copy import deepcopy
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cwoodcuttersbootcamp(Basebootcamp):
     def __init__(self, min_n=1, max_n=10, max_h=100, max_x_step=100):

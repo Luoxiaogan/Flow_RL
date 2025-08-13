@@ -234,13 +234,13 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
 import math
 from collections import deque
 from itertools import combinations
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Edigittreebootcamp(Basebootcamp):
     def __init__(self, **params):

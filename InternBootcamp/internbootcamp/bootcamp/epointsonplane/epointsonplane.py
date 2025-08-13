@@ -80,10 +80,10 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Epointsonplanebootcamp(Basebootcamp):
     def __init__(self, n=5, SQ=1200):

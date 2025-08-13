@@ -15,7 +15,7 @@
 ### 类方法实现要求
 
 ```python
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class {PuzzleName}bootcamp(Basebootcamp):
     def __init__(self, **params):
@@ -194,12 +194,12 @@ Output the number in double brackets. For example, if it takes 3 steps from the 
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 from collections import defaultdict, deque
 import random
 import re
 # from nltk.corpus import words
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class KorPuzzleWordLadderbootcamp(Basebootcamp):
     def __init__(self, **params):

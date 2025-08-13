@@ -449,10 +449,10 @@ if __name__ == \"__main__\":
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import bisect
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Dirrigationbootcamp(Basebootcamp):
     def __init__(self, m_max=1000, n_max=1000):

@@ -127,10 +127,10 @@ main()
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def compute_answer(n, s):
     if '1' not in s:  # 快速返回全0情况

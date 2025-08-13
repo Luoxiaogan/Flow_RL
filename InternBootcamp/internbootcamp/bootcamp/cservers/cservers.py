@@ -113,10 +113,10 @@ for i in xrange(1, q+1):
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cserversbootcamp(Basebootcamp):
     def __init__(self, n_min=1, n_max=100, q_min=1, q_max=10, t_min=1, t_max=10**6, d_min=1, d_max=1000):

@@ -76,10 +76,10 @@ print -1 if 3==m and n>4 else '\n'.join(map(lambda x:'%d %d'%x,[(i,i*i) for i in
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Dsetofpointsbootcamp(Basebootcamp):
     def __init__(self, m_min=3, m_max=100, max_coordinate=10**8):

@@ -187,11 +187,11 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 from heapq import heappop, heappush
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def manhattan(r1, c1, r2, c2):
     return abs(r1 - r2) + abs(c1 - c2)

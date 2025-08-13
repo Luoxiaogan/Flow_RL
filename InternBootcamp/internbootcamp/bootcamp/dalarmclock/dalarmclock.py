@@ -96,11 +96,11 @@ print ans
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 from bisect import bisect_left, bisect_right
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Dalarmclockbootcamp(Basebootcamp):
     def __init__(self, max_n=10, max_m=100, max_time=1000):

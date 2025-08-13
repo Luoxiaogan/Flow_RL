@@ -121,11 +121,11 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import json
 import random
 from collections import deque
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Edrazillikesheapbootcamp(Basebootcamp):
     def __init__(self, h=3, g=2):

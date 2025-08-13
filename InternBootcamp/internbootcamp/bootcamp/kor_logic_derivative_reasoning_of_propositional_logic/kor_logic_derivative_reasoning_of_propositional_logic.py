@@ -15,7 +15,7 @@
 ### 类方法实现要求
 
 ```python
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class {PuzzleName}bootcamp(Basebootcamp):
     def __init__(self, **params):
@@ -260,10 +260,10 @@ Please answer in the format of [[A/B/C]].
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class KorLogicDerivativeReasoningOfPropositionalLogicbootcamp(Basebootcamp):
     def __init__(self, apply_prob=0.7, methods=None, subjects=None, predicates=None):

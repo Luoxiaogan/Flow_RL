@@ -311,11 +311,11 @@ if __name__ == \"__main__\":
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 from string import ascii_lowercase
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Csubstringgameinthelessonbootcamp(Basebootcamp):
     def __init__(self, min_length=1, max_length=6):

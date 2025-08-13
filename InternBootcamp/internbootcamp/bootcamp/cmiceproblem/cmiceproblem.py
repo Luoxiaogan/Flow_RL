@@ -247,10 +247,10 @@ else:
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import json
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cmiceproblembootcamp(Basebootcamp):
     def __init__(self, x1=7, y1=7, x2=9, y2=8, n=4, has_solution=True, seed=None):

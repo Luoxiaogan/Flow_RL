@@ -9,6 +9,7 @@ Test_FILE/verl_support/logs
 Test_FILE/verl_support/metagpt
 Test_FILE/verl_support/workspace
 Datasets/
+Test_FILE/debug_logs/
 wandb/
 Test_FILE/verl_support/data
 Test_FILE/verl_internbootcamp/dataset

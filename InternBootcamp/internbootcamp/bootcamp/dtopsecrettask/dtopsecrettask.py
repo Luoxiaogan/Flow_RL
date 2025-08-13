@@ -102,9 +102,9 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def calculate_min_loquacity(n, k, s, q):
     adjusted_s = min(s, (n*n)//2 + 10)  # 严格模拟参考代码的调整逻辑

@@ -68,11 +68,11 @@ for i in range(n):
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
 from collections import defaultdict, deque
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def simulate_knights_placement(initial_knights):
     current_knights = set()

@@ -75,11 +75,11 @@ for t in xrange(T):
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 from collections import defaultdict
 from random import randint
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Csequencepairweightbootcamp(Basebootcamp):
     def __init__(self, max_t=2, max_n=5, a_max=5):

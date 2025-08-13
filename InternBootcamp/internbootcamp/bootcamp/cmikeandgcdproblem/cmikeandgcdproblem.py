@@ -93,12 +93,12 @@ else:
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
 from math import gcd
 from functools import reduce
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cmikeandgcdproblembootcamp(Basebootcamp):
     def __init__(self, n_min=2, n_max=10**5, max_value=10**9):

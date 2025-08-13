@@ -72,11 +72,11 @@ print '%.9lf'%(s*6./n/(n+1)/(n*2+1))
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import string
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def compute_expected(n, a_str, b_str):
     a = [[[] for _ in range(26)] for __ in range(2)]

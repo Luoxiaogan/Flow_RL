@@ -149,9 +149,9 @@ my_main()
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Dmultiplesandpowerdifferencesbootcamp(Basebootcamp):
     def __init__(self, n=2, m=2, min_a=1, max_a=16):

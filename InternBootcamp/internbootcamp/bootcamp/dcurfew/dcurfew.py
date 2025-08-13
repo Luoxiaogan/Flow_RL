@@ -81,10 +81,10 @@ print(max(i - min(a[min(n, i * d)], (a[n] - a[max(0, n - i * d)])) // b for i in
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Dcurfewbootcamp(Basebootcamp):
     def __init__(self, max_n=10, max_d=9, max_b=10):

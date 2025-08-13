@@ -15,7 +15,7 @@
 ### 类方法实现要求
 
 ```python
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class {PuzzleName}bootcamp(Basebootcamp):
     def __init__(self, **params):
@@ -296,10 +296,10 @@ Please answer in the format of [[*/#/&/%]].
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import json
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class KorLogicPropositionalLogicConceptsbootcamp(Basebootcamp):
     def __init__(self, s_list=None, p_list=None, problem_types=None, **params):

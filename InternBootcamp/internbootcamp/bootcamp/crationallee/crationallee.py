@@ -279,12 +279,12 @@ if __name__== \"__main__\":
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 # 确认原有代码正确，无修正必要。以下为原封不动的实现代码。
 
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Crationalleebootcamp(Basebootcamp):
     def __init__(self, n_min=2, n_max=20, a_min=-10**9, a_max=10**9, **params):

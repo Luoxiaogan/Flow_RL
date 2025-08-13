@@ -82,10 +82,10 @@ print solve(n, a)
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cnumberofwaysbootcamp(Basebootcamp):
     def __init__(self, max_n=10, element_range=100):

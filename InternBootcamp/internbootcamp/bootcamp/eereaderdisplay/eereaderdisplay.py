@@ -98,9 +98,9 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def apply_command(grid, x, y):
     """应用命令(x, y)到初始网格，翻转对应像素"""

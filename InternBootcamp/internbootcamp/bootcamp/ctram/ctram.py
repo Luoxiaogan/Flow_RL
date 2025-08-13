@@ -85,10 +85,10 @@ else:
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Ctrambootcamp(Basebootcamp):
     def __init__(self, s_min=2, s_max=1000, t_min=1, t_max=1000):

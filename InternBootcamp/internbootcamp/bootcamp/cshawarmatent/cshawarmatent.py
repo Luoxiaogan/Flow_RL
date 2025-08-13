@@ -220,10 +220,10 @@ if __name__ == \"__main__\":
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cshawarmatentbootcamp(Basebootcamp):
     def __init__(self, student_count_range=(1, 20), school_coord_range=(0, 10**9), student_coord_range=(0, 10**9)):

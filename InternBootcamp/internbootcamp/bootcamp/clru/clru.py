@@ -162,10 +162,10 @@ void writeln(T x) {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def compute_expected_probabilities(n, k, p_list):
     non_zero = [(idx, p) for idx, p in enumerate(p_list) if p > 1e-9]

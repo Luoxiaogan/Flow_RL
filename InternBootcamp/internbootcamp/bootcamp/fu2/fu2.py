@@ -96,9 +96,9 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 def cw(a, b, c):
     return (b[0] - a[0]) * (c[1] - b[1]) - (c[0] - b[0]) * (b[1] - a[1]) < 0

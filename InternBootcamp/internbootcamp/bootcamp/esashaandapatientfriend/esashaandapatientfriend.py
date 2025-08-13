@@ -267,12 +267,12 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 import bisect
 from bisect import bisect_left, bisect_right
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Esashaandapatientfriendbootcamp(Basebootcamp):
     def __init__(self, max_queries=10, max_time=int(1e9), max_speed=int(1e9)):

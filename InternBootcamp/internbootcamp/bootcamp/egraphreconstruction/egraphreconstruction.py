@@ -143,10 +143,10 @@ else:
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 from collections import defaultdict
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Egraphreconstructionbootcamp(Basebootcamp):
     def __init__(self, max_nodes=10, prob_impossible=0.3):

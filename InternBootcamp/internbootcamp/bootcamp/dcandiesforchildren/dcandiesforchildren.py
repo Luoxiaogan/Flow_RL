@@ -211,11 +211,11 @@ int32_t main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 import math
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Dcandiesforchildrenbootcamp(Basebootcamp):
     def __init__(self, n_min=1, n_max=10**11, k_min=1, k_max=10**11):

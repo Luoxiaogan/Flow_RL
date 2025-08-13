@@ -155,11 +155,11 @@ if __name__ == '__main__':
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
 from collections import deque
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Dpietbootcamp(Basebootcamp):
     def __init__(self, max_rows=5, max_cols=5, max_steps=1_000_000):

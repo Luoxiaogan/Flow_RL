@@ -116,11 +116,11 @@ for k in di:
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import string
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cphonenumbersbootcamp(Basebootcamp):
     def __init__(self, max_entries=20, min_entries=1, max_phones_per_entry=10, min_phones_per_entry=1):

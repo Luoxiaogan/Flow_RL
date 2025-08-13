@@ -140,10 +140,10 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Ereadtimebootcamp(Basebootcamp):
     def __init__(self, max_heads=5, max_tracks=5, max_value=10**10):

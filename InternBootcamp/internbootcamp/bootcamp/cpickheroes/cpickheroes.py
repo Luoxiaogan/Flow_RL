@@ -164,11 +164,11 @@ int main() {
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 import heapq
 import re
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cpickheroesbootcamp(Basebootcamp):
     def __init__(self, default_n=3, max_m=None, p_range=(1, 1000)):

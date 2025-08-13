@@ -71,10 +71,10 @@ print int(a%(10**9+7))
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 import random
 from math import factorial
-from bootcamp import Basebootcamp
+from ..base import Basebootcamp
 
 class Cshaassandlightsbootcamp(Basebootcamp):
     MOD = 10**9 + 7
