@@ -217,7 +217,15 @@ class InternBootcampRewardCalculator:
             return bootcamp_class
             
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             logger.error(f"Failed to load bootcamp class for {task_name}: {e}")
+            debug_log("workflow", {
+                "event": "bootcamp_class_not_found",
+                "task_name": task_name,
+                "error": str(e),
+                "traceback": traceback.format_exc()
+            })
             return None
          
     async def execute_workflow_metagpt(self, workflow_code: str, task_name: str, 
@@ -319,6 +327,8 @@ class InternBootcampRewardCalculator:
             exec(full_script_code, exec_globals, execution_namespace)
             
             WorkflowClass = execution_namespace.get('Workflow')
+            if WorkflowClass is None:
+                WorkflowClass = execution_namespace.get('InternBootcampWorkflow')
             if not WorkflowClass:
                 raise ValueError(f"No 'Workflow' class found in the executed script for {workflow_id}")
             
@@ -480,7 +490,7 @@ class InternBootcampRewardCalculator:
                 "event": "workflow_executed_via_metagpt",  # 更新事件名
                 "execution_time": time.time() - exec_start,
                 "result_length": len(str(result)),
-                "result_preview": str(result)[:500] if len(str(result)) > 500 else str(result)
+                "result_preview": str(result)
             })
             
             logger.debug(f"MetaGPT workflow result: {str(result)[:100]}...")
