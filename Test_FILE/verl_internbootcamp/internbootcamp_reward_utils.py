@@ -659,12 +659,16 @@ def compute_score(solution_str: str, ground_truth: str, extra_info: Dict) -> flo
     """
     # 检查是否已经在事件循环中
     try:
-        loop = asyncio.get_running_loop()
-        # 如果已经在事件循环中，创建任务并等待
-        return loop.run_until_complete(_compute_score_async(solution_str, ground_truth, extra_info))
+        asyncio.get_running_loop()
     except RuntimeError:
         # 如果不在事件循环中，使用 asyncio.run
         return asyncio.run(_compute_score_async(solution_str, ground_truth, extra_info))
+    else:
+        # 如果已经在事件循环中，在单独线程中开启新的事件循环以保持同步接口
+        import concurrent.futures
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+            future = pool.submit(lambda: asyncio.run(_compute_score_async(solution_str, ground_truth, extra_info)))
+            return future.result()
 
 
 async def _compute_score_async(solution_str: str, ground_truth: str, extra_info: Dict) -> float:
