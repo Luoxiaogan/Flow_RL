@@ -10,7 +10,8 @@
       "Bash(do cp \"$file\" \"$file.backup\")",
       "Bash(done)",
       "Bash(grep:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "WebSearch"
     ],
     "deny": []
   }

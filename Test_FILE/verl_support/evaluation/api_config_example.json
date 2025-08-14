@@ -1,0 +1,29 @@
+{
+  "api_url": "https://api.openai.com/v1/chat/completions",
+  "api_key": "your-api-key-here",
+  "api_model": "gpt-4",
+  "description": "Example configuration for external API models",
+  "supported_apis": {
+    "openai": {
+      "api_url": "https://api.openai.com/v1/chat/completions",
+      "models": ["gpt-4", "gpt-3.5-turbo", "gpt-4-turbo"]
+    },
+    "anthropic": {
+      "api_url": "https://api.anthropic.com/v1/messages",
+      "models": ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku"]
+    },
+    "qwen": {
+      "api_url": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "models": ["qwen-max", "qwen-plus", "qwen-turbo"]
+    },
+    "deepseek": {
+      "api_url": "https://api.deepseek.com/v1/chat/completions",
+      "models": ["deepseek-chat", "deepseek-coder"]
+    },
+    "local_openai_compatible": {
+      "api_url": "http://localhost:8000/v1/chat/completions",
+      "models": ["local-model"],
+      "description": "For local OpenAI-compatible servers like vLLM, TGI, etc."
+    }
+  }
+}
