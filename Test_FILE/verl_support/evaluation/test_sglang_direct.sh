@@ -3,13 +3,23 @@
 # SGLang 直接测试脚本
 # 用于诊断SGLang启动问题
 
+# 获取脚本所在目录
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# 加载共享配置文件
+CONFIG_FILE="${SCRIPT_DIR}/config.sh"
+if [ -f "$CONFIG_FILE" ]; then
+    echo "加载配置文件: $CONFIG_FILE"
+    source "$CONFIG_FILE"
+    echo ""
+else
+    echo "错误: 配置文件不存在: $CONFIG_FILE"
+    exit 1
+fi
+
 echo "======================================"
 echo "SGLang 直接启动测试"
 echo "======================================"
-
-# 配置参数
-MODEL_PATH="/nas/ganluo/sft_output/Qwen2.5-7B-workflow-sft_new/checkpoint-200"
-PORT=30000
 
 echo "模型路径: $MODEL_PATH"
 echo "端口: $PORT"

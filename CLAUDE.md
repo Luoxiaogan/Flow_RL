@@ -370,3 +370,25 @@ print(f"Reward: {score:.3f}")
    - **Model Paths**: Located at `/nas/models/` on the server
    - **Output**: Saved to `/nas/ganluo/sft_output/`
    - **WandB**: Requires unsetting WANDB_API_KEY if issues occur
+
+## Documentation Standards
+
+When creating documentation files (README.md or other markdown documents):
+
+1. **Always create TWO versions**:
+   - English version: `README.md` or `[filename].md`
+   - Chinese version: `README_zh.md` or `[filename]_zh.md`
+
+2. **Content requirements**:
+   - Both versions should contain equivalent information
+   - Chinese version should use native Chinese expressions, not direct translations
+   - Use appropriate emojis and formatting for better readability
+   - Include clear section headers and table of contents for longer documents
+
+3. **File naming convention**:
+   - English: standard filename (e.g., `README.md`, `INSTALL.md`, `API.md`)
+   - Chinese: add `_zh` suffix before `.md` (e.g., `README_zh.md`, `INSTALL_zh.md`, `API_zh.md`)
+
+4. **Language quality**:
+   - English: Clear, concise, professional technical writing
+   - Chinese: 使用地道的中文表达，避免生硬翻译，使用适当的技术术语

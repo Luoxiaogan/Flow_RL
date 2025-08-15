@@ -4,7 +4,20 @@
 # 模型评测脚本
 # ============================================
 # 该脚本用于运行模型评测流程
-# 请根据需要修改下面的配置参数
+
+# 获取脚本所在目录
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# 加载共享配置文件
+CONFIG_FILE="${SCRIPT_DIR}/config.sh"
+if [ -f "$CONFIG_FILE" ]; then
+    echo "加载配置文件: $CONFIG_FILE"
+    source "$CONFIG_FILE"
+else
+    echo "错误: 配置文件不存在: $CONFIG_FILE"
+    echo "请先创建 config.sh 文件"
+    exit 1
+fi
 
 # 颜色输出
 RED='\033[0;31m'
@@ -15,22 +28,6 @@ NC='\033[0m' # 无颜色
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}      模型评测系统启动${NC}"
 echo -e "${GREEN}========================================${NC}"
-
-# ============================================
-# 配置部分 - 请修改这些值
-# ============================================
-
-# 模式选择: "local" 或 "api"
-MODE="local"  # 改为 "local" 使用本地模型评测
-
-# ---- 本地模型配置 (当 MODE="local" 时) ----
-MODEL_PATH="/nas/models/Llama-3.1-8B-Instruct"  # 本地checkpoint路径
-PORT=30000                                        # SGLang服务器端口
-TENSOR_PARALLEL=1                                 # 张量并行GPU数量
-DATA_PARALLEL=1                                   # 数据并行模型副本数
-
-# ---- API模型配置 (当 MODE="api" 时) ----
-API_CONFIG_FILE="api_config.json"  # API配置文件路径
 
 # 如果API配置不存在，创建模板
 if [ "$MODE" = "api" ] && [ ! -f "$API_CONFIG_FILE" ]; then
@@ -46,19 +43,7 @@ EOF
     exit 1
 fi
 
-# ---- 通用配置 ----
-TEST_DATA="../data/test_new/test.parquet"         # 测试数据路径
-OUTPUT_DIR="./results"                            # 结果输出目录
-MAX_INFERENCE_WORKERS=10                          # 最大并发推理请求数
-MAX_SCORING_WORKERS=5                             # 最大并发评分请求数
-BATCH_SIZE=50                                     # 批处理大小
-TEMPERATURE=0.7                                   # 生成温度
-MAX_TOKENS=8192                                   # 最大生成token数
-LIMIT=""                                          # 样本数限制（空为全部，或设置数字如 "10"）
-SKIP_SCORING=false                                # 设为 true 跳过评分阶段
-
-# ---- ScoreFlow Reward Server 检查 ----
-SCOREFLOW_PORT=8899
+# ScoreFlow Reward Server URL
 SCOREFLOW_URL="http://localhost:$SCOREFLOW_PORT/health"
 
 echo -e "${YELLOW}检查 ScoreFlow Reward Server...${NC}"

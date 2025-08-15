@@ -12,9 +12,11 @@
       "Bash(grep:*)",
       "Bash(find:*)",
       "WebSearch",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(cp:*)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "acceptEdits"
   },
   "outputStyle": "Explanatory"
 }

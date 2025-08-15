@@ -4,8 +4,10 @@ SGLang 服务器调试脚本
 用于诊断SGLang启动问题
 """
 import sys
+import os
 import logging
 from pathlib import Path
+import subprocess
 
 # 添加父目录到路径
 sys.path.insert(0, str(Path(__file__).parent))
@@ -18,12 +20,37 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
+def load_config():
+    """从config.sh加载配置"""
+    config_file = Path(__file__).parent / "config.sh"
+    if not config_file.exists():
+        print(f"错误: 配置文件不存在: {config_file}")
+        sys.exit(1)
+    
+    # 使用bash执行source命令并输出环境变量
+    cmd = f"source {config_file} && env"
+    result = subprocess.run(cmd, shell=True, executable='/bin/bash', 
+                          capture_output=True, text=True)
+    
+    # 解析环境变量
+    config = {}
+    for line in result.stdout.split('\n'):
+        if '=' in line:
+            key, value = line.split('=', 1)
+            if key in ['MODEL_PATH', 'PORT', 'TENSOR_PARALLEL', 'TIMEOUT', 'DEBUG_MODE']:
+                config[key] = value
+    
+    return config
+
 async def test_sglang_server():
     """测试SGLang服务器启动"""
     
-    # 配置 - 请根据实际情况修改
-    model_path = "/nas/ganluo/sft_output/Qwen2.5-7B-workflow-sft_new/checkpoint-200"
-    port = 30000
+    # 加载配置
+    config = load_config()
+    model_path = config.get('MODEL_PATH', '/nas/ganluo/sft_output/Qwen2.5-7B-workflow-sft_new/checkpoint-200')
+    port = int(config.get('PORT', '30000'))
+    tensor_parallel = int(config.get('TENSOR_PARALLEL', '1'))
+    timeout = int(config.get('TIMEOUT', '180'))
     
     print("=" * 60)
     print("SGLang 服务器调试模式")
@@ -72,23 +99,24 @@ async def test_sglang_server():
         print("  ⚠ 警告: 未找到常见的模型文件，请检查模型格式")
     
     # 创建配置
-    config = ModelConfig(
+    model_config = ModelConfig(
         model_type="local",
         model_path=model_path,
         port=port,
-        tensor_parallel=1,
+        tensor_parallel=tensor_parallel,
         temperature=0.7,
         max_tokens=4096
     )
     
     # 创建管理器（启用调试模式）
     print("\n启动SGLang服务器（调试模式）...")
+    print(f"超时设置: {timeout}秒")
     print("-" * 60)
     
-    manager = InferenceManager(config, debug=True)
+    manager = InferenceManager(model_config, debug=True)
     
-    # 尝试初始化（增加超时时间）
-    success = manager.initialize(timeout=180)  # 3分钟超时
+    # 尝试初始化
+    success = manager.initialize(timeout=timeout)
     
     if success:
         print("-" * 60)
