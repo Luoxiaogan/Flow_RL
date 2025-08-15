@@ -6,8 +6,8 @@ from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 
 # ---------- 配置 ----------
-# TARGET_BASE_URL = "https://idealab.alibaba-inc.com/api/openai/v1"
-TARGET_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+TARGET_BASE_URL = "https://idealab.alibaba-inc.com/api/openai/v1"
+# TARGET_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 HOST            = "localhost"
 PORT            = 5009
 RATE_PER_SECOND = 3      # 每秒分发10个任务
