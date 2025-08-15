@@ -59,8 +59,13 @@ class SGLangLocalBackend(InferenceBackend):
         self.process = None
         self.base_url = f"http://localhost:{config.port}"
         
-    def start_server(self) -> bool:
-        """Start the SGLang server"""
+    def start_server(self, debug: bool = False, timeout: int = 120) -> bool:
+        """Start the SGLang server
+        
+        Args:
+            debug: If True, print server output in real-time
+            timeout: Seconds to wait for server to start (default 120)
+        """
         try:
             # Check if port is already in use
             if self._is_port_in_use(self.config.port):
@@ -89,30 +94,96 @@ class SGLangLocalBackend(InferenceBackend):
             ])
             
             logger.info(f"Starting SGLang server with command: {' '.join(cmd)}")
+            logger.info(f"Timeout set to {timeout} seconds")
             
-            # Start the process
-            self.process = subprocess.Popen(
-                cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                bufsize=1
-            )
-            
-            # Wait for server to be ready
-            for _ in range(60):  # Wait up to 60 seconds
-                time.sleep(1)
-                if self.health_check():
-                    logger.info(f"SGLang server started successfully on port {self.config.port}")
-                    return True
+            # Start the process with different output handling based on debug mode
+            if debug:
+                # In debug mode, show output in real-time
+                self.process = subprocess.Popen(
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,  # Combine stderr with stdout
+                    text=True,
+                    bufsize=1,
+                    universal_newlines=True
+                )
                 
-                # Check if process has failed
-                if self.process.poll() is not None:
-                    _, stderr = self.process.communicate()
-                    logger.error(f"SGLang server failed to start:\n{stderr}")
-                    return False
+                # Monitor output in real-time
+                import threading
+                server_ready = threading.Event()
+                
+                def monitor_output():
+                    for line in self.process.stdout:
+                        print(f"[SGLang] {line.rstrip()}")
+                        # Check for common ready indicators
+                        if "Running on" in line or "Uvicorn running" in line or "ready" in line.lower():
+                            server_ready.set()
+                
+                monitor_thread = threading.Thread(target=monitor_output, daemon=True)
+                monitor_thread.start()
+                
+                # Wait for server with timeout
+                for i in range(timeout):
+                    time.sleep(1)
+                    if self.health_check():
+                        logger.info(f"SGLang server started successfully on port {self.config.port}")
+                        return True
+                    if server_ready.is_set():
+                        time.sleep(2)  # Give it a bit more time
+                        if self.health_check():
+                            logger.info(f"SGLang server started successfully on port {self.config.port}")
+                            return True
+                    if self.process.poll() is not None:
+                        logger.error(f"SGLang server process terminated unexpectedly")
+                        return False
+                    if i % 10 == 0:
+                        logger.info(f"Still waiting for server... ({i}/{timeout}s)")
+                
+            else:
+                # Normal mode - capture output for error reporting
+                self.process = subprocess.Popen(
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    bufsize=1
+                )
+                
+                # Wait for server to be ready
+                for i in range(timeout):
+                    time.sleep(1)
+                    if self.health_check():
+                        logger.info(f"SGLang server started successfully on port {self.config.port}")
+                        return True
+                    
+                    # Check if process has failed
+                    if self.process.poll() is not None:
+                        stdout, stderr = self.process.communicate()
+                        logger.error(f"SGLang server failed to start.")
+                        logger.error(f"STDOUT:\n{stdout}")
+                        logger.error(f"STDERR:\n{stderr}")
+                        return False
+                    
+                    # Log progress every 10 seconds
+                    if i % 10 == 0 and i > 0:
+                        logger.info(f"Still waiting for server... ({i}/{timeout}s)")
             
-            logger.error("SGLang server failed to start within timeout")
+            logger.error(f"SGLang server failed to start within {timeout} seconds timeout")
+            
+            # Try to get any output before stopping
+            if self.process.poll() is None:
+                self.process.terminate()
+                try:
+                    stdout, stderr = self.process.communicate(timeout=5)
+                    if stdout or stderr:
+                        logger.error(f"Server output before timeout:")
+                        if stdout:
+                            logger.error(f"STDOUT:\n{stdout}")
+                        if stderr:
+                            logger.error(f"STDERR:\n{stderr}")
+                except subprocess.TimeoutExpired:
+                    self.process.kill()
+            
             self.stop_server()
             return False
             
@@ -257,19 +328,24 @@ class ExternalAPIBackend(InferenceBackend):
 class InferenceManager:
     """Manages inference backends"""
     
-    def __init__(self, config: ModelConfig):
+    def __init__(self, config: ModelConfig, debug: bool = False):
         self.config = config
         self.backend = None
+        self.debug = debug
         
-    def initialize(self) -> bool:
-        """Initialize the appropriate backend"""
+    def initialize(self, timeout: int = 120) -> bool:
+        """Initialize the appropriate backend
+        
+        Args:
+            timeout: Timeout in seconds for local server startup
+        """
         try:
             if self.config.model_type == "local":
                 if not self.config.model_path:
                     raise ValueError("model_path is required for local models")
                 
                 self.backend = SGLangLocalBackend(self.config)
-                return self.backend.start_server()
+                return self.backend.start_server(debug=self.debug, timeout=timeout)
                 
             elif self.config.model_type == "api":
                 if not self.config.api_url or not self.config.api_key:
