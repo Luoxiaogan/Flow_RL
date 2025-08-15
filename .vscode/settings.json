@@ -2,5 +2,10 @@
     "python.analysis.autoImportCompletions": true,
     "workbench.editor.enablePreview": false,
     "cursorpyright.analysis.autoImportCompletions": true,
-    "editor.wordWrap": "on"
+    "editor.wordWrap": "on",
+    "terminal.integrated.env.osx": {
+        "https_proxy": "http://127.0.0.1:7890",
+        "http_proxy": "http://127.0.0.1:7890",
+        "all_proxy": "socks5://127.0.0.1:7890"
+    }
 }

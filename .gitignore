@@ -36,3 +36,5 @@ metagpt_root/
 training_data/
 **/debug_logs
 Test_FILE/verl_support/evaluation/results
+.vscode/
+.vscode/settings.json

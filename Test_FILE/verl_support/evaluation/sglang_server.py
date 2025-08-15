@@ -86,10 +86,8 @@ class SGLangLocalBackend(InferenceBackend):
             if self.config.data_parallel > 1:
                 cmd.extend(["--dp", str(self.config.data_parallel)])
             
-            # Additional optimizations
+            # Memory configuration (only keep mem-fraction-static for stability)
             cmd.extend([
-                "--enable-flashinfer",
-                "--disable-radix-cache",
                 "--mem-fraction-static", "0.85"
             ])
             
