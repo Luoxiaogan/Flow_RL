@@ -11,7 +11,8 @@
       "Bash(done)",
       "Bash(grep:*)",
       "Bash(find:*)",
-      "WebSearch"
+      "WebSearch",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": []
   },

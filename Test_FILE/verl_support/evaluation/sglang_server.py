@@ -2,19 +2,16 @@
 SGLang Server Manager - Manages both local SGLang servers and external API endpoints
 Supports both local model deployment via SGLang and external API services
 """
-import os
 import sys
 import json
 import time
 import logging
 import subprocess
 import requests
-from typing import Optional, Dict, Any, List
-from pathlib import Path
+from typing import Optional
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 import psutil
-import signal
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -103,7 +100,7 @@ class SGLangLocalBackend(InferenceBackend):
             )
             
             # Wait for server to be ready
-            for i in range(60):  # Wait up to 60 seconds
+            for _ in range(60):  # Wait up to 60 seconds
                 time.sleep(1)
                 if self.health_check():
                     logger.info(f"SGLang server started successfully on port {self.config.port}")
@@ -111,7 +108,7 @@ class SGLangLocalBackend(InferenceBackend):
                 
                 # Check if process has failed
                 if self.process.poll() is not None:
-                    stdout, stderr = self.process.communicate()
+                    _, stderr = self.process.communicate()
                     logger.error(f"SGLang server failed to start:\n{stderr}")
                     return False
             
@@ -321,7 +318,6 @@ def load_config_from_file(config_path: str) -> ModelConfig:
 
 # Example usage
 if __name__ == "__main__":
-    import asyncio
     
     # Example 1: Local SGLang model
     local_config = ModelConfig(
@@ -340,12 +336,13 @@ if __name__ == "__main__":
         temperature=0.7
     )
     
-    async def test():
-        # Test with local model
-        manager = InferenceManager(local_config)
-        if manager.initialize():
-            response = await manager.generate("What is 2+2?")
-            print(f"Response: {response}")
-            manager.close()
-    
+    # Note: For actual usage, you would need to run this in an async context
+    # Example:
+    # import asyncio
+    # async def test():
+    #     manager = InferenceManager(local_config)
+    #     if manager.initialize():
+    #         response = await manager.generate("What is 2+2?")
+    #         print(f"Response: {response}")
+    #         manager.close()
     # asyncio.run(test())
