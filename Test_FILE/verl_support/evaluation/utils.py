@@ -18,6 +18,24 @@ class DataLoader:
     """Load and preprocess evaluation data"""
     
     @staticmethod
+    def _convert_to_serializable(obj):
+        """Recursively convert numpy arrays and other non-serializable objects"""
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, dict):
+            return {k: DataLoader._convert_to_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [DataLoader._convert_to_serializable(item) for item in obj]
+        elif isinstance(obj, (np.integer, np.int64, np.int32)):
+            return int(obj)
+        elif isinstance(obj, (np.floating, np.float64, np.float32)):
+            return float(obj)
+        elif isinstance(obj, np.bool_):
+            return bool(obj)
+        else:
+            return obj
+    
+    @staticmethod
     def load_parquet(file_path: str) -> pd.DataFrame:
         """
         Load parquet file and handle numpy arrays
@@ -34,7 +52,7 @@ class DataLoader:
             # Convert numpy arrays to lists for JSON serialization
             for col in df.columns:
                 if df[col].dtype == 'object':
-                    df[col] = df[col].apply(lambda x: x.tolist() if isinstance(x, np.ndarray) else x)
+                    df[col] = df[col].apply(lambda x: DataLoader._convert_to_serializable(x))
             
             logger.info(f"Loaded {len(df)} rows from {file_path}")
             logger.info(f"Columns: {df.columns.tolist()}")

@@ -246,6 +246,9 @@ class ExternalAPIBackend(InferenceBackend):
                 },
                 timeout=10
             )
+            if response.status_code != 200:
+                logger.error(f"API health check failed: {response.status_code}")
+                logger.error(f"API health check failed: {response.text}")
             return response.status_code in [200, 400]  # 400 might be rate limit
         except Exception as e:
             logger.warning(f"API health check failed: {e}")

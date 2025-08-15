@@ -269,7 +269,8 @@ class VerlTrainingDataGenerator:
                               train_entries_per_benchmark: Optional[int] = None,
                               test_entries_per_benchmark: Optional[int] = None,
                               train_proportion: Optional[float] = None,
-                              test_proportion: Optional[float] = None) -> Dict[str, pd.DataFrame]:
+                              test_proportion: Optional[float] = None,
+                              test_cases_per_entry: int = 5) -> Dict[str, pd.DataFrame]:
         """
         Generate mixed dataset from multiple benchmarks
         
@@ -282,6 +283,7 @@ class VerlTrainingDataGenerator:
             test_entries_per_benchmark: Number of test entries per benchmark
             train_proportion: Proportion of each benchmark's train data to use
             test_proportion: Proportion of each benchmark's test data to use
+            test_cases_per_entry: Number of test cases to include for each entry
             
         Returns:
             Dictionary with 'train' and/or 'test' DataFrames
@@ -305,7 +307,8 @@ class VerlTrainingDataGenerator:
                 num_train_entries=train_entries_per_benchmark,
                 num_test_entries=test_entries_per_benchmark,
                 train_proportion=train_proportion,
-                test_proportion=test_proportion
+                test_proportion=test_proportion,
+                test_cases_per_entry=test_cases_per_entry
             )
             
             for dtype, df in results.items():
@@ -366,8 +369,8 @@ def parse_arguments():
                        help='Proportion of test dataset to use (0.0 to 1.0)')
     
     # Other options
-    parser.add_argument('--test-cases', type=int, default=5,
-                       help='Number of test cases per entry')
+    parser.add_argument('--test-cases-per-entry', type=int, default=5,
+                       help='Number of test cases per entry (default: 5)')
     parser.add_argument('--output-dir', type=str, default='data',
                        help='Output directory for parquet files')
     parser.add_argument('--log-level', type=str, default='INFO',
@@ -411,7 +414,8 @@ def main():
             train_entries_per_benchmark=args.num_train_entries,
             test_entries_per_benchmark=args.num_test_entries,
             train_proportion=args.train_proportion,
-            test_proportion=args.test_proportion
+            test_proportion=args.test_proportion,
+            test_cases_per_entry=args.test_cases_per_entry
         )
         
         for dtype, df in results.items():
@@ -429,4 +433,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-    # python generate_verl_training_data.py --num-train-entries 20 --num-test-entries 2 --output-dir data/test_new --benchmarks all
+    # python generate_verl_training_data.py --num-train-entries 0 --num-test-entries 10 --output-dir data/test_new --benchmarks all --test-cases-per-entry 10

@@ -17,8 +17,12 @@ A comprehensive evaluation system for testing models on workflow generation task
 # Install required packages
 pip install pandas numpy matplotlib seaborn tqdm aiohttp psutil sglang
 
-# For scoreflow reward computation, ensure the server is running:
-python ../scoreflow_reward_server.py
+# IMPORTANT: Start the scoreflow reward server (required for scoring)
+cd ../../.. python api_key_proxy.py
+cd ..
+python scoreflow_reward_server.py
+
+# Note: If you don't need scoring, use --skip-scoring flag
 ```
 
 ## 🎯 Quick Start
@@ -38,10 +42,12 @@ EOF
 # Run evaluation
 python evaluate_model.py \
   --api-config api_config.json \
-  --test-data ../data/test_new/test.parquet \
-  --output-dir ./results \
+  --test-data ../data/test_eval0813/test.parquet \
+  --output-dir ./test_eval0813_results \
   --max-inference-workers 10 \
   --max-scoring-workers 5
+
+  python evaluate_model.py  --api-config api_config.json  --test-data ../data/test_eval0813/test.parquet  --output-dir ./results  --max-inference-workers 10   --max-scoring-workers 2
 ```
 
 ### 2. Using Local Models (SGLang)
@@ -98,6 +104,16 @@ python evaluate_model.py \
   --api-config api_config.json \
   --test-data ../data/test_new/test.parquet \
   --limit 10  # Only evaluate first 10 samples
+```
+
+### Skip Scoring (Inference Only)
+
+```bash
+# Run without scoring (useful when scoreflow server is not available)
+python evaluate_model.py \
+  --api-config api_config.json \
+  --test-data ../data/test_new/test.parquet \
+  --skip-scoring
 ```
 
 ### Custom Generation Parameters
@@ -169,6 +185,18 @@ Each line contains:
 - **Local**: Any OpenAI-compatible server (vLLM, TGI, etc.)
 
 ## 🐛 Troubleshooting
+
+### ScoreFlow Server Connection Issues
+
+```bash
+# Error: Max retries exceeded with url: /compute_score
+# Solution 1: Start the scoreflow server
+cd ..
+python scoreflow_reward_server.py
+
+# Solution 2: Run without scoring
+python evaluate_model.py --api-config api_config.json --test-data data.parquet --skip-scoring
+```
 
 ### SGLang Server Issues
 

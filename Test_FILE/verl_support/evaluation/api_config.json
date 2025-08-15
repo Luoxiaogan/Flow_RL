@@ -1,5 +1,5 @@
 {
-    "api_url": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
-    "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+    "api_url": "http://localhost:5009/chat/completions",
+    "api_key": "sk-dc5cc6f834614e34ac5c00e6129ddbc1",
     "api_model": "qwen-max-latest"
 }

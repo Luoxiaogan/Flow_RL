@@ -40,10 +40,10 @@ class BatchInferenceEngine:
     def __init__(
         self,
         inference_fn: Callable,
-        max_workers: int = 10,
-        batch_size: int = 100,
+        max_workers: int = 5,
+        batch_size: int = 5,
         retry_times: int = 3,
-        timeout: int = 60
+        timeout: int = 400
     ):
         """
         Initialize batch inference engine

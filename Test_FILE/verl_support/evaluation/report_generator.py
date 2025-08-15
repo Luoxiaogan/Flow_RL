@@ -35,6 +35,25 @@ class ReportGenerator:
         
         logger.info(f"Report output directory: {self.output_dir}")
     
+    def _ensure_serializable(self, obj):
+        """Ensure object is JSON serializable"""
+        import numpy as np
+        
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, (np.integer, np.int64, np.int32)):
+            return int(obj)
+        elif isinstance(obj, (np.floating, np.float64, np.float32)):
+            return float(obj)
+        elif isinstance(obj, np.bool_):
+            return bool(obj)
+        elif isinstance(obj, dict):
+            return {k: self._ensure_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._ensure_serializable(item) for item in obj]
+        else:
+            return obj
+    
     def save_detailed_results(
         self,
         results: List[Dict[str, Any]],
@@ -56,15 +75,15 @@ class ReportGenerator:
             for result in results:
                 # Ensure all fields are serializable
                 clean_result = {
-                    'prompt': result.get('prompt', ''),
+                    'prompt': self._ensure_serializable(result.get('prompt', '')),
                     'response': result.get('response', ''),
                     'workflow': result.get('workflow', ''),
-                    'score': result.get('score', 0.0),
-                    'success': result.get('success', False),
+                    'score': float(result.get('score', 0.0)) if result.get('score') is not None else 0.0,
+                    'success': bool(result.get('success', False)),
                     'error': result.get('error'),
-                    'inference_time': result.get('inference_time', 0.0),
-                    'scoring_time': result.get('scoring_time', 0.0),
-                    'metadata': result.get('metadata', {})
+                    'inference_time': float(result.get('inference_time', 0.0)) if result.get('inference_time') is not None else 0.0,
+                    'scoring_time': float(result.get('scoring_time', 0.0)) if result.get('scoring_time') is not None else 0.0,
+                    'metadata': self._ensure_serializable(result.get('metadata', {}))
                 }
                 f.write(json.dumps(clean_result, ensure_ascii=False) + '\n')
         

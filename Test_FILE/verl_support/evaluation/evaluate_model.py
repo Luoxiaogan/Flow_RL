@@ -42,7 +42,8 @@ class ModelEvaluator:
         output_dir: str = "./evaluation_results",
         max_inference_workers: int = 10,
         max_scoring_workers: int = 5,
-        batch_size: int = 100
+        batch_size: int = 5,
+        skip_scoring: bool = False
     ):
         """
         Initialize evaluator
@@ -53,12 +54,14 @@ class ModelEvaluator:
             max_inference_workers: Max concurrent inference requests
             max_scoring_workers: Max concurrent scoring requests
             batch_size: Batch size for processing
+            skip_scoring: Skip scoring phase
         """
         self.model_config = model_config
         self.output_dir = Path(output_dir)
         self.max_inference_workers = max_inference_workers
         self.max_scoring_workers = max_scoring_workers
         self.batch_size = batch_size
+        self.skip_scoring = skip_scoring
         
         # Initialize components
         self.inference_manager = None
@@ -84,12 +87,22 @@ class ModelEvaluator:
                 batch_size=self.batch_size
             )
             
-            # Initialize scorer
-            logger.info("Initializing concurrent scorer...")
-            self.scorer = ConcurrentScorer(
-                score_fn=scoreflow_compute_score,
-                max_workers=self.max_scoring_workers
-            )
+            # Initialize scorer (only if not skipping)
+            if not self.skip_scoring:
+                logger.info("Initializing concurrent scorer...")
+                try:
+                    self.scorer = ConcurrentScorer(
+                        score_fn=scoreflow_compute_score,
+                        max_workers=self.max_scoring_workers
+                    )
+                except Exception as e:
+                    logger.warning(f"Failed to initialize scorer: {e}")
+                    logger.warning("Scoring will be skipped. Make sure scoreflow_reward_server.py is running if you need scoring.")
+                    self.skip_scoring = True
+                    self.scorer = None
+            else:
+                logger.info("Scoring disabled by user request")
+                self.scorer = None
             
             # Initialize report generator
             model_name = self.model_config.model_path or self.model_config.api_model or "unknown"
@@ -142,7 +155,8 @@ class ModelEvaluator:
                 
                 benchmark_results = await self._evaluate_benchmark(
                     benchmark_name,
-                    benchmark_df
+                    benchmark_df,
+                    skip_scoring=getattr(self, 'skip_scoring', False)
                 )
                 
                 all_results[benchmark_name] = benchmark_results
@@ -200,7 +214,8 @@ class ModelEvaluator:
     async def _evaluate_benchmark(
         self,
         benchmark_name: str,
-        df: Any
+        df: Any,
+        skip_scoring: bool = False
     ) -> List[Dict[str, Any]]:
         """
         Evaluate a single benchmark
@@ -242,6 +257,35 @@ class ModelEvaluator:
         inference_time = time.time() - inference_start
         logger.info(f"Inference completed in {inference_time:.2f}s")
         
+        # If skip scoring, return results with zero scores
+        if skip_scoring:
+            logger.info("Skipping scoring phase as requested")
+            results = []
+            for inf_result in inference_results:
+                # Extract workflow
+                workflow = WorkflowExtractor.extract_workflow(inf_result.response)
+                if not workflow:
+                    logger.warning(f"Failed to extract workflow for task {inf_result.task_id}")
+                    workflow = ""
+                
+                results.append({
+                    'prompt': inf_result.metadata.get('prompt', ''),
+                    'response': inf_result.response,
+                    'workflow': workflow,
+                    'score': 0.0,  # No scoring
+                    'success': inf_result.success,
+                    'error': inf_result.error,
+                    'inference_time': inf_result.inference_time,
+                    'scoring_time': 0.0,
+                    'metadata': {
+                        'task_id': inf_result.task_id,
+                        'data_source': benchmark_name
+                    }
+                })
+            
+            logger.info(f"Benchmark {benchmark_name} completed (scoring skipped)")
+            return results
+        
         # Extract workflows and score
         logger.info("Extracting workflows and computing scores...")
         scoring_start = time.time()
@@ -262,11 +306,18 @@ class ModelEvaluator:
             # Remove 'workflow_' prefix if present
             clean_benchmark = data_source.replace('workflow_', '')
             
+            # Ensure extra_info is serializable (convert any numpy arrays)
+            extra_info = metadata.get('extra_info', {})
+            if isinstance(extra_info, dict):
+                # Use the DataLoader's conversion utility
+                from utils import DataLoader
+                extra_info = DataLoader._convert_to_serializable(extra_info)
+            
             scoring_tasks.append({
                 'data_source': clean_benchmark,
                 'solution_str': inf_result.response,  # Use full response for scoring
                 'ground_truth': metadata.get('reward_model', {}).get('ground_truth', 'default'),
-                'extra_info': metadata.get('extra_info', {}),
+                'extra_info': extra_info,
                 'task_id': inf_result.task_id,
                 'workflow': workflow,
                 'response': inf_result.response,
@@ -392,6 +443,10 @@ async def main():
     parser.add_argument('--max-tokens', type=int, default=4096,
                        help='Maximum tokens to generate')
     
+    # Scoring options
+    parser.add_argument('--skip-scoring', action='store_true',
+                       help='Skip scoring phase (only run inference)')
+    
     args = parser.parse_args()
     
     # Create model configuration
@@ -426,7 +481,8 @@ async def main():
         output_dir=args.output_dir,
         max_inference_workers=args.max_inference_workers,
         max_scoring_workers=args.max_scoring_workers,
-        batch_size=args.batch_size
+        batch_size=args.batch_size,
+        skip_scoring=args.skip_scoring
     )
     
     try:
