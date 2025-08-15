@@ -1,0 +1,77 @@
+# ============================================
+# 评测系统统一配置文件
+# ============================================
+# 所有服务和脚本共享此配置
+
+# 服务配置
+services:
+  api_proxy:
+    enabled: true
+    host: "localhost"
+    port: 5009
+    target_url: "https://idealab.alibaba-inc.com/api/openai/v1"
+    # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    rate_per_second: 3      # 每秒分发请求数
+    max_concurrency: 6       # 最大并发数
+    queue_type: "default"    # 队列类型: default | random
+    
+  scoreflow_reward:
+    enabled: true
+    host: "0.0.0.0"
+    port: 8899
+    timeout: 300            # 超时时间（秒）
+    debug: false
+
+# 模型配置
+model:
+  # 模式选择: local | api
+  mode: "local"
+  
+  # 本地模型配置（mode=local时使用）
+  local:
+    model_path: "/nas/ganluo/sft_output/Qwen2.5-7B-workflow-sft_new/checkpoint-200"
+    port: 30000
+    tensor_parallel: 1
+    data_parallel: 1
+    mem_fraction_static: 0.85
+    startup_timeout: 180    # SGLang启动超时（秒）
+    debug_mode: false       # 是否显示SGLang详细输出
+    
+  # API模型配置（mode=api时使用）
+  api:
+    url: "http://localhost:5009/v1/chat/completions"  # 使用本地API代理
+    # url: "https://api.openai.com/v1/chat/completions"
+    key: "your-api-key"
+    model: "gpt-4"
+    # model: "qwen-max-latest"
+
+# 评测参数
+evaluation:
+  # 数据配置
+  test_data: "./Test_FILE/verl_support/data/test_new/test.parquet"
+  output_dir: "./results"
+  
+  # 推理参数
+  max_inference_workers: 10    # 最大推理并发数
+  max_scoring_workers: 5       # 最大评分并发数
+  batch_size: 50               # 批处理大小
+  temperature: 0.7             # 生成温度
+  max_tokens: 8192             # 最大生成token数
+  
+  # 可选参数
+  limit: null                  # 样本限制（null表示全部）
+  skip_scoring: false          # 是否跳过评分
+  save_intermediate: true      # 是否保存中间结果
+  
+# 日志配置
+logging:
+  level: "INFO"                # 日志级别: DEBUG | INFO | WARNING | ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "./logs/evaluation.log"
+  
+# 路径配置（相对路径）
+paths:
+  scoreflow_reward_server: "./Test_FILE/verl_support/scoreflow_reward_server.py"
+  scoreflow_reward_utils: "./Test_FILE/verl_support/scoreflow_reward_utils.py"
+  data_dir: "./Test_FILE/verl_support/data"
+  workspace: "./workspace"
