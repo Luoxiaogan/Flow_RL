@@ -36,7 +36,7 @@ model:
     data_parallel: 1
     mem_fraction_static: 0.85
     startup_timeout: 180    # SGLang启动超时（秒）
-    debug_mode: true       # 是否显示SGLang详细输出
+    debug_mode: flase       # 是否显示SGLang详细输出
     
   # API模型配置（mode=api时使用）
   api:
