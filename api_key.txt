@@ -34,6 +34,19 @@ curl -X POST https://idealab.alibaba-inc.com/api/openai/v1/chat/completions \
     "thinking_budget": 1000
 }'
 
+curl -X POST https://idealab.alibaba-inc.com/api/openai/v1/chat/completions \
+-H "Authorization: Bearer 956c41bd0f31beaf68b871d4987af4bb" \
+-H "Content-Type: application/json" \
+-d '{
+    "model": "qwen-turbo",
+    "messages": [
+        {
+            "role": "user", 
+            "content": "please read the text, and think and show thinking test in <thik>...<\think>, and the revised text in <revised>...<\revised>. text: apple is an animal.  your answer: <thik>...<\think>\n\n<revised>...<\revised>"
+        }
+    ],
+}'
+
 
 qwen-max-latest
 

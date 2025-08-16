@@ -15,7 +15,10 @@
       "mcp__ide__getDiagnostics",
       "Bash(cp:*)",
       "Bash(chmod:*)",
-      "Bash(./run_all_tests.sh)"
+      "Bash(./run_all_tests.sh)",
+      "Bash(conda activate:*)",
+      "Bash(source:*)",
+      "Bash(echo $CONDA_PREFIX)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
