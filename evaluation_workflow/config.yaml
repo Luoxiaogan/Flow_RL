@@ -5,12 +5,13 @@
 
 # 服务配置
 services:
-  api_proxy:
+  metagpt_api_proxy:    # MetaGPT operator执行时使用的API代理
     enabled: true
     host: "localhost"
     port: 5009
     target_url: "https://idealab.alibaba-inc.com/api/openai/v1"
     # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    target_api_key: "your-target-api-key-here"  # 目标API的密钥
     rate_per_second: 3      # 每秒分发请求数
     max_concurrency: 6       # 最大并发数
     queue_type: "default"    # 队列类型: default | random
@@ -52,8 +53,6 @@ evaluation:
   output_dir: "./results"
   
   # 推理参数
-  max_inference_workers: 10    # 最大推理并发数
-  max_scoring_workers: 5       # 最大评分并发数
   batch_size: 50               # 批处理大小
   temperature: 0.7             # 生成温度
   max_tokens: 8192             # 最大生成token数
@@ -69,9 +68,17 @@ logging:
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
   file: "./logs/evaluation.log"
   
-# 路径配置（相对路径）
+# 路径配置
 paths:
+  # ScoreFlow组件路径（绝对路径）
+  scoreflow_handlers: "/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/scripts"
+  benchmark_mapping: "/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/benchmark_mapping.jsonl"
+  
+  # 评测相关路径（相对路径）
   scoreflow_reward_server: "./Test_FILE/verl_support/scoreflow_reward_server.py"
   scoreflow_reward_utils: "./Test_FILE/verl_support/scoreflow_reward_utils.py"
   data_dir: "./Test_FILE/verl_support/data"
   workspace: "./workspace"
+  
+  # MetaGPT配置路径
+  metagpt_config: "/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE/config2.yaml"

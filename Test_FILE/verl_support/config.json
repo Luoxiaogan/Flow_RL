@@ -3,15 +3,15 @@
         "upstream": {
             "provider": "openai",
             "model": "qwen-turbo",
-            "api_key": "sk-dc5cc6f834614e34ac5c00e6129ddbc1",
-            "base_url": "http://localhost:5001",
+            "api_key": "sk-placeholder-will-be-replaced-by-proxy",
+            "base_url": "http://localhost:5009",
             "temperature": 0.7
         },
         "downstream": {
             "provider": "openai",
             "model": "qwen-turbo",
-            "api_key": "sk-dc5cc6f834614e34ac5c00e6129ddbc1",
-            "base_url": "http://localhost:5001",
+            "api_key": "sk-placeholder-will-be-replaced-by-proxy",
+            "base_url": "http://localhost:5009",
             "temperature": 0.3
         }
     },

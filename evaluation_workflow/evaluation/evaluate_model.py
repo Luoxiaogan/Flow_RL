@@ -17,7 +17,6 @@ from datetime import datetime
 CURRENT_DIR = Path(__file__).parent
 PROJECT_ROOT = CURRENT_DIR.parent
 sys.path.insert(0, str(PROJECT_ROOT))
-sys.path.insert(0, str(PROJECT_ROOT.parent))  # Flow_RL root
 
 # Import evaluation modules (relative imports)
 from evaluation.sglang_server import InferenceManager, ModelConfig
@@ -25,9 +24,9 @@ from evaluation.batch_inference import BatchInferenceEngine, ConcurrentScorer, I
 from evaluation.utils import DataLoader, WorkflowExtractor, PromptFormatter, ConfigManager, MetricsCalculator
 from evaluation.report_generator import ReportGenerator
 
-# Import scoreflow reward from Test_FILE
-sys.path.insert(0, str(PROJECT_ROOT.parent / "Test_FILE" / "verl_support"))
-from scoreflow_reward import compute_score as scoreflow_compute_score
+# Import scoreflow reward from local scoreflow directory
+sys.path.insert(0, str(PROJECT_ROOT / "scoreflow"))
+from scoreflow_reward_utils import compute_score as scoreflow_compute_score
 
 logging.basicConfig(
     level=logging.INFO,

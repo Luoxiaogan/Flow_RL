@@ -1,0 +1,190 @@
+# Enhanced API Key Proxy with configurable target API key
+import time, threading, requests, traceback, random
+import yaml
+import os
+from flask import Flask, request, Response
+from queue import Queue
+from tqdm import tqdm
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+
+# Load configuration from config.yaml
+CONFIG_FILE = Path(__file__).parent.parent / "config.yaml"
+if CONFIG_FILE.exists():
+    with open(CONFIG_FILE, 'r') as f:
+        config = yaml.safe_load(f)
+        # Try new name first, fallback to old name for compatibility
+        proxy_config = config.get('services', {}).get('metagpt_api_proxy', 
+                       config.get('services', {}).get('api_proxy', {}))
+else:
+    print(f"Warning: Config file not found at {CONFIG_FILE}, using defaults")
+    proxy_config = {}
+
+# ---------- Configuration from YAML ----------
+TARGET_BASE_URL = proxy_config.get('target_url', "https://idealab.alibaba-inc.com/api/openai/v1")
+TARGET_API_KEY = proxy_config.get('target_api_key', "")  # Target API key
+HOST = proxy_config.get('host', "localhost")
+PORT = proxy_config.get('port', 5009)
+RATE_PER_SECOND = proxy_config.get('rate_per_second', 3)
+MAX_CONCURRENCY = proxy_config.get('max_concurrency', 6)
+QUEUE_TYPE = proxy_config.get('queue_type', "default")
+# ----------------------------------------------
+
+print(f"🚀 API Proxy Configuration:")
+print(f"   Target URL: {TARGET_BASE_URL}")
+print(f"   Target API Key: {'***' + TARGET_API_KEY[-4:] if TARGET_API_KEY else 'Not configured'}")
+print(f"   Host: {HOST}:{PORT}")
+print(f"   Rate: {RATE_PER_SECOND} req/s, Max Concurrency: {MAX_CONCURRENCY}")
+print(f"   Queue Type: {QUEUE_TYPE}")
+
+# --- Initialize queue ---
+if QUEUE_TYPE == "random":
+    print("🚀 Queue Mode: Random")
+    task_list, lock = [], threading.Lock()
+else:
+    print("🚀 Queue Mode: FIFO")
+    task_queue = Queue()
+
+# --- Initialize counters ---
+sent_to_api = 0
+received_from_api = 0
+sent_to_client = 0
+counter_lock = threading.Lock()
+
+app = Flask(__name__)
+bar = tqdm(total=0, desc="Dispatching Queue", unit="req")
+
+def put_task_into_queue(task):
+    if QUEUE_TYPE == "random":
+        with lock: task_list.append(task)
+    else: task_queue.put(task)
+
+def get_task_from_queue():
+    if QUEUE_TYPE == "random":
+        while True:
+            with lock:
+                if task_list: return task_list.pop(random.randint(0, len(task_list) - 1))
+            time.sleep(0.1)
+    else: return task_queue.get()
+
+def get_queue_size():
+    return len(task_list) if QUEUE_TYPE == "random" else task_queue.qsize()
+
+def process_request(request_data, result_queue, path):
+    global sent_to_api, received_from_api
+    target_url = f"{TARGET_BASE_URL}/{path}"
+    try:
+        # Copy headers but remove host
+        headers = {k: v for k, v in request_data['headers'].items() if k.lower() != 'host'}
+        
+        # Add or replace Authorization header with target API key if configured
+        if TARGET_API_KEY:
+            headers['Authorization'] = f'Bearer {TARGET_API_KEY}'
+            # For Alibaba/Dashscope APIs that might use different header
+            headers['X-DashScope-ApiKey'] = TARGET_API_KEY
+        
+        # Increment sent counter
+        with counter_lock:
+            sent_to_api += 1
+            update_bar_description()
+
+        resp = requests.request(
+            method=request_data['method'],
+            url=target_url,
+            headers=headers,
+            params=request_data['args'],
+            data=request_data['data'],
+            stream=True,
+            timeout=60,
+            verify=False
+        )
+
+        resp.raise_for_status()
+        
+        # Increment received counter
+        with counter_lock:
+            received_from_api += 1
+            update_bar_description()
+        
+        result_queue.put(resp)
+
+    except requests.exceptions.HTTPError as e:
+        print("\n" + "="*50)
+        print(f"[!!!] HTTP ERROR for {request_data['method']} {target_url}")
+        print(f"    Exception Type: {type(e).__name__}")
+        if e.response is not None:
+            print(f"    Upstream Status Code: {e.response.status_code}")
+            print(f"    Upstream Response Body:\n--- START RESPONSE ---\n{e.response.text}\n--- END RESPONSE ---")
+        else:
+            print("    Upstream response object is missing!")
+        print("="*50 + "\n")
+        with counter_lock:
+            received_from_api += 1
+            update_bar_description()
+        result_queue.put(e)
+        
+    except Exception as e:
+        print(f"\n[ERROR] Request failed for {target_url}")
+        print(f"  Exception: {e}")
+        traceback.print_exc()
+        with counter_lock:
+            received_from_api += 1
+            update_bar_description()
+        result_queue.put(e)
+
+def update_bar_description():
+    bar.set_description(f"Queue: {get_queue_size()}, To API: {sent_to_api}, From API: {received_from_api}, To Client: {sent_to_client}")
+
+@app.route('/', defaults={'path': ''}, methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
+@app.route('/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
+def catch_all(path):
+    result_queue = Queue()
+    put_task_into_queue((
+        {
+            'method': request.method,
+            'headers': dict(request.headers),
+            'args': request.args.to_dict(),
+            'data': request.get_data(),
+        },
+        result_queue,
+        path
+    ))
+    
+    result = result_queue.get()
+    
+    # Increment sent to client counter
+    global sent_to_client
+    with counter_lock:
+        sent_to_client += 1
+        update_bar_description()
+    
+    if isinstance(result, requests.Response):
+        return Response(result.iter_content(chunk_size=1024), status=result.status_code, headers=dict(result.headers))
+    elif isinstance(result, requests.exceptions.HTTPError):
+        if result.response is not None:
+            return Response(result.response.text, status=result.response.status_code, headers=dict(result.response.headers))
+        else:
+            return Response(f"HTTP Error occurred: {str(result)}", status=500)
+    else:
+        return Response(f"An error occurred: {str(result)}", status=500)
+
+def dispatcher():
+    executor = ThreadPoolExecutor(max_workers=MAX_CONCURRENCY)
+    while True:
+        for _ in range(RATE_PER_SECOND):
+            if get_queue_size() > 0:
+                request_data, result_queue, path = get_task_from_queue()
+                executor.submit(process_request, request_data, result_queue, path)
+        time.sleep(1)
+
+threading.Thread(target=dispatcher, daemon=True).start()
+
+if __name__ == '__main__':
+    print(f"\n📡 Starting API Proxy Server on {HOST}:{PORT}")
+    print(f"📌 Proxying to: {TARGET_BASE_URL}")
+    if TARGET_API_KEY:
+        print(f"🔑 Using target API key: ***{TARGET_API_KEY[-4:]}")
+    else:
+        print(f"⚠️  Warning: No target API key configured!")
+    print("-" * 50)
+    app.run(host=HOST, port=PORT, threaded=True, debug=False)

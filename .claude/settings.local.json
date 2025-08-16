@@ -13,7 +13,9 @@
       "Bash(find:*)",
       "WebSearch",
       "mcp__ide__getDiagnostics",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(chmod:*)",
+      "Bash(./run_all_tests.sh)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

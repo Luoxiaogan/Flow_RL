@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # ============================================
-# API代理服务启动脚本
+# MetaGPT API代理服务启动脚本
 # ============================================
+# 用于MetaGPT operator执行时的API调用
 
 # 颜色输出
 RED='\033[0;31m'
@@ -12,7 +13,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}        API代理服务启动器${NC}"
+echo -e "${BLUE}     MetaGPT API代理服务启动器${NC}"
 echo -e "${BLUE}========================================${NC}"
 
 # 获取脚本所在目录
@@ -28,9 +29,9 @@ fi
 
 # 从YAML提取配置（使用Python解析）
 echo -e "${YELLOW}读取配置文件...${NC}"
-PORT=$(python3 -c "import yaml; config=yaml.safe_load(open('$CONFIG_FILE')); print(config['services']['api_proxy']['port'])" 2>/dev/null || echo "5009")
-HOST=$(python3 -c "import yaml; config=yaml.safe_load(open('$CONFIG_FILE')); print(config['services']['api_proxy']['host'])" 2>/dev/null || echo "localhost")
-ENABLED=$(python3 -c "import yaml; config=yaml.safe_load(open('$CONFIG_FILE')); print(config['services']['api_proxy']['enabled'])" 2>/dev/null || echo "True")
+PORT=$(python3 -c "import yaml; config=yaml.safe_load(open('$CONFIG_FILE')); print(config['services']['metagpt_api_proxy']['port'])" 2>/dev/null || echo "5009")
+HOST=$(python3 -c "import yaml; config=yaml.safe_load(open('$CONFIG_FILE')); print(config['services']['metagpt_api_proxy']['host'])" 2>/dev/null || echo "localhost")
+ENABLED=$(python3 -c "import yaml; config=yaml.safe_load(open('$CONFIG_FILE')); print(config['services']['metagpt_api_proxy']['enabled'])" 2>/dev/null || echo "True")
 
 if [ "$ENABLED" != "True" ]; then
     echo -e "${YELLOW}API代理服务已禁用（config.yaml中enabled=false）${NC}"
@@ -72,28 +73,33 @@ echo ""
 
 cd "$SCRIPT_DIR"
 
-# 启动Python服务（后台运行）
-nohup python3 api_key_proxy.py > "$LOG_FILE" 2>&1 &
-PID=$!
+# 检查是否有配置target_api_key
+TARGET_API_KEY=$(python3 -c "import yaml; config=yaml.safe_load(open('$CONFIG_FILE')); print(config['services']['metagpt_api_proxy'].get('target_api_key', ''))" 2>/dev/null || echo "")
 
-echo -e "${GREEN}服务已启动，PID: $PID${NC}"
-echo $PID > "${LOG_DIR}/api_proxy.pid"
-
-# 等待服务启动
-sleep 2
-
-# 检查服务是否运行
-if ps -p $PID > /dev/null; then
-    echo -e "${GREEN}✓ API代理服务运行中${NC}"
-    echo ""
-    echo -e "${BLUE}服务信息:${NC}"
-    echo "  URL: http://$HOST:$PORT"
-    echo "  PID: $PID"
-    echo "  日志: tail -f $LOG_FILE"
-    echo ""
-    echo -e "${YELLOW}提示: 使用 ./stop_all_services.sh 停止服务${NC}"
+# 选择使用哪个版本的proxy
+if [ -n "$TARGET_API_KEY" ] && [ "$TARGET_API_KEY" != "your-target-api-key-here" ]; then
+    echo -e "${GREEN}使用增强版API代理（配置了目标API密钥）${NC}"
+    PROXY_SCRIPT="api_key_proxy_enhanced.py"
+    # 检查增强版是否存在
+    if [ ! -f "$PROXY_SCRIPT" ]; then
+        echo -e "${YELLOW}增强版不存在，使用基础版${NC}"
+        PROXY_SCRIPT="api_key_proxy.py"
+    fi
 else
-    echo -e "${RED}✗ 服务启动失败${NC}"
-    echo -e "${RED}查看日志: cat $LOG_FILE${NC}"
-    exit 1
+    echo -e "${YELLOW}使用基础版API代理（透传模式）${NC}"
+    PROXY_SCRIPT="api_key_proxy.py"
 fi
+
+# 显示服务信息
+echo -e "${GREEN}✓ 正在启动MetaGPT API代理服务...${NC}"
+echo ""
+echo -e "${BLUE}服务信息:${NC}"
+echo "  URL: http://$HOST:$PORT"
+echo "  日志: $LOG_FILE"
+echo ""
+echo -e "${YELLOW}提示: 按 Ctrl+C 停止服务${NC}"
+echo -e "${BLUE}========================================${NC}"
+echo ""
+
+# 启动Python服务（前台运行，同时输出到终端和日志文件）
+python3 $PROXY_SCRIPT 2>&1 | tee "$LOG_FILE"
