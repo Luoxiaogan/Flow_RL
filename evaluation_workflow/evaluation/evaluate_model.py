@@ -24,9 +24,23 @@ from evaluation.batch_inference import BatchInferenceEngine, ConcurrentScorer, I
 from evaluation.utils import DataLoader, WorkflowExtractor, PromptFormatter, ConfigManager, MetricsCalculator
 from evaluation.report_generator import ReportGenerator
 
-# Import scoreflow reward from local scoreflow directory
-sys.path.insert(0, str(PROJECT_ROOT / "scoreflow"))
-from scoreflow_reward_utils import compute_score as scoreflow_compute_score
+# Import scoreflow client for HTTP API calls
+# This avoids the need for MetaGPT in the evaluation environment
+try:
+    from evaluation.scoreflow_client import compute_score_via_api as scoreflow_compute_score
+    logger = logging.getLogger(__name__)
+    logger.info("Using ScoreFlow HTTP API for scoring")
+except ImportError:
+    # Fallback to direct import if client not available
+    logger = logging.getLogger(__name__)
+    logger.warning("ScoreFlow client not found, trying direct import")
+    sys.path.insert(0, str(PROJECT_ROOT / "scoreflow"))
+    try:
+        from scoreflow_reward_utils import compute_score as scoreflow_compute_score
+        logger.info("Using direct ScoreFlow import (requires MetaGPT)")
+    except ImportError:
+        logger.error("Cannot import ScoreFlow. Scoring will be disabled.")
+        scoreflow_compute_score = None
 
 logging.basicConfig(
     level=logging.INFO,
@@ -92,16 +106,33 @@ class ModelEvaluator:
             # Initialize scorer (only if not skipping)
             if not self.skip_scoring:
                 logger.info("Initializing concurrent scorer...")
-                try:
-                    self.scorer = ConcurrentScorer(
-                        score_fn=scoreflow_compute_score,
-                        max_workers=self.max_scoring_workers
-                    )
-                except Exception as e:
-                    logger.warning(f"Failed to initialize scorer: {e}")
-                    logger.warning("Scoring will be skipped. Make sure scoreflow_reward_server.py is running if you need scoring.")
+                
+                # Check if scoreflow function is available
+                if scoreflow_compute_score is None:
+                    logger.warning("ScoreFlow not available. Scoring will be skipped.")
                     self.skip_scoring = True
                     self.scorer = None
+                else:
+                    try:
+                        # Test the scoring function
+                        from evaluation.scoreflow_client import test_connection
+                        if not test_connection():
+                            logger.warning("ScoreFlow server is not running. Please start it with:")
+                            logger.warning("  Terminal 1 (with MetaGPT): cd services && ./start_scoreflow_reward.sh")
+                            logger.warning("Scoring will be skipped.")
+                            self.skip_scoring = True
+                            self.scorer = None
+                        else:
+                            self.scorer = ConcurrentScorer(
+                                score_fn=scoreflow_compute_score,
+                                max_workers=self.max_scoring_workers
+                            )
+                            logger.info("ScoreFlow scorer initialized successfully via HTTP API")
+                    except Exception as e:
+                        logger.warning(f"Failed to initialize scorer: {e}")
+                        logger.warning("Scoring will be skipped.")
+                        self.skip_scoring = True
+                        self.scorer = None
             else:
                 logger.info("Scoring disabled by user request")
                 self.scorer = None
