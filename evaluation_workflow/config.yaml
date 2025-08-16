@@ -30,13 +30,13 @@ model:
   
   # 本地模型配置（mode=local时使用）
   local:
-    model_path: "/nas/ganluo/sft_output/Qwen2.5-7B-workflow-sft_new/checkpoint-200"
+    model_path: "/nas/models/Qwen2.5-7B-Instruct"
     port: 30009
     tensor_parallel: 1
     data_parallel: 1
     mem_fraction_static: 0.85
     startup_timeout: 180    # SGLang启动超时（秒）
-    debug_mode: false       # 是否显示SGLang详细输出
+    debug_mode: true       # 是否显示SGLang详细输出
     
   # API模型配置（mode=api时使用）
   api:
