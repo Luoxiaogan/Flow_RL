@@ -70,15 +70,11 @@ logging:
   
 # 路径配置
 paths:
-  # ScoreFlow组件路径（绝对路径）
+  # 必需的外部组件（绝对路径，需要根据服务器环境修改）
   scoreflow_handlers: "/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/scripts"
   benchmark_mapping: "/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/benchmark_mapping.jsonl"
-  
-  # 评测相关路径（相对路径）
-  scoreflow_reward_server: "./Test_FILE/verl_support/scoreflow_reward_server.py"
-  scoreflow_reward_utils: "./Test_FILE/verl_support/scoreflow_reward_utils.py"
-  data_dir: "./Test_FILE/verl_support/data"
-  workspace: "./workspace"
-  
-  # MetaGPT配置路径
   metagpt_config: "/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE/config2.yaml"
+  
+  # 本地工作目录（相对路径）
+  workspace: "./workspace"
+  data_dir: "./data"  # 本地数据目录（如需要）

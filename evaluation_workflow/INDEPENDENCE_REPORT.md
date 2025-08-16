@@ -34,13 +34,17 @@
 
 ```yaml
 paths:
-  # ScoreFlow组件路径（绝对路径）
+  # 必需的外部组件（绝对路径）
   scoreflow_handlers: "/Users/.../ScoreFlow/scripts"
   benchmark_mapping: "/Users/.../ScoreFlow/benchmark_mapping.jsonl"
-  
-  # MetaGPT配置路径
   metagpt_config: "/Users/.../Test_FILE/config2.yaml"
+  
+  # 本地工作目录（相对路径）
+  workspace: "./workspace"
+  data_dir: "./data"
 ```
+
+**注意**：scoreflow_reward_server.py 和 scoreflow_reward_utils.py 已经本地化到 `scoreflow/` 目录，不需要外部路径配置。
 
 #### 已清理的依赖
 - ❌ ~~Test_FILE/verl_support/config.json~~ → 不再使用
