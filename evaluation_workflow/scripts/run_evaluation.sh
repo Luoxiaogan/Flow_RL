@@ -120,8 +120,6 @@ eval_config = config['evaluation']
 cmd.extend([
     "--test-data", eval_config['test_data'],
     "--output-dir", eval_config['output_dir'],
-    "--max-inference-workers", str(eval_config['max_inference_workers']),
-    "--max-scoring-workers", str(eval_config['max_scoring_workers']),
     "--batch-size", str(eval_config['batch_size']),
     "--temperature", str(eval_config['temperature']),
     "--max-tokens", str(eval_config['max_tokens'])
@@ -152,8 +150,8 @@ else:
     print(f"  API模型: {config['model']['api']['model']}")
 print(f"  测试数据: {config['evaluation']['test_data']}")
 print(f"  输出目录: {config['evaluation']['output_dir']}")
-print(f"  推理并发: {config['evaluation']['max_inference_workers']}")
-print(f"  评分并发: {config['evaluation']['max_scoring_workers']}")
+print(f"  批处理大小: {config['evaluation']['batch_size']}")
+print(f"  温度: {config['evaluation']['temperature']}")
 print(f"  跳过评分: {config['evaluation'].get('skip_scoring', False)}")
 if config['evaluation'].get('limit'):
     print(f"  样本限制: {config['evaluation']['limit']}")
