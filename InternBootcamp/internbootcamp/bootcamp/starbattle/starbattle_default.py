@@ -1,7 +1,7 @@
 import re
 import json
 import random
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 from internbootcamp.libs.starbattle.get_grid import generate_star_battle_grid
 from internbootcamp.libs.starbattle.dfs_solver_cn import print_grid_in_kor
 

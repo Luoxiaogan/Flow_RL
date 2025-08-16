@@ -38,7 +38,7 @@ from metagpt.provider.llm_provider_registry import create_llm_instance
 from metagpt.configs.llm_config import LLMConfig
 
 # DEBUG模式控制
-DEBUG = 1  # 改为1启用debug模式
+DEBUG = 0  # 改为1启用debug模式
 DEBUG_PATH = PROJECT_ROOT / "Test_FILE" / "debug_logs"
 
 # 设置日志

@@ -5,7 +5,7 @@ import os
 import sys
 import traceback
 from typing import Dict, Any, List, Union
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 from internbootcamp.libs.bbeh_hyperbaton.bbeh_hyperbaton_generator import HyperbatonGenerator
 from internbootcamp.libs.bbeh_hyperbaton.bbeh_hyperbaton_solver import HyperbatonSolver
 from internbootcamp.libs.bbeh_hyperbaton.bbeh_hyperbaton_validor import HyperbatonValidator

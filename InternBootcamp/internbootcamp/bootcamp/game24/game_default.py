@@ -1,6 +1,6 @@
 import re
 import json
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 from internbootcamp.libs.game24.game24 import Game24Plus
 
 def remove_boxed(s):

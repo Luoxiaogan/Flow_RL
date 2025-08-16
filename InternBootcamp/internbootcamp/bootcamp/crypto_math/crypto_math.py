@@ -3,7 +3,7 @@ import ast
 import json
 import sys
 sys.path.append('./')
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 import random
 from internbootcamp.libs.cryptomath.crypto_math import generate_crypto_math
 

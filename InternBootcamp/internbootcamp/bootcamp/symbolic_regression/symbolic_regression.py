@@ -2,7 +2,7 @@ import re
 import json
 import requests
 import random
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 from sklearn.metrics import r2_score, root_mean_squared_error
 import numpy as np
 import sympy as sp

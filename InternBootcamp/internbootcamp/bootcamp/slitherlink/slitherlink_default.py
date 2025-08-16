@@ -4,7 +4,7 @@ import random
 import re
 from typing import Dict, List, Any, Tuple, Optional
 
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 from internbootcamp.libs.slitherlink.slitherlink_generator import SlitherlinkSolver, generate_puzzle
 from internbootcamp.libs.slitherlink.slitherlink_verifier import verify_puzzle
 

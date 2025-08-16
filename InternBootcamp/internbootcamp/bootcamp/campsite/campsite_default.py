@@ -4,7 +4,7 @@ import json
 import sys
 import random
 sys.path.append('./')
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 # from environments import CampsiteEnvironment
 from internbootcamp.libs.campsite.campsite_generator import  generate_campsite
 from internbootcamp.libs.campsite.campsite_validor import validate_campsite_solution

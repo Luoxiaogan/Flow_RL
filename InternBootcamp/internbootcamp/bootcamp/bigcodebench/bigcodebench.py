@@ -1,4 +1,4 @@
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 import re
 import tempfile
 import subprocess

@@ -1,7 +1,7 @@
 import json
 import os
 from typing import Dict, Any, List
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 from internbootcamp.libs.bbeh_buggy_tables.bbeh_buggy_tables_generator import BBEHBuggyTablesGenerator
 from internbootcamp.libs.bbeh_buggy_tables.bbeh_buggy_tables_solver import BBEHBuggyTablesSolver
 from internbootcamp.libs.bbeh_buggy_tables.bbeh_buggy_tables_validor import BBEHBuggyTablesValidator

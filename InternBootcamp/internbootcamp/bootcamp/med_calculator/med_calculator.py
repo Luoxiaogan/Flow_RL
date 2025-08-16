@@ -1,7 +1,7 @@
 import json
 import math
 import random
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 
 def remove_boxed(s):
     if "\\boxed " in s:

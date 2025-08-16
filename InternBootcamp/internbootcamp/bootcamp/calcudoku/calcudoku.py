@@ -3,7 +3,7 @@ import ast
 import json
 import sys
 sys.path.append('./')
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 # from environments import CalcudokuEnvironment
 from internbootcamp.libs.calcudoku.calcudoku_generator import CalcudokuGenerator
 import random

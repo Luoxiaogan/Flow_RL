@@ -2,7 +2,7 @@ import re
 import json
 import numpy as np
 from scipy.integrate import odeint
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 
 
 class LinearODEbootcamp(Basebootcamp):

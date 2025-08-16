@@ -3,7 +3,7 @@ import re
 import json
 import distance
 
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 from internbootcamp.libs.cipher import *
 from bootcamp_utils import catch_print
 

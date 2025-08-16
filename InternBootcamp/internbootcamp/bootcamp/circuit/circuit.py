@@ -5,8 +5,7 @@ import re
 import os
 from typing import Optional, Dict, List, Tuple, Any
 # Attempt to import Basebootcamp, assuming the path is accessible
-try:
-    from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 except ImportError:
     # Fallback if the specific path is not found, e.g. for local testing
     # This might need adjustment based on the actual execution environment

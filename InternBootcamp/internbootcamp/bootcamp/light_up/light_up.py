@@ -155,7 +155,7 @@ Objective: Place light bulbs in white grid cells such that every white cell is i
 请完成上述谜题的训练场环境类实现，包括所有必要的方法。
 """
 
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 import json
 import random
 import re

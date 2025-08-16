@@ -1,4 +1,4 @@
-from bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 import re
 import random
 from typing import List, Tuple, Dict, Set, Optional

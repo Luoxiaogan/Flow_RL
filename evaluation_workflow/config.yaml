@@ -11,7 +11,7 @@ services:
     port: 5009
     target_url: "https://idealab.alibaba-inc.com/api/openai/v1"
     # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    target_api_key: "your-target-api-key-here"  # 目标API的密钥
+    target_api_key: "956c41bd0f31beaf68b871d4987af4bb"  # 目标API的密钥
     rate_per_second: 3      # 每秒分发请求数
     max_concurrency: 6       # 最大并发数
     queue_type: "default"    # 队列类型: default | random
@@ -31,7 +31,7 @@ model:
   # 本地模型配置（mode=local时使用）
   local:
     model_path: "/nas/ganluo/sft_output/Qwen2.5-7B-workflow-sft_new/checkpoint-200"
-    port: 30000
+    port: 30009
     tensor_parallel: 1
     data_parallel: 1
     mem_fraction_static: 0.85
@@ -49,8 +49,8 @@ model:
 # 评测参数
 evaluation:
   # 数据配置
-  test_data: "./Test_FILE/verl_support/data/test_new/test.parquet"
-  output_dir: "./results"
+  test_data: "/nas/ganluo/Flow_RL/Test_FILE/verl_support/data/test_new/test.parquet"
+  output_dir: "/nas/ganluo/Flow_RL/evaluation_workflow/results"
   
   # 推理参数
   batch_size: 50               # 批处理大小
@@ -66,14 +66,14 @@ evaluation:
 logging:
   level: "INFO"                # 日志级别: DEBUG | INFO | WARNING | ERROR
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  file: "./logs/evaluation.log"
+  file: "/nas/ganluo/Flow_RL/evaluation_workflow/logs/evaluation.log"
   
 # 路径配置
 paths:
   # 必需的外部组件（绝对路径，需要根据服务器环境修改）
-  scoreflow_handlers: "/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/scripts"
-  benchmark_mapping: "/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/benchmark_mapping.jsonl"
-  metagpt_config: "/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE/config2.yaml"
+  scoreflow_handlers: "/nas/ganluo/Flow_RL/ScoreFlow/scripts"
+  benchmark_mapping: "/nas/ganluo/Flow_RL/ScoreFlow/benchmark_mapping.jsonl"
+  metagpt_config: "/nas/ganluo/Flow_RL/metagpt_root/config/config2.yaml"
   
   # 本地工作目录（相对路径）
   workspace: "./workspace"

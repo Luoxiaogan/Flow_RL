@@ -2,7 +2,7 @@ import logging
 import re
 import time
 from typing import Dict, Any, Optional, Union
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 from internbootcamp.libs.bbeh_multistep_arithmetic.bbeh_arithmetic_generator import BBEHArithmeticGenerator
 from internbootcamp.libs.bbeh_multistep_arithmetic.bbeh_arithmetic_solver import BBEHArithmeticSolver
 from internbootcamp.libs.bbeh_multistep_arithmetic.bbeh_arithmetic_validor import BBEHArithmeticVerifier

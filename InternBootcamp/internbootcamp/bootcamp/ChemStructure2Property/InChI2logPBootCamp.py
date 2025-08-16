@@ -1,6 +1,6 @@
 import random
 
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 from internbootcamp.libs.chemStructure2Property.ChemStructureGenerator import InChIGenerator
 from internbootcamp.bootcamp.ChemStructure2Property.utils import last_boxed_only_string, remove_boxed
 from rdkit import Chem

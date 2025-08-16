@@ -2,7 +2,7 @@ import re
 import random
 import math
 from itertools import count
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 
 class Bbehbooleanexpressionsbootcamp(Basebootcamp):
     """

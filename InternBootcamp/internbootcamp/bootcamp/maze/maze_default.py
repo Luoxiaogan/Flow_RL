@@ -3,7 +3,7 @@ import json
 import random
 import re
 
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 from internbootcamp.libs.maze.maze_generator import generate_maze
 from internbootcamp.libs.maze.maze_solver import solve_maze, is_path_exist
 from internbootcamp.libs.maze.maze_validator import validate_maze_solution

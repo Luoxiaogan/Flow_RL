@@ -2,7 +2,7 @@ import re
 import json
 import random
 
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 from internbootcamp.libs.arrowmaze.maze_generator import generate_arrow_maze
 class Arrowmazebootcamp(Basebootcamp):
     def __init__(self, size:tuple = (6,6), start_pos:tuple = (0,0), end_pos:tuple = (5,5), max_solution_step:int = 5, seed:int = None):

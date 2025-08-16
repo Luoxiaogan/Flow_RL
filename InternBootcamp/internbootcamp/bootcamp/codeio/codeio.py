@@ -1,4 +1,4 @@
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 import traceback
 import re
 import json

@@ -1,7 +1,7 @@
 import re
 import json
 import numpy as np
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 
 
 class Earthdew2humiditybootcamp(Basebootcamp):

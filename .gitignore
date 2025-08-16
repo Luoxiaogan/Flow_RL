@@ -38,3 +38,12 @@ training_data/
 Test_FILE/verl_support/evaluation/results
 .vscode/
 .vscode/settings.json
+evaluation_workflow/logs/
+evaluation_workflow/results/
+Test_FILE/metagpt_local/metagpt_local/
+Test_FILE/metagpt_local/metagpt_local/metagpt.egg-info/PKG-INFO
+Test_FILE/metagpt_local/metagpt_local/metagpt.egg-info/requires.txt
+Test_FILE/verl_support_backup/core-ray::WorkerDict-17185-1755097123
+Test_FILE/verl_support_backup/core-ray::WorkerDict-20134-1755097277
+Test_FILE/verl_support_backup/core-ray::WorkerDict-*
+Test_FILE/verl_support_backup/outputs/

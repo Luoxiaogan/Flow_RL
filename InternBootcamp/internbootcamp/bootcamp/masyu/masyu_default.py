@@ -6,7 +6,7 @@ import time
 import numpy as np
 from typing import List, Tuple, Dict, Any, Optional
 
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 from internbootcamp.libs.masyu.masyu_data_generator import MasyuGenerator
 from internbootcamp.libs.masyu.masyu_solver import check_valid_masyu
 from internbootcamp.libs.masyu.masyu_z3_solver import solve_masyu_with_z3

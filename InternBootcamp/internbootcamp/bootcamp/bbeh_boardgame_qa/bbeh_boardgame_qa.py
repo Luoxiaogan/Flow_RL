@@ -2,7 +2,7 @@ import copy
 import re
 import random
 from typing import Dict, List, Set, Tuple
-from internbootcamp.bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 
 
 Entities = [

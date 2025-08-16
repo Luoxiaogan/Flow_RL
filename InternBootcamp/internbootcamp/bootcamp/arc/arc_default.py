@@ -8,7 +8,7 @@ import random
 sys.path.insert(0, Path(__file__).parent.parent.parent.as_posix())
 
 from internbootcamp.libs.re_arc.main import get_generators, get_verifiers, get_rng_difficulty, get_pso_difficulty, demo_generator, generate_dataset, demo_dataset, evaluate_verifiers_on_original_tasks
-from bootcamp.base import Basebootcamp
+from ..base import Basebootcamp
 
 Grid = Tuple[Tuple[int]]
 
