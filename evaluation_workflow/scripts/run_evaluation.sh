@@ -100,8 +100,8 @@ if mode == 'local':
         "--port", str(local_config['port']),
         "--tensor-parallel", str(local_config['tensor_parallel'])
     ])
-    if local_config.get('debug_mode'):
-        cmd.append("--debug")
+    # debug_mode 是给 SGLang 服务器用的，不是给 evaluate_model.py
+    # SGLang 的 debug 模式在 sglang_server.py 中处理
 else:  # api mode
     # 创建临时API配置文件
     api_config = config['model']['api']

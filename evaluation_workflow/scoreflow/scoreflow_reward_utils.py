@@ -36,6 +36,7 @@ else:
 # 从config.yaml获取路径
 SCOREFLOW_HANDLERS_PATH = Path(paths_config.get('scoreflow_handlers', '/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/scripts'))
 BENCHMARK_MAPPING_PATH = Path(paths_config.get('benchmark_mapping', '/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/benchmark_mapping.jsonl'))
+PROCESSED_DATASET_PATH = Path(paths_config.get('processed_dataset', '/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset'))
 METAGPT_CONFIG_PATH = Path(paths_config.get('metagpt_config', '/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE/config2.yaml'))
 
 # 添加必要路径
@@ -854,7 +855,15 @@ async def _compute_score_async(data_source: str, solution_str: str, ground_truth
         
         # 构建完整的数据路径
         if not os.path.isabs(data_path):
-            data_path = os.path.join(PROJECT_ROOT, data_path)
+            # 使用配置的 processed_dataset 路径作为基准
+            # 如果 data_path 已经包含 "Processed_dataset"，需要去掉这部分
+            if data_path.startswith("Processed_dataset/"):
+                # 去掉 "Processed_dataset/" 前缀，直接拼接
+                relative_path = data_path.replace("Processed_dataset/", "", 1)
+                data_path = os.path.join(PROCESSED_DATASET_PATH, relative_path)
+            else:
+                # 直接拼接
+                data_path = os.path.join(PROCESSED_DATASET_PATH, data_path)
         
         logger.info(f"Computing reward for benchmark: {benchmark_name} with {len(test_cases)} test cases")
         logger.info(f"Data path: {data_path}")
