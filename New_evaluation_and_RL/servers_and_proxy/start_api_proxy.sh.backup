@@ -74,7 +74,8 @@ echo -e "${GREEN}启动API代理服务...${NC}"
 echo -e "${YELLOW}日志文件: $LOG_FILE${NC}"
 echo ""
 
-cd "$SCRIPT_DIR"
+# 切换到metagpt_api_key_proxy目录
+cd "${PROJECT_ROOT}/metagpt_api_key_proxy"
 
 # 检查是否有配置target_api_key
 TARGET_API_KEY=$(python3 -c "import yaml; config=yaml.safe_load(open('$CONFIG_FILE')); print(config['services']['metagpt_api_proxy'].get('target_api_key', ''))" 2>/dev/null || echo "")

@@ -6,7 +6,7 @@ from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 
 # ---------- 配置 ----------
-TARGET_BASE_URL = "https://idealab.alibaba-inc.com/api/openai/v1/chat/completions"
+TARGET_BASE_URL = "https://idealab.alibaba-inc.com/api/openai/v1"
 # TARGET_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 HOST            = "localhost"
 PORT            = 5009
@@ -55,8 +55,6 @@ def get_queue_size():
 def process_request(request_data, result_queue, path):
     global sent_to_api, received_from_api
     target_url = f"{TARGET_BASE_URL}/{path}"
-    print(f"   - Target URL是: {target_url}")
-    print(f"   - Path是: {path}")
     try:
         headers = {k: v for k, v in request_data['headers'].items() if k.lower() != 'host'}
         

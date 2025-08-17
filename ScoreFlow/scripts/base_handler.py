@@ -156,38 +156,47 @@ class BenchmarkHandler(abc.ABC):
         from metagpt.provider.llm_provider_registry import create_llm_instance as create
         
         # 提取问题和答案
-        question = ground_truth_data.get('question', '')
-        if not question and 'passage' in ground_truth_data:
-            # 对于某些数据集，问题可能在不同字段
-            question = ground_truth_data.get('passage', '')[:200] + "..."
+        # 1. 直接从 'question' 字段提取问题，不再使用 passage 作为备选
+        question = ground_truth_data.get('question', 'N/A')
+        # question = ground_truth_data.get('question', '')
+        # if not question and 'passage' in ground_truth_data:
+        #     # 对于某些数据集，问题可能在不同字段
+        #     question = ground_truth_data.get('passage', '')[:200] + "..."
         
-        # 获取标准答案
-        if 'answer' in ground_truth_data:
-            ground_truth = ground_truth_data['answer']
-        elif 'all_answers' in ground_truth_data:
-            ground_truth = ground_truth_data['all_answers']
-        else:
-            ground_truth = str(ground_truth_data)
+        # # 获取标准答案
+        # if 'answer' in ground_truth_data:
+        #     ground_truth = ground_truth_data['answer']
+        # elif 'all_answers' in ground_truth_data:
+        #     ground_truth = ground_truth_data['all_answers']
+        # else:
+        #     ground_truth = str(ground_truth_data)
+
+        # 2. 将完整的 ground_truth_data 格式化后提供给 LLM，让其拥有全部上下文
+        ground_truth_context = json.dumps(ground_truth_data, indent=2, ensure_ascii=False)
         
         # 构建判断prompt - 更严格的版本
-        prompt = f"""You are a strict judge evaluating whether a model's answer correctly addresses the specific question asked.
+        # 修改 Prompt 逻辑，指导 LLM 如何使用完整的上下文进行判断
+        prompt = f"""You are a meticulous and fair evaluator for a question-answering system. Your task is to determine if the "Model's Response" correctly answers the question based on the provided "Ground Truth Data".
 
-**The Question Asked:**
+**Question(this can also found in the Ground Truth Data):**
 {question}
 
-**The Correct Answer:**
-{ground_truth}
+**Ground Truth Data (The reference for correctness):**
+{ground_truth_context}
 
-**The Model's Response:**
+**The Model's Response to Evaluate:**
 {model_output}
 
-**Evaluation Criteria:**
-1. The model's response MUST directly answer the specific question that was asked
-2. For "Which happened first?" questions: The answer must specify which event happened first, not just describe an event
-3. For counting questions: The answer must provide the correct number
-4. For identification questions: The answer must identify the correct entity/person/place
-5. The answer must contain the key information from the expected answer
-6. Additional context is acceptable ONLY if the core answer is present and correct
+
+**Your Task & Evaluation Rules:**
+1.  Analyze the `Ground Truth Data`. It contains the original `question`, the `answer`, and sometimes a list of all possible correct answers in `all_answers`.
+2.  **Crucial Rule for `all_answers`:** If the `Ground Truth Data` contains a list called `all_answers`, the "Model's Response" is considered **CORRECT** if it is semantically equivalent to **ANY ONE** of the answers in that list.
+3.  If only a single `answer` field exists, the "Model's Response" must be semantically equivalent to that value.
+4.  The model's response MUST directly and accurately answer the `question` specified in the ground truth. Do not accept related but tangential information.
+5.  Pay attention to specifics:
+    -   For "Which happened first?" questions: The answer must specify the event that happened first.
+    -   For counting questions: The answer must provide the correct number.
+    -   For identification questions: The answer must identify the correct entity/person/place.
 
 **Important:** 
 - An answer that describes something related but doesn't answer the actual question is INCORRECT

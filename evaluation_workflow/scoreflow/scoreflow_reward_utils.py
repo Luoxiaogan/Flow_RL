@@ -309,6 +309,15 @@ class ScoreFlowRewardCalculator:
             
             # 查找benchmark映射信息
             benchmark_info = self.benchmark_mapping.get(benchmark_name)
+            
+            # 如果精确匹配失败，尝试去掉后缀（如_limr）再匹配
+            if not benchmark_info and '_' in benchmark_name:
+                # 尝试去掉最后一个下划线后的部分
+                base_name = '_'.join(benchmark_name.split('_')[:-1])
+                benchmark_info = self.benchmark_mapping.get(base_name)
+                if benchmark_info:
+                    logger.info(f"Using base benchmark '{base_name}' mapping for '{benchmark_name}'")
+            
             if benchmark_info:
                 # 使用mapping中的handler class名称和路径
                 handler_class_name = benchmark_info['handler_class']
@@ -319,7 +328,8 @@ class ScoreFlowRewardCalculator:
                 # 回退到默认命名规则
                 if benchmark_name.startswith("high_level_math"):
                     handler_module_path = "ScoreFlow.scripts.high_level_math.handler"
-                    handler_class_name = "HighLevelMathHandler"
+                    # 修正类名为实际存在的类名
+                    handler_class_name = "HighlevelmathHandler"
                 else:
                     handler_module_path = f"ScoreFlow.scripts.{benchmark_name}.handler"
                     handler_class_name = f"{benchmark_name.capitalize()}Handler"

@@ -5,8 +5,8 @@ import json
 import os
 import numpy as np          # 新增
 
-INPUT_PARQUET  = "/nas/ganluo/Flow_RL/Test_FILE/verl_support/data/test_new_test/train.parquet"
-OUTPUT_JSONL   = "/nas/ganluo/Flow_RL/Test_FILE/verl_support/data/test_new_test/train.jsonl"
+INPUT_PARQUET  = "/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE/verl_support/data/gsm8k/test.parquet"
+OUTPUT_JSONL   = "/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE/verl_support/data/gsm8k/test.jsonl"
 
 def np_encoder(obj):
     """NumPy 数组/数值 → 原生 Python"""

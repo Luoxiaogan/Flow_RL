@@ -392,3 +392,6 @@ When creating documentation files (README.md or other markdown documents):
 4. **Language quality**:
    - English: Clear, concise, professional technical writing
    - Chinese: 使用地道的中文表达，避免生硬翻译，使用适当的技术术语
+- to memorize 所有代码的注释都应该是英文，所有的print和log都应该是中文输出
+- to memorize 在本项目中，本地测试都需要source /opt/anaconda3/etc/profile.d/conda.sh && conda activate workflow
+- to memorize 写计划和回答问题使用简体中文

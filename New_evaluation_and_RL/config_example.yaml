@@ -9,23 +9,22 @@ services:
     enabled: true
     host: "localhost"
     port: 5009
-    target_url: "https://idealab.alibaba-inc.com/api/openai/v1"
+    target_url: "https://idealab.alibaba-inc.com/api/openai/v1/chat/completions"
     # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
     target_api_key: "956c41bd0f31beaf68b871d4987af4bb"  # 目标API的密钥
-    rate_per_second: 3      # 每秒分发请求数
-    max_concurrency: 6       # 最大并发数
-    queue_type: "default"    # 队列类型: default | random
+    rate_per_second: 3      # 每秒分发请求数（支持小数，如0.2表示5秒一个请求）
+    debug: false            # true: 显示所有请求详情, false: 仅显示进度条和错误
     
   evaluation_api_proxy:  # 评估模型使用的API代理（新增）
     enabled: true
     host: "localhost"
     port: 5010            # 使用不同的端口
-    target_url: "https://idealab.alibaba-inc.com/api/openai/v1"
+    target_url: "https://idealab.alibaba-inc.com/api/openai/v1/chat/completions"
     # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
     target_api_key: "956c41bd0f31beaf68b871d4987af4bb"  # 评估专用API密钥（可以与metagpt相同或不同）
     rate_per_second: 3      # 更高的速率限制
-    max_concurrency: 6     # 更高的并发数
-    queue_type: "default"    # 队列类型: default | random
+    debug: true
+
     
   scoreflow_reward:
     enabled: true
@@ -33,6 +32,7 @@ services:
     port: 8899
     timeout: 300            # 超时时间（秒）
     debug: false
+    workspace: "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/workspace"  # workflow执行日志保存目录
 
 # 模型配置
 model:
@@ -65,7 +65,7 @@ model:
 # 评测参数
 evaluation:
   # 数据配置
-  test_data: "/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE/verl_support/data/gsm8k/test.parquet"
+  test_data: "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/single/test.jsonl"
   output_dir: "/Users/luogan/Code/workflow_generation/Flow_RL/evaluation_workflow/results"
   
   # 推理参数
@@ -87,11 +87,30 @@ logging:
 # 路径配置
 paths:
   # 必需的外部组件（绝对路径，需要根据服务器环境修改）
-  scoreflow_handlers: "/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/scripts"
+  scoreflow_handlers: "/Users/luogan/Code/workflow_generation/Flow_RL"  # ScoreFlow根目录
   benchmark_mapping: "/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/benchmark_mapping.jsonl"
   processed_dataset: "/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset"  # 数据集根目录
-  metagpt_config: "/Users/luogan/Code/workflow_generation/Flow_RL/metagpt_root/config/config2.yaml"
+  metagpt_config: "/Users/luogan/Code/workflow_generation/Flow_RL/metagpt_root/config/config2.yaml"  # MetaGPT配置文件
   
-  # 本地工作目录（相对路径）
-  workspace: "/Users/luogan/Code/workflow_generation/Flow_RL/metagpt_root/workspace"
+  # 共享的MetaGPT工作目录（所有程序共用）
+  metagpt_workspace: "/Users/luogan/Code/workflow_generation/Flow_RL/metagpt_root/workspace"
   data_dir: "./data"  # 本地数据目录（如需要）
+
+# 数据生成配置
+data_generation:
+  # 默认输出目录
+  output_dir: "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data"
+  
+  # 默认生成参数
+  default_test_cases_per_entry: 5
+  default_train_proportion: 0.8
+  default_test_proportion: 0.2
+  
+  # 支持的基准测试
+  supported_benchmarks:
+    - gsm8k
+    - mbpp
+    - drop
+    - hotpotqa
+    - humaneval
+    - high_level_math

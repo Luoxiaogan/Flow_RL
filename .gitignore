@@ -49,3 +49,7 @@ Test_FILE/verl_support_backup/core-ray::WorkerDict-*
 Test_FILE/verl_support_backup/outputs/
 evaluation_workflow/workspace/
 evaluation_workflow/services/logs/
+New_evaluation_and_RL/workspace/
+New_evaluation_and_RL/logs/
+New_evaluation_and_RL/parquet_and_jsonl_data/
+New_evaluation_and_RL/evaluation/*.log

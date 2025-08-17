@@ -18,7 +18,13 @@
       "Bash(./run_all_tests.sh)",
       "Bash(conda activate:*)",
       "Bash(source:*)",
-      "Bash(echo $CONDA_PREFIX)"
+      "Bash(echo $CONDA_PREFIX)",
+      "Bash(PYTHONPATH=/Users/luogan/Code/workflow_generation/Flow_RL:$PYTHONPATH python evaluation_workflow/tests/test_handler_mapping_fix.py)",
+      "Bash(echo \"Current conda env: $CONDA_DEFAULT_ENV\")",
+      "Bash(bash:*)",
+      "Bash(curl:*)",
+      "Bash(unset:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

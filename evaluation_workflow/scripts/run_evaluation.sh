@@ -45,16 +45,29 @@ echo -e "${GREEN}评测模式: $MODE${NC}"
 echo ""
 echo -e "${BLUE}检查必要服务...${NC}"
 
-# 检查API代理（如果使用API模式）
+# 检查API代理（根据不同模式）
 if [ "$MODE" = "api" ]; then
-    API_PORT=$(python3 -c "import yaml; config=yaml.safe_load(open('$CONFIG_FILE')); print(config['services']['api_proxy']['port'])" 2>/dev/null)
+    # 使用MetaGPT API代理
+    API_PORT=$(python3 -c "import yaml; config=yaml.safe_load(open('$CONFIG_FILE')); print(config['services']['metagpt_api_proxy']['port'])" 2>/dev/null)
     if curl -s -o /dev/null -w "%{http_code}" "http://localhost:$API_PORT" | grep -q "404\|200"; then
-        echo -e "${GREEN}✓ API代理服务运行中 (端口: $API_PORT)${NC}"
+        echo -e "${GREEN}✓ MetaGPT API代理服务运行中 (端口: $API_PORT)${NC}"
     else
-        echo -e "${RED}✗ API代理服务未运行${NC}"
+        echo -e "${RED}✗ MetaGPT API代理服务未运行${NC}"
         echo -e "${YELLOW}请先启动API代理服务:${NC}"
         echo -e "${CYAN}  cd $PROJECT_ROOT/services${NC}"
         echo -e "${CYAN}  ./start_api_proxy.sh${NC}"
+        exit 1
+    fi
+elif [ "$MODE" = "evaluation_api" ]; then
+    # 使用评估专用API代理
+    EVAL_PORT=$(python3 -c "import yaml; config=yaml.safe_load(open('$CONFIG_FILE')); print(config['services']['evaluation_api_proxy']['port'])" 2>/dev/null)
+    if curl -s -o /dev/null -w "%{http_code}" "http://localhost:$EVAL_PORT/health" | grep -q "200"; then
+        echo -e "${GREEN}✓ 评估API代理服务运行中 (端口: $EVAL_PORT)${NC}"
+    else
+        echo -e "${RED}✗ 评估API代理服务未运行${NC}"
+        echo -e "${YELLOW}请先启动评估API代理服务:${NC}"
+        echo -e "${CYAN}  cd $PROJECT_ROOT/services${NC}"
+        echo -e "${CYAN}  ./start_evaluation_api_proxy.sh${NC}"
         exit 1
     fi
 fi
@@ -102,14 +115,23 @@ if mode == 'local':
     ])
     # debug_mode 是给 SGLang 服务器用的，不是给 evaluate_model.py
     # SGLang 的 debug 模式在 sglang_server.py 中处理
-else:  # api mode
+else:  # api mode or evaluation_api mode
     # 创建临时API配置文件
     api_config = config['model']['api']
     import json
     api_config_file = '/tmp/temp_api_config.json'
+    
+    # 根据模式调整API URL
+    if mode == 'evaluation_api':
+        # 使用评估API代理的URL
+        api_url = api_config.get('url', 'http://localhost:5010/v1/chat/completions')
+    else:
+        # 使用MetaGPT API代理的URL（兼容旧配置）
+        api_url = api_config.get('url', 'http://localhost:5009/v1/chat/completions')
+    
     with open(api_config_file, 'w') as f:
         json.dump({
-            'api_url': api_config['url'],
+            'api_url': api_url,
             'api_key': api_config['key'],
             'api_model': api_config['model']
         }, f)
