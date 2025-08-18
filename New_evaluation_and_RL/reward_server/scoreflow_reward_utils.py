@@ -44,22 +44,39 @@ if CONFIG_FILE.exists():
     with open(CONFIG_FILE, 'r') as f:
         config = yaml.safe_load(f)
         paths_config = config.get('paths', {})
+        # 获取project_root，用于构建默认路径
+        project_root = config.get('project_root', '/Users/luogan/Code/workflow_generation/Flow_RL')
 else:
     print(f"Warning: Config file not found at {CONFIG_FILE}")
     paths_config = {}
+    project_root = '/Users/luogan/Code/workflow_generation/Flow_RL'
 
-# 从config.yaml获取路径
-SCOREFLOW_HANDLERS_PATH = Path(paths_config.get('scoreflow_handlers', '/Users/luogan/Code/workflow_generation/Flow_RL'))
-BENCHMARK_MAPPING_PATH = Path(paths_config.get('benchmark_mapping', '/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/benchmark_mapping.jsonl'))
-PROCESSED_DATASET_PATH = Path(paths_config.get('processed_dataset', '/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset'))
-METAGPT_CONFIG_PATH = Path(paths_config.get('metagpt_config', '/Users/luogan/Code/workflow_generation/Flow_RL/metagpt_root/config/config2.yaml'))
+# 转换为Path对象
+project_root_path = Path(project_root)
+
+# 从config.yaml获取路径，如果配置中没有指定，则基于project_root构建默认路径
+# scoreflow_handlers直接使用project_root
+scoreflow_handlers = paths_config.get('scoreflow_handlers', str(project_root_path))
+SCOREFLOW_HANDLERS_PATH = Path(scoreflow_handlers)
+
+# benchmark_mapping基于project_root拼接
+benchmark_mapping = paths_config.get('benchmark_mapping', str(project_root_path / 'ScoreFlow/benchmark_mapping.jsonl'))
+BENCHMARK_MAPPING_PATH = Path(benchmark_mapping)
+
+# processed_dataset基于project_root拼接
+processed_dataset = paths_config.get('processed_dataset', str(project_root_path / 'Processed_dataset'))
+PROCESSED_DATASET_PATH = Path(processed_dataset)
+
+# metagpt_config基于project_root拼接
+metagpt_config = paths_config.get('metagpt_config', str(project_root_path / 'metagpt_root/config/config2.yaml'))
+METAGPT_CONFIG_PATH = Path(metagpt_config)
 
 # 添加必要路径
 # 重要：添加ScoreFlow的根目录，使得ScoreFlow可以被正确导入
 sys.path.insert(0, str(SCOREFLOW_HANDLERS_PATH))  # Add Flow_RL to path for ScoreFlow import
 
-# 使用固定的共享metagpt_root路径（所有程序共用）
-SHARED_METAGPT_ROOT = Path("/Users/luogan/Code/workflow_generation/Flow_RL/metagpt_root")
+# 使用基于project_root的共享metagpt_root路径（所有程序共用）
+SHARED_METAGPT_ROOT = project_root_path / "metagpt_root"
 sys.path.append(str(SHARED_METAGPT_ROOT))
 
 # 设置METAGPT_PROJECT_ROOT环境变量（强制使用共享目录）
