@@ -6,7 +6,7 @@
 # 项目根目录配置（本地和服务器切换只需修改这里）
 # 本地: /Users/luogan/Code/workflow_generation/Flow_RL
 # 服务器: /nas/ganluo/Flow_RL
-project_root: "/Users/luogan/Code/workflow_generation/Flow_RL"
+project_root: "/nas/ganluo/Flow_RL"
 
 # 服务配置
 services:
@@ -44,7 +44,7 @@ model:
   # 模式选择: local | evaluation_api
   # local: 使用本地SGLang服务器（OpenAI兼容的/v1/chat/completions端点）
   # evaluation_api: 使用evaluation_api_proxy（端口5010）
-  mode: "evaluation_api"  # 默认使用评估API模式
+  mode: "local"  # 默认使用评估API模式
   
   # 本地模型配置（mode=local时使用）
   local:

@@ -22,14 +22,14 @@
 # =============================================================================
 
 # 选择的数据集 (空格分隔，必须在benchmark_mapping.jsonl中存在)
-HARDCODED_BENCHMARKS="mbpp"
+HARDCODED_BENCHMARKS="humaneval"
 
 # 每条数据随机选择的test_cases数目
-HARDCODED_TEST_CASES_PER_ENTRY=4
+HARDCODED_TEST_CASES_PER_ENTRY=10
 
 # 其他参数
-HARDCODED_NUM_TRAIN_ENTRIES=1 #""        # 留空使用全部训练数据
-HARDCODED_NUM_TEST_ENTRIES=1         # 生成的测试条目数
+HARDCODED_NUM_TRAIN_ENTRIES=3 #""        # 留空使用全部训练数据
+HARDCODED_NUM_TEST_ENTRIES=3         # 生成的测试条目数
 HARDCODED_DATASET_TYPE="both"         # train, test, both
 HARDCODED_SAVE_INDIVIDUAL=false        # 是否保存单独的基准测试文件
 
@@ -53,9 +53,9 @@ echo "📁 项目根目录: $PROJECT_ROOT"
 echo "🔧 设置环境变量..."
 
 # 激活conda环境
-echo "🐍 激活conda环境 workflow..."
-source /opt/anaconda3/etc/profile.d/conda.sh
-conda activate workflow
+# echo "🐍 激活conda环境 workflow..."
+# source /opt/anaconda3/etc/profile.d/conda.sh
+# conda activate workflow
 
 echo "✅ 当前conda环境: $CONDA_DEFAULT_ENV"
 

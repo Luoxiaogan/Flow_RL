@@ -35,14 +35,14 @@ export no_proxy="localhost,127.0.0.1,0.0.0.0,*.local"
 echo "✓ 已清除代理设置并设置NO_PROXY"
 
 # 激活conda环境
-if command -v conda &> /dev/null; then
-    echo "✓ 检测到conda，激活workflow环境..."
-    source /opt/anaconda3/etc/profile.d/conda.sh
-    conda activate workflow
-    echo "✓ 已激活conda环境: $(conda env list | grep '*' | awk '{print $1}')"
-else
-    echo "⚠️ 未检测到conda，使用系统Python环境"
-fi
+# if command -v conda &> /dev/null; then
+#     echo "✓ 检测到conda，激活workflow环境..."
+#     source /opt/anaconda3/etc/profile.d/conda.sh
+#     conda activate workflow
+#     echo "✓ 已激活conda环境: $(conda env list | grep '*' | awk '{print $1}')"
+# else
+#     echo "⚠️ 未检测到conda，使用系统Python环境"
+# fi
 
 # 检查配置文件
 if [ ! -f "$CONFIG_FILE" ]; then
