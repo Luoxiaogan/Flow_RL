@@ -37,7 +37,7 @@ services:
     port: 8899
     timeout: 300            # 超时时间（秒）
     debug: true
-    workspace: "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/workspace"  # workflow执行日志保存目录 (基于project_root)
+    workspace: "New_evaluation_and_RL/workspace"  # workflow执行日志保存目录 (相对于project_root)
 
 # 模型配置
 model:
@@ -60,8 +60,8 @@ model:
 evaluation:
   # 数据配置
   # 必须要是parquet data
-  test_data: "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/single/test.parquet"  # 基于project_root
-  output_dir: "/Users/luogan/Code/workflow_generation/Flow_RL/evaluation_workflow/results"  # 基于project_root
+  test_data: "New_evaluation_and_RL/parquet_and_jsonl_data/single/test.parquet"  # 相对于project_root
+  output_dir: "evaluation_workflow/results"  # 相对于project_root
   
   # 推理参数
   batch_size: 50               # 批处理大小
@@ -77,24 +77,24 @@ evaluation:
 logging:
   level: "INFO"                # 日志级别: DEBUG | INFO | WARNING | ERROR
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  file: "/Users/luogan/Code/workflow_generation/Flow_RL/evaluation_workflow/logs/evaluation.log"  # 基于project_root
+  file: "evaluation_workflow/logs/evaluation.log"  # 相对于project_root
   
 # 路径配置
 paths:
-  # 必需的外部组件（基于project_root构建的绝对路径）
-  scoreflow_handlers: "/Users/luogan/Code/workflow_generation/Flow_RL"  # ScoreFlow根目录 (即project_root)
-  benchmark_mapping: "/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/benchmark_mapping.jsonl"  # 基于project_root
-  processed_dataset: "/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset"  # 数据集根目录 (基于project_root)
-  metagpt_config: "/Users/luogan/Code/workflow_generation/Flow_RL/metagpt_root/config/config2.yaml"  # MetaGPT配置文件 (基于project_root)
+  # 必需的外部组件（相对于project_root的路径）
+  scoreflow_handlers: "."  # ScoreFlow根目录 (即project_root本身)
+  benchmark_mapping: "ScoreFlow/benchmark_mapping.jsonl"  # 相对于project_root
+  processed_dataset: "Processed_dataset"  # 数据集根目录 (相对于project_root)
+  metagpt_config: "metagpt_root/config/config2.yaml"  # MetaGPT配置文件 (相对于project_root)
   
   # 共享的MetaGPT工作目录（所有程序共用）
-  metagpt_workspace: "/Users/luogan/Code/workflow_generation/Flow_RL/metagpt_root/workspace"  # 基于project_root
+  metagpt_workspace: "metagpt_root/workspace"  # 相对于project_root
   data_dir: "./data"  # 本地数据目录（如需要）
 
 # 数据生成配置
 data_generation:
   # 默认输出目录
-  output_dir: "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data"  # 基于project_root
+  output_dir: "New_evaluation_and_RL/parquet_and_jsonl_data"  # 相对于project_root
   
   # 默认生成参数
   default_test_cases_per_entry: 5

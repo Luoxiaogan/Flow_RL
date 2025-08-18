@@ -18,6 +18,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from typing import Dict, List, Any, Optional
+from pathlib import Path
 from tqdm import tqdm
 import logging
 import re
@@ -303,15 +304,15 @@ class EvaluationRunner:
             }
             return result
     
-    def run_evaluation(self, test_data_path: str, limit: Optional[int] = None, 
-                      output_dir: str = "./results") -> Dict[str, Any]:
+    def run_evaluation(self, test_data_path: str = None, limit: Optional[int] = None, 
+                      output_dir: str = None) -> Dict[str, Any]:
         """
         Run evaluation on test data
         
         Args:
-            test_data_path: Path to test parquet file
+            test_data_path: Path to test parquet file (if None, use config)
             limit: Maximum number of samples to process
-            output_dir: Output directory for results
+            output_dir: Output directory for results (if None, use config)
             
         Returns:
             Evaluation summary
@@ -319,6 +320,22 @@ class EvaluationRunner:
         logger.info("=" * 60)
         logger.info("🚀 开始评估")
         logger.info("=" * 60)
+        
+        # Get project root and build paths
+        project_root = Path(self.config.get('project_root', '.'))
+        
+        # Use test_data_path from argument or config
+        if test_data_path is None:
+            test_data_rel = self.config.get('evaluation', {}).get('test_data')
+            if test_data_rel:
+                test_data_path = str(project_root / test_data_rel)
+            else:
+                raise ValueError("No test_data_path provided and not found in config")
+        
+        # Use output_dir from argument or config
+        if output_dir is None:
+            output_dir_rel = self.config.get('evaluation', {}).get('output_dir', 'evaluation_workflow/results')
+            output_dir = str(project_root / output_dir_rel)
         
         # Load test data
         logger.info(f"📊 加载测试数据: {test_data_path}")
@@ -477,14 +494,14 @@ class EvaluationRunner:
 def main():
     """Main function with command line interface"""
     parser = argparse.ArgumentParser(description="评估系统 - 简单数据管道")
-    parser.add_argument("--test-data", default="../Test_FILE/verl_support/data/gsm8k/test.parquet",
-                       help="测试数据parquet文件路径")
+    parser.add_argument("--test-data", default=None,
+                       help="测试数据parquet文件路径 (默认从config.yaml读取)")
     parser.add_argument("--config", default="../config.yaml",
                        help="配置文件路径")
     parser.add_argument("--limit", type=int, default=None,
                        help="限制处理的样本数量")
-    parser.add_argument("--output-dir", default="./results",
-                       help="结果输出目录")
+    parser.add_argument("--output-dir", default=None,
+                       help="结果输出目录 (默认从config.yaml读取)")
     parser.add_argument("--verbose", action="store_true",
                        help="显示详细日志")
     
@@ -504,26 +521,16 @@ def main():
         # Initialize runner
         runner = EvaluationRunner(args.config)
         
-        # Check if test data exists
-        if not os.path.exists(args.test_data):
+        # Check if test data exists (if provided via command line)
+        if args.test_data and not os.path.exists(args.test_data):
             logger.error(f"❌ 测试数据文件不存在: {args.test_data}")
             sys.exit(1)
         
-        # Determine output directory: use config if args.output_dir is default
-        if args.output_dir == "./results":
-            # Use config output_dir if command line argument wasn't explicitly set
-            config_output_dir = runner.config.get('evaluation', {}).get('output_dir', './results')
-            output_dir = config_output_dir
-        else:
-            output_dir = args.output_dir
-        
-        logger.info(f"📂 输出目录: {output_dir}")
-        
-        # Run evaluation
+        # Run evaluation (will use config values if not provided via command line)
         summary = runner.run_evaluation(
             test_data_path=args.test_data,
             limit=args.limit,
-            output_dir=output_dir
+            output_dir=args.output_dir
         )
         
         print(f"\n🎉 评估完成！成功率: {summary['success_rate']:.1%}")

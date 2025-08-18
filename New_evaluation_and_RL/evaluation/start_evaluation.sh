@@ -230,24 +230,36 @@ echo -e "${GREEN}============================================${NC}"
 echo -e "${BLUE}📊 评估配置信息${NC}"
 echo "模型模式: $MODE"
 
-# 读取测试数据路径
+# 读取测试数据路径（基于project_root构建完整路径）
 TEST_DATA=$(python3 -c "
 import yaml
+from pathlib import Path
 try:
     with open('$CONFIG_FILE', 'r') as f:
         config = yaml.safe_load(f)
-    print(config.get('evaluation', {}).get('test_data', '../Test_FILE/verl_support/data/gsm8k/test.parquet'))
-except:
-    print('../Test_FILE/verl_support/data/gsm8k/test.parquet')
+    project_root = Path(config.get('project_root', '.'))
+    test_data_rel = config.get('evaluation', {}).get('test_data')
+    if test_data_rel:
+        test_data_path = project_root / test_data_rel
+        print(str(test_data_path))
+    else:
+        print('NOT_CONFIGURED')
+except Exception as e:
+    print('NOT_CONFIGURED')
 " 2>/dev/null)
 
-echo "测试数据: $TEST_DATA"
-
-# 检查测试数据是否存在
-if [ ! -f "$TEST_DATA" ]; then
-    echo -e "${RED}❌ 测试数据文件不存在: $TEST_DATA${NC}"
-    echo -e "${YELLOW}请检查config.yaml中的evaluation.test_data配置${NC}"
-    exit 1
+if [ "$TEST_DATA" = "NOT_CONFIGURED" ]; then
+    echo -e "${YELLOW}⚠️ 测试数据路径未在config.yaml中配置${NC}"
+    echo -e "${YELLOW}将使用命令行参数或evaluation_runner.py的默认值${NC}"
+else
+    echo "测试数据: $TEST_DATA"
+    
+    # 检查测试数据是否存在
+    if [ ! -f "$TEST_DATA" ]; then
+        echo -e "${RED}❌ 测试数据文件不存在: $TEST_DATA${NC}"
+        echo -e "${YELLOW}请检查config.yaml中的evaluation.test_data配置${NC}"
+        exit 1
+    fi
 fi
 
 echo "Python环境: $(which python3)"

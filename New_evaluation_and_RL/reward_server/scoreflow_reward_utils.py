@@ -54,22 +54,25 @@ else:
 # 转换为Path对象
 project_root_path = Path(project_root)
 
-# 从config.yaml获取路径，如果配置中没有指定，则基于project_root构建默认路径
-# scoreflow_handlers直接使用project_root
-scoreflow_handlers = paths_config.get('scoreflow_handlers', str(project_root_path))
-SCOREFLOW_HANDLERS_PATH = Path(scoreflow_handlers)
+# 从config.yaml获取路径（相对路径），然后基于project_root构建完整路径
+# scoreflow_handlers - 如果是"."则使用project_root本身
+scoreflow_handlers = paths_config.get('scoreflow_handlers', '.')
+if scoreflow_handlers == '.':
+    SCOREFLOW_HANDLERS_PATH = project_root_path
+else:
+    SCOREFLOW_HANDLERS_PATH = project_root_path / scoreflow_handlers
 
-# benchmark_mapping基于project_root拼接
-benchmark_mapping = paths_config.get('benchmark_mapping', str(project_root_path / 'ScoreFlow/benchmark_mapping.jsonl'))
-BENCHMARK_MAPPING_PATH = Path(benchmark_mapping)
+# benchmark_mapping - 相对路径拼接
+benchmark_mapping = paths_config.get('benchmark_mapping', 'ScoreFlow/benchmark_mapping.jsonl')
+BENCHMARK_MAPPING_PATH = project_root_path / benchmark_mapping
 
-# processed_dataset基于project_root拼接
-processed_dataset = paths_config.get('processed_dataset', str(project_root_path / 'Processed_dataset'))
-PROCESSED_DATASET_PATH = Path(processed_dataset)
+# processed_dataset - 相对路径拼接
+processed_dataset = paths_config.get('processed_dataset', 'Processed_dataset')
+PROCESSED_DATASET_PATH = project_root_path / processed_dataset
 
-# metagpt_config基于project_root拼接
-metagpt_config = paths_config.get('metagpt_config', str(project_root_path / 'metagpt_root/config/config2.yaml'))
-METAGPT_CONFIG_PATH = Path(metagpt_config)
+# metagpt_config - 相对路径拼接
+metagpt_config = paths_config.get('metagpt_config', 'metagpt_root/config/config2.yaml')
+METAGPT_CONFIG_PATH = project_root_path / metagpt_config
 
 # 添加必要路径
 # 重要：添加ScoreFlow的根目录，使得ScoreFlow可以被正确导入

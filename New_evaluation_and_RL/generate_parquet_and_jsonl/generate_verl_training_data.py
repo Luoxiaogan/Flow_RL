@@ -25,8 +25,17 @@ CONFIG_FILE = CURRENT_DIR.parent / "config.yaml"
 if CONFIG_FILE.exists():
     with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
-    scoreflow_path = config.get('paths', {}).get('scoreflow_handlers', str(PROJECT_ROOT))
-    sys.path.append(scoreflow_path)
+    # Get project_root from config
+    project_root = config.get('project_root', str(PROJECT_ROOT))
+    project_root_path = Path(project_root)
+    
+    # Get scoreflow_handlers relative path and build full path
+    scoreflow_handlers = config.get('paths', {}).get('scoreflow_handlers', '.')
+    if scoreflow_handlers == '.':
+        scoreflow_path = project_root_path
+    else:
+        scoreflow_path = project_root_path / scoreflow_handlers
+    sys.path.append(str(scoreflow_path))
 else:
     # Fallback to default path
     sys.path.append(str(PROJECT_ROOT))
@@ -60,7 +69,13 @@ class VerlTrainingDataGenerator:
         if CONFIG_FILE.exists():
             with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
                 config = yaml.safe_load(f)
-            mapping_file_path = config.get('paths', {}).get('benchmark_mapping')
+            # Get project_root from config
+            project_root = config.get('project_root', str(PROJECT_ROOT))
+            project_root_path = Path(project_root)
+            
+            # Get benchmark_mapping relative path and build full path
+            benchmark_mapping_rel = config.get('paths', {}).get('benchmark_mapping', 'ScoreFlow/benchmark_mapping.jsonl')
+            mapping_file_path = str(project_root_path / benchmark_mapping_rel)
         
         if not mapping_file_path:
             # Fallback to default path
@@ -97,7 +112,16 @@ class VerlTrainingDataGenerator:
                 if CONFIG_FILE.exists():
                     with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
                         config = yaml.safe_load(f)
-                    scoreflow_root = config.get('paths', {}).get('scoreflow_handlers', str(PROJECT_ROOT))
+                    # Get project_root from config
+                    project_root = config.get('project_root', str(PROJECT_ROOT))
+                    project_root_path = Path(project_root)
+                    
+                    # Get scoreflow_handlers relative path and build full path
+                    scoreflow_handlers = config.get('paths', {}).get('scoreflow_handlers', '.')
+                    if scoreflow_handlers == '.':
+                        scoreflow_root = str(project_root_path)
+                    else:
+                        scoreflow_root = str(project_root_path / scoreflow_handlers)
                 else:
                     scoreflow_root = str(PROJECT_ROOT)
                 
@@ -149,7 +173,16 @@ class VerlTrainingDataGenerator:
                 if CONFIG_FILE.exists():
                     with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
                         config = yaml.safe_load(f)
-                    scoreflow_root = config.get('paths', {}).get('scoreflow_handlers', str(PROJECT_ROOT))
+                    # Get project_root from config
+                    project_root = config.get('project_root', str(PROJECT_ROOT))
+                    project_root_path = Path(project_root)
+                    
+                    # Get scoreflow_handlers relative path and build full path
+                    scoreflow_handlers = config.get('paths', {}).get('scoreflow_handlers', '.')
+                    if scoreflow_handlers == '.':
+                        scoreflow_root = str(project_root_path)
+                    else:
+                        scoreflow_root = str(project_root_path / scoreflow_handlers)
                 else:
                     scoreflow_root = str(PROJECT_ROOT)
                 
