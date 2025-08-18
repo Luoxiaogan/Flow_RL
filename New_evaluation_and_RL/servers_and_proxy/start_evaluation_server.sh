@@ -138,40 +138,69 @@ if [ "$MODE" = "evaluation_api" ]; then
 elif [ "$MODE" = "local" ]; then
     echo "🖥️ 启动SGLang本地服务器..."
     echo ""
-    echo "❌ SGLang本地模式暂未实现"
+    
+    # 从配置文件读取SGLang配置
+    MODEL_PATH=$(python3 -c "import yaml; c=yaml.safe_load(open('$CONFIG_FILE')); print(c['model']['local']['model_path'])" 2>/dev/null || echo "/nas/models/Qwen2.5-7B-Instruct")
+    LOCAL_HOST=$(python3 -c "import yaml; c=yaml.safe_load(open('$CONFIG_FILE')); print(c['model']['local']['host'])" 2>/dev/null || echo "0.0.0.0")
+    LOCAL_PORT=$(python3 -c "import yaml; c=yaml.safe_load(open('$CONFIG_FILE')); print(c['model']['local']['port'])" 2>/dev/null || echo "30009")
+    MEM_FRACTION=$(python3 -c "import yaml; c=yaml.safe_load(open('$CONFIG_FILE')); print(c['model']['local']['mem_fraction_static'])" 2>/dev/null || echo "0.85")
+    BASE_GPU_ID=$(python3 -c "import yaml; c=yaml.safe_load(open('$CONFIG_FILE')); print(c['model']['local']['base_gpu_id'])" 2>/dev/null || echo "0")
+    DEBUG_MODE=$(python3 -c "import yaml; c=yaml.safe_load(open('$CONFIG_FILE')); print(str(c['model']['local']['debug_mode']).lower())" 2>/dev/null || echo "false")
+    
+    # 检查端口是否被占用
+    if lsof -i :$LOCAL_PORT > /dev/null 2>&1; then
+        echo "端口 $LOCAL_PORT 已被占用，正在终止现有进程..."
+        kill -9 $(lsof -t -i:$LOCAL_PORT) 2>/dev/null
+        sleep 2
+    fi
+    
+    # 创建日志目录
+    LOG_DIR="${PROJECT_ROOT}/logs"
+    mkdir -p "$LOG_DIR"
+    LOG_FILE="${LOG_DIR}/sglang_server_$(date +%Y%m%d_%H%M%S).log"
+    
+    echo "SGLang服务器配置:"
+    echo "  - 模型路径: $MODEL_PATH"
+    echo "  - 主机地址: $LOCAL_HOST"
+    echo "  - 端口: $LOCAL_PORT"
+    echo "  - 内存分配: $MEM_FRACTION"
+    echo "  - 基础GPU ID: $BASE_GPU_ID"
+    echo "  - 调试模式: $DEBUG_MODE"
+    echo "  - 日志文件: $LOG_FILE"
     echo ""
-    echo "请在config.yaml中修改配置："
-    echo "  model:"
-    echo "    mode: \"evaluation_api\"  # 使用评估API代理模式"
+    echo "正在启动SGLang服务器..."
+    echo "按 Ctrl+C 停止服务"
+    echo "=========================================="
     echo ""
-    echo "或者使用："
-    echo "  model:"
-    echo "    mode: \"api\"  # 使用MetaGPT API代理模式"
+    
+    # 构建SGLang启动命令（简化版本，只保留必要参数）
+    SGLANG_CMD="python -m sglang.launch_server"
+    SGLANG_CMD="$SGLANG_CMD --model-path \"$MODEL_PATH\""
+    SGLANG_CMD="$SGLANG_CMD --host \"$LOCAL_HOST\""
+    SGLANG_CMD="$SGLANG_CMD --port $LOCAL_PORT"
+    SGLANG_CMD="$SGLANG_CMD --base-gpu-id $BASE_GPU_ID"
+    SGLANG_CMD="$SGLANG_CMD --mem-fraction-static $MEM_FRACTION"
+    SGLANG_CMD="$SGLANG_CMD --enable-metrics"
+    
+    # 如果不是调试模式，减少输出
+    if [ "$DEBUG_MODE" != "true" ]; then
+        SGLANG_CMD="$SGLANG_CMD --log-level info"
+    else
+        SGLANG_CMD="$SGLANG_CMD --log-level debug"
+    fi
+    
+    echo "执行命令: $SGLANG_CMD"
     echo ""
-    echo "然后重新运行评估脚本。"
-    exit 1
-
-elif [ "$MODE" = "api" ]; then
-    echo "ℹ️ 使用MetaGPT API代理模式"
-    echo ""
-    echo "✅ 无需启动额外的评估模型服务"
-    echo "   评估将直接使用MetaGPT API代理 (端口5009)"
-    echo ""
-    echo "请确保MetaGPT API代理正在运行："
-    echo "  bash start_api_proxy.sh"
-    echo ""
-    echo "然后可以直接运行评估："
-    echo "  cd ../evaluation"
-    echo "  bash start_evaluation.sh"
-    exit 0
+    
+    # 启动SGLang服务器（前台运行，同时输出到终端和日志文件）
+    eval "$SGLANG_CMD" 2>&1 | tee "$LOG_FILE"
 
 else
     echo "❌ 未知的模型模式: $MODE"
     echo ""
     echo "支持的模式："
     echo "  - evaluation_api: 使用评估API代理 (推荐)"
-    echo "  - api: 使用MetaGPT API代理"
-    echo "  - local: SGLang本地服务器 (暂未实现)"
+    echo "  - local: SGLang本地服务器"
     echo ""
     echo "请在config.yaml中设置正确的model.mode值"
     exit 1

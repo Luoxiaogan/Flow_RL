@@ -36,9 +36,8 @@ services:
 
 # 模型配置
 model:
-  # 模式选择: local | api | evaluation_api
-  # local: 使用本地SGLang服务器
-  # api: 使用metagpt_api_proxy（端口5009）
+  # 模式选择: local | evaluation_api
+  # local: 使用本地SGLang服务器（OpenAI兼容的/v1/chat/completions端点）
   # evaluation_api: 使用evaluation_api_proxy（端口5010）
   mode: "evaluation_api"  # 默认使用评估API模式
   
@@ -46,21 +45,11 @@ model:
   local:
     model_path: "/nas/models/Qwen2.5-7B-Instruct"
     port: 30009
-    tensor_parallel: 1
-    data_parallel: 1
+    host: "0.0.0.0"
     mem_fraction_static: 0.85
+    base_gpu_id: 0          # 基础GPU ID，从这个GPU开始分配
     startup_timeout: 180    # SGLang启动超时（秒）
-    debug_mode: false       # 是否显示SGLang详细输出（修正拼写错误）
-    
-  # API模型配置（mode=api或evaluation_api时使用）
-  api:
-    # 当mode=evaluation_api时，使用evaluation_api_proxy
-    url: "http://localhost:5010/chat/completions"  # 评估API代理（去掉v1，因为代理会添加）
-    # 当mode=api时，使用metagpt_api_proxy
-    # url: "http://localhost:5009/v1/chat/completions"  # MetaGPT API代理
-    key: "sk-evaluation-placeholder"  # 占位符，实际密钥由代理处理
-    model: "qwen-turbo"  # 使用的模型
-    # model: "qwen-max-latest"
+    debug_mode: false       # 是否显示SGLang详细输出
 
 # 评测参数
 evaluation:

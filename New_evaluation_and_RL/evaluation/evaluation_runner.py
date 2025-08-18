@@ -89,17 +89,15 @@ class EvaluationRunner:
         
         if mode == "evaluation_api":
             self.model_url = "http://localhost:5010/chat/completions"
-            self.model_name = self.config.get('model', {}).get('api', {}).get('model', 'qwen-turbo')
+            # evaluation_api模式使用固定的模型名称
+            self.model_name = "qwen-turbo"  # 或从服务配置中获取
             logger.info(f"🔗 模型端点: {self.model_url} (评估API代理)")
-        elif mode == "api":
-            self.model_url = "http://localhost:5009/chat/completions"
-            self.model_name = self.config.get('model', {}).get('api', {}).get('model', 'qwen-turbo')
-            logger.info(f"🔗 模型端点: {self.model_url} (MetaGPT API代理)")
         elif mode == "local":
             port = self.config.get('model', {}).get('local', {}).get('port', 30009)
-            self.model_url = f"http://localhost:{port}/generate"
-            self.model_name = "local-model"
-            logger.info(f"🔗 模型端点: {self.model_url} (SGLang本地服务器)")
+            self.model_url = f"http://localhost:{port}/v1/chat/completions"
+            # 使用配置中的模型路径作为模型名称
+            self.model_name = self.config.get('model', {}).get('local', {}).get('model_path', '/nas/models/Qwen2.5-7B-Instruct')
+            logger.info(f"🔗 模型端点: {self.model_url} (SGLang本地服务器 - OpenAI兼容模式)")
         else:
             raise ValueError(f"不支持的模型模式: {mode}")
         
@@ -120,13 +118,17 @@ class EvaluationRunner:
             Generated workflow code
         """
         try:
-            # Prepare request payload
+            # 所有模式统一使用OpenAI-compatible API格式
             payload = {
                 "model": self.model_name,
                 "messages": messages,
                 "temperature": 0.7,
                 "max_tokens": 8192
             }
+            
+            logger.debug(f"📤 发送请求到 {self.model_url}")
+            logger.debug(f"   模型: {self.model_name}")
+            logger.debug(f"   消息数: {len(messages)}")
             
             print(f"📤 发送模型请求到 {self.model_url}")
             
@@ -141,7 +143,10 @@ class EvaluationRunner:
             
             if response.status_code == 200:
                 result = response.json()
+                
+                # 统一的 OpenAI 响应格式
                 workflow_code = result['choices'][0]['message']['content']
+                
                 logger.debug(f"✅ 成功获取workflow代码 (长度: {len(workflow_code)})")
                 return workflow_code
             else:
