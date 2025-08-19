@@ -304,6 +304,8 @@ class ScoreFlowRewardCalculator:
             
         except Exception as e:
             logger.error(f"Failed to load handler for {benchmark_name}: {e}")
+            import traceback
+            traceback.print_exc()
             return None
     
     async def execute_workflow_metagpt(self, workflow_code: str, benchmark_name: str, 

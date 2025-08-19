@@ -1,0 +1,63 @@
+class Workflow:
+    def __init__(self, config, problem) -> None:
+        # --- DO NOT MODIFY THIS SECTION ---
+        self.config = config
+        self.problem_text = problem
+        self.llm = create(config)
+        
+        self.generate = operator.Generate(self.llm, self.problem_text)
+        self.revise = operator.Revise(self.llm, self.problem_text)
+        self.summarize = operator.Summarize(self.llm, self.problem_text)
+        self.ensemble = operator.Ensemble(self.llm, self.problem_text)
+
+    async def run_workflow(self):
+        """
+        Implement the core problem-solving logic here.
+        Remember: 
+        - Use detailed, comprehensive instructions
+        - Dynamic instruction construction is powerful
+        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]
+        """
+        import asyncio
+
+        # Step 1: Extract key information
+        extraction_instruction = (
+            "Extract all numerical values, units, relationships, and constraints from the problem. "
+            "Identify what is known and what needs to be calculated. Include any implicit information "
+            "or assumptions that might be necessary for solving the problem."
+        )
+        extracted_info = await self.generate(instruction=extraction_instruction, context=self.problem_text)
+
+        # Step 2: Formulate a solution strategy
+        strategy_instruction = (
+            f"Based on the following extracted information: {extracted_info}\n"
+            "Outline a step-by-step solution strategy to solve the problem. Include all intermediate "
+            "calculations, unit conversions, and logical reasoning required. Ensure the order of "
+            "operations is correct and that all steps are clearly defined."
+        )
+        solution_strategy = await self.generate(instruction=strategy_instruction, context=self.problem_text)
+
+        # Step 3: Perform calculations
+        calculation_instruction = (
+            f"Execute the following solution strategy step by step: {solution_strategy}\n"
+            "Perform all calculations explicitly, showing intermediate results. Ensure all units are "
+            "consistent and that the final answer is clearly identified."
+        )
+        calculations = await self.generate(instruction=calculation_instruction, context=self.problem_text)
+
+        # Step 4: Validate the final answer
+        validation_instruction = (
+            f"Review the following calculations and final answer: {calculations}\n"
+            "Critique the solution for correctness, consistency, and alignment with the problem context. "
+            "Ensure the answer makes se.g., no negative quantities, appropriate units)."
+        )
+        validated_answer = await self.revise(instruction=validation_instruction, context=calculations)
+
+        # Step 5: Summarize the solution
+        summary_instruction = (
+            f"Summarize the problem-solving process and the final answer based on the following: {validated_answer}\n"
+            "Provide a concise explanation of how the problem was solved and present the final numerical answer."
+        )
+        final_summary = await self.summarize(instruction=summary_instruction, context=validated_answer)
+
+        return final_summary

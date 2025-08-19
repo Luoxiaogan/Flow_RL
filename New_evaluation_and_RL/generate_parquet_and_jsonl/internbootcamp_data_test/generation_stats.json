@@ -1,0 +1,28 @@
+{
+  "generation_stats": {
+    "total_generated": 4,
+    "successful": 4,
+    "failed": 0,
+    "by_task": {
+      "aalmostarithmeticalprogression": {
+        "total": 2,
+        "successful": 2,
+        "failed": 0,
+        "timeout": 0
+      },
+      "adidyoumean": {
+        "total": 2,
+        "successful": 2,
+        "failed": 0,
+        "timeout": 0
+      }
+    }
+  },
+  "dataset_info": {
+    "total_entries": 4,
+    "train_entries": 3,
+    "test_entries": 1,
+    "train_ratio": 0.8
+  },
+  "timestamp": "2025-08-19T14:57:04.296407"
+}

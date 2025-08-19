@@ -26,7 +26,7 @@ for proxy_var in ['http_proxy', 'https_proxy', 'all_proxy', 'HTTP_PROXY', 'HTTPS
 
 # 加载配置文件
 CONFIG_FILE = Path(__file__).parent.parent / "config.yaml"
-with open(CONFIG_FILE, 'r') as f:
+with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
     config = yaml.safe_load(f)
     proxy_config = config.get('services', {}).get('metagpt_api_proxy', {})
 

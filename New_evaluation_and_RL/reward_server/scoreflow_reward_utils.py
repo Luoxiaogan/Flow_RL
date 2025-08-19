@@ -41,7 +41,7 @@ CONFIG_FILE = PROJECT_ROOT / "config.yaml"
 
 # 读取配置
 if CONFIG_FILE.exists():
-    with open(CONFIG_FILE, 'r') as f:
+    with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
         paths_config = config.get('paths', {})
         # 获取project_root，用于构建默认路径
@@ -61,7 +61,6 @@ if scoreflow_handlers == '.':
     SCOREFLOW_HANDLERS_PATH = project_root_path
 else:
     SCOREFLOW_HANDLERS_PATH = project_root_path / scoreflow_handlers
-
 # benchmark_mapping - 相对路径拼接
 benchmark_mapping = paths_config.get('benchmark_mapping', 'ScoreFlow/benchmark_mapping.jsonl')
 BENCHMARK_MAPPING_PATH = project_root_path / benchmark_mapping
@@ -77,7 +76,6 @@ METAGPT_CONFIG_PATH = project_root_path / metagpt_config
 # 添加必要路径
 # 重要：添加ScoreFlow的根目录，使得ScoreFlow可以被正确导入
 sys.path.insert(0, str(SCOREFLOW_HANDLERS_PATH))  # Add Flow_RL to path for ScoreFlow import
-
 # 使用基于project_root的共享metagpt_root路径（所有程序共用）
 SHARED_METAGPT_ROOT = project_root_path / "metagpt_root"
 sys.path.append(str(SHARED_METAGPT_ROOT))
@@ -745,6 +743,7 @@ class WorkflowExecutionManager:
                 calculator._current_workflow_dir = self.workflow_dir
                 
                 print(f"⚡ 开始执行workflow...")
+
                 # 执行单个test case
                 score = await calculator.compute_score_for_testcase(
                     workflow_code, self.data_source, test_case_index, dataset_path

@@ -1,0 +1,172 @@
+# ============================================
+# InternBootcamp 系统配置文件
+# ============================================
+# InternBootcamp数据生成和Reward计算的统一配置
+
+# 项目根目录配置（本地和服务器切换只需修改这里）
+# 本地: D:/temp/Flow_RL
+# 服务器: /nas/ganluo/Flow_RL
+project_root: "D:/temp/Flow_RL"
+
+# InternBootcamp特定配置
+internbootcamp:
+  # 分析文件路径（相对于project_root）
+  # 这个文件包含了任务的quality_evaluation和english_detailed信息
+  analysis_file: "Test_FILE/verl_internbootcamp/bootcamp_analysis_filtered.jsonl"
+  
+  # 备选分析文件路径（如果主文件不存在）
+  analysis_file_alternatives:
+    - "InternBootcamp/bootcamp_analysis_filtered.jsonl"
+    - "bootcamp_analysis_filtered.jsonl"
+  
+  # InternBootcamp模块路径（相对于project_root）
+  bootcamp_root: "InternBootcamp"
+  
+  # InternBootcamp工具类路径（相对于project_root）
+  utils_path: "Test_FILE/verl_internbootcamp"
+  
+  # 任务过滤配置
+  filter:
+    # 是否过滤任务
+    enabled: true
+    # 过滤条件
+    exclude_error_prefix: true  # 排除english_detailed以"Error"开头的任务
+    exclude_incorrect: true     # 排除quality_evaluation.correctness为"incorrect"的任务
+    min_quality_score: 0         # 最低质量分数要求
+
+# 数据生成配置
+data_generation:
+  # 默认输出目录（相对于project_root）
+  output_dir: "New_evaluation_and_RL/parquet_and_jsonl_data/internbootcamp"
+  
+  # 默认生成参数
+  default_entries_per_task: 5     # 每个任务生成的条目数
+  default_train_ratio: 0.8        # 训练集比例
+  default_test_ratio: 0.2         # 测试集比例
+  timeout_per_task: 3.0           # 每个任务的超时时间（秒）
+  
+  # 测试模式参数
+  test_mode:
+    enabled: false                # 是否启用测试模式
+    max_tasks: 2                  # 测试模式下最大任务数
+    entries_per_task: 2           # 测试模式下每个任务的条目数
+  
+  # 并行处理配置
+  parallel:
+    max_concurrent: 5             # 最大并发任务数
+    batch_size: 10                # 批处理大小
+
+# Reward服务配置
+reward_server:
+  enabled: true
+  host: "0.0.0.0"
+  port: 8900                      # InternBootcamp专用端口
+  timeout: 300                     # 超时时间（秒）
+  debug: true
+  workspace: "New_evaluation_and_RL/internbootcamp_workspace"  # 工作目录（相对于project_root）
+  
+  # MetaGPT执行配置
+  metagpt:
+    timeout: 180                   # MetaGPT执行超时（秒）
+    config_file: "metagpt_root/config/config2.yaml"  # MetaGPT配置文件（相对于project_root）
+
+# LLM配置（用于reward计算）
+llm_config:
+  provider: 'openai'
+  model: 'qwen-turbo'
+  api_key: '956c41bd0f31beaf68b871d4987af4bb'
+  base_url: 'https://idealab.alibaba-inc.com/api/openai/v1'
+  temperature: 0.7
+  max_retries: 3
+  retry_delay: 1                   # 重试延迟（秒）
+
+# 日志配置
+logging:
+  level: "INFO"                    # 日志级别: DEBUG | INFO | WARNING | ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "New_evaluation_and_RL/logs/internbootcamp.log"  # 日志文件（相对于project_root）
+  
+  # 分离的日志文件
+  separate_logs:
+    data_generation: "New_evaluation_and_RL/logs/internbootcamp_data_gen.log"
+    reward_server: "New_evaluation_and_RL/logs/internbootcamp_reward.log"
+    debug: "New_evaluation_and_RL/logs/internbootcamp_debug.log"
+
+# 路径配置
+paths:
+  # ScoreFlow相关路径（用于复用operator等）
+  scoreflow_root: "."              # ScoreFlow根目录（相对于project_root）
+  scoreflow_scripts: "ScoreFlow/scripts"  # ScoreFlow脚本目录
+  
+  # InternBootcamp条件文件
+  conditions_module: "ScoreFlow.scripts.internbootcamp.conditions"
+  
+  # 数据集根目录
+  processed_dataset: "Processed_dataset"  # 数据集根目录（相对于project_root）
+
+# 缓存配置
+cache:
+  enabled: true
+  # Bootcamp类缓存
+  bootcamp_class_cache: true
+  # 任务描述缓存
+  task_description_cache: true
+  # 缓存过期时间（秒）
+  ttl: 3600
+
+# 性能优化配置
+optimization:
+  # 是否启用性能优化
+  enabled: true
+  # 预加载所有bootcamp类
+  preload_bootcamps: false
+  # 批量处理大小
+  batch_processing_size: 50
+  # 内存限制（MB）
+  memory_limit: 4096
+
+# 调试配置
+debug:
+  # 是否启用调试模式
+  enabled: false
+  # 保存中间结果
+  save_intermediate: true
+  # 保存失败的任务详情
+  save_failed_tasks: true
+  # 调试输出目录（相对于project_root）
+  debug_output_dir: "New_evaluation_and_RL/debug/internbootcamp"
+  
+  # 详细日志选项
+  verbose_logging:
+    task_loading: false
+    data_generation: false
+    reward_calculation: false
+    workflow_execution: false
+
+# 监控配置
+monitoring:
+  # 是否启用监控
+  enabled: false
+  # 统计信息收集间隔（秒）
+  stats_interval: 60
+  # 性能指标收集
+  collect_metrics: true
+  # 指标输出文件（相对于project_root）
+  metrics_file: "New_evaluation_and_RL/metrics/internbootcamp_metrics.json"
+
+# 备份配置
+backup:
+  # 是否启用自动备份
+  enabled: false
+  # 备份目录（相对于project_root）
+  backup_dir: "New_evaluation_and_RL/backups/internbootcamp"
+  # 保留的备份数量
+  max_backups: 5
+  # 备份文件前缀
+  prefix: "internbootcamp_backup"
+
+# 版本信息
+version:
+  config_version: "1.0.0"
+  last_updated: "2024-08-19"
+  compatible_with: "InternBootcamp v2.0+"

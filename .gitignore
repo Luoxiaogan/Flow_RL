@@ -1,5 +1,6 @@
 
 Test_FILE/metagpt/
+Test_FILE/metagpt_local/
 Test_FILE/logs/
 Test_FILE/workspace/
 Test_FILE/verl_internbootcamp/metagpt
@@ -54,3 +55,8 @@ New_evaluation_and_RL/logs/
 New_evaluation_and_RL/parquet_and_jsonl_data/
 New_evaluation_and_RL/evaluation/*.log
 New_evaluation_and_RL/reward_server/New_evaluation_and_RL/workspace
+New_evaluation_and_RL/config.yaml
+New_evaluation_and_RL/evaluation/start_evaluation.sh
+New_evaluation_and_RL/generate_parquet_and_jsonl/generate_data.sh
+New_evaluation_and_RL/tests/curl.txt
+ScoreFlow/benchmark_mapping.jsonl

@@ -22,7 +22,7 @@ CONFIG_FILE = PROJECT_ROOT / "config.yaml"
 
 # 读取配置
 if CONFIG_FILE.exists():
-    with open(CONFIG_FILE, 'r') as f:
+    with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
         paths_config = config.get('paths', {})
         service_config = config.get('services', {}).get('scoreflow_reward', {})
