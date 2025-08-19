@@ -366,7 +366,15 @@ IFS=$'\n' read -rd '' -a PARAMS <<< "$TRAINING_PARAMS"
 
 CMD=(python "$VERL_MAIN_SCRIPT" --config-path=config --config-name=ppo_trainer.yaml)
 for raw in "${PARAMS[@]}"; do
-    CMD+=("$raw")
+    # 处理占位符：$$LIST$$参数$$LIST$$ -> '参数'
+    if [[ $raw == \$\$LIST\$\$* && $raw == *\$\$LIST\$\$ ]]; then
+        # 去掉前后的占位符标记
+        param="${raw#\$\$LIST\$\$}"      # 去掉前缀
+        param="${param%\$\$LIST\$\$}"    # 去掉后缀
+        CMD+=("$param")  # 添加处理后的参数
+    else
+        CMD+=("$raw")  # 普通参数直接添加
+    fi
 done
 
 printf "${GREEN}即将执行:${NC}\n"

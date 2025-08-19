@@ -29,16 +29,13 @@ def generate_training_params(config_file):
     train_files = data_config.get('train_files')
     test_files = data_config.get('test_files')
 
-    # 构建数据文件的完整路径 - Hydra列表语法
+    # 构建数据文件的完整路径 - Hydra列表语法，需要整体加单引号
     if train_files:
         train_path = project_root / train_files
-        # params.append(f'data.train_files=["{train_path}"]')
-        # 用罕见占位符包裹
         params.append(f'$$LIST$$data.train_files=["{train_path}"]$$LIST$$')
 
     if test_files:
         test_path = project_root / test_files
-        # params.append(f'data.val_files=["{test_path}"]')
         params.append(f'$$LIST$$data.val_files=["{test_path}"]$$LIST$$')
 
     # 添加其他数据参数
@@ -77,11 +74,11 @@ def generate_training_params(config_file):
         save_contents = checkpoint_config.get('save_contents', ['model', 'optimizer', 'extra'])
         load_contents = checkpoint_config.get('load_contents', save_contents)
         
-        # Hydra列表格式：[item1,item2,item3]
-        save_contents_str = '[' + ','.join(save_contents) + ']'
-        load_contents_str = '[' + ','.join(load_contents) + ']'
-        params.append(f"actor_rollout_ref.actor.checkpoint.save_contents={save_contents_str}")
-        params.append(f"actor_rollout_ref.actor.checkpoint.load_contents={load_contents_str}")
+        # Hydra列表格式：["item1","item2","item3"] - 需要整体加单引号
+        save_contents_str = '[' + ','.join([f'"{item}"' for item in save_contents]) + ']'
+        load_contents_str = '[' + ','.join([f'"{item}"' for item in load_contents]) + ']'
+        params.append(f"$$LIST$$actor_rollout_ref.actor.checkpoint.save_contents={save_contents_str}$$LIST$$")
+        params.append(f"$$LIST$$actor_rollout_ref.actor.checkpoint.load_contents={load_contents_str}$$LIST$$")
 
     # Rollout配置
     rollout_config = rl_config.get('rollout', {})
@@ -106,10 +103,10 @@ def generate_training_params(config_file):
         if critic_checkpoint:
             save_contents = critic_checkpoint.get('save_contents', ['model', 'optimizer', 'extra'])
             load_contents = critic_checkpoint.get('load_contents', save_contents)
-            save_contents_str = '[' + ','.join(save_contents) + ']'
-            load_contents_str = '[' + ','.join(load_contents) + ']'
-            params.append(f"critic.checkpoint.save_contents={save_contents_str}")
-            params.append(f"critic.checkpoint.load_contents={load_contents_str}")
+            save_contents_str = '[' + ','.join([f'"{item}"' for item in save_contents]) + ']'
+            load_contents_str = '[' + ','.join([f'"{item}"' for item in load_contents]) + ']'
+            params.append(f"$$LIST$$critic.checkpoint.save_contents={save_contents_str}$$LIST$$")
+            params.append(f"$$LIST$$critic.checkpoint.load_contents={load_contents_str}$$LIST$$")
 
     # 算法配置
     algorithm_config = rl_config.get('algorithm', {})
@@ -132,26 +129,26 @@ def generate_training_params(config_file):
     experiment_name = trainer_config.get("experiment_name", "qwen2.5_7b_h100_8gpu_test")
     params.append(f'trainer.experiment_name={experiment_name}')
 
-    # Checkpoint管理配置
+    # Checkpoint管理配置 - 使用++前缀添加新配置
     max_ckpt_num = trainer_config.get('max_ckpt_num', 3)
     if max_ckpt_num is not None:
-        params.append(f'trainer.max_ckpt_num={max_ckpt_num}')
-    params.append(f'trainer.save_on_each_node={str(trainer_config.get("save_on_each_node", False)).lower()}')
+        params.append(f'++trainer.max_ckpt_num={max_ckpt_num}')
+    params.append(f'++trainer.save_on_each_node={str(trainer_config.get("save_on_each_node", False)).lower()}')
 
-    # 日志配置
+    # 日志配置 - logger需要++前缀和特殊引号处理
     logger_config = trainer_config.get('logger', ['console'])
     if isinstance(logger_config, list):
-        logger_str = '[' + ','.join(logger_config) + ']'
+        logger_str = '[' + ','.join([f'"{item}"' for item in logger_config]) + ']'
     else:
-        logger_str = '[console]'
-    params.append(f"trainer.logger={logger_str}")
+        logger_str = '["console"]'
+    params.append(f"$$LIST$$++trainer.logger={logger_str}$$LIST$$")
 
-    # 日志频率配置
+    # 日志频率配置 - 使用++前缀
     log_freq = trainer_config.get('log_freq', 1)
-    params.append(f'trainer.log_freq={log_freq}')
+    params.append(f'++trainer.log_freq={log_freq}')
 
     log_to_wandb_every_n_steps = trainer_config.get('log_to_wandb_every_n_steps', 1)
-    params.append(f'trainer.log_to_wandb_every_n_steps={log_to_wandb_every_n_steps}')
+    params.append(f'++trainer.log_to_wandb_every_n_steps={log_to_wandb_every_n_steps}')
 
     # WandB配置
     wandb_config = trainer_config.get('wandb_config', {})
@@ -160,14 +157,14 @@ def generate_training_params(config_file):
             entity = wandb_config["entity"]
             params.append(f'trainer.wandb_entity={entity}')
         if wandb_config.get('tags'):
-            tags_str = '[' + ','.join(wandb_config['tags']) + ']'
-            params.append(f"trainer.wandb_tags={tags_str}")
+            tags_str = '[' + ','.join([f'"{tag}"' for tag in wandb_config['tags']]) + ']'
+            params.append(f"$$LIST$$++trainer.wandb_tags={tags_str}$$LIST$$")
         if wandb_config.get('notes'):
-            # 处理包含空格的notes，替换空格为下划线
-            notes = wandb_config["notes"].replace(' ', '_')
-            params.append(f'trainer.wandb_notes={notes}')
-        params.append(f'trainer.wandb_save_code={str(wandb_config.get("save_code", True)).lower()}')
-        params.append(f'trainer.wandb_log_model={str(wandb_config.get("log_model", False)).lower()}')
+            # 处理包含空格的notes，保持原始格式但用双引号包围
+            notes = wandb_config["notes"]
+            params.append(f'++trainer.wandb_notes="{notes}"')
+        params.append(f'++trainer.wandb_save_code={str(wandb_config.get("save_code", True)).lower()}')
+        params.append(f'++trainer.wandb_log_model={str(wandb_config.get("log_model", False)).lower()}')
 
     # 检查点目录
     checkpoint_dir = trainer_config.get('default_local_dir', 'rl_out/checkpoints')
@@ -190,8 +187,9 @@ def generate_training_params(config_file):
             name = custom_reward.get("name", "compute_score")
             params.append(f'++custom_reward_function.name={name}')
 
-    # 输出参数
-    print(' \\\n    '.join(params))
+    # 输出参数 - 每行一个参数，便于bash处理
+    for param in params:
+        print(param)
 
 
 if __name__ == "__main__":
