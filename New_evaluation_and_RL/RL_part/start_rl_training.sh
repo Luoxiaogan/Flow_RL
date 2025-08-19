@@ -346,12 +346,39 @@ echo -e "${GREEN}     🚀 开始PPO训练${NC}"
 echo -e "${GREEN}============================================${NC}"
 echo ""
 
-# 构建完整的训练命令 - 直接使用参数，避免引号嵌套
-TRAIN_CMD="python $VERL_MAIN_SCRIPT --config-path=config --config-name=ppo_trainer.yaml $TRAINING_PARAMS"
+# # 构建完整的训练命令 - 直接使用参数，避免引号嵌套
+# # TRAIN_CMD="python $VERL_MAIN_SCRIPT --config-path=config --config-name=ppo_trainer.yaml $TRAINING_PARAMS"
+# TRAIN_CMD="python $VERL_MAIN_SCRIPT --config-path=config --config-name=ppo_trainer.yaml"
 
-echo -e "${BLUE}执行命令:${NC}"
-echo "$TRAIN_CMD"
-echo ""
+# # 逐条处理参数：含 $$LIST$$ 的整条加单引号，其余原样追加
+# for raw in $TRAINING_PARAMS; do
+#     if [[ $raw == \$\$LIST\$\$* && $raw == *\$\$LIST\$\$ ]]; then
+#         param="${raw#\$\$LIST\$\$}"      # 去掉前缀
+#         param="${param%\$\$LIST\$\$}"    # 去掉后缀
+#         TRAIN_CMD="$TRAIN_CMD '$param'"  # 整体包单引号
+#     else
+#         TRAIN_CMD="$TRAIN_CMD $raw"
+#     fi
+# done
 
-# 执行训练
-eval $TRAIN_CMD
+# ---------- 构造命令 ----------
+IFS=$'\n' read -rd '' -a PARAMS <<< "$TRAINING_PARAMS"
+
+CMD=(python "$VERL_MAIN_SCRIPT" --config-path=config --config-name=ppo_trainer.yaml)
+for raw in "${PARAMS[@]}"; do
+    # 处理占位符：$$LIST$$参数$$LIST$$ -> '参数'
+    if [[ $raw == \$\$LIST\$\$* && $raw == *\$\$LIST\$\$ ]]; then
+        # 去掉前后的占位符标记
+        param="${raw#\$\$LIST\$\$}"      # 去掉前缀
+        param="${param%\$\$LIST\$\$}"    # 去掉后缀
+        CMD+=("$param")  # 添加处理后的参数
+    else
+        CMD+=("$raw")  # 普通参数直接添加
+    fi
+done
+
+printf "${GREEN}即将执行:${NC}\n"
+printf "%q " "${CMD[@]}" && echo
+
+# **去掉 exec，直接执行**
+"${CMD[@]}"
