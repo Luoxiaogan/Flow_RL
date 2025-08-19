@@ -32,11 +32,14 @@ def generate_training_params(config_file):
     # 构建数据文件的完整路径 - Hydra列表语法
     if train_files:
         train_path = project_root / train_files
-        params.append(f'data.train_files=[{train_path}]')
+        # params.append(f'data.train_files=["{train_path}"]')
+        # 用罕见占位符包裹
+        params.append(f'$$LIST$$data.train_files=["{train_path}"]$$LIST$$')
 
     if test_files:
         test_path = project_root / test_files
-        params.append(f'data.val_files=[{test_path}]')
+        # params.append(f'data.val_files=["{test_path}"]')
+        params.append(f'$$LIST$$data.val_files=["{test_path}"]$$LIST$$')
 
     # 添加其他数据参数
     params.append(f'data.train_batch_size={data_config.get("train_batch_size", 16)}')
