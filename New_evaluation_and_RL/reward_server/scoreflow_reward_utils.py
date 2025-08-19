@@ -960,12 +960,13 @@ class ScoreFlowRewardCalculator:
             print("\n🚀 使用config.yaml:", CONFIG_FILE)
             # 使用metagpt_api_proxy配置
             proxy_port = config.get('services', {}).get('metagpt_api_proxy', {}).get('port', 5009)
+            temperature = config.get('api_metagpt', {}).get('temperature', 0.1)
             self.llm_config = {
                 'provider': 'openai',
                 'model': 'qwen-turbo',
                 'api_key': 'sk-placeholder-will-be-replaced-by-proxy',
                 'base_url': f'http://localhost:{proxy_port}',
-                'temperature': 0.3
+                'temperature': temperature
             }
             print("\n🚀 llm_config (for MetaGPT operators):\n", self.llm_config)
             
