@@ -38,6 +38,14 @@ services:
     timeout: 300            # 超时时间（秒）
     debug: true
     workspace: "New_evaluation_and_RL/workspace"  # workflow执行日志保存目录 (相对于project_root)
+  
+  internbootcamp_reward:
+    enabled: true
+    host: "0.0.0.0"
+    port: 8900
+    timeout: 300            # 超时时间（秒）
+    debug: true
+    workspace: "New_evaluation_and_RL/workspace/internbootcamp"  # workflow执行日志保存目录 (相对于project_root)
 
 # 模型配置
 model:

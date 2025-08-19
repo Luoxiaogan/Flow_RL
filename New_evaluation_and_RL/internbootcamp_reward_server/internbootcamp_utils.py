@@ -16,23 +16,9 @@ import logging
 # 配置日志
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-CURRENT_DIR = Path(__file__).parent
-PROJECT_ROOT = CURRENT_DIR.parent
-CONFIG_FILE = PROJECT_ROOT / "config.yaml"
-if CONFIG_FILE.exists():
-    with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
-        paths_config = config.get('paths', {})
-        # 获取project_root，用于构建默认路径
-        project_root = config.get('project_root', '/Users/luogan/Code/workflow_generation/Flow_RL')
-else:
-    print(f"Warning: Config file not found at {CONFIG_FILE}")
-    paths_config = {}
-    project_root = '/Users/luogan/Code/workflow_generation/Flow_RL'
 
 # 添加InternBootcamp到Python路径
-project_root_path = Path(project_root)
-internbootcamp_root = project_root / "InternBootcamp"
+internbootcamp_root = Path(__file__).parent.parent.parent / "InternBootcamp"
 sys.path.insert(0, str(internbootcamp_root))
 
 
