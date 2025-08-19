@@ -36,29 +36,59 @@ TARGET_API_KEY = proxy_config.get('target_api_key')
 HOST = proxy_config.get('host', 'localhost')
 PORT = proxy_config.get('port', 5009)
 RATE_PER_SECOND = float(proxy_config.get('rate_per_second', 1.0))
+MAX_CONCURRENCY = int(proxy_config.get('max_concurrency', 20))  # 默认最大并发数为20
 DEBUG_MODE = proxy_config.get('debug', False)
 
-# 速率限制器
+# 速率和并发限制器
 class RateLimiter:
-    """速率限制器，控制请求发送频率"""
-    def __init__(self, rate_per_second):
+    """速率和并发限制器，控制请求发送频率和并发数"""
+    def __init__(self, rate_per_second, max_concurrency):
+        # 速率限制
         self.rate = rate_per_second
         self.interval = 1.0 / rate_per_second if rate_per_second > 0 else 0
         self.last_request_time = 0
-        self.lock = threading.Lock()
+        self.rate_lock = threading.Lock()
+        
+        # 并发限制
+        self.max_concurrency = max_concurrency
+        self.current_concurrency = 0
+        self.concurrency_lock = threading.Lock()
+        self.concurrency_condition = threading.Condition(self.concurrency_lock)
     
     def wait_if_needed(self):
-        """同步等待函数（Flask路由中使用）"""
+        """同步等待函数（Flask路由中使用）- 包含速率和并发限制"""
+        # 先检查并发限制
+        with self.concurrency_condition:
+            while self.current_concurrency >= self.max_concurrency:
+                # 等待直到有空闲的并发槽位
+                self.concurrency_condition.wait()
+            # 获得并发槽位
+            self.current_concurrency += 1
+        
+        # 再检查速率限制
         if self.interval > 0:
-            with self.lock:
+            with self.rate_lock:
                 current_time = time.time()
                 elapsed = current_time - self.last_request_time
                 if elapsed < self.interval:
                     wait_time = self.interval - elapsed
                     time.sleep(wait_time)
                 self.last_request_time = time.time()
+    
+    def release_concurrency(self):
+        """释放一个并发槽位"""
+        with self.concurrency_condition:
+            self.current_concurrency -= 1
+            self.concurrency_condition.notify()  # 通知等待的线程
+    
+    @property
+    def queued_requests(self):
+        """获取当前排队等待的请求数"""
+        with self.concurrency_lock:
+            # 通过检查等待的线程数来估算排队数
+            return len(self.concurrency_condition._waiters) if hasattr(self.concurrency_condition, '_waiters') else 0
 
-rate_limiter = RateLimiter(RATE_PER_SECOND)
+rate_limiter = RateLimiter(RATE_PER_SECOND, MAX_CONCURRENCY)
 
 # 请求统计
 request_stats = {
@@ -85,6 +115,7 @@ if RATE_PER_SECOND < 1:
     print(f" (约{1.0/RATE_PER_SECOND:.1f}秒/请求)")
 else:
     print()
+print(f"并发限制: 最大 {MAX_CONCURRENCY} 个并发请求")
 print(f"模式: {'调试模式 (显示详细信息)' if DEBUG_MODE else '正常模式 (仅显示进度和错误)'}")
 print("="*60)
 print()
@@ -96,9 +127,9 @@ if not DEBUG_MODE:
         unit="req",
         position=0,
         leave=True,
-        ncols=100,
+        ncols=120,  # 增加宽度以容纳更多信息
         total=0,  # 初始化为0，会在第一个请求时更新
-        bar_format="{desc}: {n_fmt}/{total_fmt} |{bar}| {rate_fmt} [{postfix}]"
+        bar_format="{desc}: 完成{n_fmt}/总{total_fmt} |{bar}| {rate_fmt} [{postfix}]"
     )
 
 app = Flask(__name__)
@@ -107,7 +138,7 @@ app = Flask(__name__)
 @app.route('/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
 def proxy_request(path):
     """处理代理请求"""
-    # 速率限制
+    # 速率和并发限制
     rate_limiter.wait_if_needed()
     
     # 更新统计
@@ -141,9 +172,13 @@ def proxy_request(path):
     else:
         # Normal模式：更新进度条
         if pbar is not None:
-            pbar.total = request_stats["total"]
+            # 获取排队数
+            queued = rate_limiter.queued_requests
+            # 总接收的请求数（包括正在处理和排队的）
+            pbar.total = request_stats["total"]  
+            # 已完成数 = 成功 + 失败
             pbar.n = request_stats["success"] + request_stats["failed"]
-            pbar.set_description(f"处理中: {request_stats['in_progress']}")
+            pbar.set_description(f"并发: {rate_limiter.current_concurrency}/{MAX_CONCURRENCY} | 排队: {queued}")
             pbar.refresh()
     
     # 获取请求体
@@ -265,6 +300,7 @@ def proxy_request(path):
                 pbar.set_postfix({
                     "成功": request_stats["success"],
                     "失败": request_stats["failed"],
+                    "并发": rate_limiter.current_concurrency,
                     "平均响应": f"{avg_time:.1f}s"
                 })
                 pbar.update()
@@ -279,9 +315,13 @@ def proxy_request(path):
         # 对于流式响应，直接传递
         if response.headers.get('Content-Type', '').startswith('text/event-stream'):
             def generate():
-                for chunk in response.iter_content(chunk_size=8192):
-                    if chunk:
-                        yield chunk
+                try:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        if chunk:
+                            yield chunk
+                finally:
+                    # 流式响应结束后释放并发槽位
+                    rate_limiter.release_concurrency()
             
             return Response(
                 generate(),
@@ -290,13 +330,19 @@ def proxy_request(path):
             )
         else:
             # 非流式响应
-            return Response(
+            result = Response(
                 response.content,
                 status=response.status_code,
                 headers=filtered_headers
             )
+            # 释放并发槽位
+            rate_limiter.release_concurrency()
+            return result
         
     except Exception as e:
+        # 发生异常时也要释放并发槽位
+        rate_limiter.release_concurrency()
+        
         with stats_lock:
             request_stats["failed"] += 1
             request_stats["in_progress"] -= 1
@@ -308,7 +354,8 @@ def proxy_request(path):
         if not DEBUG_MODE and pbar is not None:
             pbar.set_postfix({
                 "成功": request_stats["success"],
-                "失败": request_stats["failed"]
+                "失败": request_stats["failed"],
+                "并发": rate_limiter.current_concurrency
             })
             pbar.update()
         
@@ -337,9 +384,10 @@ def shutdown_handler(signum, frame):
     print("="*60)
     elapsed = time.time() - request_stats["start_time"]
     print(f"运行时间: {elapsed:.1f}秒")
-    print(f"总请求数: {request_stats['total']}")
-    print(f"成功: {request_stats['success']}")
-    print(f"失败: {request_stats['failed']}")
+    print(f"总接收请求数: {request_stats['total']}")
+    print(f"已完成: {request_stats['success'] + request_stats['failed']} (成功: {request_stats['success']}, 失败: {request_stats['failed']})")
+    print(f"未完成: {request_stats['in_progress']}")
+    print(f"最大并发数: {MAX_CONCURRENCY}")
     if request_stats["response_times"]:
         avg_time = sum(request_stats["response_times"]) / len(request_stats["response_times"])
         print(f"平均响应时间: {avg_time:.2f}秒")

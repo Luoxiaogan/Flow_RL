@@ -34,6 +34,7 @@ echo "=========================================="
 PORT=$(python3 -c "import yaml; c=yaml.safe_load(open('$CONFIG_FILE')); print(c['services']['metagpt_api_proxy']['port'])" 2>/dev/null || echo "5009")
 DEBUG=$(python3 -c "import yaml; c=yaml.safe_load(open('$CONFIG_FILE')); print(str(c['services']['metagpt_api_proxy'].get('debug', False)).lower())" 2>/dev/null || echo "false")
 RATE=$(python3 -c "import yaml; c=yaml.safe_load(open('$CONFIG_FILE')); print(c['services']['metagpt_api_proxy'].get('rate_per_second', 1.0))" 2>/dev/null || echo "1.0")
+MAX_CONCURRENCY=$(python3 -c "import yaml; c=yaml.safe_load(open('$CONFIG_FILE')); print(c['services']['metagpt_api_proxy'].get('max_concurrency', 20))" 2>/dev/null || echo "20")
 
 # 检查端口是否被占用
 if lsof -i :$PORT > /dev/null 2>&1; then
@@ -53,6 +54,7 @@ echo ""
 echo "服务配置:"
 echo "  - 端口: $PORT"
 echo "  - 速率限制: $RATE req/s"
+echo "  - 并发限制: 最大 $MAX_CONCURRENCY 个并发请求"
 if [ "$DEBUG" = "true" ]; then
     echo "  - 模式: 调试模式 (显示详细信息)"
 else
