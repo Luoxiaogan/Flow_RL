@@ -6,10 +6,10 @@
 # 项目根目录配置（本地和服务器切换只需修改这里）
 # 本地: /Users/luogan/Code/workflow_generation/Flow_RL
 # 服务器: /nas/ganluo/Flow_RL
-project_root: "/Users/luogan/Code/workflow_generation/Flow_RL"
+project_root: "/nas/ganluo/Flow_RL"
 
 api_metagpt:
-  temperature: 0.8
+  temperature: 0.9
 
 # 服务配置
 services:

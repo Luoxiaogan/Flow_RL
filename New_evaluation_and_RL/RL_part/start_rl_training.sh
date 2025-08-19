@@ -347,7 +347,12 @@ echo -e "${GREEN}============================================${NC}"
 echo ""
 
 # 构建完整的训练命令
-TRAIN_CMD="python $VERL_MAIN_SCRIPT --config-path=config --config-name='ppo_trainer.yaml' $TRAINING_PARAMS"
+# TRAIN_CMD="python $VERL_MAIN_SCRIPT --config-path=config --config-name='ppo_trainer.yaml' $TRAINING_PARAMS"
+TRAIN_CMD="python $VERL_MAIN_SCRIPT --config-path=config --config-name=ppo_trainer.yaml"
+# 为每个含特殊字符的 override 再包一层单引号
+for p in $TRAINING_PARAMS; do
+    TRAIN_CMD="$TRAIN_CMD '$p'"
+done
 
 echo -e "${BLUE}执行命令:${NC}"
 echo "$TRAIN_CMD"

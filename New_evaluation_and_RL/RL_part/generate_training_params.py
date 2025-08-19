@@ -32,11 +32,13 @@ def generate_training_params(config_file):
     # 构建数据文件的完整路径
     if train_files:
         train_path = project_root / train_files
-        params.append(f'data.train_files="[\\"{train_path}\\"]"')
+        # params.append(f'data.train_files="[\\"{train_path}\\"]"')
+        params.append(f'data.train_files=["{train_path}"]')
 
     if test_files:
         test_path = project_root / test_files
-        params.append(f'data.val_files="[\\"{test_path}\\"]"')
+        # params.append(f'data.val_files="[\\"{test_path}\\"]"')
+        params.append(f'data.val_files=["{test_path}"]')
 
     # 添加其他数据参数
     params.append(f'data.train_batch_size={data_config.get("train_batch_size", 16)}')
