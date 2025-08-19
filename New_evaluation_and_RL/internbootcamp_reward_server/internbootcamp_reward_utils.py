@@ -12,34 +12,114 @@ import importlib
 import traceback
 import random
 import string
+import yaml
+import csv
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 import aiohttp
 from datetime import datetime
 import time
 
+print("-"*60)
 
+# 设置NO_PROXY来排除localhost（防止被系统代理拦截）
+os.environ['NO_PROXY'] = 'localhost,127.0.0.1,0.0.0.0,*.local'
+os.environ['no_proxy'] = 'localhost,127.0.0.1,0.0.0.0,*.local'
+
+# 清除代理环境变量，确保本地服务通信正常
+for proxy_var in ['http_proxy', 'https_proxy', 'all_proxy', 'HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY']:
+    if proxy_var in os.environ:
+        del os.environ[proxy_var]
+        print(f"✓ 已清除环境变量: {proxy_var}")
+
+print(f"✓ 已设置 NO_PROXY='{os.environ.get('NO_PROXY', '')}' (InternBootcamp)")
+print("  InternBootcamp的localhost请求将绕过所有代理")
+
+# 加载配置文件
+CURRENT_DIR = Path(__file__).parent
+PROJECT_ROOT = CURRENT_DIR.parent
+CONFIG_FILE = PROJECT_ROOT / "config.yaml"
+
+# 读取配置
+if CONFIG_FILE.exists():
+    with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+        paths_config = config.get('paths', {})
+        service_config = config.get('services', {}).get('internbootcamp_reward', {})
+        # 获取project_root，用于构建默认路径
+        project_root = config.get('project_root', '/Users/luogan/Code/workflow_generation/Flow_RL')
+else:
+    print(f"Warning: Config file not found at {CONFIG_FILE}")
+    paths_config = {}
+    service_config = {}
+    project_root = '/Users/luogan/Code/workflow_generation/Flow_RL'
+
+# 转换为Path对象
+project_root_path = Path(project_root)
+
+# 从config.yaml获取路径（相对路径），然后基于project_root构建完整路径
+# scoreflow_handlers - 如果是"."则使用project_root本身
+scoreflow_handlers = paths_config.get('scoreflow_handlers', '.')
+if scoreflow_handlers == '.':
+    SCOREFLOW_HANDLERS_PATH = project_root_path
+else:
+    SCOREFLOW_HANDLERS_PATH = project_root_path / scoreflow_handlers
+
+# processed_dataset - 相对路径拼接
+processed_dataset = paths_config.get('processed_dataset', 'Processed_dataset')
+PROCESSED_DATASET_PATH = project_root_path / processed_dataset
+
+# metagpt_config - 相对路径拼接
+metagpt_config = paths_config.get('metagpt_config', 'metagpt_root/config/config2.yaml')
+METAGPT_CONFIG_PATH = project_root_path / metagpt_config
+
+# 从服务配置获取workspace路径
+workspace_path = service_config.get('workspace', 'New_evaluation_and_RL/workspace/internbootcamp')
+WORKSPACE_PATH = project_root_path / workspace_path
 
 # 添加必要路径
-CURRENT_DIR = Path(__file__).parent
-PROJECT_ROOT = CURRENT_DIR.parent.parent
-sys.path.append(str(PROJECT_ROOT))
-sys.path.append(str(PROJECT_ROOT / "InternBootcamp"))
-# 添加MetaGPT本地路径
-METAGPT_LOCAL = PROJECT_ROOT / "Test_FILE" / "metagpt_local" / "metagpt_local"
-if METAGPT_LOCAL.exists():
-    sys.path.insert(0, str(METAGPT_LOCAL))
-if "METAGPT_PROJECT_ROOT" not in os.environ:
-    os.environ["METAGPT_PROJECT_ROOT"] = str(PROJECT_ROOT / "metagpt_root")
-METAGPT_PROJECT_ROOT = Path(os.environ["METAGPT_PROJECT_ROOT"])
+sys.path.insert(0, str(SCOREFLOW_HANDLERS_PATH))  # Add Flow_RL to path for ScoreFlow import
+sys.path.append(str(project_root_path))
+
+# 添加InternBootcamp路径（基于project_root）
+INTERNBOOTCAMP_PATH = project_root_path / "InternBootcamp"
+if INTERNBOOTCAMP_PATH.exists():
+    sys.path.append(str(INTERNBOOTCAMP_PATH))
+    print(f"✓ 已添加InternBootcamp路径: {INTERNBOOTCAMP_PATH}")
+else:
+    print(f"⚠ InternBootcamp路径不存在: {INTERNBOOTCAMP_PATH}")
+
+# 使用基于project_root的共享metagpt_root路径（所有程序共用）
+SHARED_METAGPT_ROOT = project_root_path / "metagpt_root"
+sys.path.append(str(SHARED_METAGPT_ROOT))
+
+# 设置METAGPT_PROJECT_ROOT环境变量（强制使用共享目录）
+os.environ["METAGPT_PROJECT_ROOT"] = str(SHARED_METAGPT_ROOT)
+METAGPT_PROJECT_ROOT = SHARED_METAGPT_ROOT
+
+# 添加MetaGPT本地路径（从config.yaml中配置的路径推导）
+if METAGPT_CONFIG_PATH.exists():
+    METAGPT_LOCAL = METAGPT_CONFIG_PATH.parent / "metagpt_local" / "metagpt_local"
+    if METAGPT_LOCAL.exists():
+        sys.path.insert(0, str(METAGPT_LOCAL))
+
+# 设置MetaGPT的工作目录和日志目录
+os.environ["METAGPT_WORKSPACE"] = str(METAGPT_PROJECT_ROOT / "workspace")
+os.environ["METAGPT_LOG_DIR"] = str(METAGPT_PROJECT_ROOT / "logs")
+os.environ["METAGPT_DATA_PATH"] = str(METAGPT_PROJECT_ROOT / "data")
+
+# 创建必要目录
+(METAGPT_PROJECT_ROOT / "workspace").mkdir(parents=True, exist_ok=True)
+(METAGPT_PROJECT_ROOT / "logs").mkdir(parents=True, exist_ok=True)
+(METAGPT_PROJECT_ROOT / "data").mkdir(parents=True, exist_ok=True)
 import asyncio as aio
 from typing import List as ListType
 from metagpt.provider.llm_provider_registry import create_llm_instance
-from metagpt.configs.llm_config import LLMConfig
+from metagpt.configs.llm_config import LLMConfig, LLMType
 
-# DEBUG模式控制
-DEBUG = 0  # 改为1启用debug模式
-DEBUG_PATH = PROJECT_ROOT / "Test_FILE" / "debug_logs"
+# DEBUG模式控制（从config获取）
+DEBUG = 1 if service_config.get('debug', False) else 0
+DEBUG_PATH = PROJECT_ROOT / "debug_logs"  # 存储在evaluation_workflow目录下
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -95,41 +175,320 @@ def debug_log(category: str, data: Any, start_time: float = None):
             debug_data["start_time"] = data["timestamp"]
 
 
+class TeeOutput:
+    """同时输出到终端和文件的辅助类"""
+    def __init__(self, terminal, file):
+        self.terminal = terminal
+        self.file = file
+    
+    def write(self, message):
+        """写入到终端和文件"""
+        self.terminal.write(message)
+        self.terminal.flush()  # 立即刷新终端
+        self.file.write(message)
+        self.file.flush()  # 立即刷新文件
+        return len(message)
+    
+    def flush(self):
+        """刷新缓冲区"""
+        self.terminal.flush()
+        self.file.flush()
+    
+    def isatty(self):
+        """检查是否是终端"""
+        return self.terminal.isatty()
+    
+    def fileno(self):
+        """返回文件描述符"""
+        return self.terminal.fileno()
+
+
+class SafeTeeOutput:
+    """安全的双向输出类 - 防止向已关闭文件写入"""
+    def __init__(self, terminal, file_handle, manager_ref):
+        self.terminal = terminal
+        self.file_handle = file_handle
+        self.manager_ref = manager_ref  # 引用manager，确保文件不被提前关闭
+        self._closed = False
+    
+    def write(self, message):
+        """安全写入到终端和文件"""
+        # 总是写入到终端
+        try:
+            self.terminal.write(message)
+            self.terminal.flush()
+        except Exception:
+            pass  # 忽略终端写入错误
+        
+        # 只有在文件未关闭且上下文活跃时才写入文件
+        if (not self._closed and 
+            self.file_handle and 
+            not self.file_handle.closed and 
+            self.manager_ref._context_active):
+            try:
+                self.file_handle.write(message)
+                self.file_handle.flush()
+            except (ValueError, OSError) as e:
+                # 文件已关闭或其他I/O错误，标记为已关闭
+                self._closed = True
+        
+        return len(message)
+    
+    def flush(self):
+        """安全刷新缓冲区"""
+        try:
+            self.terminal.flush()
+        except Exception:
+            pass
+        
+        if (not self._closed and 
+            self.file_handle and 
+            not self.file_handle.closed):
+            try:
+                self.file_handle.flush()
+            except (ValueError, OSError):
+                self._closed = True
+    
+    def close_when_safe(self):
+        """标记为可安全关闭状态"""
+        self._closed = True
+    
+    def isatty(self):
+        """检查是否是终端"""
+        try:
+            return self.terminal.isatty()
+        except Exception:
+            return False
+    
+    def fileno(self):
+        """返回文件描述符"""
+        try:
+            return self.terminal.fileno()
+        except Exception:
+            return -1
+
+
+class WorkflowExecutionLogger:
+    """workflow执行日志捕获器"""
+    
+    def __init__(self, log_file_path: Path):
+        """初始化日志捕获器"""
+        self.log_file_path = log_file_path
+        self.log_file = None
+        self.original_stdout = None
+        self.original_stderr = None
+        self.tee_stdout = None
+        self.tee_stderr = None
+        self._context_active = False
+    
+    def __enter__(self):
+        """进入上下文时重定向输出"""
+        self._context_active = True
+        
+        # 确保目录存在
+        self.log_file_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # 打开日志文件
+        self.log_file = open(self.log_file_path, 'w', encoding='utf-8', buffering=1)
+        
+        # 保存原始输出
+        self.original_stdout = sys.stdout
+        self.original_stderr = sys.stderr
+        
+        # 创建双向输出对象
+        self.tee_stdout = TeeOutput(self.original_stdout, self.log_file)
+        self.tee_stderr = TeeOutput(self.original_stderr, self.log_file)
+        
+        # 重定向输出
+        sys.stdout = self.tee_stdout
+        sys.stderr = self.tee_stderr
+        
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """退出上下文时恢复输出"""
+        self._context_active = False
+        
+        # 恢复原始输出
+        sys.stdout = self.original_stdout
+        sys.stderr = self.original_stderr
+        
+        # 关闭日志文件
+        if self.log_file:
+            self.log_file.close()
+
+
+class IndividualTestCaseLogger:
+    """单个test case的独立日志管理器 - 避免并发I/O冲突"""
+    
+    def __init__(self, log_file_path: Path, test_case_index: int):
+        """
+        初始化独立日志管理器
+        
+        Args:
+            log_file_path: 日志文件路径
+            test_case_index: test case索引号
+        """
+        self.log_file_path = log_file_path
+        self.test_case_index = test_case_index
+        self.log_file = None
+        self.original_stdout = None
+        self.original_stderr = None
+        self.tee_stdout = None
+        self.tee_stderr = None
+    
+    def __enter__(self):
+        """进入上下文时设置独立日志重定向"""
+        # 确保目录存在
+        self.log_file_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # 打开独立日志文件
+        self.log_file = open(self.log_file_path, 'w', encoding='utf-8', buffering=1)
+        
+        # 保存原始输出
+        self.original_stdout = sys.stdout
+        self.original_stderr = sys.stderr
+        
+        # 创建安全的双向输出对象（简化版，无manager引用）
+        self.tee_stdout = SimpleTeeOutput(self.original_stdout, self.log_file)
+        self.tee_stderr = SimpleTeeOutput(self.original_stderr, self.log_file)
+        
+        # 重定向输出到独立文件
+        sys.stdout = self.tee_stdout
+        sys.stderr = self.tee_stderr
+        
+        # 记录开始
+        print(f"{'='*60}")
+        print(f"Test Case {self.test_case_index} - 独立执行日志")
+        print(f"开始时间: {datetime.now().isoformat()}")
+        print(f"日志文件: {self.log_file_path}")
+        print(f"🔍 验证信息: 此日志文件将执行test_case_index={self.test_case_index}的内容")
+        print(f"{'='*60}")
+        
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """退出上下文时安全关闭独立日志"""
+        # 记录结束
+        print(f"{'='*60}")
+        print(f"Test Case {self.test_case_index} - 执行完成")
+        print(f"结束时间: {datetime.now().isoformat()}")
+        print(f"🔍 验证信息: 此日志文件完成了test_case_index={self.test_case_index}的处理")
+        if exc_type:
+            print(f"执行异常: {exc_type.__name__}: {exc_val}")
+        print(f"{'='*60}")
+        
+        # 恢复原始输出
+        if self.original_stdout:
+            sys.stdout = self.original_stdout
+        if self.original_stderr:
+            sys.stderr = self.original_stderr
+        
+        # 安全关闭日志文件
+        if self.log_file and not self.log_file.closed:
+            try:
+                self.log_file.flush()
+                self.log_file.close()
+            except (ValueError, OSError):
+                pass  # 忽略关闭错误
+
+
+class SimpleTeeOutput:
+    """简化的双向输出类 - 用于独立日志"""
+    def __init__(self, terminal, file_handle):
+        self.terminal = terminal
+        self.file_handle = file_handle
+    
+    def write(self, message):
+        """安全写入到终端和文件"""
+        # 写入终端
+        try:
+            self.terminal.write(message)
+            self.terminal.flush()
+        except Exception:
+            pass
+        
+        # 写入文件
+        try:
+            if self.file_handle and not self.file_handle.closed:
+                self.file_handle.write(message)
+                self.file_handle.flush()
+        except (ValueError, OSError):
+            pass  # 文件已关闭，忽略错误
+        
+        return len(message)
+    
+    def flush(self):
+        """安全刷新缓冲区"""
+        try:
+            self.terminal.flush()
+        except Exception:
+            pass
+        
+        try:
+            if self.file_handle and not self.file_handle.closed:
+                self.file_handle.flush()
+        except (ValueError, OSError):
+            pass
+    
+    def isatty(self):
+        """检查是否是终端"""
+        try:
+            return self.terminal.isatty()
+        except Exception:
+            return False
+    
+    def fileno(self):
+        """返回文件描述符"""
+        try:
+            return self.terminal.fileno()
+        except Exception:
+            return -1
+
+
 class InternBootcampRewardCalculator:
     """
     InternBootcamp任务的reward计算器 V2
     """
     
     def __init__(self, config_path: str = None):
-        """初始化reward计算器"""
+        """初始化reward计算器 - 全部从config.yaml读取配置"""
         init_start = time.time()
         
         # 记录初始化开始
         debug_log("init", {"event": "initialization_start"})
         
-        # 加载配置
-        if config_path is None:
-            config_path = CURRENT_DIR / "config.json"
+        # 统一从config.yaml加载配置
+        config_file = Path(config_path) if config_path else CONFIG_FILE
         
-        if os.path.exists(config_path):
-            with open(config_path, 'r', encoding='utf-8') as f:
-                self.config = json.load(f)
-            self.llm_config = self.config['llm_config']['upstream']
-            self.reward_config = self.config.get('reward_config', {})
-        else:
-            # 默认配置
-            self.llm_config = {
-                'provider': 'openai',
-                'model': 'qwen-turbo',
-                'api_key': '956c41bd0f31beaf68b871d4987af4bb',
-                'base_url': 'https://idealab.alibaba-inc.com/api/openai/v1',
-                'temperature': 0.7
-            }
-            self.reward_config = {}
+        if not config_file.exists():
+            raise FileNotFoundError(f"Configuration file not found: {config_file}")
+        
+        # 读取config.yaml
+        with open(config_file, 'r', encoding='utf-8') as f:
+            yaml_config = yaml.safe_load(f)
+        
+        # 获取API配置 - 使用metagpt_api_proxy配置
+        api_config = yaml_config.get('services', {}).get('metagpt_api_proxy', {})
+        
+        # 构建LLM配置
+        self.llm_config = {
+            'provider': 'openai',  # InternBootcamp使用OpenAI兼容接口
+            'model': yaml_config.get('api_metagpt', {}).get('model', 'qwen-turbo'),
+            'api_key': api_config.get('target_api_key', ''),
+            'base_url': api_config.get('target_url', 'https://idealab.alibaba-inc.com/api/openai/v1'),
+            'temperature': yaml_config.get('api_metagpt', {}).get('temperature', 0.9)
+        }
+        
+        # 获取InternBootcamp reward服务配置
+        self.reward_config = yaml_config.get('services', {}).get('internbootcamp_reward', {})
         
         # 设置超时和并发限制
-        self.timeout = self.reward_config.get('timeout', 30)
+        self.timeout = self.reward_config.get('timeout', 300)  # 默认5分钟
         self.max_concurrent = self.reward_config.get('max_concurrent', 5)
+        
+        # 设置workspace路径
+        self.workspace_path = WORKSPACE_PATH
         
         # bootcamp类缓存
         self._bootcamp_cache = {}
@@ -237,8 +596,8 @@ class InternBootcampRewardCalculator:
         exec_start = time.time()
         
         try:
-            # 1. 创建临时工作空间
-            workspace_dir = Path(CURRENT_DIR/"../workspace/internbootcamp")
+            # 1. 创建临时工作空间（使用config中配置的路径）
+            workspace_dir = WORKSPACE_PATH
             workspace_dir.mkdir(parents=True, exist_ok=True)
             
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -647,11 +1006,16 @@ class InternBootcampRewardCalculator:
 # 创建全局计算器实例
 _global_calculator = None
 
-def get_calculator():
-    """获取全局计算器实例"""
+def get_calculator(config_path: str = None):
+    """
+    获取全局计算器实例
+    
+    Args:
+        config_path: 可选的配置文件路径，默认使用config.yaml
+    """
     global _global_calculator
     if _global_calculator is None:
-        _global_calculator = InternBootcampRewardCalculator()
+        _global_calculator = InternBootcampRewardCalculator(config_path)
     return _global_calculator
 
 

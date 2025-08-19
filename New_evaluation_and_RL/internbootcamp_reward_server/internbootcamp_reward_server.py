@@ -8,14 +8,30 @@ import json
 import asyncio
 import logging
 import traceback
+import yaml
 from pathlib import Path
 from typing import Dict, Any
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import argparse
 
-# 添加必要路径
+# 加载配置文件
 CURRENT_DIR = Path(__file__).parent
+PROJECT_ROOT = CURRENT_DIR.parent
+CONFIG_FILE = PROJECT_ROOT / "config.yaml"
+
+# 读取配置
+if CONFIG_FILE.exists():
+    with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+        paths_config = config.get('paths', {})
+        service_config = config.get('services', {}).get('internbootcamp_reward', {})
+else:
+    print(f"Warning: Config file not found at {CONFIG_FILE}")
+    paths_config = {}
+    service_config = {}
+
+# 添加必要路径
 sys.path.insert(0, str(CURRENT_DIR))
 
 # 导入internbootcamp_reward模块
@@ -29,12 +45,12 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 CORS(app)  # 允许跨域请求
 
-# 全局配置
+# 全局配置（从config.yaml读取）
 SERVER_CONFIG = {
-    'host': '0.0.0.0',
-    'port': 8900,  # 使用不同端口避免冲突
-    'debug': False,
-    'timeout': 300  # 5分钟超时
+    'host': service_config.get('host', '0.0.0.0'),
+    'port': service_config.get('port', 8900),
+    'debug': service_config.get('debug', False),
+    'timeout': service_config.get('timeout', 300)  # 5分钟超时
 }
 
 @app.route('/health', methods=['GET'])
@@ -208,14 +224,14 @@ def get_config():
 def main():
     """主函数"""
     parser = argparse.ArgumentParser(description='InternBootcamp Reward Server')
-    parser.add_argument('--host', type=str, default='0.0.0.0',
-                       help='Server host (default: 0.0.0.0)')
-    parser.add_argument('--port', type=int, default=8900,
-                       help='Server port (default: 8900)')
+    parser.add_argument('--host', type=str, default=SERVER_CONFIG['host'],
+                       help=f'Server host (default: {SERVER_CONFIG["host"]})')
+    parser.add_argument('--port', type=int, default=SERVER_CONFIG['port'],
+                       help=f'Server port (default: {SERVER_CONFIG["port"]})')
     parser.add_argument('--debug', action='store_true',
                        help='Enable debug mode')
     parser.add_argument('--config', type=str,
-                       help='Path to config.json file')
+                       help='Path to config.yaml file (default: ../config.yaml)')
     
     args = parser.parse_args()
     
@@ -226,7 +242,13 @@ def main():
     
     # 初始化calculator（传入配置文件路径）
     if args.config:
-        _ = get_calculator()._init__(args.config)
+        # 使用指定的配置文件初始化
+        from internbootcamp_reward_utils import get_calculator
+        _ = get_calculator(args.config)
+    else:
+        # 使用默认的config.yaml
+        from internbootcamp_reward_utils import get_calculator
+        _ = get_calculator()
     
     logger.info(f"Starting InternBootcamp Reward Server on {args.host}:{args.port}")
     logger.info(f"Debug mode: {args.debug}")

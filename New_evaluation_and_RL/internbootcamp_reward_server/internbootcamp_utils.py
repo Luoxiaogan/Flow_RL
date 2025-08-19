@@ -9,6 +9,7 @@ import re
 import importlib
 import inspect
 import traceback
+import yaml
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
 import logging
@@ -17,19 +18,47 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# 添加InternBootcamp到Python路径
-internbootcamp_root = Path(__file__).parent.parent.parent / "InternBootcamp"
-sys.path.insert(0, str(internbootcamp_root))
+# 加载配置文件
+CURRENT_DIR = Path(__file__).parent
+PROJECT_ROOT = CURRENT_DIR.parent
+CONFIG_FILE = PROJECT_ROOT / "config.yaml"
+
+# 读取配置
+if CONFIG_FILE.exists():
+    with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+        # 获取project_root，用于构建默认路径
+        project_root = config.get('project_root', '/Users/luogan/Code/workflow_generation/Flow_RL')
+else:
+    print(f"Warning: Config file not found at {CONFIG_FILE}")
+    # 使用默认配置
+    project_root = '/Users/luogan/Code/workflow_generation/Flow_RL'
+
+# 转换为Path对象
+project_root_path = Path(project_root)
+
+# 添加InternBootcamp到Python路径（基于配置的project_root）
+internbootcamp_root = project_root_path / "InternBootcamp"
+if internbootcamp_root.exists():
+    sys.path.insert(0, str(internbootcamp_root))
+    logger.info(f"✓ InternBootcamp path added: {internbootcamp_root}")
+else:
+    logger.warning(f"⚠ InternBootcamp path not found: {internbootcamp_root}")
 
 
 class InternBootcampManager:
     """InternBootcamp任务管理器"""
     
     def __init__(self):
+        # 使用从config.yaml加载的internbootcamp_root
         self.internbootcamp_root = internbootcamp_root
         self.bootcamp_registry = {}
         self.failed_bootcamps = {}
-        self._discover_bootcamps()
+        # 只有在路径存在时才尝试发现bootcamp
+        if self.internbootcamp_root.exists():
+            self._discover_bootcamps()
+        else:
+            logger.error(f"InternBootcamp root directory not found: {self.internbootcamp_root}")
     
     def _discover_bootcamps(self):
         """动态发现所有可用的bootcamp类"""
