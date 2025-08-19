@@ -29,16 +29,14 @@ def generate_training_params(config_file):
     train_files = data_config.get('train_files')
     test_files = data_config.get('test_files')
 
-    # 构建数据文件的完整路径
+    # 构建数据文件的完整路径 - Hydra列表语法
     if train_files:
         train_path = project_root / train_files
-        # params.append(f'data.train_files="[\\"{train_path}\\"]"')
-        params.append(f'data.train_files=["{train_path}"]')
+        params.append(f'data.train_files=[{train_path}]')
 
     if test_files:
         test_path = project_root / test_files
-        # params.append(f'data.val_files="[\\"{test_path}\\"]"')
-        params.append(f'data.val_files=["{test_path}"]')
+        params.append(f'data.val_files=[{test_path}]')
 
     # 添加其他数据参数
     params.append(f'data.train_batch_size={data_config.get("train_batch_size", 16)}')
@@ -47,7 +45,7 @@ def generate_training_params(config_file):
     params.append(f'data.filter_overlong_prompts={str(data_config.get("filter_overlong_prompts", True)).lower()}')
     
     truncation = data_config.get("truncation", "error")
-    params.append(f'data.truncation="{truncation}"')
+    params.append(f'data.truncation={truncation}')
 
     # 模型配置
     model_config = rl_config.get('model', {})
@@ -66,7 +64,7 @@ def generate_training_params(config_file):
     params.append(f'actor_rollout_ref.actor.kl_loss_coef={actor_config.get("kl_loss_coef", 0.001)}')
     
     kl_loss_type = actor_config.get("kl_loss_type", "low_var_kl")
-    params.append(f'actor_rollout_ref.actor.kl_loss_type="{kl_loss_type}"')
+    params.append(f'actor_rollout_ref.actor.kl_loss_type={kl_loss_type}')
     params.append(f'actor_rollout_ref.actor.entropy_coeff={actor_config.get("entropy_coeff", 0)}')
     params.append(f'actor_rollout_ref.actor.use_torch_compile={str(actor_config.get("use_torch_compile", False)).lower()}')
 
@@ -76,11 +74,11 @@ def generate_training_params(config_file):
         save_contents = checkpoint_config.get('save_contents', ['model', 'optimizer', 'extra'])
         load_contents = checkpoint_config.get('load_contents', save_contents)
         
-        # 格式化为字符串列表
-        save_contents_str = '[' + ','.join([f'"{item}"' for item in save_contents]) + ']'
-        load_contents_str = '[' + ','.join([f'"{item}"' for item in load_contents]) + ']'
-        params.append(f"actor_rollout_ref.actor.checkpoint.save_contents='{save_contents_str}'")
-        params.append(f"actor_rollout_ref.actor.checkpoint.load_contents='{load_contents_str}'")
+        # Hydra列表格式：[item1,item2,item3]
+        save_contents_str = '[' + ','.join(save_contents) + ']'
+        load_contents_str = '[' + ','.join(load_contents) + ']'
+        params.append(f"actor_rollout_ref.actor.checkpoint.save_contents={save_contents_str}")
+        params.append(f"actor_rollout_ref.actor.checkpoint.load_contents={load_contents_str}")
 
     # Rollout配置
     rollout_config = rl_config.get('rollout', {})
@@ -89,7 +87,7 @@ def generate_training_params(config_file):
     params.append(f'actor_rollout_ref.rollout.n={rollout_config.get("n", 2)}')
     
     rollout_name = rollout_config.get("name", "sglang")
-    params.append(f'actor_rollout_ref.rollout.name="{rollout_name}"')
+    params.append(f'actor_rollout_ref.rollout.name={rollout_name}')
     params.append(f'actor_rollout_ref.rollout.gpu_memory_utilization={model_config.get("gpu_memory_utilization", 0.5)}')
     params.append(f'actor_rollout_ref.hybrid_engine={str(rollout_config.get("hybrid_engine", True)).lower()}')
 
@@ -105,15 +103,15 @@ def generate_training_params(config_file):
         if critic_checkpoint:
             save_contents = critic_checkpoint.get('save_contents', ['model', 'optimizer', 'extra'])
             load_contents = critic_checkpoint.get('load_contents', save_contents)
-            save_contents_str = '[' + ','.join([f'"{item}"' for item in save_contents]) + ']'
-            load_contents_str = '[' + ','.join([f'"{item}"' for item in load_contents]) + ']'
-            params.append(f"critic.checkpoint.save_contents='{save_contents_str}'")
-            params.append(f"critic.checkpoint.load_contents='{load_contents_str}'")
+            save_contents_str = '[' + ','.join(save_contents) + ']'
+            load_contents_str = '[' + ','.join(load_contents) + ']'
+            params.append(f"critic.checkpoint.save_contents={save_contents_str}")
+            params.append(f"critic.checkpoint.load_contents={load_contents_str}")
 
     # 算法配置
     algorithm_config = rl_config.get('algorithm', {})
     adv_estimator = algorithm_config.get("adv_estimator", "grpo")
-    params.append(f'algorithm.adv_estimator="{adv_estimator}"')
+    params.append(f'algorithm.adv_estimator={adv_estimator}')
     params.append(f'algorithm.use_kl_in_reward={str(algorithm_config.get("use_kl_in_reward", False)).lower()}')
 
     # 训练器配置
@@ -126,10 +124,10 @@ def generate_training_params(config_file):
     params.append(f'trainer.critic_warmup={trainer_config.get("critic_warmup", 0)}')
     
     project_name = trainer_config.get("project_name", "verl_grpo_h100_test")
-    params.append(f'trainer.project_name="{project_name}"')
+    params.append(f'trainer.project_name={project_name}')
     
     experiment_name = trainer_config.get("experiment_name", "qwen2.5_7b_h100_8gpu_test")
-    params.append(f'trainer.experiment_name="{experiment_name}"')
+    params.append(f'trainer.experiment_name={experiment_name}')
 
     # Checkpoint管理配置
     max_ckpt_num = trainer_config.get('max_ckpt_num', 3)
@@ -140,10 +138,10 @@ def generate_training_params(config_file):
     # 日志配置
     logger_config = trainer_config.get('logger', ['console'])
     if isinstance(logger_config, list):
-        logger_str = '["' + '","'.join(logger_config) + '"]'
+        logger_str = '[' + ','.join(logger_config) + ']'
     else:
-        logger_str = '["console"]'
-    params.append(f"trainer.logger='{logger_str}'")
+        logger_str = '[console]'
+    params.append(f"trainer.logger={logger_str}")
 
     # 日志频率配置
     log_freq = trainer_config.get('log_freq', 1)
@@ -157,13 +155,14 @@ def generate_training_params(config_file):
     if wandb_config and 'wandb' in logger_config:
         if wandb_config.get('entity'):
             entity = wandb_config["entity"]
-            params.append(f'trainer.wandb_entity="{entity}"')
+            params.append(f'trainer.wandb_entity={entity}')
         if wandb_config.get('tags'):
-            tags_str = '[' + ','.join([f'"{tag}"' for tag in wandb_config['tags']]) + ']'
-            params.append(f"trainer.wandb_tags='{tags_str}'")
+            tags_str = '[' + ','.join(wandb_config['tags']) + ']'
+            params.append(f"trainer.wandb_tags={tags_str}")
         if wandb_config.get('notes'):
-            notes = wandb_config["notes"]
-            params.append(f'trainer.wandb_notes="{notes}"')
+            # 处理包含空格的notes，替换空格为下划线
+            notes = wandb_config["notes"].replace(' ', '_')
+            params.append(f'trainer.wandb_notes={notes}')
         params.append(f'trainer.wandb_save_code={str(wandb_config.get("save_code", True)).lower()}')
         params.append(f'trainer.wandb_log_model={str(wandb_config.get("log_model", False)).lower()}')
 
@@ -176,7 +175,7 @@ def generate_training_params(config_file):
     # 奖励配置
     reward_config = rl_config.get('reward', {})
     reward_manager = reward_config.get("reward_manager", "prime")
-    params.append(f'++reward_model.reward_manager="{reward_manager}"')
+    params.append(f'++reward_model.reward_manager={reward_manager}')
 
     # 自定义奖励函数
     custom_reward = reward_config.get('custom_reward_function', {})
