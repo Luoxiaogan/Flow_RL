@@ -1433,11 +1433,11 @@ class ScoreFlowRewardCalculator:
             print(f"   - Dataset: {dataset_path}")
             if 'question' in verification_data:
                 print(f"   - 问题: {verification_data['question'][:100]}...")
-            if 'index' in verification_data:
-                print(f"   - 数据集中的index: {verification_data['index']}")
-                if verification_data['index'] != test_case_index:
-                    print(f"   ⚠️ 警告: 传入索引({test_case_index}) != 数据索引({verification_data['index']})")
-            print(f"")
+            # if 'index' in verification_data:
+            #     print(f"   - 数据集中的index: {verification_data['index']}")
+            #     if verification_data['index'] != test_case_index:
+            #         print(f"   ⚠️ 警告: 传入索引({test_case_index}) != 数据索引({verification_data['index']})")
+            # print(f"")
             
             debug_log("task", {
                 "event": "verification_data_loaded",

@@ -56,3 +56,4 @@ New_evaluation_and_RL/evaluation/*.log
 New_evaluation_and_RL/reward_server/New_evaluation_and_RL/workspace
 New_evaluation_and_RL/evaluation/start_evaluation.sh
 New_evaluation_and_RL/generate_parquet_and_jsonl/generate_data.sh
+New_evaluation_and_RL/RL_part/New_evaluation_and_RL/workspace/

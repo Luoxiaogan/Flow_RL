@@ -59,35 +59,10 @@ else
     echo -e "${GREEN}✅ MetaGPT API代理运行正常 (端口 $METAGPT_PORT)${NC}"
 fi
 
-# 2. 检查Evaluation API代理（如果配置为evaluation_api模式）
-MODEL_MODE=$(python3 -c "
-import yaml
-with open('$CONFIG_FILE', 'r') as f:
-    config = yaml.safe_load(f)
-mode = config.get('model', {}).get('mode', 'evaluation_api')
-print(mode)
-" 2>/dev/null || echo "evaluation_api")
-
-if [ "$MODEL_MODE" = "evaluation_api" ]; then
-    echo -e "${BLUE}🔍 检查Evaluation API代理...${NC}"
-    EVAL_PORT=$(python3 -c "
-import yaml
-with open('$CONFIG_FILE', 'r') as f:
-    config = yaml.safe_load(f)
-port = config.get('services', {}).get('evaluation_api_proxy', {}).get('port', 5010)
-print(port)
-" 2>/dev/null || echo "5010")
-    
-    if ! lsof -i :$EVAL_PORT > /dev/null 2>&1; then
-        echo -e "${RED}❌ Evaluation API代理未运行 (端口 $EVAL_PORT)${NC}"
-        echo -e "${YELLOW}请先启动Evaluation API代理:${NC}"
-        echo -e "${YELLOW}  cd $SCRIPT_DIR/../servers_and_proxy${NC}"
-        echo -e "${YELLOW}  bash start_evaluation_api_proxy.sh${NC}"
-        exit 1
-    else
-        echo -e "${GREEN}✅ Evaluation API代理运行正常 (端口 $EVAL_PORT)${NC}"
-    fi
-fi
+# 2. VERL训练模式说明
+echo -e "${BLUE}📝 VERL训练模式说明...${NC}"
+echo -e "${GREEN}✅ VERL训练使用GPU上的模型直接生成workflow${NC}"
+echo -e "${GREEN}✅ 不需要evaluation_api_proxy (仅evaluation模式需要)${NC}"
 
 # 3. 检查ScoreFlow奖励服务器
 echo -e "${BLUE}🔍 检查ScoreFlow奖励服务器...${NC}"
@@ -116,35 +91,97 @@ echo ""
 echo -e "${CYAN}========== 测试服务链路 ==========${NC}"
 
 # 测试ScoreFlow奖励计算
-echo -e "${BLUE}测试ScoreFlow奖励计算...${NC}"
+echo -e "${BLUE}测试VERL-ScoreFlow reward链路...${NC}"
+echo -e "${BLUE}模拟VERL训练调用reward计算接口...${NC}"
+
+# 检查测试workflow文件是否存在
+TEST_WORKFLOW_FILE="$SCRIPT_DIR/test_workflow.py"
+if [ ! -f "$TEST_WORKFLOW_FILE" ]; then
+    echo -e "${RED}❌ 测试workflow文件不存在: $TEST_WORKFLOW_FILE${NC}"
+    echo -e "${YELLOW}请确保test_workflow.py文件存在${NC}"
+    exit 1
+fi
+
+echo -e "${BLUE}📁 使用外部workflow文件: $TEST_WORKFLOW_FILE${NC}"
+
 REWARD_TEST_RESULT=$(python3 -c "
 import sys
 sys.path.insert(0, '$SCRIPT_DIR')
 try:
     from scoreflow_reward_client import compute_score
-    test_workflow = '''
-class Workflow:
-    def __init__(self, config, problem):
-        self.config = config
-        self.problem = problem
-        self.custom = operator.Custom(self.config, self.problem)
     
-    async def run_workflow(self):
-        solution = await self.custom(instruction='Solve the problem.')
-        return solution
-'''
-    score = compute_score('gsm8k', test_workflow, 'default', {'test_cases': [0], 'data_path': 'Processed_dataset/gsm8k/test.jsonl'})
-    print(f'成功! 测试分数: {score:.3f}')
+    # 读取外部测试workflow文件
+    with open('$TEST_WORKFLOW_FILE', 'r', encoding='utf-8') as f:
+        test_workflow = f.read()
+    
+    print('📄 已加载外部workflow文件')
+    print(f'📏 Workflow代码长度: {len(test_workflow)} 字符')
+    
+    # VERL标准调用参数
+    extra_info = {
+        'test_cases': [2], 
+        'data_path': '/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/gsm8k/1000_train.jsonl'
+    }
+    
+    print('🚀 开始VERL reward链路测试...')
+    print('📝 模拟: VERL训练 → compute_score() → HTTP API → reward_server')
+    
+    score = compute_score('gsm8k', test_workflow, 'default', extra_info)
+    
+    if score >= 0.8:
+        print(f'✅ 成功! VERL-ScoreFlow链路正常 - 分数: {score:.3f}')
+    elif score > 0.0:
+        print(f'⚠️ 部分成功! 链路可用但分数较低 - 分数: {score:.3f}')
+    else:
+        print(f'❌ 失败! 链路异常 - 分数: {score:.3f}')
+        
+except FileNotFoundError as e:
+    print(f'❌ 文件错误: {str(e)}')
 except Exception as e:
-    print(f'失败: {str(e)[:100]}')
+    print(f'❌ VERL客户端错误: {str(e)[:100]}')
+    import traceback
+    print(f'详细错误: {traceback.format_exc()[:200]}')
 " 2>&1)
 
-if [[ "$REWARD_TEST_RESULT" == *"成功"* ]]; then
-    echo -e "${GREEN}✅ ScoreFlow奖励计算测试: $REWARD_TEST_RESULT${NC}"
+# 显示完整的测试输出（用于调试）
+echo -e "${CYAN}📋 测试详细输出:${NC}"
+echo "$REWARD_TEST_RESULT"
+echo ""
+
+# 检查测试结果
+if [[ "$REWARD_TEST_RESULT" == *"✅ 成功"* ]]; then
+    echo -e "${GREEN}✅ VERL-ScoreFlow链路测试通过${NC}"
+    echo -e "${GREEN}   reward_server正常响应，VERL训练可以开始${NC}"
+elif [[ "$REWARD_TEST_RESULT" == *"⚠️ 部分成功"* ]]; then
+    echo -e "${YELLOW}⚠️ VERL-ScoreFlow链路部分可用${NC}"
+    echo -e "${YELLOW}   链路正常但分数较低，可能是workflow或数据问题${NC}"
+    echo -e "${YELLOW}   建议检查workflow代码和数据集路径${NC}"
+elif [[ "$REWARD_TEST_RESULT" == *"❌ 失败"* ]]; then
+    echo -e "${RED}❌ VERL-ScoreFlow链路测试失败${NC}"
+    echo -e "${RED}   reward_server可能未响应或内部错误${NC}"
+    echo -e "${YELLOW}   建议检查:${NC}"
+    echo -e "${YELLOW}     1. reward_server是否正常运行 (端口 $SCOREFLOW_PORT)${NC}"
+    echo -e "${YELLOW}     2. MetaGPT API代理是否可用 (端口 $METAGPT_PORT)${NC}"
+    echo -e "${YELLOW}     3. workflow代码是否语法正确${NC}"
+    echo -e "${RED}   警告: 训练可能失败，建议先解决链路问题${NC}"
 else
-    echo -e "${YELLOW}⚠️ ScoreFlow奖励计算测试: $REWARD_TEST_RESULT${NC}"
-    echo -e "${YELLOW}   这可能影响训练过程，请确保scoreflow_reward_client.py配置正确${NC}"
+    echo -e "${RED}❌ VERL客户端连接失败${NC}"
+    echo -e "${RED}   $REWARD_TEST_RESULT${NC}"
+    echo -e "${YELLOW}   请检查:${NC}"
+    echo -e "${YELLOW}     1. scoreflow_reward_client.py是否存在${NC}"
+    echo -e "${YELLOW}     2. Python依赖是否安装 (requests, yaml)${NC}"
+    echo -e "${YELLOW}     3. config.yaml路径配置是否正确${NC}"
+    echo -e "${RED}   训练无法继续，请修复后重试${NC}"
+    exit 1
 fi
+
+echo ""
+echo -e "${CYAN}📊 VERL训练架构说明:${NC}"
+echo -e "${GREEN}   1. VERL GPU模型生成workflow响应${NC}"  
+echo -e "${GREEN}   2. 调用 compute_score() 计算reward${NC}"
+echo -e "${GREEN}   3. scoreflow_reward_client 转发HTTP请求${NC}"
+echo -e "${GREEN}   4. reward_server 执行workflow获得分数${NC}"
+echo -e "${GREEN}   5. 分数返回给VERL用于PPO训练${NC}"
 
 # ============================================
 # 参数验证和计算
@@ -153,104 +190,8 @@ echo ""
 echo -e "${CYAN}========== 参数验证和计算 ==========${NC}"
 
 # 验证参数约束并计算相关值
-PARAM_VALIDATION=$(python3 << 'EOF'
-import yaml
-import sys
-from pathlib import Path
-
-# 加载配置
-config_file = '$CONFIG_FILE'
-with open(config_file, 'r') as f:
-    config = yaml.safe_load(f)
-
-# 获取RL训练配置
-rl_config = config.get('rl_training', {})
-
-# 提取关键参数
-train_batch_size = rl_config['data']['train_batch_size']
-ppo_mini_batch_size = rl_config['actor']['ppo_mini_batch_size']
-ppo_micro_batch_size = rl_config['actor']['ppo_micro_batch_size_per_gpu']
-tensor_model_parallel_size = rl_config['rollout']['tensor_model_parallel_size']
-n_gpus_per_node = rl_config['trainer']['n_gpus_per_node']
-rollout_n = rl_config['rollout']['n']  # 每个prompt生成的响应数量
-
-# ScoreFlow配置
-max_wf_data_pair = config['services']['scoreflow_reward'].get('max_wf_data_pair_running', 5)
-
-# 计算派生参数
-data_parallel_size = n_gpus_per_node // tensor_model_parallel_size
-real_train_batch_size = train_batch_size * rollout_n
-gradient_accumulation_steps = ppo_mini_batch_size // ppo_micro_batch_size
-
-# 默认test_cases数量（从data_generation配置读取）
-default_test_cases = config.get('data_generation', {}).get('default_test_cases_per_entry', 5)
-
-print("【参数计算】")
-print(f"  GPU总数: {n_gpus_per_node}")
-print(f"  张量并行度(TP): {tensor_model_parallel_size}")
-print(f"  数据并行度(DP): {data_parallel_size}")
-print(f"  训练批次大小: {train_batch_size}")
-print(f"  每个prompt生成: {rollout_n}个响应")
-print(f"  真实批次大小: {real_train_batch_size} = {train_batch_size} × {rollout_n}")
-print(f"  PPO mini批次: {ppo_mini_batch_size}")
-print(f"  PPO micro批次: {ppo_micro_batch_size}")
-print(f"  梯度累积步数: {gradient_accumulation_steps}")
-print()
-
-print("【数据流分析】")
-print(f"  每个prompt → 生成{rollout_n}个workflow")
-print(f"  每个workflow → 评估{default_test_cases}个test cases (默认)")
-print(f"  总计: 每个prompt产生 {rollout_n * default_test_cases} 个(workflow,test_case)对")
-print(f"  并发限制: 最多{max_wf_data_pair}个(workflow,test_case)对同时执行")
-print()
-
-# 验证约束
-errors = []
-warnings = []
-
-# 约束1: GPU数量必须能被TP整除
-if n_gpus_per_node % tensor_model_parallel_size != 0:
-    errors.append(f"GPU数量({n_gpus_per_node})必须能被tensor_model_parallel_size({tensor_model_parallel_size})整除")
-    errors.append(f"  建议: 修改tensor_model_parallel_size为 1, 2, 4 或 8")
-
-# 约束2: 真实批次大小必须能被DP整除
-if real_train_batch_size % data_parallel_size != 0:
-    errors.append(f"真实批次大小({real_train_batch_size})必须能被数据并行度({data_parallel_size})整除")
-    errors.append(f"  建议: 调整train_batch_size或rollout.n")
-
-# 约束3: mini批次必须能被micro批次整除
-if ppo_mini_batch_size % ppo_micro_batch_size != 0:
-    errors.append(f"PPO mini批次({ppo_mini_batch_size})必须能被micro批次({ppo_micro_batch_size})整除")
-    errors.append(f"  建议: 调整ppo_mini_batch_size为{ppo_micro_batch_size}的倍数")
-
-# 约束4: train_batch_size必须>=ppo_mini_batch_size
-if train_batch_size < ppo_mini_batch_size:
-    errors.append(f"训练批次({train_batch_size})必须≥PPO mini批次({ppo_mini_batch_size})")
-    errors.append(f"  建议: 增加train_batch_size或减少ppo_mini_batch_size")
-
-# 约束5: micro批次检查
-if ppo_micro_batch_size < n_gpus_per_node:
-    warnings.append(f"PPO micro批次({ppo_micro_batch_size})小于GPU数量({n_gpus_per_node})，可能导致GPU利用率低")
-
-# 输出验证结果
-if errors:
-    print("【❌ 参数约束错误】")
-    for error in errors:
-        print(f"  {error}")
-    sys.exit(1)
-else:
-    print("【✅ 参数约束验证】")
-    print(f"  ✓ GPU数量可被TP整除: {n_gpus_per_node} % {tensor_model_parallel_size} = 0")
-    print(f"  ✓ 批次大小可被DP整除: {real_train_batch_size} % {data_parallel_size} = 0")
-    print(f"  ✓ Mini批次可被Micro批次整除: {ppo_mini_batch_size} % {ppo_micro_batch_size} = 0")
-    print(f"  ✓ 训练批次≥PPO mini批次: {train_batch_size} ≥ {ppo_mini_batch_size}")
-
-if warnings:
-    print("\n【⚠️ 警告】")
-    for warning in warnings:
-        print(f"  {warning}")
-EOF
-)
+echo -e "${BLUE}📊 使用外部验证器: $SCRIPT_DIR/validate_training_params.py${NC}"
+PARAM_VALIDATION=$(python3 "$SCRIPT_DIR/validate_training_params.py" "$CONFIG_FILE" 2>&1)
 
 # 检查参数验证结果
 if [ $? -ne 0 ]; then
@@ -267,171 +208,8 @@ echo ""
 echo -e "${BLUE}📝 生成训练参数...${NC}"
 
 # 生成训练参数
-TRAINING_PARAMS=$(python3 << 'EOF'
-import yaml
-import sys
-from pathlib import Path
-
-# 加载配置
-config_file = '$CONFIG_FILE'
-with open(config_file, 'r') as f:
-    config = yaml.safe_load(f)
-
-# 获取project_root
-project_root = Path(config.get('project_root', '$PROJECT_ROOT'))
-
-# 获取RL训练配置
-rl_config = config.get('rl_training', {})
-
-# 构建参数列表
-params = []
-
-# 数据配置
-data_config = rl_config.get('data', {})
-train_files = data_config.get('train_files')
-test_files = data_config.get('test_files')
-
-# 构建数据文件的完整路径
-if train_files:
-    train_path = project_root / train_files
-    params.append(f'data.train_files="[\'{train_path}\']"')
-
-if test_files:
-    test_path = project_root / test_files
-    params.append(f'data.val_files="[\'{test_path}\']"')
-
-# 添加其他数据参数
-params.append(f'data.train_batch_size={data_config.get("train_batch_size", 16)}')
-params.append(f'data.max_prompt_length={data_config.get("max_prompt_length", 8192)}')
-params.append(f'data.max_response_length={data_config.get("max_response_length", 8192)}')
-params.append(f'data.filter_overlong_prompts={str(data_config.get("filter_overlong_prompts", True)).lower()}')
-params.append(f'data.truncation="{data_config.get("truncation", "error")}"')
-
-# 模型配置
-model_config = rl_config.get('model', {})
-model_path = model_config.get('base_model_path', '/nas/models/Qwen2.5-7B-Instruct')
-params.append(f'actor_rollout_ref.model.path={model_path}')
-params.append(f'actor_rollout_ref.model.enable_gradient_checkpointing={str(model_config.get("enable_gradient_checkpointing", True)).lower()}')
-params.append(f'actor_rollout_ref.model.trust_remote_code={str(model_config.get("trust_remote_code", False)).lower()}')
-
-# Actor配置
-actor_config = rl_config.get('actor', {})
-params.append(f'actor_rollout_ref.actor.optim.lr={actor_config.get("learning_rate", "5e-7")}')
-params.append(f'actor_rollout_ref.actor.ppo_mini_batch_size={actor_config.get("ppo_mini_batch_size", 8)}')
-params.append(f'actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu={actor_config.get("ppo_micro_batch_size_per_gpu", 2)}')
-params.append(f'actor_rollout_ref.actor.use_kl_loss={str(actor_config.get("use_kl_loss", True)).lower()}')
-params.append(f'actor_rollout_ref.actor.kl_loss_coef={actor_config.get("kl_loss_coef", 0.001)}')
-params.append(f'actor_rollout_ref.actor.kl_loss_type="{actor_config.get("kl_loss_type", "low_var_kl")}"')
-params.append(f'actor_rollout_ref.actor.entropy_coeff={actor_config.get("entropy_coeff", 0)}')
-params.append(f'actor_rollout_ref.actor.use_torch_compile={str(actor_config.get("use_torch_compile", False)).lower()}')
-
-# Actor Checkpoint配置
-checkpoint_config = actor_config.get('checkpoint', {})
-if checkpoint_config:
-    save_contents = checkpoint_config.get('save_contents', ['model', 'optimizer', 'extra'])
-    load_contents = checkpoint_config.get('load_contents', save_contents)
-    # 格式化为字符串列表
-    save_contents_str = '[' + ','.join([f'"{item}"' for item in save_contents]) + ']'
-    load_contents_str = '[' + ','.join([f'"{item}"' for item in load_contents]) + ']'
-    params.append(f'actor_rollout_ref.actor.checkpoint.save_contents=\'{save_contents_str}\'')
-    params.append(f'actor_rollout_ref.actor.checkpoint.load_contents=\'{load_contents_str}\'')
-
-# Rollout配置
-rollout_config = rl_config.get('rollout', {})
-params.append(f'actor_rollout_ref.rollout.tensor_model_parallel_size={rollout_config.get("tensor_model_parallel_size", 2)}')
-params.append(f'actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu={rollout_config.get("log_prob_micro_batch_size_per_gpu", 2)}')
-params.append(f'actor_rollout_ref.rollout.n={rollout_config.get("n", 2)}')
-params.append(f'actor_rollout_ref.rollout.name="{rollout_config.get("name", "sglang")}"')
-params.append(f'actor_rollout_ref.rollout.gpu_memory_utilization={model_config.get("gpu_memory_utilization", 0.5)}')
-params.append(f'actor_rollout_ref.hybrid_engine={str(rollout_config.get("hybrid_engine", True)).lower()}')
-
-# Reference模型配置
-ref_config = rl_config.get('ref', {})
-params.append(f'actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu={ref_config.get("log_prob_micro_batch_size_per_gpu", 2)}')
-params.append(f'actor_rollout_ref.ref.use_torch_compile={str(ref_config.get("use_torch_compile", False)).lower()}')
-
-# Critic配置（如果存在）
-critic_config = rl_config.get('critic', {})
-if critic_config:
-    critic_checkpoint = critic_config.get('checkpoint', {})
-    if critic_checkpoint:
-        save_contents = critic_checkpoint.get('save_contents', ['model', 'optimizer', 'extra'])
-        load_contents = critic_checkpoint.get('load_contents', save_contents)
-        save_contents_str = '[' + ','.join([f'"{item}"' for item in save_contents]) + ']'
-        load_contents_str = '[' + ','.join([f'"{item}"' for item in load_contents]) + ']'
-        params.append(f'critic.checkpoint.save_contents=\'{save_contents_str}\'')
-        params.append(f'critic.checkpoint.load_contents=\'{load_contents_str}\'')
-
-# 算法配置
-algorithm_config = rl_config.get('algorithm', {})
-params.append(f'algorithm.adv_estimator="{algorithm_config.get("adv_estimator", "grpo")}"')
-params.append(f'algorithm.use_kl_in_reward={str(algorithm_config.get("use_kl_in_reward", False)).lower()}')
-
-# 训练器配置
-trainer_config = rl_config.get('trainer', {})
-params.append(f'trainer.total_epochs={trainer_config.get("total_epochs", 3)}')
-params.append(f'trainer.n_gpus_per_node={trainer_config.get("n_gpus_per_node", 8)}')
-params.append(f'trainer.nnodes={trainer_config.get("nnodes", 1)}')
-params.append(f'trainer.save_freq={trainer_config.get("save_freq", 10)}')
-params.append(f'trainer.test_freq={trainer_config.get("test_freq", 2)}')
-params.append(f'trainer.critic_warmup={trainer_config.get("critic_warmup", 0)}')
-params.append(f'trainer.project_name="{trainer_config.get("project_name", "verl_grpo_h100_test")}"')
-params.append(f'trainer.experiment_name="{trainer_config.get("experiment_name", "qwen2.5_7b_h100_8gpu_test")}"')
-
-# Checkpoint管理配置
-max_ckpt_num = trainer_config.get('max_ckpt_num', 3)
-if max_ckpt_num is not None:
-    params.append(f'trainer.max_ckpt_num={max_ckpt_num}')
-params.append(f'trainer.save_on_each_node={str(trainer_config.get("save_on_each_node", False)).lower()}')
-
-# 日志配置
-logger_config = trainer_config.get('logger', ['console'])
-logger_str = '["' + '","'.join(logger_config) + '"]' if isinstance(logger_config, list) else '["console"]'
-params.append(f'trainer.logger=\'{logger_str}\'')
-
-# 日志频率配置
-log_freq = trainer_config.get('log_freq', 1)
-params.append(f'trainer.log_freq={log_freq}')
-
-log_to_wandb_every_n_steps = trainer_config.get('log_to_wandb_every_n_steps', 1)
-params.append(f'trainer.log_to_wandb_every_n_steps={log_to_wandb_every_n_steps}')
-
-# WandB配置
-wandb_config = trainer_config.get('wandb_config', {})
-if wandb_config and 'wandb' in logger_config:
-    if wandb_config.get('entity'):
-        params.append(f'trainer.wandb_entity="{wandb_config["entity"]}"')
-    if wandb_config.get('tags'):
-        tags_str = '[' + ','.join([f'"{tag}"' for tag in wandb_config['tags']]) + ']'
-        params.append(f'trainer.wandb_tags=\'{tags_str}\'')
-    if wandb_config.get('notes'):
-        params.append(f'trainer.wandb_notes="{wandb_config["notes"]}"')
-    params.append(f'trainer.wandb_save_code={str(wandb_config.get("save_code", True)).lower()}')
-    params.append(f'trainer.wandb_log_model={str(wandb_config.get("log_model", False)).lower()}')
-
-# 检查点目录
-checkpoint_dir = trainer_config.get('default_local_dir', 'rl_out/checkpoints')
-if not Path(checkpoint_dir).is_absolute():
-    checkpoint_dir = project_root / checkpoint_dir
-params.append(f'++trainer.default_local_dir={checkpoint_dir}')
-
-# 奖励配置
-reward_config = rl_config.get('reward', {})
-params.append(f'++reward_model.reward_manager="{reward_config.get("reward_manager", "prime")}"')
-
-# 自定义奖励函数
-custom_reward = reward_config.get('custom_reward_function', {})
-if custom_reward.get('enabled', False):
-    reward_path = custom_reward.get('path')
-    if reward_path:
-        reward_path = project_root / reward_path
-        params.append(f'++custom_reward_function.path={reward_path}')
-        params.append(f'++custom_reward_function.name={custom_reward.get("name", "compute_score")}')
-
-# 输出参数
-print(' \\\n    '.join(params))
-EOF
-)
+echo -e "${BLUE}⚙️ 使用外部生成器: $SCRIPT_DIR/generate_training_params.py${NC}"
+TRAINING_PARAMS=$(python3 "$SCRIPT_DIR/generate_training_params.py" "$CONFIG_FILE" 2>&1)
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}❌ 解析配置失败${NC}"
