@@ -62,5 +62,5 @@ New_evaluation_and_RL/tests/curl.txt
 ScoreFlow/benchmark_mapping.jsonl
 outputs/
 
-New_evaluation_and_RL/generate_parquet_and_jsonl/internbootcamp_data_test
-New_evaluation_and_RL/generate_parquet_and_jsonl/internbootcamp_data
+New_evaluation_and_RL/generate_parquet_and_jsonl/internbootcamp_data_test/
+New_evaluation_and_RL/generate_parquet_and_jsonl/internbootcamp_data/
