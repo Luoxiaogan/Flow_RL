@@ -613,7 +613,7 @@ class InternBootcampRewardCalculator:
             handler = InternBootcampHandler()
             
             # 使用修复后的build_executable_script方法
-            script_parts = handler.build_executable_script(workflow_code, timeout=180)
+            script_parts = handler.build_executable_script(workflow_code, timeout=500)
             
             # 拼接完整脚本
             full_script_code = (
@@ -743,7 +743,7 @@ class InternBootcampRewardCalculator:
                     )
                 else:
                     execution_result = await asyncio.wait_for(
-                        workflow_instance(timeout=180),
+                        workflow_instance(timeout=500),
                         timeout=190
                     )
             else:
