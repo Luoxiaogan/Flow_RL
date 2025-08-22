@@ -195,14 +195,7 @@ The following examples help you understand the problem type. Create a workflow f
 
 
 # 工作流生成的结束提示
-END_PROMPT = '''
-Remember:
-- The workflow should be general enough to handle various problem types
-- Use the provided operators effectively
-- Ensure proper error handling
-- Format the output according to problem requirements
-- The workflow will be executed in a MetaGPT environment
-'''
+END_PROMPT = ''' '''
 
 # Python执行的开始模板 - 预定义操作符
 PYTHON_START = '''import asyncio
