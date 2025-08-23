@@ -475,8 +475,8 @@ class InternBootcampRewardCalculator:
         self.llm_config = {
             'provider': 'openai',  # InternBootcamp使用OpenAI兼容接口
             'model': yaml_config.get('api_metagpt', {}).get('model', 'qwen-turbo'),
-            'api_key': api_config.get('target_api_key', ''),
-            'base_url': api_config.get('target_url', 'https://idealab.alibaba-inc.com/api/openai/v1'),
+            'api_key': 'sk-placeholder-will-be-replaced-by-proxy',
+            'base_url': "http://localhost:"+str(api_config.get('port')),
             'temperature': yaml_config.get('api_metagpt', {}).get('temperature', 0.9)
         }
         
