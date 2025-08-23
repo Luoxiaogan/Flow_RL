@@ -973,6 +973,7 @@ class ScoreFlowRewardCalculator:
             scoreflow_config = config.get('services', {}).get('scoreflow_reward', {})
             self.reward_config = {
                 'timeout': scoreflow_config.get('timeout', 300),
+                'client_http_timeout': scoreflow_config.get('client_http_timeout', 600),  # 新增：HTTP客户端超时
                 'test_cases_per_task': 3,
                 'max_concurrent': 5
             }
@@ -994,6 +995,7 @@ class ScoreFlowRewardCalculator:
             }
             self.reward_config = {
                 'timeout': 300,
+                'client_http_timeout': 600,  # 默认HTTP客户端超时
                 'test_cases_per_task': 3,
                 'max_concurrent': 5
             }
@@ -1001,6 +1003,7 @@ class ScoreFlowRewardCalculator:
         
         # 设置超时和并发限制
         self.timeout = self.reward_config.get('timeout', 180)
+        self.client_http_timeout = self.reward_config.get('client_http_timeout', 600)  # HTTP客户端超时
         self.max_concurrent = self.reward_config.get('max_concurrent', 5)
         
         # handler缓存
@@ -1692,7 +1695,10 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
         
         with concurrent.futures.ThreadPoolExecutor() as executor:
             future = executor.submit(run_in_thread)
-            return future.result(timeout=600)  # 10分钟超时
+            # 使用配置的client_http_timeout，默认600秒
+            calculator = get_calculator()
+            timeout_value = calculator.client_http_timeout if hasattr(calculator, 'client_http_timeout') else 600
+            return future.result(timeout=timeout_value)
             
     except RuntimeError:
         # 如果不在事件循环中，直接使用 asyncio.run

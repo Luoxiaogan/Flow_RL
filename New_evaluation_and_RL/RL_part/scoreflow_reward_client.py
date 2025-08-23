@@ -35,27 +35,42 @@ CURRENT_DIR = Path(__file__).parent
 PROJECT_ROOT = CURRENT_DIR.parent
 CONFIG_FILE = PROJECT_ROOT / "config.yaml"
 
-# 读取配置文件获取reward_server地址
-def get_reward_server_url() -> str:
-    """从配置文件获取reward_server的URL"""
+# 读取配置文件获取reward_server配置
+def get_reward_server_config() -> Dict[str, Any]:
+    """从配置文件获取reward_server的完整配置"""
+    default_config = {
+        'url': 'http://localhost:8899',
+        'client_http_timeout': 600  # 默认10分钟
+    }
+    
     try:
         if CONFIG_FILE.exists():
             with open(CONFIG_FILE, 'r') as f:
                 config = yaml.safe_load(f)
-                host = config.get('services', {}).get('scoreflow_reward', {}).get('host', 'localhost')
-                port = config.get('services', {}).get('scoreflow_reward', {}).get('port', 8899)
+                scoreflow_config = config.get('services', {}).get('scoreflow_reward', {})
+                
+                host = scoreflow_config.get('host', 'localhost')
+                port = scoreflow_config.get('port', 8899)
                 
                 # 如果host是0.0.0.0，转换为localhost用于客户端连接
                 if host == '0.0.0.0':
                     host = 'localhost'
                 
-                return f"http://{host}:{port}"
+                return {
+                    'url': f"http://{host}:{port}",
+                    'client_http_timeout': scoreflow_config.get('client_http_timeout', 600)
+                }
         else:
-            logger.warning(f"配置文件不存在: {CONFIG_FILE}, 使用默认地址")
-            return "http://localhost:8899"
+            logger.warning(f"配置文件不存在: {CONFIG_FILE}, 使用默认配置")
+            return default_config
     except Exception as e:
-        logger.error(f"读取配置文件失败: {e}, 使用默认地址")
-        return "http://localhost:8899"
+        logger.error(f"读取配置文件失败: {e}, 使用默认配置")
+        return default_config
+
+# 保留向后兼容的函数
+def get_reward_server_url() -> str:
+    """从配置文件获取reward_server的URL（向后兼容）"""
+    return get_reward_server_config()['url']
 
 def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_info: Dict[str, Any]) -> float:
     """
@@ -102,13 +117,16 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
         return 0.0
     
     try:
-        # 获取reward_server的URL
-        server_url = get_reward_server_url()
+        # 获取reward_server的配置
+        server_config = get_reward_server_config()
+        server_url = server_config['url']
+        client_timeout = server_config['client_http_timeout']
         api_url = f"{server_url}/compute_score"
         
         logger.info(f"🚀 VERL Reward请求 - benchmark: {data_source}")
         logger.info(f"📊 测试用例: {test_cases} (共{len(test_cases)}个)")
         logger.info(f"🌐 API地址: {api_url}")
+        logger.info(f"⏱️ HTTP超时: {client_timeout}秒")
         
         # 构建标准的reward_server API请求数据
         request_data = {
@@ -118,7 +136,7 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
             "extra_info": extra_info
         }
         
-        # 发送HTTP请求到reward_server
+        # 发送HTTP请求到reward_server（使用配置的超时时间）
         response = requests.post(
             api_url,
             json=request_data,
@@ -126,7 +144,7 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
                 "Content-Type": "application/json",
                 "User-Agent": "VERL-ScoreFlow-Client/1.0"
             },
-            timeout=600  # 10分钟超时，与VERL训练兼容
+            timeout=client_timeout  # 使用配置文件中的超时时间
         )
         
         # 检查HTTP响应
