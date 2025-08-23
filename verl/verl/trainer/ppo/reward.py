@@ -52,7 +52,6 @@ def get_custom_reward_fn(config):
     """
     import importlib.util
     import sys
-    import hashlib
 
     reward_fn_config = config.get("custom_reward_function") or {}
     file_path = reward_fn_config.get("path")
@@ -62,15 +61,10 @@ def get_custom_reward_fn(config):
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Reward function file '{file_path}' not found.")
 
-    # Generate unique module name based on file path to avoid Ray serialization issues
-    # This prevents "Can't pickle: it's not the same object" errors
-    module_hash = hashlib.md5(file_path.encode()).hexdigest()[:8]
-    module_name = f"custom_module_{module_hash}"
-    
-    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    spec = importlib.util.spec_from_file_location("custom_module", file_path)
     module = importlib.util.module_from_spec(spec)
     try:
-        sys.modules[module_name] = module
+        sys.modules["custom_module"] = module
         spec.loader.exec_module(module)
     except Exception as e:
         raise RuntimeError(f"Error loading module from '{file_path}': {e}") from e
@@ -79,19 +73,12 @@ def get_custom_reward_fn(config):
     if not hasattr(module, function_name):
         raise AttributeError(f"Reward function '{function_name}' not found in '{file_path}'.")
 
-    print(f"using customized reward function '{function_name}' from '{file_path}' (module: {module_name})")
+    print(f"using customized reward function '{function_name}' from '{file_path}'")
     raw_fn = getattr(module, function_name)
 
     reward_kwargs = dict(reward_fn_config.get("reward_kwargs", {}))
 
-    # Avoid pickle serialization issues with partial when using ProcessPoolExecutor
-    # Only use partial wrapper if reward_kwargs is not empty
-    if reward_kwargs:
-        print(f"  with reward_kwargs: {reward_kwargs}")
-        return partial(_call_with_kwargs, raw_fn, reward_kwargs)
-    else:
-        print(f"  without reward_kwargs (avoiding partial for better serialization)")
-        return raw_fn  # Return raw function directly for better pickle compatibility
+    return partial(_call_with_kwargs, raw_fn, reward_kwargs)
 
 
 def load_reward_manager(config, tokenizer, num_examine, **reward_kwargs):
