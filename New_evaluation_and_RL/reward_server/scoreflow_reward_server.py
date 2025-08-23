@@ -37,6 +37,9 @@ sys.path.insert(0, str(CURRENT_DIR))
 # 导入scoreflow_reward模块
 from scoreflow_reward_utils import compute_score, get_calculator
 
+# 导入并发控制模块
+from concurrency_limiter import init_limiter, get_limiter, with_concurrency_limit
+
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -50,8 +53,18 @@ SERVER_CONFIG = {
     'host': service_config.get('host', '0.0.0.0'),
     'port': service_config.get('port', 8899),
     'debug': service_config.get('debug', False),
-    'timeout': service_config.get('timeout', 300)  # 5分钟超时
+    'timeout': service_config.get('timeout', 300),  # 5分钟超时
+    'max_concurrent_requests': service_config.get('max_concurrent_requests', 5),
+    'request_queue_timeout': service_config.get('request_queue_timeout', 600)
 }
+
+# 初始化并发控制器
+limiter = init_limiter(
+    max_concurrent=SERVER_CONFIG['max_concurrent_requests'],
+    queue_timeout=SERVER_CONFIG['request_queue_timeout']
+)
+logger.info(f"并发控制已启用: 最大并发数={SERVER_CONFIG['max_concurrent_requests']}, "
+           f"排队超时={SERVER_CONFIG['request_queue_timeout']}秒")
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -63,6 +76,7 @@ def health_check():
     })
 
 @app.route('/compute_score', methods=['POST'])
+@with_concurrency_limit('data_source')
 def compute_score_endpoint():
     """
     计算reward分数的API端点
@@ -134,6 +148,7 @@ def compute_score_endpoint():
         }), 500
 
 @app.route('/batch_compute', methods=['POST'])
+@with_concurrency_limit('data_source')
 def batch_compute_endpoint():
     """
     批量计算多个workflow的分数
@@ -224,6 +239,37 @@ def get_config():
         'reward_config': calculator.reward_config,
         'benchmarks': list(calculator.benchmark_mapping.keys())
     })
+
+@app.route('/status', methods=['GET'])
+def get_status():
+    """
+    获取服务器并发状态和统计信息
+    用于监控和调试
+    """
+    limiter = get_limiter()
+    if limiter:
+        return jsonify(limiter.get_status())
+    else:
+        return jsonify({
+            'error': 'Concurrency limiter not initialized',
+            'message': '并发控制器未初始化'
+        }), 500
+
+@app.route('/reset_stats', methods=['POST'])
+def reset_statistics():
+    """重置统计信息（需要管理权限）"""
+    limiter = get_limiter()
+    if limiter:
+        limiter.reset_statistics()
+        return jsonify({
+            'success': True,
+            'message': 'Statistics reset successfully'
+        })
+    else:
+        return jsonify({
+            'success': False,
+            'error': 'Concurrency limiter not initialized'
+        }), 500
 
 def main():
     """主函数"""

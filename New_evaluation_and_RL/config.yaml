@@ -41,6 +41,8 @@ services:
     host: "0.0.0.0"
     port: 8899
     timeout: 300            # 超时时间（秒）
+    max_concurrent_requests: 5     # 最大并发请求数（同时处理的请求数量限制）
+    request_queue_timeout: 600      # 请求排队超时时间（秒）
     debug: false
     workspace: "New_evaluation_and_RL/workspace"  # workflow执行日志保存目录 (相对于project_root)
   
