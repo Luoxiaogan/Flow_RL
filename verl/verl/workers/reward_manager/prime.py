@@ -60,19 +60,22 @@ async def parallel_compute_score_async(
             print(f"[Exception] async gather failed: {e}")
             raise
         finally:
-            terminated_count = 0
-            for pid, proc in executor._processes.items():
-                try:
-                    p = psutil.Process(pid)
-                    p.terminate()
+            # Only cleanup processes for ProcessPoolExecutor
+            if hasattr(executor, '_processes'):
+                terminated_count = 0
+                for pid, proc in executor._processes.items():
                     try:
-                        p.wait(timeout=5)
-                    except psutil.TimeoutExpired:
-                        p.kill()
-                    terminated_count += 1
-                except Exception:
-                    pass
-            print(f"[Shutdown] {terminated_count} subprocess(es) terminated.")
+                        p = psutil.Process(pid)
+                        p.terminate()
+                        try:
+                            p.wait(timeout=5)
+                        except psutil.TimeoutExpired:
+                            p.kill()
+                        terminated_count += 1
+                    except Exception:
+                        pass
+                print(f"[Shutdown] {terminated_count} subprocess(es) terminated.")
+            # ThreadPoolExecutor threads will be cleaned up automatically
 
     # Process results
     for result, completion, reference, task in zip(results, completions, references, tasks, strict=True):
