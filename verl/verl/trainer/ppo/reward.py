@@ -84,7 +84,14 @@ def get_custom_reward_fn(config):
 
     reward_kwargs = dict(reward_fn_config.get("reward_kwargs", {}))
 
-    return partial(_call_with_kwargs, raw_fn, reward_kwargs)
+    # Avoid pickle serialization issues with partial when using ProcessPoolExecutor
+    # Only use partial wrapper if reward_kwargs is not empty
+    if reward_kwargs:
+        print(f"  with reward_kwargs: {reward_kwargs}")
+        return partial(_call_with_kwargs, raw_fn, reward_kwargs)
+    else:
+        print(f"  without reward_kwargs (avoiding partial for better serialization)")
+        return raw_fn  # Return raw function directly for better pickle compatibility
 
 
 def load_reward_manager(config, tokenizer, num_examine, **reward_kwargs):

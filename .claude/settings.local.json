@@ -24,7 +24,8 @@
       "Bash(bash:*)",
       "Bash(curl:*)",
       "Bash(unset:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(echo $PYTHONPATH)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

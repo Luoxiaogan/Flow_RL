@@ -72,7 +72,7 @@ def get_reward_server_url() -> str:
     """从配置文件获取reward_server的URL（向后兼容）"""
     return get_reward_server_config()['url']
 
-def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_info: Dict[str, Any]) -> float:
+def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_info: Dict[str, Any], **kwargs) -> float:
     """
     VERL标准reward计算接口
     
@@ -97,6 +97,10 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
     - 在config.yaml中设置: reward_model.path: "path/to/this/file"
     - VERL会自动调用此函数计算每个生成response的reward
     """
+    # 如果收到额外的kwargs（应该不会，因为config中reward_kwargs为空）
+    if kwargs:
+        logger.warning(f"Received unexpected kwargs (will be ignored): {kwargs}")
+    
     # 参数验证
     if not isinstance(data_source, str) or not data_source.strip():
         logger.error(f"Invalid data_source: {data_source}")
