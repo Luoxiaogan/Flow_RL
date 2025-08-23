@@ -120,7 +120,7 @@ try:
     # VERL标准调用参数
     extra_info = {
         'test_cases': [2], 
-        'data_path': '/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/1000_train.jsonl'
+        'data_path': '/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/gsm8k/1000_train.jsonl'
     }
     
     print('🚀 开始VERL reward链路测试...')

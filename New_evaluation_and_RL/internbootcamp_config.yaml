@@ -6,7 +6,8 @@
 # 项目根目录配置（本地和服务器切换只需修改这里）
 # 本地: D:/temp/Flow_RL
 # 服务器: /nas/ganluo/Flow_RL
-project_root: "D:/temp/Flow_RL"
+# LG: /Users/luogan/Code/workflow_generation/Flow_RL
+project_root: "/Users/luogan/Code/workflow_generation/Flow_RL"
 
 # InternBootcamp特定配置
 internbootcamp:
@@ -67,7 +68,7 @@ reward_server:
   
   # MetaGPT执行配置
   metagpt:
-    timeout: 180                   # MetaGPT执行超时（秒）
+    timeout: 190                   # MetaGPT执行超时（秒）
     config_file: "metagpt_root/config/config2.yaml"  # MetaGPT配置文件（相对于project_root）
 
 # LLM配置（用于reward计算）
