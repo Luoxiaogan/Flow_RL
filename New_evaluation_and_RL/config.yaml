@@ -6,7 +6,7 @@
 # 项目根目录配置（本地和服务器切换只需修改这里）
 # 本地: /Users/luogan/Code/workflow_generation/Flow_RL
 # 服务器: /nas/ganluo/Flow_RL
-project_root: "/Users/luogan/Code/workflow_generation/Flow_RL"
+project_root: "/nas/ganluo/Flow_RL"
 
 api_metagpt:
   temperature: 0.9
@@ -20,8 +20,8 @@ services:
     target_url: "https://idealab.alibaba-inc.com/api/openai/v1"
     # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
     target_api_key: "956c41bd0f31beaf68b871d4987af4bb"  # 目标API的密钥
-    rate_per_second: 3      # 每秒分发请求数（支持小数，如0.2表示5秒一个请求）
-    max_concurrency: 20     # 最大并发请求数（同时处理的请求数量限制）
+    rate_per_second: 2      # 每秒分发请求数（支持小数，如0.2表示5秒一个请求）
+    max_concurrency: 70     # 最大并发请求数（同时处理的请求数量限制）
     debug: false            # true: 显示所有请求详情, false: 仅显示进度条和错误
     
   evaluation_api_proxy:  # 评估模型使用的API代理（新增）
@@ -41,8 +41,8 @@ services:
     host: "0.0.0.0"
     port: 8899
     timeout: 300            # 超时时间（秒）
-    max_concurrent_requests: 5     # 最大并发请求数（同时处理的请求数量限制）
-    request_queue_timeout: 600      # 请求排队超时时间（秒）
+    max_concurrent_requests: 8     # 最大并发请求数（同时处理的请求数量限制）
+    request_queue_timeout: 600      # 请求排队超时时间(秒)，感觉应该设置成
     debug: false
     workspace: "New_evaluation_and_RL/workspace"  # workflow执行日志保存目录 (相对于project_root)
   
@@ -131,8 +131,8 @@ data_generation:
 rl_training:
   # 数据配置（基于project_root的相对路径）
   data:
-    train_files: "New_evaluation_and_RL/parquet_and_jsonl_data/train.parquet"  # 相对于project_root
-    test_files: "New_evaluation_and_RL/parquet_and_jsonl_data/test.parquet"    # 相对于project_root
+    train_files: "New_evaluation_and_RL/parquet_and_jsonl_data/single/train.parquet"  # 相对于project_root
+    test_files: "New_evaluation_and_RL/parquet_and_jsonl_data/single/test.parquet"    # 相对于project_root
     train_batch_size: 16
     max_prompt_length: 8192
     max_response_length: 8192
