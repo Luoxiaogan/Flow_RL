@@ -1,5 +1,5 @@
 #!/bin/bash
-# VERL RL训练命令 - 生成时间: 2025-08-23 06:21:17
+# VERL RL训练命令 - 生成时间: 2025-08-23 08:54:31
 
 # 设置环境变量
 export USE_SGLANG=1
@@ -10,8 +10,8 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   --config-path=config \
   --config-name=ppo_trainer.yaml \
-  'data.train_files=["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/single/train.parquet"]' \
-  'data.val_files=["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/single/test.parquet"]' \
+  'data.train_files=["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/RL/train.parquet"]' \
+  'data.val_files=["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/RL/test.parquet"]' \
   data.train_batch_size=16 \
   data.max_prompt_length=8192 \
   data.max_response_length=8192 \
