@@ -142,8 +142,8 @@ rl_training:
   
   # 模型配置
   model:
-    # 基础模型路径（可以是绝对路径或相对路径）
-    base_model_path: "/nas/models/Qwen2.5-7B-Instruct"
+    # 基础模型路径 - 升级到Qwen3-8B以支持thinking功能
+    base_model_path: "/nas/models/Qwen3-8B"
     # 检查点保存目录（相对于project_root）
     checkpoint_dir: "rl_out/checkpoints"
     torch_dtype: "bfloat16"
@@ -173,13 +173,24 @@ rl_training:
       # 加载内容（通常与save_contents一致）
       load_contents: ['model', 'extra']
   
-  # Rollout配置
+  # Rollout配置 - 优化用于Qwen3
   rollout:
     tensor_model_parallel_size: 2
     log_prob_micro_batch_size_per_gpu: 2
     n: 2  # 生成的响应数量
     name: "sglang"
     hybrid_engine: true
+    
+    # Qwen3官方推荐的generation参数
+    temperature: 0.6
+    top_p: 0.95
+    top_k: 20
+    min_p: 0.0
+    
+    # Qwen3特性支持
+    custom_chat_template: "auto"  # 自动使用模型内置的聊天模板
+    reasoning_parser: "qwen3"     # 启用Qwen3推理解析器
+    enable_thinking: true         # 启用thinking模式提升推理能力
   
   # Reference模型配置
   ref:

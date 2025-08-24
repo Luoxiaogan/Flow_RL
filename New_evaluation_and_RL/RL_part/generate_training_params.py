@@ -90,6 +90,24 @@ def generate_training_params(config_file):
     params.append(f'actor_rollout_ref.rollout.name={rollout_name}')
     params.append(f'actor_rollout_ref.rollout.gpu_memory_utilization={model_config.get("gpu_memory_utilization", 0.5)}')
     params.append(f'actor_rollout_ref.hybrid_engine={str(rollout_config.get("hybrid_engine", True)).lower()}')
+    
+    # Qwen3 Generation参数 - 如果配置中提供了这些参数
+    if 'temperature' in rollout_config:
+        params.append(f'actor_rollout_ref.rollout.temperature={rollout_config["temperature"]}')
+    if 'top_p' in rollout_config:
+        params.append(f'actor_rollout_ref.rollout.top_p={rollout_config["top_p"]}')
+    if 'top_k' in rollout_config:
+        params.append(f'actor_rollout_ref.rollout.top_k={rollout_config["top_k"]}')
+    if 'min_p' in rollout_config:
+        params.append(f'actor_rollout_ref.rollout.min_p={rollout_config["min_p"]}')
+    
+    # Qwen3聊天模板和特性支持
+    if 'custom_chat_template' in rollout_config:
+        params.append(f'actor_rollout_ref.model.custom_chat_template={rollout_config["custom_chat_template"]}')
+    if 'reasoning_parser' in rollout_config:
+        params.append(f'++actor_rollout_ref.rollout.engine_kwargs.sglang.reasoning_parser={rollout_config["reasoning_parser"]}')
+    if 'enable_thinking' in rollout_config:
+        params.append(f'++actor_rollout_ref.rollout.engine_kwargs.sglang.enable_thinking={str(rollout_config["enable_thinking"]).lower()}')
 
     # Reference模型配置
     ref_config = rl_config.get('ref', {})
