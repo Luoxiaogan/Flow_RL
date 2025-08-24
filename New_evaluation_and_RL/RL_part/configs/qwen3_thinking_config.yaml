@@ -1,0 +1,299 @@
+# =====================================================================
+# Qwen3 Thinking模式VERL训练配置
+# =====================================================================
+# 
+# 配置说明：
+# 1. 这个配置文件专门为启用Qwen3的thinking模式而设计
+# 2. 确保tokenizer的chat template被正确应用
+# 3. 使用自定义数据集类来控制thinking参数的传递
+# 4. 配置了适合thinking模式的序列长度和生成参数
+#
+# 使用方法：
+# python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
+#   --config-path=/nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/configs \
+#   --config-name=qwen3_thinking_config
+#
+# =====================================================================
+
+# 继承VERL的基础配置
+defaults:
+  - override hydra/launcher: basic  # 使用基础启动器
+  - _self_  # 当前配置的优先级最高
+
+# ---------------------------------------------------------------------
+# 数据配置部分
+# 这部分配置控制数据的加载和预处理
+# ---------------------------------------------------------------------
+data:
+  # 训练和验证数据文件路径
+  train_files: 
+    - "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/RL/train.parquet"
+  val_files: 
+    - "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/RL/test.parquet"
+  
+  # 批次大小配置
+  train_batch_size: 16  # 全局训练批次大小
+  
+  # 序列长度配置
+  # thinking模式需要更长的序列长度来容纳推理过程
+  max_prompt_length: 8192      # 最大prompt长度
+  max_response_length: 16384   # 最大响应长度（包含thinking部分）
+  
+  # 数据处理配置
+  # 这些设置确保使用tokenizer自带的chat template
+  return_raw_input_ids: false  # False = 使用tokenizer的chat template进行处理
+  return_raw_chat: false       # False = 应用chat template而不是返回原始chat
+  return_full_prompt: false    # False = 使用标准的prompt处理流程
+  
+  # 自定义数据集类配置
+  # 这是确保thinking模式正确工作的关键
+  custom_cls:
+    path: /nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/custom_datasets/qwen3_thinking_dataset.py
+    name: Qwen3ThinkingDataset
+  
+  # 数据过滤和处理选项
+  filter_overlong_prompts: true  # 过滤超长的prompt
+  truncation: error              # 遇到超长序列时报错而不是截断
+  shuffle: true                  # 打乱训练数据
+  
+  # 分词器配置
+  trust_remote_code: true  # 允许加载Qwen3的远程代码
+  
+  # 提示键名配置
+  prompt_key: prompt  # 数据中prompt字段的键名
+
+# ---------------------------------------------------------------------
+# Actor-Rollout-Reference模型配置
+# 这部分配置Actor（策略模型）、Rollout（推理引擎）和Reference（参考模型）
+# ---------------------------------------------------------------------
+actor_rollout_ref:
+  # 启用混合引擎（必须为true）
+  hybrid_engine: true
+  
+  # 模型基础配置
+  model:
+    path: /nas/models/Qwen3-8B  # Qwen3-8B模型路径
+    
+    # 关键配置：必须启用trust_remote_code
+    # Qwen3使用了自定义的模型代码，需要这个参数来正确加载
+    trust_remote_code: true
+    
+    # 内存优化配置
+    enable_gradient_checkpointing: true  # 启用梯度检查点以节省显存
+    enable_activation_offload: false     # 不卸载激活值到CPU
+    use_remove_padding: false            # 不移除padding（保持序列完整性）
+    
+    # 模型精度配置
+    torch_dtype: bfloat16  # 使用bfloat16精度
+  
+  # Actor（策略模型）配置
+  actor:
+    strategy: fsdp  # 使用FSDP（Fully Sharded Data Parallel）策略
+    
+    # PPO训练批次配置
+    ppo_mini_batch_size: 8               # PPO小批次大小（全局）
+    ppo_micro_batch_size_per_gpu: 2      # 每个GPU的微批次大小
+    ppo_epochs: 1                        # 每次采样后的PPO更新轮数
+    
+    # 优化器配置
+    optim:
+      lr: 5e-7                # 学习率
+      lr_warmup_steps: -1     # 不使用学习率预热
+      min_lr_ratio: 0.0       # 最小学习率比例
+      weight_decay: 0.01      # 权重衰减
+    
+    # PPO算法参数
+    clip_ratio: 0.2      # PPO裁剪比例
+    grad_clip: 1.0       # 梯度裁剪阈值
+    
+    # KL散度正则化配置
+    use_kl_loss: true         # 启用KL损失
+    kl_loss_coef: 0.001      # KL损失系数
+    kl_loss_type: low_var_kl  # 使用低方差KL计算方法
+    
+    # 熵正则化
+    entropy_coeff: 0.0  # 熵系数（0表示不使用熵正则化）
+    
+    # 性能优化
+    use_torch_compile: false    # 不使用torch.compile（可能与某些功能不兼容）
+    use_dynamic_bsz: false      # 不使用动态批次大小
+    
+    # 检查点保存配置
+    checkpoint:
+      save_contents: ["model", "extra"]  # 保存模型权重和额外信息
+      load_contents: ["model", "extra"]  # 加载相同的内容
+    
+    # FSDP配置
+    fsdp_config:
+      wrap_policy:
+        min_num_params: 0  # 包装所有参数
+      param_offload: false      # 不卸载参数到CPU
+      optimizer_offload: false  # 不卸载优化器到CPU
+  
+  # Rollout（推理引擎）配置
+  rollout:
+    name: sglang  # 使用SGLang作为推理引擎
+    mode: sync    # 同步模式（等待生成完成）
+    
+    # 模型并行配置
+    tensor_model_parallel_size: 2  # 张量并行大小（使用2个GPU）
+    gpu_memory_utilization: 0.5    # GPU显存使用率限制
+    
+    # 生成参数（与Qwen3的generation_config.json保持一致）
+    temperature: 0.6  # 采样温度
+    top_p: 0.95      # Nucleus采样的累积概率阈值
+    top_k: 20        # Top-K采样的K值
+    n: 2             # 每个prompt生成的响应数量（GRPO需要多个）
+    
+    # 序列长度配置（与data配置保持一致）
+    prompt_length: ${data.max_prompt_length}    # 引用data配置
+    response_length: ${data.max_response_length} # 引用data配置
+    
+    # 批处理配置
+    log_prob_micro_batch_size_per_gpu: 2  # 计算log概率的批次大小
+    log_prob_use_dynamic_bsz: false       # 不使用动态批次
+    max_num_batched_tokens: 8192          # 批次中的最大token数
+    max_num_seqs: 1024                     # 最大序列数
+    
+    # 性能和内存配置
+    enforce_eager: true       # 禁用CUDA graph（与cache释放兼容）
+    free_cache_engine: true   # 生成后释放KV cache
+    dtype: bfloat16          # 数据类型（与actor保持一致）
+    ignore_eos: false        # 不忽略EOS token
+    
+    # SGLang特定配置
+    # 这是启用thinking模式的关键配置
+    engine_kwargs:
+      sglang:
+        reasoning_parser: qwen3   # 使用Qwen3专用的reasoning parser
+        trust_remote_code: true   # 允许加载远程代码
+        # 注意：enable_thinking应该在tokenizer层面处理，
+        # 不是在这里配置
+  
+  # Reference模型配置（用于计算KL散度）
+  ref:
+    log_prob_micro_batch_size_per_gpu: 2  # 计算log概率的批次大小
+    log_prob_use_dynamic_bsz: false       # 不使用动态批次
+    use_torch_compile: false              # 不使用torch.compile
+    
+    # FSDP配置
+    fsdp_config:
+      param_offload: false  # 不卸载参数
+      wrap_policy:
+        min_num_params: 0
+
+# ---------------------------------------------------------------------
+# Critic（价值函数）配置
+# Critic用于估计状态价值，是PPO算法的重要组成部分
+# ---------------------------------------------------------------------
+critic:
+  strategy: fsdp  # 使用FSDP策略
+  
+  # 模型配置
+  model:
+    path: ${actor_rollout_ref.model.path}  # 使用与Actor相同的基础模型
+    enable_gradient_checkpointing: true    # 启用梯度检查点
+    trust_remote_code: true                # 允许加载远程代码
+  
+  # 训练配置
+  ppo_micro_batch_size_per_gpu: 2  # 每个GPU的微批次大小
+  use_torch_compile: false          # 不使用torch.compile
+  
+  # 优化器配置
+  optim:
+    lr: 5e-7  # 学习率（与Actor相同）
+  
+  # 检查点配置
+  checkpoint:
+    save_contents: ["model", "extra"]
+    load_contents: ["model", "extra"]
+  
+  # FSDP配置
+  fsdp_config:
+    wrap_policy:
+      min_num_params: 0
+    param_offload: false
+    optimizer_offload: false
+
+# ---------------------------------------------------------------------
+# 算法配置
+# 配置PPO算法的核心参数
+# ---------------------------------------------------------------------
+algorithm:
+  # 优势估计器类型
+  adv_estimator: grpo  # 使用GRPO（Grouped Relative Policy Optimization）
+  
+  # GAE（Generalized Advantage Estimation）参数
+  gamma: 1.0  # 折扣因子
+  lam: 1.0    # GAE的λ参数
+  
+  # KL散度配置
+  use_kl_in_reward: false  # 不在奖励中包含KL散度项
+  
+  # GRPO特定配置
+  norm_adv_by_std_in_grpo: true  # 在GRPO中按标准差归一化优势值
+
+# ---------------------------------------------------------------------
+# 奖励模型配置
+# ---------------------------------------------------------------------
+reward_model:
+  enable: false          # 不使用神经网络奖励模型
+  reward_manager: prime  # 使用prime奖励管理器（支持并行处理）
+
+# 自定义奖励函数配置
+custom_reward_function:
+  path: /nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py
+  name: compute_score
+
+# ---------------------------------------------------------------------
+# 训练器配置
+# 控制训练流程、日志记录和检查点保存
+# ---------------------------------------------------------------------
+trainer:
+  # 基础训练参数
+  total_epochs: 3        # 总训练轮数
+  n_gpus_per_node: 8     # 每个节点的GPU数量
+  nnodes: 1              # 节点数量
+  device: cuda           # 使用CUDA设备
+  
+  # 保存和验证频率
+  save_freq: 10          # 每10个iteration保存一次检查点
+  test_freq: 2           # 每2个iteration进行一次验证
+  critic_warmup: 0       # Critic预热步数（0表示不预热）
+  val_before_train: true # 训练前先进行一次验证
+  
+  # 实验标识
+  project_name: verl_qwen3_thinking      # 项目名称
+  experiment_name: qwen3_8b_with_thinking # 实验名称
+  
+  # 日志配置
+  logger: ["console", "wandb"]  # 同时输出到控制台和WandB
+  log_freq: 1                   # 每个iteration记录一次
+  log_to_wandb_every_n_steps: 1 # 每步上传到WandB
+  log_val_generations: 1        # 记录1个验证生成样本
+  
+  # WandB配置
+  wandb_tags: ["qwen3", "thinking", "grpo", "rl"]
+  wandb_notes: "Qwen3-8B PPO训练，启用thinking模式进行复杂推理"
+  wandb_save_code: true   # 保存代码到WandB
+  wandb_log_model: false  # 不上传模型权重到WandB（太大）
+  
+  # 检查点管理
+  default_local_dir: /nas/ganluo/Flow_RL/rl_out/checkpoints
+  max_ckpt_num: 3           # 最多保留3个检查点
+  save_on_each_node: false  # 只在主节点保存
+  del_local_ckpt_after_load: false  # 加载后不删除本地检查点
+  
+  # 训练恢复配置
+  resume_mode: auto  # 自动从最新检查点恢复
+  
+  # Ray配置
+  ray_wait_register_center_timeout: 300  # Ray注册超时时间（秒）
+
+# ---------------------------------------------------------------------
+# Ray初始化配置
+# Ray是VERL使用的分布式计算框架
+# ---------------------------------------------------------------------
+ray_init:
+  num_cpus: null           # 自动检测可用CPU数量
+  timeline_json_file: null # 不记录timeline（可用于性能分析）
