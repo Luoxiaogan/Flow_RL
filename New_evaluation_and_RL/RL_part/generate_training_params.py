@@ -90,6 +90,20 @@ def generate_training_params(config_file):
     params.append(f'actor_rollout_ref.rollout.name={rollout_name}')
     params.append(f'actor_rollout_ref.rollout.gpu_memory_utilization={model_config.get("gpu_memory_utilization", 0.5)}')
     params.append(f'actor_rollout_ref.hybrid_engine={str(rollout_config.get("hybrid_engine", True)).lower()}')
+    
+    # 标准Generation参数 - 如果配置中提供了这些参数
+    if 'temperature' in rollout_config:
+        params.append(f'actor_rollout_ref.rollout.temperature={rollout_config["temperature"]}')
+    if 'top_p' in rollout_config:
+        params.append(f'actor_rollout_ref.rollout.top_p={rollout_config["top_p"]}')
+    if 'top_k' in rollout_config:
+        params.append(f'actor_rollout_ref.rollout.top_k={rollout_config["top_k"]}')
+    
+    # 注意：以下参数已被移除，因为它们不是VERL标准参数
+    # - min_p: 不在VERL标准rollout配置中
+    # - custom_chat_template: 可能导致配置错误
+    # - reasoning_parser: SGLang不识别此参数
+    # - enable_thinking: SGLang不识别此参数
 
     # Reference模型配置
     ref_config = rl_config.get('ref', {})

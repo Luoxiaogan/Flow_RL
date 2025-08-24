@@ -28,7 +28,9 @@
       "Bash(echo $PYTHONPATH)",
       "Bash(git log:*)",
       "Bash(git checkout:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

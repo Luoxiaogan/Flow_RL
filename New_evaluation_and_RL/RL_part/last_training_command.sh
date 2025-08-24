@@ -1,5 +1,5 @@
 #!/bin/bash
-# VERL RL训练命令 - 生成时间: 2025-08-23 08:54:31
+# VERL RL训练命令 - 生成时间: 2025-08-23 21:00:24
 
 # 设置环境变量
 export USE_SGLANG=1
@@ -17,7 +17,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   data.max_response_length=8192 \
   data.filter_overlong_prompts=true \
   data.truncation=error \
-  actor_rollout_ref.model.path=/nas/models/Qwen2.5-7B-Instruct \
+  actor_rollout_ref.model.path=/nas/models/Qwen3-8B \
   actor_rollout_ref.model.enable_gradient_checkpointing=true \
   actor_rollout_ref.model.trust_remote_code=false \
   actor_rollout_ref.actor.optim.lr=5e-7 \
@@ -36,6 +36,13 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   actor_rollout_ref.rollout.name=sglang \
   actor_rollout_ref.rollout.gpu_memory_utilization=0.5 \
   actor_rollout_ref.hybrid_engine=true \
+  actor_rollout_ref.rollout.temperature=0.6 \
+  actor_rollout_ref.rollout.top_p=0.95 \
+  actor_rollout_ref.rollout.top_k=20 \
+  actor_rollout_ref.rollout.min_p=0.0 \
+  actor_rollout_ref.model.custom_chat_template=auto \
+  ++actor_rollout_ref.rollout.engine_kwargs.sglang.reasoning_parser=qwen3 \
+  ++actor_rollout_ref.rollout.engine_kwargs.sglang.enable_thinking=true \
   actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=2 \
   actor_rollout_ref.ref.use_torch_compile=false \
   'critic.checkpoint.save_contents=["model","extra"]' \
