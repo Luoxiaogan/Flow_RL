@@ -16,12 +16,12 @@ services:
   metagpt_api_proxy:    # MetaGPT operator执行时使用的API代理
     enabled: true
     host: "localhost"
-    port: 5009
+    port: 5019
     target_url: "https://idealab.alibaba-inc.com/api/openai/v1"
     # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
     target_api_key: "956c41bd0f31beaf68b871d4987af4bb"  # 目标API的密钥
     rate_per_second: 4      # 每秒分发请求数（支持小数，如0.2表示5秒一个请求）
-    max_concurrency: 80     # 最大并发请求数（同时处理的请求数量限制）
+    max_concurrency: 90     # 最大并发请求数（同时处理的请求数量限制）
     debug: false            # true: 显示所有请求详情, false: 仅显示进度条和错误
     
   evaluation_api_proxy:  # 评估模型使用的API代理（新增）
@@ -39,10 +39,10 @@ services:
   scoreflow_reward:
     enabled: true
     host: "0.0.0.0"
-    port: 8899
-    timeout: 3600           # workflow执行超时：1小时（3600秒）
+    port: 8897
+    timeout: 4800           # workflow执行超时：80分钟（4800秒）
     max_concurrent_requests: 10     # 最大并发请求数（同时处理的请求数量限制）
-    request_queue_timeout: 4200     # 请求排队超时时间：70分钟（4200秒）
+    request_queue_timeout: 4800     # 请求排队超时时间：80分钟（4800秒）
     client_http_timeout: 4800        # 客户端HTTP连接超时：80分钟（4800秒）
     debug: false
     workspace: "New_evaluation_and_RL/workspace"  # workflow执行日志保存目录 (相对于project_root)
