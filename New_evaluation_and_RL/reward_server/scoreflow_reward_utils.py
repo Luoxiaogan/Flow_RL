@@ -1190,6 +1190,10 @@ class ScoreFlowRewardCalculator:
             self.token_penalty_config = scoreflow_config.get('token_penalty', {})
             print("\n🚀 token_penalty_config:\n", self.token_penalty_config)
             
+            # 加载token惩罚配置
+            self.token_penalty_config = scoreflow_config.get('token_penalty', {})
+            print("\n🚀 token_penalty_config:\n", self.token_penalty_config)
+            
             # 读取workspace配置
             self.workspace_path = Path(scoreflow_config.get('workspace', 
                 str(PROJECT_ROOT / "workspace")))

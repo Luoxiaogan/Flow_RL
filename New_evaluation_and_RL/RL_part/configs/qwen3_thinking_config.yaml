@@ -1,0 +1,384 @@
+# =====================================================================
+# Qwen3 Thinking模式VERL训练配置 - 完整显式版本
+# =====================================================================
+
+# 继承VERL的默认配置结构（必需，否则会缺少某些字段）
+defaults:
+  - actor@actor_rollout_ref.actor: dp_actor
+  - npu_profile@trainer.npu_profile: npu_profile
+  - data@data: legacy_data
+  - ref@actor_rollout_ref.ref: dp_ref
+  - rollout@actor_rollout_ref.rollout: rollout
+  - critic@critic: dp_critic
+  - reward_model@reward_model: dp_reward_model
+  - _self_
+
+# ---------------------------------------------------------------------
+# 数据配置 - 完整覆盖
+# ---------------------------------------------------------------------
+data:
+  # 数据文件
+  train_files: 
+    - "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/RL/train.parquet"
+  val_files: 
+    - "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/RL/test.parquet"
+  
+  # 批次和序列长度
+  train_batch_size: 16
+  max_prompt_length: 8192
+  max_response_length: 16384
+  
+  # 数据键名
+  prompt_key: prompt
+  response_key: response
+  reward_fn_key: data_source  # VERL需要这个字段
+  
+  # 数据处理选项
+  return_raw_input_ids: false
+  return_raw_chat: false
+  return_full_prompt: false
+  filter_overlong_prompts: true
+  filter_overlong_prompts_workers: 1
+  truncation: error
+  shuffle: true
+  
+  # 分词器和图像处理
+  tokenizer: null
+  image_key: images
+  trust_remote_code: true
+  
+  # 自定义数据集
+  custom_cls:
+    path: /nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/custom_datasets/qwen3_thinking_dataset.py
+    name: Qwen3ThinkingDataset
+
+# ---------------------------------------------------------------------
+# Actor-Rollout-Reference配置 - 完整覆盖
+# ---------------------------------------------------------------------
+actor_rollout_ref:
+  hybrid_engine: true
+  
+  # 模型配置
+  model:
+    path: /nas/models/Qwen3-8B
+    custom_chat_template: null  # Qwen3不需要自定义template
+    torch_dtype: bfloat16
+    use_shm: false
+    external_lib: null
+    override_config: {}
+    enable_gradient_checkpointing: true
+    enable_activation_offload: false
+    use_remove_padding: false
+    lora_rank: 0
+    lora_alpha: 16
+    target_modules: all-linear
+    exclude_modules: null
+    use_liger: false
+    use_fused_kernels: false
+    fused_kernel_options:
+      impl_backend: torch
+    trust_remote_code: true
+  
+  # Actor配置
+  actor:
+    strategy: fsdp
+    
+    # PPO批次设置
+    ppo_mini_batch_size: 8
+    ppo_micro_batch_size: null  # deprecated
+    ppo_micro_batch_size_per_gpu: 2
+    use_dynamic_bsz: false
+    ppo_max_token_len_per_gpu: 16384
+    ppo_epochs: 1
+    data_loader_seed: null
+    shuffle: false
+    ulysses_sequence_parallel_size: 1
+    
+    # 梯度和损失
+    grad_clip: 1.0
+    clip_ratio: 0.2
+    entropy_coeff: 0.0
+    use_kl_loss: true
+    kl_loss_coef: 0.001
+    kl_loss_type: low_var_kl
+    use_torch_compile: false
+    
+    # 优化器
+    optim:
+      lr: 5e-7
+      lr_warmup_steps: -1
+      lr_warmup_steps_ratio: 0.0
+      min_lr_ratio: 0.0
+      num_cycles: 0.5
+      warmup_style: constant
+      total_training_steps: -1
+      weight_decay: 0.01
+    
+    # FSDP配置
+    fsdp_config:
+      wrap_policy:
+        min_num_params: 0
+      param_offload: false
+      optimizer_offload: false
+      fsdp_size: -1
+    
+    # 检查点
+    checkpoint:
+      save_contents: ["model", "extra"]
+      load_contents: ["model", "extra"]
+  
+  # Rollout配置
+  rollout:
+    name: sglang
+    mode: sync
+    
+    # 采样参数
+    temperature: 0.6
+    top_k: 20
+    top_p: 0.95
+    n: 2
+    
+    # 序列长度
+    prompt_length: 8192
+    response_length: 16384
+    
+    # vLLM/SGLang参数
+    dtype: bfloat16
+    gpu_memory_utilization: 0.5
+    ignore_eos: false
+    enforce_eager: true
+    free_cache_engine: true
+    load_format: dummy_dtensor
+    tensor_model_parallel_size: 2
+    max_num_batched_tokens: 8192
+    max_model_len: null
+    max_num_seqs: 1024
+    
+    # 批处理
+    log_prob_micro_batch_size: null
+    log_prob_micro_batch_size_per_gpu: 2
+    log_prob_use_dynamic_bsz: false
+    log_prob_max_token_len_per_gpu: 16384
+    
+    # 其他
+    disable_log_stats: true
+    do_sample: true
+    multi_stage_wake_up: false
+    
+    # 引擎参数
+    engine_kwargs:
+      vllm:
+        swap_space: null
+        disable_mm_preprocessor_cache: false
+      sglang:
+        attention_backend: null
+        reasoning_parser: qwen3  # 关键：Qwen3的reasoning parser
+        trust_remote_code: true
+    
+    # 验证参数
+    val_kwargs:
+      top_k: -1
+      top_p: 1.0
+      temperature: 0
+      n: 1
+      do_sample: false
+    
+    # 多轮对话（如需要）
+    multi_turn:
+      enable: false
+      max_assistant_turns: null
+      tool_config_path: null
+      max_user_turns: null
+      max_parallel_calls: 1
+      max_tool_response_length: 256
+      tool_response_truncate_side: middle
+      interaction_config_path: null
+      completion_callback: null
+      use_inference_chat_template: false
+      tokenization_sanity_check_mode: strict
+      format: hermes
+    
+    calculate_log_probs: false
+    
+    # Agent配置
+    agent:
+      num_workers: 8
+      agent_loop_config_path: null
+      custom_async_server:
+        path: null
+        name: null
+    
+    update_weights_bucket_megabytes: 512
+    
+    # 追踪
+    trace:
+      backend: null
+      token2text: false
+  
+  # Reference模型配置
+  ref:
+    fsdp_config:
+      param_offload: false
+      wrap_policy:
+        min_num_params: 0
+    log_prob_micro_batch_size: null
+    log_prob_micro_batch_size_per_gpu: 2
+    log_prob_use_dynamic_bsz: false
+    log_prob_max_token_len_per_gpu: 16384
+    ulysses_sequence_parallel_size: 1
+    use_torch_compile: false
+
+  # Profiler配置
+  profiler:
+    _target_: verl.utils.profiler.ProfilerConfig
+    discrete: false
+    all_ranks: false
+    ranks: []
+
+# ---------------------------------------------------------------------
+# Critic配置 - 完整覆盖
+# ---------------------------------------------------------------------
+critic:
+  strategy: fsdp
+  
+  # 模型
+  model:
+    path: ${actor_rollout_ref.model.path}
+    enable_gradient_checkpointing: true
+    trust_remote_code: true
+    torch_dtype: bfloat16
+  
+  # 训练
+  ppo_micro_batch_size: null
+  ppo_micro_batch_size_per_gpu: 2
+  use_torch_compile: false
+  use_dynamic_bsz: false
+  ppo_max_token_len_per_gpu: 16384
+  ulysses_sequence_parallel_size: 1
+  
+  # 优化器
+  optim:
+    lr: 5e-7
+    lr_warmup_steps: -1
+    lr_warmup_steps_ratio: 0.0
+    min_lr_ratio: 0.0
+    num_cycles: 0.5
+    warmup_style: constant
+    total_training_steps: -1
+    weight_decay: 0.01
+  
+  # FSDP
+  fsdp_config:
+    wrap_policy:
+      min_num_params: 0
+    param_offload: false
+    optimizer_offload: false
+    fsdp_size: -1
+  
+  # 检查点
+  checkpoint:
+    save_contents: ["model", "extra"]
+    load_contents: ["model", "extra"]
+
+# ---------------------------------------------------------------------
+# 算法配置 - 完整覆盖
+# ---------------------------------------------------------------------
+algorithm:
+  _target_: verl.trainer.config.AlgoConfig
+  
+  gamma: 1.0
+  lam: 1.0
+  adv_estimator: grpo
+  norm_adv_by_std_in_grpo: true
+  use_kl_in_reward: false
+  kl_penalty: kl
+  
+  kl_ctrl:
+    _target_: verl.trainer.config.KLControlConfig
+    type: fixed
+    kl_coef: 0.001
+    horizon: 10000
+    target_kl: 0.1
+  
+  use_pf_ppo: false
+  pf_ppo:
+    _target_: verl.trainer.config.PFPPOConfig
+    reweight_method: pow
+    weight_pow: 2.0
+
+# ---------------------------------------------------------------------
+# 奖励模型配置 - 完整覆盖
+# ---------------------------------------------------------------------
+reward_model:
+  enable: false
+  model:
+    input_tokenizer: ${actor_rollout_ref.model.path}
+    path: null
+    external_lib: null
+    trust_remote_code: false
+    fsdp_config:
+      min_num_params: 0
+      param_offload: false
+  micro_batch_size_per_gpu: 16
+  max_length: null
+  reward_manager: prime
+
+# 自定义奖励函数
+custom_reward_function:
+  path: /nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py
+  name: compute_score
+
+# ---------------------------------------------------------------------
+# 训练器配置 - 完整覆盖
+# ---------------------------------------------------------------------
+trainer:
+  balance_batch: true
+  total_epochs: 3
+  total_training_steps: null
+  profile_steps: null
+  
+  controller_nsight_options:
+    trace: "cuda,nvtx,cublas,ucx"
+    cuda-memory-usage: "true"
+    cuda-graph-trace: "graph"
+  
+  worker_nsight_options:
+    trace: "cuda,nvtx,cublas,ucx"
+    cuda-memory-usage: "true"
+    cuda-graph-trace: "graph"
+    capture-range: "cudaProfilerApi"
+    capture-range-end: null
+    kill: none
+  
+  project_name: verl_qwen3_thinking
+  experiment_name: qwen3_8b_with_thinking
+  logger: ["console"]
+  log_val_generations: 0
+  rollout_data_dir: null
+  validation_data_dir: null
+  
+  nnodes: 1
+  n_gpus_per_node: 8
+  save_freq: 10
+  esi_redundant_time: 0
+  resume_mode: auto
+  resume_from_path: null
+  val_before_train: true
+  val_only: false
+  test_freq: 2
+  critic_warmup: 0
+  
+  default_hdfs_dir: null
+  del_local_ckpt_after_load: false
+  default_local_dir: /nas/ganluo/Flow_RL/rl_out/checkpoints
+  max_actor_ckpt_to_keep: null
+  max_critic_ckpt_to_keep: null
+  ray_wait_register_center_timeout: 300
+  device: cuda
+
+# ---------------------------------------------------------------------
+# Ray配置 - 完整覆盖
+# ---------------------------------------------------------------------
+ray_init:
+  num_cpus: null
+  timeline_json_file: null
