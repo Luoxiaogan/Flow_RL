@@ -40,9 +40,10 @@ services:
     enabled: true
     host: "0.0.0.0"
     port: 8899
-    timeout: 300            # 超时时间（秒）
-    max_concurrent_requests: 8     # 最大并发请求数（同时处理的请求数量限制）
-    request_queue_timeout: 600      # 请求排队超时时间(秒)，感觉应该设置成
+    timeout: 3600           # workflow执行超时：1小时（3600秒）
+    max_concurrent_requests: 10     # 最大并发请求数（同时处理的请求数量限制）
+    request_queue_timeout: 4200     # 请求排队超时时间：70分钟（4200秒）
+    client_http_timeout: 4800        # 客户端HTTP连接超时：80分钟（4800秒）
     debug: false
     workspace: "New_evaluation_and_RL/workspace"  # workflow执行日志保存目录 (相对于project_root)
   
