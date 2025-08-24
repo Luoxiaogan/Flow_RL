@@ -16,10 +16,9 @@ import yaml
 import csv
 from typing import List, Dict, Any, Optional
 from pathlib import Path
+import aiohttp
 from datetime import datetime
 import time
-import aiohttp
-import uuid
 print("-"*60)
 
 # 设置NO_PROXY来排除localhost（防止被系统代理拦截）
@@ -34,6 +33,215 @@ for proxy_var in ['http_proxy', 'https_proxy', 'all_proxy', 'HTTP_PROXY', 'HTTPS
 
 print(f"✓ 已设置 NO_PROXY='{os.environ.get('NO_PROXY', '')}' (InternBootcamp)")
 print("  InternBootcamp的localhost请求将绕过所有代理")
+
+# 导入MetaGPT原生Token追踪器
+try:
+    from metagpt_token_tracker import METAGPT_TOKEN_TRACKER, track_workflow_llm_instances
+    METAGPT_TRACKING_AVAILABLE = True
+    print("✅ MetaGPT Token追踪模块已加载")
+except ImportError:
+    METAGPT_TRACKING_AVAILABLE = False
+    print("⚠️ MetaGPT Token追踪模块不可用")
+    # 创建dummy对象避免错误
+    class DummyTracker:
+        def set_workflow_id(self, *args, **kwargs): pass
+        def collect_workflow_tokens(self, *args, **kwargs): return {}
+        def print_workflow_stats(self, *args, **kwargs): pass
+        def print_total_stats(self, *args, **kwargs): pass
+        def get_summary(self): return {'total_tokens': 0}
+    METAGPT_TOKEN_TRACKER = DummyTracker()
+    def track_workflow_llm_instances(*args, **kwargs): pass
+
+# 删除所有旧的Token追踪器代码，使用MetaGPT原生方法
+# 旧代码已经移除，现在完全依赖metagpt_token_tracker.py
+
+# 为了兼容性，创建GLOBAL_TOKEN_TRACKER别名
+if METAGPT_TRACKING_AVAILABLE:
+    GLOBAL_TOKEN_TRACKER = METAGPT_TOKEN_TRACKER
+else:
+    # 如果MetaGPT追踪不可用，使用DummyTracker
+    class DummyTokenTracker:
+    """Token使用追踪器 - 用于统计workflow执行的token消耗"""
+    
+    def __init__(self):
+        self.stats = {
+            'total_prompt_tokens': 0,
+            'total_completion_tokens': 0,
+            'total_tokens': 0,
+            'total_cost': 0.0,
+            'api_calls': [],
+            'by_workflow': {}  # 按workflow ID分组的统计
+        }
+        self.current_workflow_id = None
+    
+    def set_workflow_id(self, workflow_id: str):
+        """设置当前workflow ID"""
+        self.current_workflow_id = workflow_id
+        if workflow_id not in self.stats['by_workflow']:
+            self.stats['by_workflow'][workflow_id] = {
+                'prompt_tokens': 0,
+                'completion_tokens': 0,
+                'total_tokens': 0,
+                'api_calls': 0,
+                'start_time': datetime.now().isoformat()
+            }
+    
+    def record_api_call(self, request_data: Dict, response_data: Dict, usage: Optional[Dict] = None):
+        """记录一次API调用的token使用"""
+        call_record = {
+            'timestamp': datetime.now().isoformat(),
+            'workflow_id': self.current_workflow_id,
+            'model': request_data.get('model', 'unknown')
+        }
+        
+        # 解析usage信息
+        if not usage and 'usage' in response_data:
+            usage = response_data['usage']
+        
+        if usage and isinstance(usage, dict):
+            call_record['usage'] = usage
+            
+            # 更新总计 - 处理可能的None值和null值
+            prompt_tokens = usage.get('prompt_tokens', 0)
+            completion_tokens = usage.get('completion_tokens', 0) 
+            total_tokens = usage.get('total_tokens', 0)
+            
+            # 确保是数字，处理可能的None
+            prompt_tokens = prompt_tokens if prompt_tokens is not None else 0
+            completion_tokens = completion_tokens if completion_tokens is not None else 0
+            total_tokens = total_tokens if total_tokens is not None else 0
+            
+            # 如果total_tokens为0但有其他值，计算它
+            if total_tokens == 0 and (prompt_tokens > 0 or completion_tokens > 0):
+                total_tokens = prompt_tokens + completion_tokens
+            
+            self.stats['total_prompt_tokens'] += prompt_tokens
+            self.stats['total_completion_tokens'] += completion_tokens
+            self.stats['total_tokens'] += total_tokens
+            
+            # 更新workflow统计
+            if self.current_workflow_id and self.current_workflow_id in self.stats['by_workflow']:
+                wf_stats = self.stats['by_workflow'][self.current_workflow_id]
+                wf_stats['prompt_tokens'] += prompt_tokens
+                wf_stats['completion_tokens'] += completion_tokens
+                wf_stats['total_tokens'] += total_tokens
+                wf_stats['api_calls'] += 1
+            
+            # 打印实时统计 - 更醒目
+            print(f"\n💡 [实时Token统计] ✅ 成功记录:")
+            print(f"   📝 输入Token (Prompt): {prompt_tokens:,}")
+            print(f"   💬 输出Token (Completion): {completion_tokens:,}")
+            print(f"   🎯 总计Token: {total_tokens:,}")
+            print(f"   🏷️ Model: {request_data.get('model', 'unknown')}")
+            print(f"   📂 Workflow: {self.current_workflow_id if self.current_workflow_id else 'No workflow ID'}")
+            
+            # 累计统计
+            print(f"   📊 累计统计: 输入{self.stats['total_prompt_tokens']:,} + 输出{self.stats['total_completion_tokens']:,} = 总计{self.stats['total_tokens']:,}")
+        else:
+            print(f"\n⚠️ [Token统计] 无法记录 - usage数据无效或为空")
+        
+        self.stats['api_calls'].append(call_record)
+    
+    def get_workflow_stats(self, workflow_id: str) -> Dict:
+        """获取特定workflow的统计"""
+        return self.stats['by_workflow'].get(workflow_id, {})
+    
+    def get_summary(self) -> Dict:
+        """获取统计摘要"""
+        return {
+            'total_api_calls': len(self.stats['api_calls']),
+            'total_prompt_tokens': self.stats['total_prompt_tokens'],
+            'total_completion_tokens': self.stats['total_completion_tokens'], 
+            'total_tokens': self.stats['total_tokens'],
+            'workflows_processed': len(self.stats['by_workflow'])
+        }
+
+# 全局Token追踪器实例
+GLOBAL_TOKEN_TRACKER = TokenTracker()
+
+# 原始aiohttp._request方法保存
+_original_aiohttp_request = None
+
+def patch_aiohttp_for_token_tracking():
+    """Patch aiohttp.ClientSession来拦截所有HTTP请求并统计token"""
+    global _original_aiohttp_request
+    
+    if _original_aiohttp_request is not None:
+        return  # 已经打过补丁
+    
+    _original_aiohttp_request = aiohttp.ClientSession._request
+    
+    async def tracked_request(self, method, url, **kwargs):
+        """包装的请求方法，用于追踪token使用"""
+        global GLOBAL_TOKEN_TRACKER
+        
+        # 检查是否是LLM API调用 - 更精确的匹配
+        is_llm_call = any(keyword in str(url) for keyword in [
+            'chat/completions', 'completions', 'localhost:5009', 'localhost:5010', 
+            'localhost:8900', 'openai', '/api/'
+        ])
+        
+        request_data = {}
+        if is_llm_call and method.upper() == 'POST':
+            # 记录请求体
+            if 'json' in kwargs:
+                request_data = kwargs['json']
+                # 调试日志
+                if request_data.get('model'):
+                    print(f"\n🔍 [HTTP拦截] 检测到API请求: {url}")
+                    print(f"   Model: {request_data.get('model')}")
+        
+        # 执行原始请求
+        response = await _original_aiohttp_request(self, method, url, **kwargs)
+        
+        # 如果是LLM调用，解析响应获取token信息
+        if is_llm_call and method.upper() == 'POST':
+            try:
+                # 保存原始响应内容
+                response_text = await response.text()
+                response_data = json.loads(response_text)
+                
+                # 检查并记录token使用
+                if 'usage' in response_data:
+                    usage = response_data['usage']
+                    # 验证usage字段的完整性
+                    if usage and isinstance(usage, dict):
+                        # 提取token数据，处理可能的None值
+                        prompt_tokens = usage.get('prompt_tokens', 0) or 0
+                        completion_tokens = usage.get('completion_tokens', 0) or 0
+                        total_tokens = usage.get('total_tokens', 0) or 0
+                        
+                        # 如果有有效的token数据，记录它
+                        if total_tokens > 0 or (prompt_tokens > 0 or completion_tokens > 0):
+                            print(f"✅ [HTTP拦截] 捕获到Token数据:")
+                            print(f"   Prompt: {prompt_tokens}, Completion: {completion_tokens}, Total: {total_tokens}")
+                            GLOBAL_TOKEN_TRACKER.record_api_call(request_data, response_data)
+                        else:
+                            print(f"⚠️ [HTTP拦截] usage字段存在但token值为0")
+                else:
+                    # 只在有choices的情况下警告（说明是有效的LLM响应）
+                    if 'choices' in response_data:
+                        print(f"⚠️ [HTTP拦截] LLM响应中没有usage字段")
+                
+                # 重新构造响应（因为已经读取了内容）
+                response._body = response_text.encode('utf-8')
+                
+            except json.JSONDecodeError:
+                print(f"⚠️ [HTTP拦截] 响应不是JSON格式")
+            except Exception as e:
+                print(f"⚠️ [HTTP拦截] 解析响应时出错: {e}")
+        
+        return response
+    
+    # 应用patch
+    aiohttp.ClientSession._request = tracked_request
+    print(f"\n{'🚀'*20}")
+    print(f"✅ Token追踪功能已启用！")
+    print(f"   - HTTP请求拦截器已安装")
+    print(f"   - 将监听所有发往 localhost:5009/5010 的API调用")
+    print(f"   - 如果没有Token统计，请检查API响应格式")
+    print(f"{'🚀'*20}\n")
+
 # 加载配置文件
 CURRENT_DIR = Path(__file__).parent
 PROJECT_ROOT = CURRENT_DIR.parent
@@ -70,7 +278,6 @@ PROCESSED_DATASET_PATH = project_root_path / processed_dataset
 
 # metagpt_config - 相对路径拼接
 metagpt_config = paths_config.get('metagpt_config', 'metagpt_root/config/config2.yaml')
-print(metagpt_config)
 METAGPT_CONFIG_PATH = project_root_path / metagpt_config
 
 # 从服务配置获取workspace路径
@@ -96,7 +303,7 @@ sys.path.append(str(SHARED_METAGPT_ROOT))
 # 设置METAGPT_PROJECT_ROOT环境变量（强制使用共享目录）
 os.environ["METAGPT_PROJECT_ROOT"] = str(SHARED_METAGPT_ROOT)
 METAGPT_PROJECT_ROOT = SHARED_METAGPT_ROOT
-print("METAROOT:",METAGPT_PROJECT_ROOT)
+
 # 添加MetaGPT本地路径（从config.yaml中配置的路径推导）
 if METAGPT_CONFIG_PATH.exists():
     METAGPT_LOCAL = METAGPT_CONFIG_PATH.parent / "metagpt_local" / "metagpt_local"
@@ -135,158 +342,6 @@ debug_data = {
     "llm_calls": [],
     "errors": []
 }
-
-# MetaGPT原生Token追踪实现
-from metagpt.context import Context
-from metagpt.utils.cost_manager import CostManager, Costs
-
-class MetaGPTNativeTokenTracker:
-    """使用MetaGPT原生功能的Token追踪器"""
-    
-    def __init__(self):
-        self.workflow_contexts = {}  # workflow_id -> Context
-        self.workflow_stats = {}     # workflow_id -> stats (for compatibility)
-        self.total_stats = {
-            'total_workflows': 0,
-            'total_prompt_tokens': 0,
-            'total_completion_tokens': 0,
-            'total_cost': 0.0,
-            'workflows': []
-        }
-        print(f"✅ MetaGPT原生Token追踪器已初始化")
-        print(f"📊 使用MetaGPT内置CostManager统计Token")
-    
-    def create_workflow_context(self, workflow_id: str) -> Context:
-        """为workflow创建独立的Context和CostManager"""
-        # 创建新的Context
-        context = Context()
-        
-        # 创建独立的CostManager
-        cost_manager = CostManager()
-        cost_manager.max_budget = 100.0  # 设置预算上限
-        
-        # 关联到context
-        context.cost_manager = cost_manager
-        
-        # 保存到字典
-        self.workflow_contexts[workflow_id] = context
-        
-        print(f"✅ 创建Workflow {workflow_id} 的MetaGPT Context")
-        return context
-    
-    def get_workflow_context(self, workflow_id: str) -> Optional[Context]:
-        """获取workflow的context"""
-        return self.workflow_contexts.get(workflow_id)
-    
-    def get_workflow_stats(self, workflow_id: str) -> dict:
-        """获取workflow统计（从Context的CostManager获取）"""
-        context = self.workflow_contexts.get(workflow_id)
-        if not context:
-            return {}
-        
-        # 获取costs信息
-        costs = context.cost_manager.get_costs()
-        
-        return {
-            'workflow_id': workflow_id,
-            'prompt_tokens': costs.total_prompt_tokens,
-            'completion_tokens': costs.total_completion_tokens,
-            'total_tokens': costs.total_prompt_tokens + costs.total_completion_tokens,
-            'total_cost': costs.total_cost,
-            'api_calls': 1 if costs.total_prompt_tokens > 0 else 0  # 简化计数
-        }
-    
-    def print_workflow_stats(self, workflow_id: str):
-        """醒目打印workflow的token统计"""
-        stats = self.get_workflow_stats(workflow_id)
-        
-        print(f"\n{'🔥'*30}")
-        print(f"{'='*80}")
-        if stats and stats.get('total_tokens', 0) > 0:
-            print(f"🎯 ✅ TOKEN统计成功 - Workflow: {workflow_id}")
-            print(f"{'='*80}")
-            print(f"  📝 输入Token (Prompt):     {stats['prompt_tokens']:,}")
-            print(f"  💬 输出Token (Completion): {stats['completion_tokens']:,}")
-            print(f"  📊 总计Token:              {stats['total_tokens']:,}  ⭐️⭐️⭐️")
-            print(f"  💰 估算成本:               ${stats['total_cost']:.6f}")
-            print(f"{'='*80}")
-            print(f"  ✨ 使用MetaGPT原生CostManager统计")
-        else:
-            print(f"❌ ⚠️ TOKEN统计失败 - 没有捕获到Token信息！")
-            print(f"{'='*80}")
-            print(f"  可能的原因:")
-            print(f"  1. LLMConfig未设置calc_usage=True")
-            print(f"  2. API响应中没有usage字段")
-            print(f"  3. CostManager未正确关联")
-        print(f"{'='*80}")
-        print(f"{'🔥'*30}\n")
-    
-    def update_total_stats(self, workflow_id: str):
-        """更新总体统计信息"""
-        stats = self.get_workflow_stats(workflow_id)
-        if stats and stats.get('total_tokens', 0) > 0:
-            self.total_stats['total_workflows'] += 1
-            self.total_stats['total_prompt_tokens'] += stats['prompt_tokens']
-            self.total_stats['total_completion_tokens'] += stats['completion_tokens']
-            self.total_stats['total_cost'] += stats['total_cost']
-            self.total_stats['workflows'].append(stats)
-    
-    def print_total_stats(self):
-        """打印总体统计"""
-        print(f"\n{'⭐'*40}")
-        print(f"{'='*100}")
-        
-        if self.total_stats['total_workflows'] > 0:
-            print(f"🏆 ✅ 总体TOKEN统计汇总 (MetaGPT Native)")
-            print(f"{'='*100}")
-            print(f"  📊 处理的Workflows数:         {self.total_stats['total_workflows']}")
-            print(f"  📝 总输入Token (Prompt):      {self.total_stats['total_prompt_tokens']:,}")
-            print(f"  💬 总输出Token (Completion):  {self.total_stats['total_completion_tokens']:,}")
-            print(f"  🎯 总计Token:                 {(self.total_stats['total_prompt_tokens'] + self.total_stats['total_completion_tokens']):,}  🔥🔥🔥")
-            print(f"  💰 总估算成本:                ${self.total_stats['total_cost']:.6f}")
-            
-            # 计算平均值
-            avg_tokens = (self.total_stats['total_prompt_tokens'] + 
-                         self.total_stats['total_completion_tokens']) / self.total_stats['total_workflows']
-            print(f"  📈 平均每个Workflow:          {avg_tokens:.0f} tokens")
-        else:
-            print(f"❌ ⚠️ 总体TOKEN统计失败 - 没有任何Token数据！")
-            print(f"{'='*100}")
-            print(f"  🚨 请检查MetaGPT配置")
-        print(f"{'='*100}")
-        print(f"  ✨ Powered by MetaGPT CostManager")
-        print(f"{'='*100}")
-        print(f"{'⭐'*40}\n")
-    
-    # 兼容旧接口
-    def init_workflow(self, workflow_id: str):
-        """兼容旧接口 - 创建workflow context"""
-        return self.create_workflow_context(workflow_id)
-    
-    def set_workflow_id(self, workflow_id: str):
-        """兼容旧接口 - 设置当前workflow ID"""
-        self.create_workflow_context(workflow_id)
-        self.current_workflow_id = workflow_id
-    
-    def get_summary(self) -> dict:
-        """获取统计摘要（兼容旧接口）"""
-        return {
-            'total_prompt_tokens': self.total_stats['total_prompt_tokens'],
-            'total_completion_tokens': self.total_stats['total_completion_tokens'],
-            'total_tokens': self.total_stats['total_prompt_tokens'] + self.total_stats['total_completion_tokens'],
-            'total_api_calls': self.total_stats['total_workflows'],
-            'workflows_processed': self.total_stats['total_workflows']
-        }
-
-# 创建全局Token追踪器（使用MetaGPT原生方法）
-GLOBAL_TOKEN_TRACKER = MetaGPTNativeTokenTracker()
-
-print(f"\n{'🚀'*20}")
-print(f"✅ MetaGPT原生Token追踪功能已启用")
-print(f"   - 使用Context和CostManager进行统计")
-print(f"   - 每个workflow独立追踪")
-print(f"   - 自动计算成本")
-print(f"{'🚀'*20}\n")
 
 def save_debug_data():
     """保存debug数据到文件"""
@@ -610,6 +665,9 @@ class InternBootcampRewardCalculator:
         # 记录初始化开始
         debug_log("init", {"event": "initialization_start"})
         
+        # 启用Token追踪
+        patch_aiohttp_for_token_tracking()
+        
         # 统一从config.yaml加载配置
         config_file = Path(config_path) if config_path else CONFIG_FILE
         
@@ -756,9 +814,9 @@ class InternBootcampRewardCalculator:
             random_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
             workflow_id = f"reward_{task_name}_{timestamp}_{random_id}"
             
-            # 创建workflow的独立Context和CostManager
+            # 设置Token追踪的workflow ID
             global GLOBAL_TOKEN_TRACKER
-            workflow_context = GLOBAL_TOKEN_TRACKER.create_workflow_context(workflow_id)
+            GLOBAL_TOKEN_TRACKER.set_workflow_id(workflow_id)
             
             # 2. 保存工作流文件（用于调试）
             workflow_file = workspace_dir / f"{workflow_id}.py"
@@ -807,38 +865,10 @@ class InternBootcampRewardCalculator:
             # 加载operator模块（使用common operators）
             operator_module = importlib.import_module("ScoreFlow.scripts.common.operator")
             
-            # 先准备LLM配置（移到前面，因为后续需要使用）
-            provider = self.llm_config.get('provider', 'openai')
-            api_type_map = {
-                'openai': 'OPENAI', 'azure': 'AZURE', 'gemini': 'GEMINI',
-                'claude': 'CLAUDE', 'moonshot': 'MOONSHOT',
-                'zhipuai': 'ZHIPUAI', 'qianfan': 'QIANFAN',
-            }
-            
-            # 转换为MetaGPT的LLMConfig
-            from metagpt.provider.llm_provider_registry import LLMType
-            
-            # 获取LLMType枚举
-            llm_type_str = api_type_map.get(provider.lower(), 'OPENAI')
-            llm_type = getattr(LLMType, llm_type_str)
-            
-            metagpt_config = LLMConfig(
-                api_type=llm_type,
-                model=self.llm_config.get('model'),
-                api_key=self.llm_config.get('api_key'),
-                base_url=self.llm_config.get('base_url'),
-                calc_usage=True  # 重要：启用token计算
-            )
-            
-            # 创建LLM实例并关联cost_manager
-            llm_instance = create_llm_instance(metagpt_config)
-            if workflow_context and hasattr(llm_instance, 'cost_manager'):
-                llm_instance.cost_manager = workflow_context.cost_manager
-            
             # 准备全局命名空间
             exec_globals = {
                 'asyncio': aio,
-                'create': lambda config: llm_instance,  # 使用已配置好的llm实例
+                'create': create_llm_instance,
                 'operator': operator_module,
                 'Literal': getattr(__import__('typing'), 'Literal'),
                 'List': ListType,
@@ -875,7 +905,29 @@ class InternBootcampRewardCalculator:
             if not WorkflowClass:
                 raise ValueError(f"No 'Workflow' class found in the executed script for {workflow_id}")
             
-            # 6. 格式化问题文本（使用bootcamp的prompt_func）
+            # 6. 准备LLM配置
+            provider = self.llm_config.get('provider', 'openai')
+            api_type_map = {
+                'openai': 'OPENAI', 'azure': 'AZURE', 'gemini': 'GEMINI',
+                'claude': 'CLAUDE', 'moonshot': 'MOONSHOT',
+                'zhipuai': 'ZHIPUAI', 'qianfan': 'QIANFAN',
+            }
+            
+            # 转换为MetaGPT的LLMConfig
+            from metagpt.provider.llm_provider_registry import LLMType
+            
+            # 获取LLMType枚举
+            llm_type_str = api_type_map.get(provider.lower(), 'OPENAI')
+            llm_type = getattr(LLMType, llm_type_str)
+            
+            metagpt_config = LLMConfig(
+                api_type=llm_type,
+                model=self.llm_config.get('model'),
+                api_key=self.llm_config.get('api_key'),
+                base_url=self.llm_config.get('base_url')
+            )
+            
+            # 7. 格式化问题文本（使用bootcamp的prompt_func）
             bootcamp_class = self._load_bootcamp_class(task_name)
             if bootcamp_class and hasattr(bootcamp_class, 'prompt_func'):
                 problem_text = bootcamp_class.prompt_func(test_case_data)
@@ -884,12 +936,8 @@ class InternBootcampRewardCalculator:
             
             logger.debug(f"Problem text for {workflow_id}: {problem_text[:200]}...")
             
-            # 7. 实例化并执行工作流
+            # 8. 实例化并执行工作流
             workflow_instance = WorkflowClass(config=metagpt_config, problem=problem_text)
-            
-            # 确保workflow使用的llm关联了cost_manager
-            if hasattr(workflow_instance, 'llm') and workflow_instance.llm:
-                workflow_instance.llm.cost_manager = workflow_context.cost_manager
             
             debug_log("workflow", {
                 "event": "workflow_instance_created",
@@ -897,7 +945,7 @@ class InternBootcampRewardCalculator:
                 "class_type": str(type(workflow_instance))
             })
             
-            # 8. 根据call_signature执行（处理超时参数）
+            # 9. 根据call_signature执行（处理超时参数）
             if "timeout=" in script_parts["call_signature"]:
                 # 新版格式，传入timeout参数
                 timeout_match = re.search(r'timeout=(\d+)', script_parts["call_signature"])
@@ -927,11 +975,31 @@ class InternBootcampRewardCalculator:
                 "execution_time": time.time() - exec_start
             })
             
-            # 获取并输出token统计 - 使用MetaGPT原生方法
-            GLOBAL_TOKEN_TRACKER.print_workflow_stats(workflow_id)
-            
-            # 更新总体统计
-            GLOBAL_TOKEN_TRACKER.update_total_stats(workflow_id)
+            # 获取并输出token统计 - 更醒目的格式
+            workflow_stats = GLOBAL_TOKEN_TRACKER.get_workflow_stats(workflow_id)
+            print(f"\n{'🔥'*30}")
+            print(f"{'='*80}")
+            if workflow_stats and workflow_stats.get('total_tokens', 0) > 0:
+                print(f"🎯 ✅ TOKEN统计成功 - Workflow: {workflow_id}")
+                print(f"{'='*80}")
+                print(f"  📝 Prompt Tokens:     {workflow_stats.get('prompt_tokens', 0):,}")
+                print(f"  💬 Completion Tokens: {workflow_stats.get('completion_tokens', 0):,}")
+                print(f"  📊 Total Tokens:      {workflow_stats.get('total_tokens', 0):,}  ⭐️⭐️⭐️")
+                print(f"  🔄 API调用次数:       {workflow_stats.get('api_calls', 0)}")
+                # 计算单个workflow的成本
+                workflow_cost = (workflow_stats.get('prompt_tokens', 0) * 0.0008 + 
+                               workflow_stats.get('completion_tokens', 0) * 0.002) / 1000
+                print(f"  💰 估算成本:          ${workflow_cost:.6f}")
+            else:
+                print(f"❌ ⚠️ TOKEN统计失败 - 没有捕获到Token信息！")
+                print(f"{'='*80}")
+                print(f"  可能的原因:")
+                print(f"  1. API响应中没有 'usage' 字段")
+                print(f"  2. HTTP拦截器未生效")
+                print(f"  3. API服务未正确返回OpenAI格式响应")
+                print(f"  4. 请检查 localhost:5009/5010 的API代理配置")
+            print(f"{'='*80}")
+            print(f"{'🔥'*30}\n")
             
             logger.info(f"MetaGPT workflow {workflow_id} executed successfully")
             return str(execution_result)
@@ -1287,8 +1355,37 @@ async def _compute_score_async(solution_str: str, ground_truth: str, extra_info:
             "num_test_cases": len(test_cases)
         }, compute_start)
         
-        # 输出总体token统计 - 使用MetaGPT原生方法
-        GLOBAL_TOKEN_TRACKER.print_total_stats()
+        # 输出总体token统计 - 超级醒目版本
+        total_summary = GLOBAL_TOKEN_TRACKER.get_summary()
+        print(f"\n{'⭐'*40}")
+        print(f"{'='*100}")
+        if total_summary['total_tokens'] > 0:
+            print(f"🏆 ✅ 总体TOKEN统计汇总 - 所有Workflows")
+            print(f"{'='*100}")
+            print(f"  📝 总Prompt Tokens:      {total_summary['total_prompt_tokens']:,}")
+            print(f"  💬 总Completion Tokens:  {total_summary['total_completion_tokens']:,}")
+            print(f"  🎯 总Tokens:             {total_summary['total_tokens']:,}  🔥🔥🔥")
+            print(f"  🔄 总API调用次数:        {total_summary['total_api_calls']}")
+            print(f"  📊 处理的Workflows数:    {total_summary['workflows_processed']}")
+            
+            # 计算平均值和总成本
+            if total_summary['workflows_processed'] > 0:
+                avg_per_workflow = total_summary['total_tokens'] / total_summary['workflows_processed']
+                print(f"  📈 平均每个Workflow:     {avg_per_workflow:.0f} tokens")
+            
+            total_cost = (total_summary['total_prompt_tokens'] * 0.0008 + 
+                         total_summary['total_completion_tokens'] * 0.002) / 1000
+            print(f"  💰 总估算成本:           ${total_cost:.6f}")
+        else:
+            print(f"❌ ⚠️ 总体TOKEN统计失败 - 没有任何Token数据！")
+            print(f"{'='*100}")
+            print(f"  🚨 严重问题：整个测试过程中没有捕获到任何Token信息")
+            print(f"  请立即检查:")
+            print(f"  1. API代理服务 (localhost:5009/5010) 是否正常运行")
+            print(f"  2. API响应格式是否包含 'usage' 字段")
+            print(f"  3. 运行 debug_token_tracking.py 进行诊断")
+        print(f"{'='*100}")
+        print(f"{'⭐'*40}\n")
         
         # 保存debug数据
         save_debug_data()

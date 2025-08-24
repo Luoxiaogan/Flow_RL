@@ -35,7 +35,7 @@ else:
 sys.path.insert(0, str(CURRENT_DIR))
 
 # 导入internbootcamp_reward模块
-from internbootcamp_reward_utils import compute_score, get_calculator
+from internbootcamp_reward_utils import compute_score, get_calculator, GLOBAL_TOKEN_TRACKER
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -61,6 +61,38 @@ def health_check():
         'service': 'internbootcamp_reward_server',
         'version': '1.0.0'
     })
+
+@app.route('/token_stats', methods=['GET'])
+def get_token_stats():
+    """获取Token统计信息"""
+    try:
+        summary = GLOBAL_TOKEN_TRACKER.get_summary()
+        
+        # 计算额外的统计信息
+        response = {
+            'success': True,
+            'summary': summary,
+            'details': {
+                'by_workflow': GLOBAL_TOKEN_TRACKER.total_stats.get('workflows', []),
+                'estimated_cost_usd': (summary['total_prompt_tokens'] * 0.0008 + 
+                                     summary['total_completion_tokens'] * 0.002) / 1000
+            }
+        }
+        
+        # 如果有workflow数据，计算平均值
+        if summary['workflows_processed'] > 0:
+            response['details']['avg_tokens_per_workflow'] = summary['total_tokens'] / summary['workflows_processed']
+        
+        if summary['total_api_calls'] > 0:
+            response['details']['avg_tokens_per_call'] = summary['total_tokens'] / summary['total_api_calls']
+        
+        return jsonify(response)
+    except Exception as e:
+        logger.error(f"Error getting token stats: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 @app.route('/compute_score', methods=['POST'])
 def compute_score_endpoint():

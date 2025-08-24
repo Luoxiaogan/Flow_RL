@@ -15,6 +15,8 @@ import sys
 from datetime import datetime
 import csv
 
+# 注意：Token追踪在服务器端进行，客户端通过API获取统计
+
 # 简化的workflow模板
 SIMPLIFIED_WORKFLOW = """<code>
 class Workflow:
@@ -321,6 +323,8 @@ def print_summary(results: List[Dict[str, Any]]):
     print("测试结果总结")
     print("="*60)
     
+    # Token统计现在通过服务器API获取，在main()函数中处理
+    
     if not results:
         print("没有测试结果")
         return
@@ -426,6 +430,66 @@ def save_rewards_csv(results: List[Dict[str, Any]], csv_path: Path):
     print(f"Reward详情已保存到CSV: {csv_path}")
 
 
+async def fetch_and_print_token_stats(base_url: str):
+    """
+    从服务器获取并打印Token统计
+    
+    Args:
+        base_url: 服务器基础URL
+    """
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"{base_url}/token_stats") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if data.get('success') and data.get('summary', {}).get('total_tokens', 0) > 0:
+                        summary = data['summary']
+                        details = data.get('details', {})
+                        
+                        print(f"\n{'💎'*30}")
+                        print("="*80)
+                        print("🏆 服务器端Token使用统计 (从API获取)")
+                        print("="*80)
+                        print(f"  📝 总Prompt Tokens:      {summary['total_prompt_tokens']:,}")
+                        print(f"  💬 总Completion Tokens:  {summary['total_completion_tokens']:,}")
+                        print(f"  🎯 总Tokens:             {summary['total_tokens']:,}  🔥🔥🔥")
+                        print(f"  🔄 总API调用次数:        {summary['total_api_calls']}")
+                        print(f"  📊 处理的Workflows数:    {summary['workflows_processed']}")
+                        
+                        if 'avg_tokens_per_workflow' in details:
+                            print(f"  平均每个Workflow Tokens: {details['avg_tokens_per_workflow']:.0f}")
+                        
+                        if 'avg_tokens_per_call' in details:
+                            print(f"  平均每次API调用Tokens: {details['avg_tokens_per_call']:.0f}")
+                        
+                        if 'estimated_cost_usd' in details:
+                            print(f"  估算成本: ${details['estimated_cost_usd']:.4f}")
+                        
+                        print("="*80)
+                        print(f"{'💎'*30}\n")
+                        
+                        # 返回数据以便保存
+                        return data
+                    else:
+                        print(f"\n{'❌'*30}")
+                        print("="*80)
+                        print("⚠️ 服务器端没有Token统计数据！")
+                        print("="*80)
+                        print("  可能的原因:")
+                        print("  1. API代理未返回usage字段")
+                        print("  2. 所有workflow执行都失败了")
+                        print("  3. Token追踪器未正确初始化")
+                        print("="*80)
+                        print(f"{'❌'*30}\n")
+                        return None
+                else:
+                    print(f"\n⚠️ 无法获取Token统计: HTTP {response.status}")
+                    return None
+    except Exception as e:
+        print(f"\n⚠️ 获取Token统计失败: {e}")
+        return None
+
+
 async def main():
     parser = argparse.ArgumentParser(description='批量测试InternBootcamp Reward Server')
     parser.add_argument('--host', type=str, default='localhost',
@@ -473,6 +537,9 @@ async def main():
     # 打印总结
     print_summary(results)
     
+    # 从服务器获取token统计
+    await fetch_and_print_token_stats(base_url)
+    
     # 保存结果（如果指定）
     if results:
         if args.output:
@@ -484,6 +551,22 @@ async def main():
         if args.csv:
             csv_path = Path(args.csv)
             save_rewards_csv(results, csv_path)
+        
+        # 保存Token统计（从服务器获取）
+        if args.output or args.csv:
+            token_data = await fetch_and_print_token_stats(base_url)
+            if token_data and token_data.get('summary', {}).get('total_tokens', 0) > 0:
+                # 使用输出文件的目录
+                if args.output:
+                    output_dir = Path(args.output).parent
+                else:
+                    output_dir = Path(args.csv).parent
+                
+                # 保存到文件
+                token_stats_file = output_dir / f"token_stats_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+                with open(token_stats_file, 'w', encoding='utf-8') as f:
+                    json.dump(token_data, f, ensure_ascii=False, indent=2)
+                print(f"Token统计已保存到: {token_stats_file}")
     
     # 返回状态码
     all_success = all(r['success'] for r in results) if results else False
