@@ -213,8 +213,21 @@ TRAINING_PARAMS=$(python3 "$SCRIPT_DIR/generate_training_params.py" "$CONFIG_FIL
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}❌ 解析配置失败${NC}"
+    echo -e "${RED}错误信息：${NC}"
+    echo "$TRAINING_PARAMS"
     exit 1
 fi
+
+# 显示生成的参数
+echo -e "${GREEN}✅ 成功生成训练参数${NC}"
+echo -e "${CYAN}生成的参数列表：${NC}"
+echo "----------------------------------------"
+# 使用cat避免shell解释$符号
+echo "$TRAINING_PARAMS" | cat | while IFS= read -r line; do
+    echo "  $line"
+done
+echo "----------------------------------------"
+echo -e "${GREEN}共 $(echo "$TRAINING_PARAMS" | wc -l) 个参数${NC}"
 
 # 设置环境变量
 echo ""
@@ -362,23 +375,142 @@ echo ""
 # done
 
 # ---------- 构造命令 ----------
-IFS=$'\n' read -rd '' -a PARAMS <<< "$TRAINING_PARAMS"
+echo -e "${BLUE}📦 构建训练命令...${NC}"
 
+# 兼容macOS的方法：使用while循环读取参数到数组
+PARAMS=()
+while IFS= read -r line; do
+    if [[ -n "$line" ]]; then
+        PARAMS+=("$line")
+    fi
+done <<< "$TRAINING_PARAMS"
+
+# 验证数组不为空
+if [ ${#PARAMS[@]} -eq 0 ]; then
+    echo -e "${RED}❌ 错误: 无法读取参数到数组${NC}"
+    echo -e "${YELLOW}参数内容: $TRAINING_PARAMS${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ 成功读取 ${#PARAMS[@]} 个参数${NC}"
+
+# 构建基础命令
 CMD=(python "$VERL_MAIN_SCRIPT" --config-path=config --config-name=ppo_trainer.yaml)
+
+# 显示和构建命令
+echo -e "${CYAN}完整的训练命令：${NC}"
+echo "----------------------------------------"
+
+# 构建显示用的命令
+DISPLAY_CMD="python $VERL_MAIN_SCRIPT \\"$'\n'
+DISPLAY_CMD+="  --config-path=config \\"$'\n'
+DISPLAY_CMD+="  --config-name=ppo_trainer.yaml \\"$'\n'
+
+# 处理每个参数
 for raw in "${PARAMS[@]}"; do
+    if [[ -z "$raw" ]]; then
+        continue
+    fi
+    
     # 处理占位符：$$LIST$$参数$$LIST$$ -> '参数'
-    if [[ $raw == \$\$LIST\$\$* && $raw == *\$\$LIST\$\$ ]]; then
+    if [[ $raw == *"$$LIST$$"* ]]; then
         # 去掉前后的占位符标记
         param="${raw#\$\$LIST\$\$}"      # 去掉前缀
         param="${param%\$\$LIST\$\$}"    # 去掉后缀
-        CMD+=("$param")  # 添加处理后的参数
+        # 对于包含特殊字符的参数，需要加引号
+        CMD+=("'$param'")
+        DISPLAY_CMD+="  '$param' \\"$'\n'
     else
-        CMD+=("$raw")  # 普通参数直接添加
+        # 普通参数直接添加
+        CMD+=("$raw")
+        DISPLAY_CMD+="  $raw \\"$'\n'
     fi
 done
 
-printf "${GREEN}即将执行:${NC}\n"
-printf "%q " "${CMD[@]}" && echo
+# 显示命令
+echo "$DISPLAY_CMD"
+echo "----------------------------------------"
 
-# **去掉 exec，直接执行**
-"${CMD[@]}"
+# 保存命令到文件
+COMMAND_FILE="$SCRIPT_DIR/last_training_command.sh"
+echo -e "${BLUE}💾 保存命令到: $COMMAND_FILE${NC}"
+{
+    echo "#!/bin/bash"
+    echo "# VERL RL训练命令 - 生成时间: $(date '+%Y-%m-%d %H:%M:%S')"
+    echo ""
+    echo "# 设置环境变量"
+    echo "export USE_SGLANG=$USE_SGLANG"
+    echo "export NCCL_DEBUG=$NCCL_DEBUG"
+    echo "export CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-0,1,2,3,4,5,6,7}"
+    echo ""
+    echo "# 执行训练命令"
+    echo -n "python $VERL_MAIN_SCRIPT"
+    echo " \\"
+    echo "  --config-path=config \\"
+    echo "  --config-name=ppo_trainer.yaml \\"
+    for raw in "${PARAMS[@]}"; do
+        if [[ -z "$raw" ]]; then
+            continue
+        fi
+        if [[ $raw == \$\$LIST\$\$* && $raw == *\$\$LIST\$\$ ]]; then
+            param="${raw#\$\$LIST\$\$}"
+            param="${param%\$\$LIST\$\$}"
+            echo "  '$param' \\"
+        else
+            echo "  $raw \\"
+        fi
+    done
+    echo ""
+} > "$COMMAND_FILE"
+chmod +x "$COMMAND_FILE"
+
+echo -e "${GREEN}✅ 命令已保存，可以通过以下方式手动执行：${NC}"
+echo "  bash $COMMAND_FILE"
+echo ""
+
+# 显示即将执行的命令（简化版）
+echo -e "${YELLOW}🚀 即将执行训练命令${NC}"
+echo -e "${YELLOW}提示: 如果命令执行失败，请检查参数是否正确${NC}"
+echo ""
+
+# 执行命令
+echo -e "${GREEN}开始执行...${NC}"
+echo "=========================================="
+
+# 构建完整的命令字符串用于执行
+FULL_CMD="python $VERL_MAIN_SCRIPT --config-path=config --config-name=ppo_trainer.yaml"
+
+for raw in "${PARAMS[@]}"; do
+    if [[ -z "$raw" ]]; then
+        continue
+    fi
+    
+    if [[ $raw == \$\$LIST\$\$* && $raw == *\$\$LIST\$\$ ]]; then
+        # 去掉占位符
+        param="${raw#\$\$LIST\$\$}"
+        param="${param%\$\$LIST\$\$}"
+        # 添加参数（带引号）
+        FULL_CMD="$FULL_CMD '$param'"
+    else
+        # 普通参数
+        FULL_CMD="$FULL_CMD $raw"
+    fi
+done
+
+# 显示最终要执行的命令（简化版）
+echo ""
+echo -e "${CYAN}即将执行的命令：${NC}"
+echo "----------------------------------------"
+echo "$FULL_CMD"
+echo "----------------------------------------"
+echo ""
+
+# 确认执行
+echo -e "${GREEN}========================================${NC}"
+echo -e "${GREEN}    开始执行VERL训练${NC}"
+echo -e "${GREEN}========================================${NC}"
+echo ""
+
+# 执行命令 - 使用exec替换当前shell进程
+# 这确保所有输出都直接显示在终端
+exec bash -c "$FULL_CMD"

@@ -24,7 +24,11 @@
       "Bash(bash:*)",
       "Bash(curl:*)",
       "Bash(unset:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(echo $PYTHONPATH)",
+      "Bash(git log:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
