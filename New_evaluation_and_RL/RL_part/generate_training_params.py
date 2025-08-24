@@ -99,7 +99,7 @@ def generate_training_params(config_file):
     if 'top_k' in rollout_config:
         params.append(f'actor_rollout_ref.rollout.top_k={rollout_config["top_k"]}')
     if 'min_p' in rollout_config:
-        params.append(f'actor_rollout_ref.rollout.min_p={rollout_config["min_p"]}')
+        params.append(f'+actor_rollout_ref.rollout.min_p={rollout_config["min_p"]}')
     
     # Qwen3聊天模板和特性支持
     if 'custom_chat_template' in rollout_config:
