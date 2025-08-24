@@ -105,8 +105,81 @@ from typing import List as ListType
 from metagpt.provider.llm_provider_registry import create_llm_instance
 from metagpt.configs.llm_config import LLMConfig, LLMType
 
+# MetaGPT原生Token追踪实现
+from metagpt.context import Context
+from metagpt.utils.cost_manager import CostManager, Costs
+
 # 导入ScoreFlow组件
 from ScoreFlow.scripts.base_handler import BenchmarkHandler
+
+class MetaGPTNativeTokenTracker:
+    """使用MetaGPT原生功能的Token追踪器"""
+    
+    def __init__(self):
+        self.workflow_contexts = {}  # workflow_id -> Context
+        self.workflow_stats = {}     # workflow_id -> stats
+        self.total_stats = {
+            'total_workflows': 0,
+            'total_prompt_tokens': 0,
+            'total_completion_tokens': 0,
+            'total_cost': 0.0,
+            'workflows': []
+        }
+        print(f"✅ MetaGPT原生Token追踪器已初始化")
+    
+    def create_workflow_context(self, workflow_id: str) -> Context:
+        """为workflow创建独立的Context和CostManager"""
+        context = Context()
+        cost_manager = CostManager()
+        cost_manager.max_budget = 100.0
+        context.cost_manager = cost_manager
+        self.workflow_contexts[workflow_id] = context
+        return context
+    
+    def get_workflow_context(self, workflow_id: str) -> Optional[Context]:
+        """获取workflow的context"""
+        return self.workflow_contexts.get(workflow_id)
+    
+    def get_workflow_stats(self, workflow_id: str) -> dict:
+        """获取workflow统计（从Context的CostManager获取）"""
+        context = self.workflow_contexts.get(workflow_id)
+        if not context:
+            return {}
+        
+        costs = context.cost_manager.get_costs()
+        return {
+            'workflow_id': workflow_id,
+            'prompt_tokens': costs.total_prompt_tokens,
+            'completion_tokens': costs.total_completion_tokens,
+            'total_tokens': costs.total_prompt_tokens + costs.total_completion_tokens,
+            'total_cost': costs.total_cost,
+            'api_calls': 1 if costs.total_prompt_tokens > 0 else 0
+        }
+    
+    def print_workflow_stats(self, workflow_id: str):
+        """打印workflow的token统计"""
+        stats = self.get_workflow_stats(workflow_id)
+        
+        if stats and stats.get('total_tokens', 0) > 0:
+            print(f"\n{'='*60}")
+            print(f"📊 Token统计 - Workflow: {workflow_id}")
+            print(f"  输入Token: {stats['prompt_tokens']:,}")
+            print(f"  输出Token: {stats['completion_tokens']:,}")
+            print(f"  总计Token: {stats['total_tokens']:,}")
+            print(f"{'='*60}\n")
+    
+    def update_total_stats(self, workflow_id: str):
+        """更新总体统计信息"""
+        stats = self.get_workflow_stats(workflow_id)
+        if stats and stats.get('total_tokens', 0) > 0:
+            self.total_stats['total_workflows'] += 1
+            self.total_stats['total_prompt_tokens'] += stats['prompt_tokens']
+            self.total_stats['total_completion_tokens'] += stats['completion_tokens']
+            self.total_stats['total_cost'] += stats['total_cost']
+            self.total_stats['workflows'].append(stats)
+
+# 创建全局Token追踪器
+GLOBAL_TOKEN_TRACKER = MetaGPTNativeTokenTracker()
 
 # DEBUG模式控制
 DEBUG = 1  # 改为1启用debug模式
@@ -979,6 +1052,10 @@ class ScoreFlowRewardCalculator:
             }
             print("\n🚀 reward_config:\n", self.reward_config)
             
+            # 加载token惩罚配置
+            self.token_penalty_config = scoreflow_config.get('token_penalty', {})
+            print("\n🚀 token_penalty_config:\n", self.token_penalty_config)
+            
             # 读取workspace配置
             self.workspace_path = Path(scoreflow_config.get('workspace', 
                 str(PROJECT_ROOT / "workspace")))
@@ -999,12 +1076,16 @@ class ScoreFlowRewardCalculator:
                 'test_cases_per_task': 3,
                 'max_concurrent': 5
             }
+            self.token_penalty_config = {}  # 默认禁用token惩罚
             self.workspace_path = PROJECT_ROOT / "workspace"
         
         # 设置超时和并发限制
         self.timeout = self.reward_config.get('timeout', 180)
         self.client_http_timeout = self.reward_config.get('client_http_timeout', 600)  # HTTP客户端超时
         self.max_concurrent = self.reward_config.get('max_concurrent', 5)
+        
+        # 创建token追踪器
+        self.token_tracker = MetaGPTNativeTokenTracker()
         
         # handler缓存
         self._handler_cache = {}
@@ -1189,9 +1270,77 @@ class ScoreFlowRewardCalculator:
             logger.error(f"Failed to load handler for {benchmark_name}: {e}")
             return None
     
+    def calculate_token_cost_penalty(self, base_score: float, token_stats: dict) -> tuple:
+        """
+        基于token使用费用计算惩罚后的分数
+        
+        Args:
+            base_score: 原始分数（准确率）
+            token_stats: token统计信息字典
+        
+        Returns:
+            (final_score, penalty_details) 元组
+        """
+        if not self.token_penalty_config.get('enabled', False):
+            return base_score, {}
+        
+        # 获取token数量
+        input_tokens = token_stats.get('prompt_tokens', 0)
+        output_tokens = token_stats.get('completion_tokens', 0)
+        
+        # 获取价格配置
+        pricing = self.token_penalty_config.get('pricing', {})
+        input_price = pricing.get('input_price_per_million', 0.5)
+        output_price = pricing.get('output_price_per_million', 1.5)
+        
+        # 计算费用（美元）
+        input_cost = (input_tokens / 1_000_000) * input_price
+        output_cost = (output_tokens / 1_000_000) * output_price
+        total_cost = input_cost + output_cost
+        
+        # 获取惩罚策略
+        strategy = self.token_penalty_config.get('penalty_strategy', {})
+        mode = strategy.get('mode', 'linear')
+        penalty_rate = strategy.get('penalty_rate', 0.1)
+        max_penalty = strategy.get('max_penalty', 0.3)
+        
+        # 根据模式计算惩罚值
+        if mode == 'linear':
+            penalty = total_cost * penalty_rate
+        elif mode == 'square':
+            penalty = (total_cost ** 2) * penalty_rate
+        elif mode == 'exponential':
+            import math
+            penalty = (math.exp(total_cost) - 1) * penalty_rate
+        else:
+            penalty = 0.0
+        
+        # 应用最大惩罚限制
+        penalty = min(penalty, max_penalty)
+        
+        # 计算最终分数
+        final_score = max(0.0, base_score * (1 - penalty))
+        
+        # 构建详细信息
+        penalty_details = {
+            'input_tokens': input_tokens,
+            'output_tokens': output_tokens,
+            'total_tokens': input_tokens + output_tokens,
+            'input_cost': input_cost,
+            'output_cost': output_cost,
+            'total_cost': total_cost,
+            'penalty_mode': mode,
+            'penalty_rate': penalty_rate,
+            'penalty_value': penalty,
+            'base_score': base_score,
+            'final_score': final_score
+        }
+        
+        return final_score, penalty_details
+    
     async def execute_workflow_metagpt(self, workflow_code: str, benchmark_name: str, 
                                        test_case_index: int, dataset_path: str, 
-                                       workflow_dir: Path = None) -> str:
+                                       workflow_dir: Path = None) -> tuple:
         """
         使用MetaGPT框架执行工作流
         完全复用workflow_executor.py的执行逻辑
@@ -1210,6 +1359,9 @@ class ScoreFlowRewardCalculator:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             random_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
             workflow_id = f"exec_{benchmark_name}_{test_case_index}_{timestamp}_{random_id}"
+            
+            # 创建workflow的独立Context和CostManager用于token追踪
+            workflow_context = self.token_tracker.create_workflow_context(workflow_id)
             
             # 获取Handler并构建脚本
             handler = self._load_benchmark_handler(benchmark_name, dataset_path)
@@ -1330,6 +1482,10 @@ class ScoreFlowRewardCalculator:
             # 8. 实例化并执行工作流
             workflow_instance = WorkflowClass(config=metagpt_config, problem=problem_text)
             
+            # 关联cost_manager用于token追踪
+            if hasattr(workflow_instance, 'llm') and workflow_instance.llm:
+                workflow_instance.llm.cost_manager = workflow_context.cost_manager
+            
             debug_log("workflow", {
                 "event": "workflow_instance_created",
                 "workflow_id": workflow_id,
@@ -1366,8 +1522,13 @@ class ScoreFlowRewardCalculator:
                 "execution_time": time.time() - exec_start
             })
             
+            # 获取token统计
+            token_stats = self.token_tracker.get_workflow_stats(workflow_id)
+            self.token_tracker.print_workflow_stats(workflow_id)  # 打印统计
+            self.token_tracker.update_total_stats(workflow_id)  # 更新总体统计
+            
             logger.info(f"MetaGPT workflow {workflow_id} executed successfully")
-            return str(execution_result)
+            return str(execution_result), token_stats
             
         except asyncio.TimeoutError:
             logger.error(f"MetaGPT workflow execution timed out for {benchmark_name}")
@@ -1378,7 +1539,9 @@ class ScoreFlowRewardCalculator:
                 "test_case_index": test_case_index,
                 "execution_time": time.time() - exec_start
             })
-            return "Error: Workflow execution timed out"
+            # 即使超时也尝试获取token统计
+            token_stats = self.token_tracker.get_workflow_stats(workflow_id) if 'workflow_id' in locals() else {}
+            return "Error: Workflow execution timed out", token_stats
             
         except Exception as e:
             error_msg = f"MetaGPT workflow execution failed for {benchmark_name}: {e}"
@@ -1397,7 +1560,9 @@ class ScoreFlowRewardCalculator:
                 "execution_time": time.time() - exec_start
             })
             
-            return f"Error: {str(e)}"
+            # 即使失败也尝试获取token统计
+            token_stats = self.token_tracker.get_workflow_stats(workflow_id) if 'workflow_id' in locals() else {}
+            return f"Error: {str(e)}", token_stats
     
     async def compute_score_for_testcase(self, workflow_code: str, benchmark_name: str, 
                                         test_case_index: int, dataset_path: str) -> float:
@@ -1455,7 +1620,8 @@ class ScoreFlowRewardCalculator:
             # 获取当前的workflow目录（如果在WorkflowExecutionManager上下文中）
             workflow_dir = getattr(self, '_current_workflow_dir', None)
             
-            result = await self.execute_workflow_metagpt(
+            # 执行workflow并获取结果和token统计
+            result, token_stats = await self.execute_workflow_metagpt(
                 workflow_code, benchmark_name, test_case_index, dataset_path, workflow_dir
             )
             
@@ -1463,7 +1629,8 @@ class ScoreFlowRewardCalculator:
                 "event": "workflow_executed_via_metagpt",
                 "execution_time": time.time() - exec_start,
                 "result_length": len(str(result)),
-                "result_preview": str(result)[:500] if len(str(result)) > 500 else str(result)
+                "result_preview": str(result)[:500] if len(str(result)) > 500 else str(result),
+                "token_stats": token_stats
             })
             
             logger.debug(f"MetaGPT workflow result: {str(result)[:100]}...")
@@ -1499,29 +1666,48 @@ class ScoreFlowRewardCalculator:
             print("="*80)
             print(f"😋😋😋😋😋: 真正的答案是:\n{verification_data}")
 
-            score = 1.0 if is_correct else 0.0
+            base_score = 1.0 if is_correct else 0.0
+            
+            # 应用token费用惩罚
+            final_score, penalty_details = self.calculate_token_cost_penalty(base_score, token_stats)
+            
+            # 打印惩罚详情
+            if penalty_details and self.token_penalty_config.get('enabled', False):
+                print(f"\n💰 Token费用惩罚计算:")
+                print(f"  输入Tokens: {penalty_details['input_tokens']:,}")
+                print(f"  输出Tokens: {penalty_details['output_tokens']:,}") 
+                print(f"  输入费用: ${penalty_details['input_cost']:.6f}")
+                print(f"  输出费用: ${penalty_details['output_cost']:.6f}")
+                print(f"  总费用: ${penalty_details['total_cost']:.6f}")
+                print(f"  基础分数: {penalty_details['base_score']:.3f}")
+                print(f"  惩罚值: {penalty_details['penalty_value']:.3f}")
+                print(f"  最终分数: {penalty_details['final_score']:.3f}\n")
             
             debug_log("task", {
                 "event": "score_verified",
-                "score": score,
+                "base_score": base_score,
+                "final_score": final_score,
                 "is_correct": is_correct,
+                "token_stats": token_stats,
+                "penalty_details": penalty_details,
                 "verification_time": time.time() - verify_start,
                 "benchmark_name": benchmark_name,
                 "execution_mode": "metagpt"
             })
             
-            logger.info(f"Benchmark {benchmark_name} test case {test_case_index} score: {score}")
+            logger.info(f"Benchmark {benchmark_name} test case {test_case_index} score: {final_score} (base: {base_score})")
             
             debug_log("task", {
                 "event": "testcase_completed",
                 "benchmark_name": benchmark_name,
                 "test_case_index": test_case_index,
-                "score": score,
+                "base_score": base_score,
+                "final_score": final_score,
                 "total_time": time.time() - testcase_start,
                 "execution_mode": "metagpt"
             })
             
-            return score
+            return final_score
             
         except Exception as e:
             logger.error(f"Error computing score for {benchmark_name} index {test_case_index}: {e}")

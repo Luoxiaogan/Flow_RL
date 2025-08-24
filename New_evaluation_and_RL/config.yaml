@@ -6,7 +6,8 @@
 # 项目根目录配置（本地和服务器切换只需修改这里）
 # 本地: /Users/luogan/Code/workflow_generation/Flow_RL
 # 服务器: /nas/ganluo/Flow_RL
-project_root: "/nas/ganluo/Flow_RL"
+# project_root: "/nas/ganluo/Flow_RL"
+project_root: "D:/temp/Flow_RL"
 
 api_metagpt:
   temperature: 0.9
@@ -46,6 +47,21 @@ services:
     client_http_timeout: 4800        # 客户端HTTP连接超时：80分钟（4800秒）
     debug: false
     workspace: "New_evaluation_and_RL/workspace"  # workflow执行日志保存目录 (相对于project_root)
+    
+    # Token费用惩罚配置
+    token_penalty:
+      enabled: true
+      
+      # API价格配置（每百万token的价格，美元）
+      pricing:
+        input_price_per_million: 0.5    # 输入token价格 $0.5/M (Qwen-turbo参考价)
+        output_price_per_million: 1.5   # 输出token价格 $1.5/M (Qwen-turbo参考价)
+      
+      # 惩罚策略
+      penalty_strategy:
+        mode: "linear"           # 惩罚模式: linear | square | exponential
+        penalty_rate: 0.1        # 每1美元费用扣0.1分（即10%）
+        max_penalty: 0.3         # 最大惩罚不超过30%原始分数
   
   internbootcamp_reward:
     enabled: true
@@ -54,6 +70,21 @@ services:
     timeout: 300            # 超时时间（秒）
     debug: true
     workspace: "New_evaluation_and_RL/workspace/internbootcamp"  # workflow执行日志保存目录 (相对于project_root)
+    
+    # Token费用惩罚配置（与scoreflow保持一致）
+    token_penalty:
+      enabled: true
+      
+      # API价格配置（每百万token的价格，美元）
+      pricing:
+        input_price_per_million: 0.5    # 输入token价格 $0.5/M (Qwen-turbo参考价)
+        output_price_per_million: 1.5   # 输出token价格 $1.5/M (Qwen-turbo参考价)
+      
+      # 惩罚策略
+      penalty_strategy:
+        mode: "linear"           # 惩罚模式: linear | square | exponential
+        penalty_rate: 0.1        # 每1美元费用扣0.1分（即10%）
+        max_penalty: 0.3         # 最大惩罚不超过30%原始分数
 
 # 模型配置 
 model:

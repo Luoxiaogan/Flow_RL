@@ -635,6 +635,9 @@ class InternBootcampRewardCalculator:
         # 获取InternBootcamp reward服务配置
         self.reward_config = yaml_config.get('services', {}).get('internbootcamp_reward', {})
         
+        # 加载token惩罚配置
+        self.token_penalty_config = self.reward_config.get('token_penalty', {})
+        
         # 设置超时和并发限制
         self.timeout = self.reward_config.get('timeout', 300)  # 默认5分钟
         self.max_concurrent = self.reward_config.get('max_concurrent', 5)
@@ -738,12 +741,81 @@ class InternBootcampRewardCalculator:
                 "traceback": traceback.format_exc()
             })
             return None
+    
+    def calculate_token_cost_penalty(self, base_score: float, token_stats: dict) -> tuple:
+        """
+        基于token使用费用计算惩罚后的分数
+        
+        Args:
+            base_score: 原始分数（准确率）
+            token_stats: token统计信息字典
+        
+        Returns:
+            (final_score, penalty_details) 元组
+        """
+        if not self.token_penalty_config.get('enabled', False):
+            return base_score, {}
+        
+        # 获取token数量
+        input_tokens = token_stats.get('prompt_tokens', 0)
+        output_tokens = token_stats.get('completion_tokens', 0)
+        
+        # 获取价格配置
+        pricing = self.token_penalty_config.get('pricing', {})
+        input_price = pricing.get('input_price_per_million', 0.5)
+        output_price = pricing.get('output_price_per_million', 1.5)
+        
+        # 计算费用（美元）
+        input_cost = (input_tokens / 1_000_000) * input_price
+        output_cost = (output_tokens / 1_000_000) * output_price
+        total_cost = input_cost + output_cost
+        
+        # 获取惩罚策略
+        strategy = self.token_penalty_config.get('penalty_strategy', {})
+        mode = strategy.get('mode', 'linear')
+        penalty_rate = strategy.get('penalty_rate', 0.1)
+        max_penalty = strategy.get('max_penalty', 0.3)
+        
+        # 根据模式计算惩罚值
+        if mode == 'linear':
+            penalty = total_cost * penalty_rate
+        elif mode == 'square':
+            penalty = (total_cost ** 2) * penalty_rate
+        elif mode == 'exponential':
+            import math
+            penalty = (math.exp(total_cost) - 1) * penalty_rate
+        else:
+            penalty = 0.0
+        
+        # 应用最大惩罚限制
+        penalty = min(penalty, max_penalty)
+        
+        # 计算最终分数
+        final_score = max(0.0, base_score * (1 - penalty))
+        
+        # 构建详细信息
+        penalty_details = {
+            'input_tokens': input_tokens,
+            'output_tokens': output_tokens,
+            'total_tokens': input_tokens + output_tokens,
+            'input_cost': input_cost,
+            'output_cost': output_cost,
+            'total_cost': total_cost,
+            'penalty_mode': mode,
+            'penalty_rate': penalty_rate,
+            'penalty_value': penalty,
+            'base_score': base_score,
+            'final_score': final_score
+        }
+        
+        return final_score, penalty_details
          
     async def execute_workflow_metagpt(self, workflow_code: str, task_name: str, 
-                                       test_case_data: Dict) -> str:
+                                       test_case_data: Dict) -> tuple:
         """
         使用MetaGPT框架执行工作流
         完全复用workflow_executor.py的执行逻辑
+        返回 (result, token_stats) 元组
         """
         exec_start = time.time()
         
@@ -927,14 +999,15 @@ class InternBootcampRewardCalculator:
                 "execution_time": time.time() - exec_start
             })
             
-            # 获取并输出token统计 - 使用MetaGPT原生方法
+            # 获取token统计 - 使用MetaGPT原生方法
+            token_stats = GLOBAL_TOKEN_TRACKER.get_workflow_stats(workflow_id)
             GLOBAL_TOKEN_TRACKER.print_workflow_stats(workflow_id)
             
             # 更新总体统计
             GLOBAL_TOKEN_TRACKER.update_total_stats(workflow_id)
             
             logger.info(f"MetaGPT workflow {workflow_id} executed successfully")
-            return str(execution_result)
+            return str(execution_result), token_stats
             
         except asyncio.TimeoutError:
             logger.error(f"MetaGPT workflow execution timed out for {task_name}")
@@ -944,7 +1017,9 @@ class InternBootcampRewardCalculator:
                 "task_name": task_name,
                 "execution_time": time.time() - exec_start
             })
-            return "Error: Workflow execution timed out"
+            # 即使超时也尝试获取token统计
+            token_stats = GLOBAL_TOKEN_TRACKER.get_workflow_stats(workflow_id) if 'workflow_id' in locals() else {}
+            return "Error: Workflow execution timed out", token_stats
             
         except Exception as e:
             error_msg = f"MetaGPT workflow execution failed for {task_name}: {e}"
@@ -962,7 +1037,9 @@ class InternBootcampRewardCalculator:
                 "execution_time": time.time() - exec_start
             })
             
-            return f"Error: {str(e)}"
+            # 即使失败也尝试获取token统计
+            token_stats = GLOBAL_TOKEN_TRACKER.get_workflow_stats(workflow_id) if 'workflow_id' in locals() else {}
+            return f"Error: {str(e)}", token_stats
     
     async def compute_score_for_testcase(self, workflow_code: str, task_name: str, 
                                         test_case: str) -> float:
@@ -1014,14 +1091,15 @@ class InternBootcampRewardCalculator:
             # ===== 关键修改：使用MetaGPT执行 =====
             exec_start = time.time()
             
-            # 调用新的MetaGPT执行方法
-            result = await self.execute_workflow_metagpt(workflow_code, task_name, case_data)
+            # 调用新的MetaGPT执行方法，获取结果和token统计
+            result, token_stats = await self.execute_workflow_metagpt(workflow_code, task_name, case_data)
             
             debug_log("task", {
                 "event": "workflow_executed_via_metagpt",  # 更新事件名
                 "execution_time": time.time() - exec_start,
                 "result_length": len(str(result)),
-                "result_preview": str(result)
+                "result_preview": str(result),
+                "token_stats": token_stats
             })
             
             logger.debug(f"MetaGPT workflow result: {str(result)[:100]}...")
@@ -1036,25 +1114,46 @@ class InternBootcampRewardCalculator:
                 format_penalty=False
             )
             
+            base_score = float(score)
+            
+            # 应用token费用惩罚
+            final_score, penalty_details = self.calculate_token_cost_penalty(base_score, token_stats)
+            
+            # 打印惩罚详情
+            if penalty_details and self.token_penalty_config.get('enabled', False):
+                print(f"\n💰 Token费用惩罚计算 (InternBootcamp):")
+                print(f"  输入Tokens: {penalty_details['input_tokens']:,}")
+                print(f"  输出Tokens: {penalty_details['output_tokens']:,}")
+                print(f"  输入费用: ${penalty_details['input_cost']:.6f}")
+                print(f"  输出费用: ${penalty_details['output_cost']:.6f}")
+                print(f"  总费用: ${penalty_details['total_cost']:.6f}")
+                print(f"  基础分数: {penalty_details['base_score']:.3f}")
+                print(f"  惩罚值: {penalty_details['penalty_value']:.3f}")
+                print(f"  最终分数: {penalty_details['final_score']:.3f}\n")
+            
             debug_log("task", {
                 "event": "score_verified",
-                "score": float(score),
+                "base_score": base_score,
+                "final_score": final_score,
+                "token_stats": token_stats,
+                "penalty_details": penalty_details,
                 "verification_time": time.time() - verify_start,
                 "task_name": task_name,
                 "execution_mode": "metagpt"
             })
             
-            logger.info(f"Task {task_name} test case score (MetaGPT): {score}")
+            logger.info(f"Task {task_name} test case score (MetaGPT): {final_score} (base: {base_score})")
             
             debug_log("task", {
                 "event": "testcase_completed",
                 "task_name": task_name,
-                "score": float(score),
+                "base_score": base_score,
+                "final_score": final_score,
                 "total_time": time.time() - testcase_start,
                 "execution_mode": "metagpt"
             })
             
-            return float(score)
+            return final_score
             
         except Exception as e:
             logger.error(f"Error computing score for {task_name}: {e}")
