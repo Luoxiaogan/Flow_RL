@@ -29,7 +29,7 @@ EVAL_TEST_DATA_PATH="/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl
 
 # 训练参数
 MODEL_TYPE="llama"  # 或 "qwen"
-USE_LOSS_MASK=false  # 是否使用损失掩码
+USE_LOSS_MASK=true  # 是否使用损失掩码
 ENABLE_EVAL=true  # 是否启用原地评估
 EVAL_INTERVAL=20  # 评估间隔
 MAX_EVAL_SAMPLES=5  # 评估样本数（测试时用小数值）
@@ -39,9 +39,9 @@ NUM_EPOCHS=3
 PER_DEVICE_BATCH_SIZE=1  # 减小，因为每GPU现在存储完整模型（DDP vs ZeRO-3）
 GRAD_ACCUM_STEPS=4       # 增加，保持相同有效batch size
 LEARNING_RATE=2e-5
-MAX_SEQ_LENGTH=4096
+MAX_SEQ_LENGTH=6500
 SAVE_STEPS=500
-LOGGING_STEPS=10
+LOGGING_STEPS=1
 WARMUP_RATIO=0.03
 
 # 计算全局批次大小

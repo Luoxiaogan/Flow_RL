@@ -15,9 +15,9 @@ from accelerate.logging import get_logger
 from transformers import (
     HfArgumentParser,
     TrainingArguments,
-    AdamW,
     get_cosine_schedule_with_warmup
 )
+from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 import wandb
