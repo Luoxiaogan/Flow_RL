@@ -64,6 +64,7 @@ class InPlaceEvaluationCallback(TrainerCallback):
                 - eval_batch_size: 评估批次大小（默认：4）
                 - output_dir: 保存评估报告的目录
                 - max_samples: 评估的最大样本数（默认：None表示全部）
+                - eval_config_path: evaluation_config.yaml路径（可选）
         """
         self.test_data_path = config.get('test_data_path')
         self.reward_server_url = load_reward_server_config()  # 从config.yaml读取
@@ -71,6 +72,17 @@ class InPlaceEvaluationCallback(TrainerCallback):
         self.eval_batch_size = config.get('eval_batch_size', 4)
         self.output_dir = Path(config.get('output_dir', 'evaluation_reports'))
         self.max_samples = config.get('max_samples', None)
+        
+        # 读取evaluation_config.yaml（如果提供了路径）
+        self.eval_config = {}
+        eval_config_path = config.get('eval_config_path')
+        if eval_config_path and Path(eval_config_path).exists():
+            try:
+                with open(eval_config_path, 'r', encoding='utf-8') as f:
+                    self.eval_config = yaml.safe_load(f)
+                logger.info(f"Loaded evaluation config from: {eval_config_path}")
+            except Exception as e:
+                logger.warning(f"Failed to load evaluation config: {e}")
         
         # 创建输出目录
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -158,7 +170,7 @@ class InPlaceEvaluationCallback(TrainerCallback):
             
             if self._model_evaluator is None:
                 from .inplace_model_evaluator import InPlaceModelEvaluator
-                self._model_evaluator = InPlaceModelEvaluator()
+                self._model_evaluator = InPlaceModelEvaluator(eval_config=self.eval_config)
             
             if self._score_collector is None:
                 from .score_collector import ScoreCollector

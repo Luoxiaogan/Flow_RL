@@ -7,4 +7,4 @@
 # 在服务器上部署时，只需修改此处的root值即可
 # 所有其他配置文件和脚本将自动使用正确的路径
 
-root: "/Users/luogan/Code/workflow_generation/Flow_RL"
+root: "/nas/ganluo/Flow_RL"

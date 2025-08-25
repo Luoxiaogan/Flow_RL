@@ -135,6 +135,7 @@ class ScoreCollector:
                 'ground_truth': sample.get('reward_model', {}).get('ground_truth', 'default'),
                 'extra_info': sample.get('extra_info', {})
             }
+            print("🐺 🐺 🐺 🐺 🐺\n请求数据:\n", request_data)
             all_requests.append(request_data)
         
         # Process in batches with concurrency control
@@ -148,6 +149,7 @@ class ScoreCollector:
             
             async with semaphore:
                 result = await self.compute_score(request_data)
+                print("🐺 🐺 🐺 🐺 🐺\n评估结果:\n", result)
                 return result
         
         # Create tasks for all requests

@@ -17,11 +17,17 @@ class InPlaceModelEvaluator:
     Handles solution generation using current training model weights
     """
     
-    def __init__(self):
+    def __init__(self, eval_config: Dict = None):
         """
         Initialize in-place model evaluator
+        
+        Args:
+            eval_config: Evaluation configuration from evaluation_config.yaml
         """
-        pass  # No model loading needed, will use passed model
+        # 从配置中提取generation参数
+        self.generation_config = eval_config.get('generation', {}) if eval_config else {}
+        # 从generation配置中读取max_new_tokens，用于tokenization
+        self.max_input_length = self.generation_config.get('max_new_tokens', 2048) + 1024  # 留出生成空间
         
     async def generate_solutions_inplace(self, model, tokenizer, test_samples: List[Dict], 
                                          batch_size: int = 4) -> List[str]:
@@ -92,6 +98,7 @@ class InPlaceModelEvaluator:
                             tokenize=False,
                             add_generation_prompt=True
                         )
+                        print("🐺 🐺 🐺 🐺 🐺\n使用apply_chat_template:\n", prompt)
                     else:
                         # It's a string prompt, use directly
                         prompt = sample['prompt']
@@ -108,54 +115,62 @@ class InPlaceModelEvaluator:
                 
                 prompts.append(prompt)
             
-            # Tokenize batch
+            # Tokenize batch (使用配置的max_length)
             inputs = tokenizer(
                 prompts,
                 return_tensors='pt',
                 padding=True,
                 truncation=True,
-                max_length=4096
+                max_length=self.max_input_length  # 从配置读取
             ).to(device)
             
             # Generate with model
-            # Try to use model's generation_config.json if available
-            generation_config = None
+            # 构建最终的generation配置
+            final_config = {}
             
-            # Check if model has a generation_config attribute
+            # Step 1: 尝试使用模型自带的generation_config.json作为基础
             if hasattr(model, 'generation_config'):
                 try:
-                    # Use model's generation config as base
-                    generation_config = model.generation_config.to_dict()
-                    # Override some parameters for evaluation
-                    generation_config.update({
-                        'max_new_tokens': generation_config.get('max_new_tokens', 2048),
-                        'temperature': 0.7,  # Fixed for evaluation consistency
-                        'top_p': 0.95,
-                        'do_sample': True,
-                        'pad_token_id': tokenizer.pad_token_id,
-                        'eos_token_id': tokenizer.eos_token_id,
-                    })
-                    logger.info("Using model's generation_config.json with evaluation overrides")
+                    # 获取模型的generation config
+                    model_config = model.generation_config.to_dict()
+                    final_config.update(model_config)
+                    logger.info(f"Loaded model's generation_config.json: {list(model_config.keys())}")
                 except Exception as e:
                     logger.warning(f"Could not load generation config from model: {e}")
-                    generation_config = None
             
-            # Fallback to default config if not available
-            if generation_config is None:
-                generation_config = {
-                    'max_new_tokens': 2048,
-                    'temperature': 0.7,
-                    'top_p': 0.95,
-                    'do_sample': True,
-                    'pad_token_id': tokenizer.pad_token_id,
-                    'eos_token_id': tokenizer.eos_token_id,
-                }
-                logger.info("Using default generation config")
+            # Step 2: 用evaluation_config.yaml中的参数覆盖（优先级最高）
+            # 这些参数来自self.generation_config
+            override_params = {
+                'max_new_tokens': self.generation_config.get('max_new_tokens', 2048),
+                'temperature': self.generation_config.get('temperature', 0.7),
+                'top_p': self.generation_config.get('top_p', 0.95),
+                'do_sample': self.generation_config.get('do_sample', True),
+                'pad_token_id': tokenizer.pad_token_id,
+                'eos_token_id': tokenizer.eos_token_id,
+            }
+            
+            # 添加可选参数（如果在配置中存在）
+            if 'top_k' in self.generation_config:
+                override_params['top_k'] = self.generation_config['top_k']
+            if 'repetition_penalty' in self.generation_config:
+                override_params['repetition_penalty'] = self.generation_config['repetition_penalty']
+            if 'num_beams' in self.generation_config:
+                override_params['num_beams'] = self.generation_config['num_beams']
+            if 'early_stopping' in self.generation_config:
+                override_params['early_stopping'] = self.generation_config['early_stopping']
+            
+            # 覆盖模型配置
+            final_config.update(override_params)
+            
+            logger.info(f"Final generation config: max_new_tokens={final_config.get('max_new_tokens')}, "
+                       f"temperature={final_config.get('temperature')}, "
+                       f"top_p={final_config.get('top_p')}, "
+                       f"top_k={final_config.get('top_k', 'N/A')}")
             
             # Generate outputs
             outputs = model.generate(
                 **inputs,
-                **generation_config
+                **final_config
             )
             
             # Decode outputs
@@ -200,6 +215,7 @@ class InPlaceModelEvaluator:
         matches = re.findall(code_tag_pattern, text, re.DOTALL)
         
         if matches:
+            print("🐺 🐺 🐺 🐺 🐺\n得到被完全取出来的workflow:\n", matches[0].strip())
             return matches[0].strip()
         
         # If no code blocks found, return the full text

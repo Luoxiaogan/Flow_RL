@@ -21,10 +21,10 @@ schedule:
   interval: 50
   
   # 评估的最大样本数（None表示全部）
-  max_samples: 20  # 测试时减少，生产环境设为null
+  max_samples: 1  # 测试时减少，生产环境设为null
   
   # 评估批次大小
-  batch_size: 4
+  batch_size: 1
 
 # 生成参数（评估时使用）
 generation:

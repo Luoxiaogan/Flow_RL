@@ -246,12 +246,19 @@ def train():
         if not eval_args.eval_test_data_path or not os.path.exists(eval_args.eval_test_data_path):
             raise ValueError(f"Test data file not found: {eval_args.eval_test_data_path}")
         
+        # 构建evaluation_config.yaml的路径
+        import os
+        from pathlib import Path
+        script_dir = Path(__file__).parent.parent  # my_llama3_h100_luogan_evaluation目录
+        eval_config_path = script_dir / "configs" / "evaluation_config.yaml"
+        
         eval_callback = InPlaceEvaluationCallback({
             'test_data_path': eval_args.eval_test_data_path,
             'eval_interval': eval_args.eval_interval,
             'eval_batch_size': eval_args.eval_batch_size,
             'max_samples': eval_args.max_eval_samples,
-            'output_dir': eval_args.eval_output_dir
+            'output_dir': eval_args.eval_output_dir,
+            'eval_config_path': str(eval_config_path)  # 传递配置文件路径
         })
         callbacks.append(eval_callback)
     
