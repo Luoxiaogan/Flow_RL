@@ -67,12 +67,10 @@ def main():
     parser = HfArgumentParser((ModelArguments, DataArguments, EvalArguments, TrainingArguments))
     model_args, data_args, eval_args, training_args = parser.parse_args_into_dataclasses()
 
-    # 初始化Accelerator
+    # 初始化Accelerator（使用DeepSpeed时保持最简配置）
     accelerator = Accelerator(
-        mixed_precision="bf16",  # 使用BF16混合精度
         log_with="wandb" if training_args.report_to == "wandb" else None,
-        project_dir=training_args.logging_dir or "./logs",
-        gradient_accumulation_steps=training_args.gradient_accumulation_steps
+        project_dir=training_args.logging_dir or "./logs"
     )
     
     # 设置日志
