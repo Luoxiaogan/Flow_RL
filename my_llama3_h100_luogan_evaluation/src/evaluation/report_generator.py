@@ -190,7 +190,9 @@ class ReportGenerator:
             # Summary
             f.write("## Summary\n\n")
             f.write(f"- **Date**: {report['timestamp']}\n")
-            f.write(f"- **Checkpoint**: {report['checkpoint']['path']}\n")
+            # f.write(f"- **Checkpoint**: {report['checkpoint']['path']}\n")
+            checkpoint_path = report['checkpoint'].get('path', f"Step {report['checkpoint'].get('step', 'unknown')}")
+            f.write(f"- **Checkpoint**: {checkpoint_path}\n")
             f.write(f"- **Overall Score**: {report['overall_score']:.2%}\n")
             f.write(f"- **Success Rate**: {report['success_rate']:.2%}\n")
             f.write(f"- **Total Samples**: {report['total_samples']}\n\n")

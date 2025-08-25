@@ -28,7 +28,7 @@ echo "项目根路径: $ROOT"
 # ============================================
 # 模型配置
 # ============================================
-MODEL_TYPE="llama"  # "qwen" 或 "llama"
+MODEL_TYPE="qwen"  # "qwen" 或 "llama"
 USE_LOSS_MASK=true  # 启用损失掩码以改善训练效果
 
 # ============================================
@@ -52,10 +52,10 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 
 # --- 特定模型配置 ---
 if [ "$MODEL_TYPE" = "qwen" ]; then
-    echo "正在使用原地评估训练Qwen-2.5-7B-Instruct..."
-    MODEL_NAME="/nas/models/Qwen2.5-7B-Instruct"
-    DATASET_PATH="/nas/ganluo/training_data/0813_filter之后的COT_SFT数据/merged_training_data_qwen.jsonl"
-    OUTPUT_DIR="/nas/ganluo/sft_output/Qwen2.5-7B-inplace-eval"
+    echo "正在使用原地评估训练Qwen3-8B..."
+    MODEL_NAME="/nas/models/Qwen3-8B"
+    DATASET_PATH="/nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl"
+    OUTPUT_DIR="/nas/ganluo/sft_output/Qwen3-8B-inplace-eval"
     
     # Qwen训练参数
     PER_DEVICE_BATCH_SIZE=4
@@ -66,7 +66,7 @@ if [ "$MODEL_TYPE" = "qwen" ]; then
 elif [ "$MODEL_TYPE" = "llama" ]; then
     echo "正在使用原地评估训练Llama-3.1-8B-Instruct..."
     MODEL_NAME="/nas/models/Meta-Llama-3-8B-Instruct"
-    DATASET_PATH="/nas/ganluo/training_data/0813_filter之后的COT_SFT数据/merged_training_data_llama.jsonl"
+    DATASET_PATH="/nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl"
     OUTPUT_DIR="/nas/ganluo/sft_output/Llama-3.1-8B-inplace-eval"
     
     # Llama训练参数

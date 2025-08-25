@@ -115,6 +115,15 @@ class InPlaceEvaluationCallback(TrainerCallback):
             return control
         
         logger.info(f"在步数 {state.global_step} 开始原地评估")
+        if tokenizer is None:
+            logger.warning("Tokenizer is None! Trying to get from model...")
+            # 尝试从kwargs获取
+            tokenizer = kwargs.get('tokenizer')
+            if tokenizer is None:
+                logger.error("Cannot get tokenizer from callback!")
+                return control
+        logger.info(f"Tokenizer type: {type(tokenizer)}")
+
         
         # 同步运行评估（原地评估的推荐方式）
         self._run_evaluation_sync(model, tokenizer, state.global_step, args.output_dir)
@@ -182,7 +191,7 @@ class InPlaceEvaluationCallback(TrainerCallback):
             
             # 步骤1：检查reward服务器状态
             logger.info("检查Reward服务器状态...")
-            is_healthy = await self._server_checker.check_health()
+            is_healthy = await self._server_checker.check_server()
             if not is_healthy:
                 logger.error(f"Reward服务器不可用: {self.reward_server_url}")
                 return None

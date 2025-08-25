@@ -93,15 +93,15 @@ def main():
     print("\n🤖 Loading tokenizers...")
     
     # 注意：这里使用模拟路径，实际服务器上应该使用：
-    # qwen_model_path = "/nas/models/Qwen2.5-7B-Instruct"
-    # llama_model_path = "/nas/models/Meta-Llama-3.1-8B-Instruct"
+    qwen_model_path = "/nas/models/Qwen2.5-7B-Instruct"
+    llama_model_path = "/nas/models/Meta-Llama-3.1-8B-Instruct"
     
     # 为了演示，我们使用Hugging Face model IDs（需要网络）
     # 在服务器上请替换为实际路径
     try:
         print("Loading Qwen tokenizer...")
         qwen_tokenizer = AutoTokenizer.from_pretrained(
-            "Qwen/Qwen2.5-7B-Instruct",
+            "/nas/models/Qwen2.5-7B-Instruct",
             trust_remote_code=True
         )
         print("✅ Qwen tokenizer loaded")
@@ -113,7 +113,7 @@ def main():
     try:
         print("Loading LLaMA tokenizer...")
         llama_tokenizer = AutoTokenizer.from_pretrained(
-            "meta-llama/Meta-Llama-3.1-8B-Instruct",
+            "/nas/models/Meta-Llama-3.1-8B-Instruct",
             trust_remote_code=True
         )
         print("✅ LLaMA tokenizer loaded")

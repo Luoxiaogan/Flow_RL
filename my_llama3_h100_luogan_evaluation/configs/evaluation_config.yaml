@@ -5,7 +5,7 @@
 test_data:
   # 测试数据路径（相对于项目根目录）
   # 格式：{"data_source": "...", "prompt": [...], "extra_info": {...}}
-  path: "New_evaluation_and_RL/parquet_and_jsonl_data/single/test.jsonl"
+  path: "New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl"
   
   # 不同基准测试的备选路径（相对于项目根目录）
   # benchmark_paths是一个未实现的功能配置
@@ -18,7 +18,7 @@ test_data:
 # 评估调度
 schedule:
   # 每N个训练步评估一次
-  interval: 50
+  interval: 10
   
   # 评估的最大样本数（None表示全部）
   max_samples: 1  # 测试时减少，生产环境设为null
@@ -30,9 +30,9 @@ schedule:
 generation:
   # 这些参数会覆盖模型的generation_config.json以保证一致性
   max_new_tokens: 2048
-  temperature: 0.7  # 固定值以保证可重复性
+  temperature: 0.6  # 固定值以保证可重复性
   top_p: 0.95
-  top_k: 50
+  top_k: 20
   do_sample: true
   
   # 可选：使用模型的generation_config.json作为基础
