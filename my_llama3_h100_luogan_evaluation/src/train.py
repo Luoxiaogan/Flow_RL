@@ -270,6 +270,13 @@ def train():
         data_collator=data_collator,
         callbacks=callbacks if callbacks else None,
     )
+    
+    # --- 设置trainer引用给回调 ---
+    if callbacks:
+        for callback in callbacks:
+            if hasattr(callback, 'set_trainer'):
+                callback.set_trainer(trainer)
+                print(f"✓ 已为 {callback.__class__.__name__} 设置trainer引用")
 
     # --- 开始训练 ---
     print(f"Starting {model_args.model_type} SFT training...")

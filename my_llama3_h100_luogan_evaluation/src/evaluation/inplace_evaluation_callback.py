@@ -96,10 +96,23 @@ class InPlaceEvaluationCallback(TrainerCallback):
         self._score_collector = None
         self._report_generator = None
         
+        # 存储trainer引用以获取tokenizer
+        self._trainer = None
+        
         logger.info(f"原地评估回调已初始化")
         logger.info(f"  Reward服务器URL: {self.reward_server_url}")
         logger.info(f"  评估间隔: 每{self.eval_interval}步")
         logger.info(f"  测试数据: {self.test_data_path}")
+    
+    def set_trainer(self, trainer):
+        """
+        存储trainer引用以访问tokenizer
+        
+        Args:
+            trainer: Hugging Face Trainer对象
+        """
+        self._trainer = trainer
+        logger.info("✓ Trainer引用已设置，tokenizer访问已就绪")
     
     def on_step_end(self, args: TrainingArguments, state: TrainerState, 
                     control: TrainerControl, model=None, tokenizer=None, **kwargs) -> TrainerControl:
@@ -115,14 +128,17 @@ class InPlaceEvaluationCallback(TrainerCallback):
             return control
         
         logger.info(f"在步数 {state.global_step} 开始原地评估")
+        
+        # 使用稳健的tokenizer获取方式
         if tokenizer is None:
-            logger.warning("Tokenizer is None! Trying to get from model...")
-            # 尝试从kwargs获取
-            tokenizer = kwargs.get('tokenizer')
-            if tokenizer is None:
-                logger.error("Cannot get tokenizer from callback!")
+            if self._trainer and hasattr(self._trainer, 'tokenizer'):
+                tokenizer = self._trainer.tokenizer
+                logger.info(f"✓ 从存储的trainer获取tokenizer: {type(tokenizer)}")
+            else:
+                logger.error("无法获取tokenizer - trainer引用未设置或trainer无tokenizer")
                 return control
-        logger.info(f"Tokenizer type: {type(tokenizer)}")
+        else:
+            logger.info(f"✓ 直接获取到tokenizer: {type(tokenizer)}")
 
         
         # 同步运行评估（原地评估的推荐方式）
