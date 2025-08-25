@@ -1,0 +1,311 @@
+<|im_start|>system
+
+Your fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.
+
+Your core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:
+1. A high-level description of the problem domain
+2. A strictly defined set of callable software "Operators" that serve as your only building blocks
+3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern
+
+**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**
+
+Your generated Python workflow must be robust enough to work for any problem instance within the described domain.
+
+Crucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.
+<|im_end|>
+<|im_start|>user
+### 1. Problem Domain Overview
+The target domain is the **DROP benchmark** (Discrete Reasoning Over Paragraphs). These problems test reading comprehension with discrete reasoning over text passages.
+
+**Core Characteristics:**
+- **Input:** A dense factual passage (often about sports, history, or demographics) paired with a question
+- **Required Skills:** Information extraction, numerical reasoning, entity tracking, and multi-hop inference
+- **Answer Types:** Numbers (counts, calculations), dates, text spans (entity names, phrases), or comparative answers
+
+**Common Question Patterns:**
+- **Arithmetic Operations:** "How many total/combined..." (addition), "How many more..." (subtraction), "What is the difference..." (subtraction)
+- **Counting:** "How many times...", "How many different..."
+- **Comparison:** "Which is greater/longer/more...", "Who had more..."
+- **Selection:** "Which team won...", "What happened first/last..."
+- **Span Extraction:** "Who did...", "What was the name of..."
+
+**Critical Challenges:**
+- **Ambiguous References:** Questions may use pronouns or partial names requiring coreference resolution
+- **Multiple Similar Entities:** Passages often contain multiple similar items (e.g., multiple field goals of different yards)
+- **Implicit Information:** Some answers require inference from context rather than direct extraction
+- **Numerical Complexity:** May involve multiple numbers that need to be correctly associated with their entities
+
+**Key Success Factors:**
+- Exhaustive extraction of ALL relevant occurrences (don't miss any instance)
+- Careful entity-number association (which number belongs to which entity)
+- Understanding question intent (sum vs. individual value, all occurrences vs. specific one)
+- Handling both explicit and implicit information
+
+### 2. Available Operators & Building Blocks
+
+All operators follow a consistent interface pattern and are initialized with the problem text. They are available as `self.operator_name`.
+
+**Important Note:** The operators are pre-initialized with `self.problem_text`. Each operator automatically includes it in their prompts (you'll see it as "**Original Problem:**" in their internal prompts). You don't need to worry about losing the problem context - it's always available to every operator call behind the scenes, regardless of what you pass as the context parameter.
+
+
+#### 🔑 **CRITICAL: Understanding Parameters**
+
+**The `instruction` Parameter (Required for all operators):**
+- **Purpose:** Contains the COMPLETE strategic directive that fully specifies what the operator should do
+- **Content:** Should be **comprehensive and detailed** - think of it as a full prompt that leaves nothing ambiguous
+- **Length:** Can and SHOULD be long when needed (100-500+ words is perfectly acceptable and often necessary)
+- **Dynamic Construction:** Can include information extracted from previous steps, specific constraints, detailed reasoning strategies, and formatted requirements
+- **Key Principle:** Since we're building reusable workflows, problem-specific information cannot be hardcoded in the workflow structure. While instructions can dynamically incorporate relevant extracted information to guide the operation, the main data to be processed should remain in the context parameter.
+
+**The `context` Parameter (Required for all operators except Generate):**
+- **Purpose:** Provides the INPUT DATA that the instruction will operate on
+- **Content:** The actual text, data, or results from previous operations - this is the primary information source
+- **Type:** String for Generate/Revise/Summarize operators
+- **Usage:** Think of it as the "working material" that the instruction processes
+- **Note:** Ensemble uses `contexts` (plural) which takes List[str] instead of a single string
+
+### Core Operators
+
+**1. Generate: CREATE new information**
+- **Signature:** `await self.generate(instruction: str, context: str = "") -> str`
+- **Purpose:** Produces new text, analysis, or reasoning based on strategic instructions
+
+**2. Revise: IMPROVE existing information**
+- **Signature:** `await self.revise(instruction: str, context: str) -> str`
+- **Purpose:** Critiques and refines existing text based on specific improvement criteria
+
+**3. Summarize: COMPRESS information**
+- **Signature:** `await self.summarize(instruction: str, context: str) -> str`
+- **Purpose:** Condenses text while preserving key information relevant to the problem
+
+**4. Ensemble: DECIDE between or synthesize options**
+- **Signature:** `await self.ensemble(instruction: str, contexts: List[str]) -> str`
+- **Purpose:** Evaluates, compares, or merges multiple candidate solutions
+
+### 3. Key Design Principles
+
+**Dynamic Instruction Construction:**
+Extract information early, then incorporate it into subsequent instructions using f-strings:
+```python
+extraction = await self.generate(instruction="Extract all numerical values...", context=self.problem_text)
+analysis = await self.generate(
+    instruction=f"Given these extracted values: {extraction}
+Now solve step by step...",
+    context=self.problem_text
+)
+```
+
+**Parallel Execution:**
+Use `asyncio.gather()` for independent operations:
+```python
+results = await asyncio.gather(
+    self.generate(instruction="Approach 1...", context=...),
+    self.generate(instruction="Approach 2...", context=...)
+)
+final = await self.ensemble(instruction="Select best...", contexts=results)
+```
+
+**Common Pitfalls:**
+- ❌ Don't hardcode problem-specific data in workflow code
+- ❌ Don't use `await` inside list comprehensions (blocks parallelism)
+- ✅ Do use detailed instructions (100-500+ words when needed)
+- ✅ Do extract info dynamically and incorporate into instructions
+
+#### **🚀 Innovation Guidelines:**
+
+**Maximize the power of instructions by:**
+- Building multi-paragraph instructions that leave nothing to interpretation
+- Dynamically incorporating ALL relevant extracted information
+- Creating instruction templates that adapt based on detected patterns
+- Using instructions to implement complex reasoning strategies
+- Including specific formatting requirements and output structures
+
+**Remember:**
+- Instructions are mini-prompts - make them as detailed as needed
+- Extract early, enrich instructions throughout
+- The workflow provides structure; instructions provide intelligence
+- Never hardcode problem-specific data in the workflow code itself
+- Always pass context appropriately - empty string for initial Generate, List for Ensemble
+
+#### **Common Pitfalls to Avoid:**
+
+```python
+# ❌ WRONG: Hardcoding problem-specific information
+result = await self.generate(
+    instruction="Count how many field goals the Patriots scored",  # Too specific!
+    context=self.problem_text
+)
+
+# ✅ CORRECT: Generic instruction that works for any problem
+result = await self.generate(
+    instruction="Identify what the question is asking for, then count or calculate the requested value",
+    context=self.problem_text
+)
+
+# ❌ WRONG: Sequential execution when parallel is possible
+result1 = await self.generate(...)  # Waits
+result2 = await self.generate(...)  # Then waits again
+
+# ✅ CORRECT: Parallel execution for independent operations
+results = await asyncio.gather(
+    self.generate(...),
+    self.generate(...)
+)
+```
+
+### 4. Your Task: Complete the `run_workflow` Method
+
+Your task is to write the Python code for the `run_workflow` method within the provided template. Focus on creating a robust, reusable workflow that leverages detailed instructions.
+
+**Base Template:**
+<think>
+[Your step-by-step reasoning about the workflow strategy, why you chose specific operators, and how you'll use instructions effectively]
+</think>
+<code>
+class Workflow:
+    def __init__(self, config, problem) -> None:
+        # --- DO NOT MODIFY THIS SECTION ---
+        self.config = config
+        self.problem_text = problem
+        self.llm = create(config)
+        
+        self.generate = operator.Generate(self.llm, self.problem_text)
+        self.revise = operator.Revise(self.llm, self.problem_text)
+        self.summarize = operator.Summarize(self.llm, self.problem_text)
+        self.ensemble = operator.Ensemble(self.llm, self.problem_text)
+
+    async def run_workflow(self):
+        """
+        Implement the core problem-solving logic here.
+        Remember: 
+        - Use detailed, comprehensive instructions
+        - Dynamic instruction construction is powerful
+        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]
+        """
+        import asyncio
+        # --- YOUR WORKFLOW LOGIC HERE ---
+</code>
+
+### 5. Critical Rules
+
+**A. Generality:** Create templates for problem CLASSES, not specific instances
+**B. Instructions:** Use comprehensive, detailed instructions (100-500+ words OK)
+**C. Parameters:** `instruction` (str) + `context` (str) for most; `contexts` (List[str]) for Ensemble
+**D. Control Flow:** Branch on operator results, not direct problem_text parsing
+**E. Complexity:** Typically 3-8 operator calls, parallelize when possible
+**F. Response Format:** ONLY `<think>...</think>` followed by `<code>...</code>`
+
+### 6. Illustrative Example(s)
+
+The following examples help you understand the problem type. Create a workflow for the *class* of problems, not just these instances.
+
+---
+**PASSAGE:**
+On January 11, 2005, President Bush nominated federal judge Michael Chertoff to succeed Ridge. Chertoff was confirmed on February 15, 2005, by a vote of 98-0 in the U.S. Senate. He was sworn in the same day. In February 2005, DHS and the Office of Personnel Management issued rules relating to employee pay and discipline for a new personnel system named MaxHR. The Washington Post said that the rules would allow DHS "to override any provision in a union contract by issuing a department-wide directive" and would make it "difficult, if not impossible, for unions to negotiate over arrangements for staffing, deployments, technology and other workplace matters." In August 2005, U.S. District Judge Rosemary M. Collyer blocked the plan on the grounds that it did not ensure collective-bargaining rights for DHS employees. A federal appeals court ruled against DHS in 2006; pending a final resolution to the litigation, Congress's fiscal year 2008 appropriations bill for DHS provided no funding for the proposed new personnel system.DHS announced in early 2007 that it was retooling its pay and performance system and retiring the name "MaxHR". In a February 2008 court filing, DHS said that it would no longer pursue the new rules, and that it would abide by the existing civil service labor-management procedures. A federal court issued an order closing the case.
+
+**QUESTION:**
+How many people in the U.S. Senate voted against the confirmation of federal judge Michael Chertoff to succeed Ridge.
+---
+
+---
+**PASSAGE:**
+Hoping to extend their winning streak, the Patriots played on home ground for a game with the Vikings, who came to Foxboro with former Patriot Randy Moss. On the third possession of the game, the Vikings marched 76 yards in over 6 minutes, scoring on a 1-yard touchdown run by Adrian Peterson, taking a 7-0 lead. The Patriots countered, going on an 8 play, 75-yard drive, scoring on a 3-yard touchdown run by Woodhead, tying the game 7-7. Two possessions later, the Vikings drove to the Patriots 1, facing a 4th-and-Goal, but Peterson was tackled for a 2-yard loss. Brady took two knees and the game went to halftime tied 7-7. The Vikings marched 68 yards to the Patriots 5 on the opening possession of the 2nd half, but settled for a 23-yard field goal by Ryan Longwell, taking a 10-7 lead. The Patriots countered on their next drive, storming 80 yards in 4 plays, scoring on a 65-yard touchdown bomb from Brady to Tate, taking a 14-10. Two possessions later, McCourty intercepted Favre at the Patriots 26 and returned it 37 yards to the Patriots 37. Four plays later, Green-Ellis scored on a 13-yard touchdown run, increasing the lead to 21-10. On the Vikings next drive, Brett Favre was knocked out of the game and Tarvaris Jackson took over Early in the fourth quarter, the Vikings marched 80 yards in 9 plays, scoring on a 1-yard touchdown pass to Naufahu Tahi, with a successful two-point conversion, trimming the deficit to just 21-18. The Patriots countered, marching 84 yards in 13 plays, scoring on a 2-yard touchdown run by Green-Ellis, his first career multi-touchdown game, increasing the lead to 28-18 and pretty much putting the game out of reach with just 1:56 remaining. The Vikings drove to the Vikings 27 after a 23-yard run by Toby Gerhart, but time ran out and the Patriots won the game.
+
+**QUESTION:**
+How many points did the Patriots win by?
+---
+
+### 6. Your Response
+Now, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:<|im_end|>
+<|im_start|>assistant
+<think>
+To address the class of problems in the DROP benchmark, the workflow must be designed to handle various reasoning patterns like arithmetic operations, counting, comparison, selection, and span extraction. Here’s how I plan to approach the solution:
+
+1. **Initial Extraction Phase**:
+   - Extract all relevant numerical values, entities, and spans from the passage using a detailed instruction.
+   - Ensure that the extraction is exhaustive to capture all potential candidates for reasoning.
+
+2. **Question Analysis Phase**:
+   - Analyze the question to determine the type of reasoning required (e.g., arithmetic, counting, comparison, etc.).
+   - Dynamically construct an instruction based on the identified reasoning type to guide subsequent steps.
+
+3. **Reasoning and Calculation Phase**:
+   - Perform the necessary reasoning or calculation based on the extracted information and the question analysis.
+   - Use parallel execution where possible to explore multiple reasoning paths.
+
+4. **Validation and Refinement Phase**:
+   - Validate the results by cross-checking with the passage and refining any ambiguities.
+   - Use the `Revise` operator to improve the clarity and correctness of the result.
+
+5. **Final Answer Selection**:
+   - If multiple candidate answers are generated, use the `Ensemble` operator to select the best one based on coherence and relevance to the question.
+
+This approach ensures that the workflow is robust, reusable, and capable of handling diverse problem instances within the DROP domain.
+
+</think>
+
+<code>
+class Workflow:
+    def __init__(self, config, problem) -> None:
+        # --- DO NOT MODIFY THIS SECTION ---
+        self.config = config
+        self.problem_text = problem
+        self.llm = create(config)
+        
+        self.generate = operator.Generate(self.llm, self.problem_text)
+        self.revise = operator.Revise(self.llm, self.problem_text)
+        self.summarize = operator.Summarize(self.llm, self.problem_text)
+        self.ensemble = operator.Ensemble(self.llm, self.problem_text)
+
+    async def run_workflow(self):
+        """
+        Implement the core problem-solving logic here.
+        Remember: 
+        - Use detailed, comprehensive instructions
+        - Dynamic instruction construction is powerful
+        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]
+        """
+        import asyncio
+
+        # Step 1: Extract all relevant numerical values, entities, and spans
+        extraction_instruction = """
+        Extract ALL numerical values, dates, entity names, and key phrases from the passage.
+        Include their context to ensure proper association with entities.
+        Format the output as a structured list for easy reference.
+        """
+        extraction = await self.generate(instruction=extraction_instruction, context=self.problem_text)
+
+        # Step 2: Analyze the question to determine the reasoning type
+        question_analysis_instruction = f"""
+        Analyze the question to determine the type of reasoning required.
+        Consider the following categories: arithmetic operations, counting, comparison, selection, span extraction.
+        Provide a detailed breakdown of what the question is asking for and how it relates to the extracted information:
+        {extraction}
+        """
+        reasoning_type = await self.generate(instruction=question_analysis_instruction, context=self.problem_text)
+
+        # Step 3: Perform reasoning or calculation based on the analysis
+        reasoning_instruction = f"""
+        Based on the reasoning type identified: {reasoning_type}, perform the necessary calculations or reasoning.
+        Use the extracted information: {extraction} to derive the answer.
+        Ensure that all steps are clearly explained and justified.
+        """
+        reasoning_result = await self.generate(instruction=reasoning_instruction, context=self.problem_text)
+
+        # Step 4: Validate and refine the result
+        validation_instruction = f"""
+        Validate the reasoning result: {reasoning_result} against the original passage.
+        Identify and resolve any ambiguities or inconsistencies.
+        Provide a refined version of the result if necessary.
+        """
+        refined_result = await self.revise(instruction=validation_instruction, context=reasoning_result)
+
+        # Step 5: Final answer selection (if multiple candidates exist)
+        final_selection_instruction = f"""
+        Evaluate the refined result: {refined_result} and ensure it directly answers the question.
+        If multiple candidates exist, select the most coherent and relevant one.
+        """
+        final_answer = await self.ensemble(instruction=final_selection_instruction, contexts=[refined_result])
+
+        return final_answer
+</code><|im_end|>

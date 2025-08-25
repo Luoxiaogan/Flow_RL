@@ -1,0 +1,431 @@
+项目根路径: /nas/ganluo/Flow_RL
+正在使用原地评估训练Qwen3-8B...
+
+评估配置（从 /nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/configs/evaluation_config.yaml 读取）：
+  评估间隔: 每 10 步
+  评估批次大小: 1
+  最大评估样本数: 1
+  测试数据: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+
+训练数据分析：
+  训练样本总数: 1313
+  全局批次大小: 32
+  每轮步数: 41
+  总训练步数: 410
+  预计评估次数: 41
+==========================================
+配置摘要：
+==========================================
+模型：qwen
+训练数据：/nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl
+输出目录：/nas/ganluo/sft_output/Qwen3-8B-inplace-eval
+全局批次大小：32
+损失掩码：true
+
+原地评估设置：
+  已启用：true
+  配置文件：/nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/configs/evaluation_config.yaml
+  测试数据：/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+  Reward服务器：http://localhost:8897 (端口 8897)
+  评估间隔：每10步
+  批次大小：1
+  最大样本数：1
+  报告目录：/nas/ganluo/sft_output/Qwen3-8B-inplace-eval/evaluation_reports
+
+检查点设置：
+  保存策略：按步数
+  保存步数：1000（降低频率）
+  保存限制：2（只保留最后2个检查点）
+==========================================
+
+正在检查Reward服务器状态...
+✓ Reward服务器正在http://localhost:8897运行
+
+开始使用原地评估进行训练...
+将每10步使用当前模型权重进行评估
+
+ipex flag is deprecated, will be removed in Accelerate v1.10. From 2.7.0, PyTorch has all needed optimizations for Intel CPU and XPU.
+[2025-08-25 05:41:40,122] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-25 05:41:42,060] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+W0825 05:41:43.758758 215081 site-packages/torch/distributed/run.py:792] 
+W0825 05:41:43.758758 215081 site-packages/torch/distributed/run.py:792] *****************************************
+W0825 05:41:43.758758 215081 site-packages/torch/distributed/run.py:792] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0825 05:41:43.758758 215081 site-packages/torch/distributed/run.py:792] *****************************************
+[2025-08-25 05:41:56,086] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-25 05:41:56,214] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-25 05:41:56,319] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-25 05:41:56,667] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-25 05:41:56,734] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-25 05:41:56,747] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-25 05:41:56,799] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-25 05:41:56,817] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-25 05:41:57,180] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-25 05:41:57,297] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-25 05:41:57,476] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-25 05:41:57,614] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-25 05:41:57,623] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-25 05:41:57,661] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-25 05:41:57,769] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-25 05:41:57,813] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-25 05:41:57,887] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-25 05:41:57,938] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-25 05:41:57,940] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-25 05:41:57,955] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-25 05:41:57,965] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-25 05:41:57,965] [INFO] [comm.py:707:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+[2025-08-25 05:41:58,042] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-25 05:41:58,093] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-25 05:41:58,111] [INFO] [comm.py:676:init_distributed] cdb=None
+Loading qwen model from /nas/models/Qwen3-8B...
+[2025-08-25 05:42:00,252] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading qwen model from /nas/models/Qwen3-8B...
+Loading qwen model from /nas/models/Qwen3-8B...
+[2025-08-25 05:42:01,575] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+[2025-08-25 05:42:01,621] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading qwen model from /nas/models/Qwen3-8B...
+[2025-08-25 05:42:01,743] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading qwen model from /nas/models/Qwen3-8B...
+[2025-08-25 05:42:02,056] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading qwen model from /nas/models/Qwen3-8B...
+Loading qwen model from /nas/models/Qwen3-8B...
+Loading qwen model from /nas/models/Qwen3-8B...
+[2025-08-25 05:42:02,252] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+[2025-08-25 05:42:02,268] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+[2025-08-25 05:42:02,278] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+[2025-08-25 05:42:21,438] [INFO] [partition_parameters.py:366:__exit__] finished initializing model - num_params = 399, num_elems = 8.19B
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:01,  2.68it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:01,  2.73it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:01,  2.83it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:01,  2.61it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:01,  2.60it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:01,  2.61it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:01,  2.57it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:01<00:04,  1.14s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:01<00:01,  1.50it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:01<00:01,  1.53it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:01<00:01,  1.51it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:01<00:02,  1.50it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:01<00:02,  1.50it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:01<00:02,  1.50it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:01<00:02,  1.50it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:02<00:03,  1.07s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:02<00:01,  1.24it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:02<00:01,  1.23it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:02<00:01,  1.23it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:02<00:01,  1.23it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:02<00:01,  1.23it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:02<00:01,  1.23it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:02<00:01,  1.23it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:02<00:00,  1.31it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:02<00:00,  1.32it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:02<00:00,  1.31it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:02<00:00,  1.31it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:02<00:00,  1.31it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:02<00:00,  1.32it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:02<00:00,  1.32it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.83it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.62it/s]
+Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.82it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.63it/s]
+Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.81it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.61it/s]
+Loading dataset from /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.81it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.62it/s]
+Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.81it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.61it/s]
+Loading dataset from /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+Loading dataset from /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.80it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.61it/s]
+Loading dataset from /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+Loading checkpoint shards:  60%|██████    | 3/5 [00:03<00:02,  1.02s/it]Loading dataset from /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+Loading dataset from /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.64it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:03<00:00,  1.53it/s]
+Loading dataset from /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+Dataset sample keys: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+First message: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+Loading checkpoint shards:  80%|████████  | 4/5 [00:03<00:00,  1.10it/s]Dataset sample keys: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+First message: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+Dataset sample keys: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+First message: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+Using loss masking for qwen (only computing loss on assistant responses)
+Using loss masking for qwen (only computing loss on assistant responses)
+Dataset sample keys: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+First message: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+Dataset sample keys: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+First message: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+Dataset size: 1313 samples
+
+========== In-Place Evaluation Configuration ==========
+Enabled: True
+Interval: Every 10 steps
+Test data: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+Batch size: 1
+Max samples: 1
+Output dir: /nas/ganluo/sft_output/Qwen3-8B-inplace-eval/evaluation_reports
+======================================================
+
+Using loss masking for qwen (only computing loss on assistant responses)
+Dataset sample keys: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+First message: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+INFO:evaluation.inplace_evaluation_callback:Loaded evaluation config from: /nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/configs/evaluation_config.yaml
+INFO:evaluation.inplace_evaluation_callback:原地评估回调已初始化
+INFO:evaluation.inplace_evaluation_callback:  Reward服务器URL: http://0.0.0.0:8897
+INFO:evaluation.inplace_evaluation_callback:  评估间隔: 每10步
+INFO:evaluation.inplace_evaluation_callback:  测试数据: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+/nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/src/train.py:265: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+Dataset size: 1313 samples
+
+========== In-Place Evaluation Configuration ==========
+Enabled: True
+Interval: Every 10 steps
+Test data: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+Batch size: 1
+Max samples: 1
+Output dir: /nas/ganluo/sft_output/Qwen3-8B-inplace-eval/evaluation_reports
+======================================================
+
+Dataset size: 1313 samples
+
+========== In-Place Evaluation Configuration ==========
+Enabled: True
+Interval: Every 10 steps
+Test data: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+Batch size: 1
+Max samples: 1
+Output dir: /nas/ganluo/sft_output/Qwen3-8B-inplace-eval/evaluation_reports
+======================================================
+
+Using loss masking for qwen (only computing loss on assistant responses)
+Using loss masking for qwen (only computing loss on assistant responses)
+INFO:evaluation.inplace_evaluation_callback:Loaded evaluation config from: /nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/configs/evaluation_config.yaml
+INFO:evaluation.inplace_evaluation_callback:原地评估回调已初始化
+INFO:evaluation.inplace_evaluation_callback:  Reward服务器URL: http://0.0.0.0:8897
+INFO:evaluation.inplace_evaluation_callback:  评估间隔: 每10步
+INFO:evaluation.inplace_evaluation_callback:  测试数据: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+/nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/src/train.py:265: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+INFO:evaluation.inplace_evaluation_callback:Loaded evaluation config from: /nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/configs/evaluation_config.yaml
+Using loss masking for qwen (only computing loss on assistant responses)
+Dataset sample keys: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+First message: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+INFO:evaluation.inplace_evaluation_callback:原地评估回调已初始化
+INFO:evaluation.inplace_evaluation_callback:  Reward服务器URL: http://0.0.0.0:8897
+INFO:evaluation.inplace_evaluation_callback:  评估间隔: 每10步
+INFO:evaluation.inplace_evaluation_callback:  测试数据: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+/nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/src/train.py:265: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+Loading checkpoint shards: 100%|██████████| 5/5 [00:04<00:00,  1.46it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:04<00:00,  1.21it/s]
+Loading dataset from /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+Dataset size: 1313 samples
+
+========== In-Place Evaluation Configuration ==========
+Enabled: True
+Interval: Every 10 steps
+Test data: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+Batch size: 1
+Max samples: 1
+Output dir: /nas/ganluo/sft_output/Qwen3-8B-inplace-eval/evaluation_reports
+======================================================
+
+Dataset size: 1313 samples
+
+========== In-Place Evaluation Configuration ==========
+Enabled: True
+Interval: Every 10 steps
+Test data: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+Batch size: 1
+Max samples: 1
+Output dir: /nas/ganluo/sft_output/Qwen3-8B-inplace-eval/evaluation_reports
+======================================================
+
+Dataset size: 1313 samples
+
+========== In-Place Evaluation Configuration ==========
+Enabled: True
+Interval: Every 10 steps
+Test data: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+Batch size: 1
+Max samples: 1
+Output dir: /nas/ganluo/sft_output/Qwen3-8B-inplace-eval/evaluation_reports
+======================================================
+
+INFO:evaluation.inplace_evaluation_callback:Loaded evaluation config from: /nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/configs/evaluation_config.yaml
+INFO:evaluation.inplace_evaluation_callback:原地评估回调已初始化
+INFO:evaluation.inplace_evaluation_callback:  Reward服务器URL: http://0.0.0.0:8897
+INFO:evaluation.inplace_evaluation_callback:  评估间隔: 每10步
+INFO:evaluation.inplace_evaluation_callback:  测试数据: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+/nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/src/train.py:265: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+INFO:evaluation.inplace_evaluation_callback:Loaded evaluation config from: /nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/configs/evaluation_config.yaml
+Using loss masking for qwen (only computing loss on assistant responses)
+INFO:evaluation.inplace_evaluation_callback:原地评估回调已初始化
+INFO:evaluation.inplace_evaluation_callback:  Reward服务器URL: http://0.0.0.0:8897
+INFO:evaluation.inplace_evaluation_callback:  评估间隔: 每10步
+INFO:evaluation.inplace_evaluation_callback:  测试数据: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+/nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/src/train.py:265: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+INFO:evaluation.inplace_evaluation_callback:Loaded evaluation config from: /nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/configs/evaluation_config.yaml
+INFO:evaluation.inplace_evaluation_callback:原地评估回调已初始化
+INFO:evaluation.inplace_evaluation_callback:  Reward服务器URL: http://0.0.0.0:8897
+INFO:evaluation.inplace_evaluation_callback:  评估间隔: 每10步
+INFO:evaluation.inplace_evaluation_callback:  测试数据: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+/nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/src/train.py:265: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+Dataset size: 1313 samples
+
+========== In-Place Evaluation Configuration ==========
+Enabled: True
+Interval: Every 10 steps
+Test data: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+Batch size: 1
+Max samples: 1
+Output dir: /nas/ganluo/sft_output/Qwen3-8B-inplace-eval/evaluation_reports
+======================================================
+
+INFO:evaluation.inplace_evaluation_callback:Loaded evaluation config from: /nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/configs/evaluation_config.yaml
+INFO:evaluation.inplace_evaluation_callback:原地评估回调已初始化
+INFO:evaluation.inplace_evaluation_callback:  Reward服务器URL: http://0.0.0.0:8897
+INFO:evaluation.inplace_evaluation_callback:  评估间隔: 每10步
+INFO:evaluation.inplace_evaluation_callback:  测试数据: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+/nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/src/train.py:265: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+Starting qwen SFT training...
+Total training samples: 1313
+Number of epochs: 10.0
+Loss masking: ENABLED (only assistant tokens contribute to loss)
+Starting qwen SFT training...
+Total training samples: 1313
+Number of epochs: 10.0
+Loss masking: ENABLED (only assistant tokens contribute to loss)
+Starting qwen SFT training...
+Total training samples: 1313
+Number of epochs: 10.0
+Loss masking: ENABLED (only assistant tokens contribute to loss)
+Dataset sample keys: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+First message: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+Starting qwen SFT training...
+Total training samples: 1313
+Number of epochs: 10.0
+Loss masking: ENABLED (only assistant tokens contribute to loss)
+Starting qwen SFT training...
+Total training samples: 1313
+Number of epochs: 10.0
+Loss masking: ENABLED (only assistant tokens contribute to loss)
+Starting qwen SFT training...
+Total training samples: 1313
+Number of epochs: 10.0
+Loss masking: ENABLED (only assistant tokens contribute to loss)
+Using loss masking for qwen (only computing loss on assistant responses)
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
+/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.025274038314819336 seconds
+Dataset size: 1313 samples
+
+========== In-Place Evaluation Configuration ==========
+Enabled: True
+Interval: Every 10 steps
+Test data: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+Batch size: 1
+Max samples: 1
+Output dir: /nas/ganluo/sft_output/Qwen3-8B-inplace-eval/evaluation_reports
+======================================================
+
+Starting qwen SFT training...
+Total training samples: 1313
+Number of epochs: 10.0
+Loss masking: ENABLED (only assistant tokens contribute to loss)
+INFO:evaluation.inplace_evaluation_callback:Loaded evaluation config from: /nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/configs/evaluation_config.yaml
+INFO:evaluation.inplace_evaluation_callback:原地评估回调已初始化
+INFO:evaluation.inplace_evaluation_callback:  Reward服务器URL: http://0.0.0.0:8897
+INFO:evaluation.inplace_evaluation_callback:  评估间隔: 每10步
+INFO:evaluation.inplace_evaluation_callback:  测试数据: /nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl
+/nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/src/train.py:265: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
+/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.02718186378479004 seconds
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
+/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.02514171600341797 seconds
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
+/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.0616607666015625 seconds
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.20121550559997559 seconds
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.1009519100189209 seconds
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
+/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.024054527282714844 seconds
+Starting qwen SFT training...
+Total training samples: 1313
+Number of epochs: 10.0
+Loss masking: ENABLED (only assistant tokens contribute to loss)
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
+/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.025362730026245117 seconds
+Parameter Offload - Persistent parameters statistics: param_count = 145, numel = 308224
+[2025-08-25 05:42:32,559] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-25 05:42:32,561] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-25 05:42:32,561] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-25 05:42:32,562] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-25 05:42:32,563] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-25 05:42:32,563] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-25 05:42:32,563] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-25 05:42:32,772] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+wandb: WARNING The `run_name` is currently set to the same value as `TrainingArguments.output_dir`. If this was not intended, please specify a different run name by setting the `TrainingArguments.run_name` parameter.
+wandb: Currently logged in as: luogan_little_wolf (luogan_little_wolf-peking-university) to https://api.bandw.top. Use `wandb login --relogin` to force relogin
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.0
+wandb: Run data is saved locally in /nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/wandb/run-20250825_054234-voy8gvur
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run /nas/ganluo/sft_output/Qwen3-8B-inplace-eval
+wandb: ⭐️ View project at https://app.bandw.top/luogan_little_wolf-peking-university/qwen-8b-workflow-inplace-eval
+wandb: 🚀 View run at https://app.bandw.top/luogan_little_wolf-peking-university/qwen-8b-workflow-inplace-eval/runs/voy8gvur
+  0%|          | 0/420 [00:00<?, ?it/s]  0%|          | 1/420 [00:24<2:48:08, 24.08s/it]                                                 {'loss': 26.9065, 'grad_norm': 626.230538146581, 'learning_rate': 0.0, 'epoch': 0.02}
+  0%|          | 1/420 [00:24<2:48:08, 24.08s/it]  0%|          | 2/420 [00:28<1:28:22, 12.68s/it]                                                 {'loss': 26.9247, 'grad_norm': 614.0653512049208, 'learning_rate': 5.404763088546395e-06, 'epoch': 0.05}
+  0%|          | 2/420 [00:28<1:28:22, 12.68s/it]  1%|          | 3/420 [00:32<1:00:07,  8.65s/it]                                                 {'loss': 26.4817, 'grad_norm': 616.0439872148247, 'learning_rate': 8.566346820627895e-06, 'epoch': 0.07}
+  1%|          | 3/420 [00:32<1:00:07,  8.65s/it]  1%|          | 4/420 [00:36<46:54,  6.77s/it]                                                 {'loss': 22.6519, 'grad_norm': 428.9879701121911, 'learning_rate': 1.080952617709279e-05, 'epoch': 0.1}
+  1%|          | 4/420 [00:36<46:54,  6.77s/it]  1%|          | 5/420 [00:41<42:47,  6.19s/it]                                               {'loss': 17.7157, 'grad_norm': 159.94826084518246, 'learning_rate': 1.2549471261506067e-05, 'epoch': 0.12}
+  1%|          | 5/420 [00:41<42:47,  6.19s/it]  1%|▏         | 6/420 [00:45<37:19,  5.41s/it]                                               {'loss': 13.9487, 'grad_norm': 108.8520420129664, 'learning_rate': 1.397110990917429e-05, 'epoch': 0.14}
+  1%|▏         | 6/420 [00:45<37:19,  5.41s/it]  2%|▏         | 7/420 [00:49<34:54,  5.07s/it]                                               {'loss': 9.8317, 'grad_norm': 51.60831068473357, 'learning_rate': 1.5173088259185983e-05, 'epoch': 0.17}
+  2%|▏         | 7/420 [00:49<34:54,  5.07s/it]  2%|▏         | 8/420 [00:53<31:53,  4.64s/it]                                               {'loss': 8.2521, 'grad_norm': 39.268529630405894, 'learning_rate': 1.6214289265639183e-05, 'epoch': 0.19}
+  2%|▏         | 8/420 [00:53<31:53,  4.64s/it]  2%|▏         | 9/420 [00:57<28:59,  4.23s/it]                                               {'loss': 6.0673, 'grad_norm': 21.735105991454326, 'learning_rate': 1.713269364125579e-05, 'epoch': 0.21}
+  2%|▏         | 9/420 [00:57<28:59,  4.23s/it]INFO:evaluation.inplace_evaluation_callback:在步数 10 开始原地评估
+WARNING:evaluation.inplace_evaluation_callback:Tokenizer is None! Trying to get from model...
+ERROR:evaluation.inplace_evaluation_callback:Cannot get tokenizer from callback!
+  2%|▏         | 10/420 [01:00<27:29,  4.02s/it]                                                {'loss': 5.3367, 'grad_norm': 27.078948948390103, 'learning_rate': 1.7954234350052467e-05, 'epoch': 0.24}
+  2%|▏         | 10/420 [01:00<27:29,  4.02s/it]  3%|▎         | 11/420 [01:04<26:20,  3.87s/it]                                                {'loss': 4.4682, 'grad_norm': 14.604950782043932, 'learning_rate': 1.8697408319761175e-05, 'epoch': 0.26}
+  3%|▎         | 11/420 [01:04<26:20,  3.87s/it]  3%|▎         | 12/420 [01:07<25:25,  3.74s/it]                                                {'loss': 3.7742, 'grad_norm': 14.254388652439918, 'learning_rate': 1.9375872997720687e-05, 'epoch': 0.29}
+  3%|▎         | 12/420 [01:07<25:25,  3.74s/it]  3%|▎         | 13/420 [01:11<26:14,  3.87s/it]                                                {'loss': 3.1561, 'grad_norm': 11.011715540585316, 'learning_rate': 2e-05, 'epoch': 0.31}
+  3%|▎         | 13/420 [01:11<26:14,  3.87s/it]  3%|▎         | 14/420 [01:15<25:20,  3.75s/it]                                                {'loss': 2.6787, 'grad_norm': 6.4752436412791425, 'learning_rate': 2e-05, 'epoch': 0.33}
+  3%|▎         | 14/420 [01:15<25:20,  3.75s/it]  4%|▎         | 15/420 [01:18<25:05,  3.72s/it]                                                {'loss': 2.3526, 'grad_norm': 7.624186806035028, 'learning_rate': 2e-05, 'epoch': 0.36}
+  4%|▎         | 15/420 [01:18<25:05,  3.72s/it]  4%|▍         | 16/420 [01:22<24:54,  3.70s/it]                                                {'loss': 2.0816, 'grad_norm': 9.152678185123364, 'learning_rate': 2e-05, 'epoch': 0.38}
+  4%|▍         | 16/420 [01:22<24:54,  3.70s/it]  4%|▍         | 17/420 [01:26<24:50,  3.70s/it]                                                {'loss': 1.7689, 'grad_norm': 4.822871807897047, 'learning_rate': 2e-05, 'epoch': 0.4}
+  4%|▍         | 17/420 [01:26<24:50,  3.70s/it]  4%|▍         | 18/420 [01:30<25:54,  3.87s/it]                                                {'loss': 1.5995, 'grad_norm': 3.516663279191665, 'learning_rate': 2e-05, 'epoch': 0.43}
+  4%|▍         | 18/420 [01:30<25:54,  3.87s/it]
