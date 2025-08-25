@@ -1,0 +1,108 @@
+(verl) root@ctyun172022236189:/nas/ganluo/Flow_RL/my_llama3_h100_new# bash run_qwen.sh 
+Training Qwen-2.5-7B-Instruct...
+==========================================
+Model: qwen
+Dataset: /nas/ganluo/Flow_RL/training_data/0807_SFT_没有filter就合并/merged_training_data_qwen.jsonl
+Output: /nas/ganluo/sft_output/Qwen2.5-7B-workflow-sft
+Global batch size: 128
+Loss masking: true
+==========================================
+ipex flag is deprecated, will be removed in Accelerate v1.10. From 2.7.0, PyTorch has all needed optimizations for Intel CPU and XPU.
+[2025-08-10 21:07:11,260] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-10 21:07:13,156] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+W0810 21:07:14.456580 23273 site-packages/torch/distributed/run.py:792] 
+W0810 21:07:14.456580 23273 site-packages/torch/distributed/run.py:792] *****************************************
+W0810 21:07:14.456580 23273 site-packages/torch/distributed/run.py:792] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0810 21:07:14.456580 23273 site-packages/torch/distributed/run.py:792] *****************************************
+[2025-08-10 21:07:25,796] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-10 21:07:26,039] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-10 21:07:26,085] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-10 21:07:26,085] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-10 21:07:26,115] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-10 21:07:26,119] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-10 21:07:26,131] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-10 21:07:26,134] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-10 21:07:26,801] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+Traceback (most recent call last):
+  File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 16, in <module>
+    from .data_collator import DataCollatorForChatML, DataCollatorForCausalLMWithMasking
+ImportError: attempted relative import with no known parent package
+[2025-08-10 21:07:27,061] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-10 21:07:27,110] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-10 21:07:27,111] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-10 21:07:27,145] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+Traceback (most recent call last):
+  File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 16, in <module>
+    from .data_collator import DataCollatorForChatML, DataCollatorForCausalLMWithMasking
+ImportError: attempted relative import with no known parent package
+[2025-08-10 21:07:27,162] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-10 21:07:27,164] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-10 21:07:27,171] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+Traceback (most recent call last):
+  File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 16, in <module>
+    from .data_collator import DataCollatorForChatML, DataCollatorForCausalLMWithMasking
+ImportError: attempted relative import with no known parent package
+Traceback (most recent call last):
+  File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 16, in <module>
+    from .data_collator import DataCollatorForChatML, DataCollatorForCausalLMWithMasking
+ImportError: attempted relative import with no known parent package
+Traceback (most recent call last):
+  File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 16, in <module>
+    from .data_collator import DataCollatorForChatML, DataCollatorForCausalLMWithMasking
+ImportError: attempted relative import with no known parent package
+Traceback (most recent call last):
+  File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 16, in <module>
+Traceback (most recent call last):
+  File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 16, in <module>
+    from .data_collator import DataCollatorForChatML, DataCollatorForCausalLMWithMasking
+ImportError: attempted relative import with no known parent package
+    from .data_collator import DataCollatorForChatML, DataCollatorForCausalLMWithMasking
+ImportError: attempted relative import with no known parent package
+Traceback (most recent call last):
+  File "/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py", line 16, in <module>
+    from .data_collator import DataCollatorForChatML, DataCollatorForCausalLMWithMasking
+ImportError: attempted relative import with no known parent package
+W0810 21:07:28.097520 23273 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 23851 closing signal SIGTERM
+W0810 21:07:28.097836 23273 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 23852 closing signal SIGTERM
+W0810 21:07:28.098428 23273 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 23853 closing signal SIGTERM
+W0810 21:07:28.098751 23273 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 23854 closing signal SIGTERM
+W0810 21:07:28.099008 23273 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 23855 closing signal SIGTERM
+W0810 21:07:28.099245 23273 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 23856 closing signal SIGTERM
+W0810 21:07:28.099484 23273 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 23857 closing signal SIGTERM
+E0810 21:07:28.659983 23273 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 7 (pid: 23858) of binary: /root/miniforge3/envs/verl/bin/python
+Traceback (most recent call last):
+  File "/root/miniforge3/envs/verl/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/root/miniforge3/envs/verl/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1209, in <module>
+    main()
+  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1205, in main
+    launch_command(args)
+  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1184, in launch_command
+    deepspeed_launcher(args)
+  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/accelerate/commands/launch.py", line 868, in deepspeed_launcher
+    distrib_run.run(args)
+  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/torch/distributed/run.py", line 909, in run
+    elastic_launch(
+  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/miniforge3/envs/verl/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2025-08-10_21:07:28
+  host      : ctyun172022236189.et1032-ctyun
+  rank      : 7 (local_rank: 7)
+  exitcode  : 1 (pid: 23858)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+(verl) root@ctyun172022236189:/nas/ganluo/Flow_RL/my_llama3_h100_new# 

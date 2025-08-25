@@ -50,7 +50,7 @@ services:
     
     # Token费用惩罚配置
     token_penalty:
-      enabled: true
+      enabled: false
       
       # API价格配置（每百万token的价格，美元）
       pricing:

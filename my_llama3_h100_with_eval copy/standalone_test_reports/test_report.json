@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-08-24T22:12:22.952269",
+  "total_samples": 10,
+  "success_rate": 0.9,
+  "overall_mean": 0.6847122628034729,
+  "overall_max": 0.8415965019707354,
+  "overall_min": 0.527127599217964,
+  "benchmark_stats": {
+    "workflow_gsm8k": {
+      "num_samples": 4,
+      "num_success": 3,
+      "mean_score": 0.7947833377069485,
+      "max_score": 0.8415965019707354,
+      "min_score": 0.707522126641236
+    },
+    "workflow_drop": {
+      "num_samples": 3,
+      "num_success": 3,
+      "mean_score": 0.6721461099797671,
+      "max_score": 0.7379871888687765,
+      "min_score": 0.6330713273406107
+    },
+    "workflow_high_level_math": {
+      "num_samples": 3,
+      "num_success": 3,
+      "mean_score": 0.5872073407237027,
+      "max_score": 0.6452251524029536,
+      "min_score": 0.527127599217964
+    }
+  }
+}
