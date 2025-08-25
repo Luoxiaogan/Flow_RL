@@ -120,6 +120,11 @@ def main():
     tokenizer = setup_tokenizer(model_args.model_name_or_path, model_args.model_type)
     model = load_model(model_args)
     
+    # 启用梯度检查点（如果在TrainingArguments中指定）
+    if training_args.gradient_checkpointing:
+        model.gradient_checkpointing_enable()
+        logger.info("✓ 梯度检查点已启用（节省内存）")
+    
     # 加载和处理数据集
     train_dataset = load_and_process_dataset(
         data_args, tokenizer, model_args.model_type, model_args.use_loss_mask

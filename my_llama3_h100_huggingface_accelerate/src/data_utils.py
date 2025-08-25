@@ -28,10 +28,6 @@ class ModelArguments:
         default=False,
         metadata={"help": "仅对助手回复计算损失（损失掩码）"}
     )
-    gradient_checkpointing: bool = field(
-        default=False,
-        metadata={"help": "启用梯度检查点以节省内存（会稍微降低训练速度）"}
-    )
 
 
 @dataclass
@@ -138,10 +134,7 @@ def load_model(model_args: ModelArguments):
     if hasattr(model.config, "use_cache"):
         model.config.use_cache = False
     
-    # 启用梯度检查点（如果指定）
-    if hasattr(model_args, 'gradient_checkpointing') and model_args.gradient_checkpointing:
-        model.gradient_checkpointing_enable()
-        print("✓ 梯度检查点已启用（节省内存）")
+    # 梯度检查点将在训练脚本中通过TrainingArguments.gradient_checkpointing启用
     
     print(f"✓ 模型加载成功")
     return model
