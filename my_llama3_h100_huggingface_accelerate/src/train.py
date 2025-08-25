@@ -166,8 +166,11 @@ def main():
     )
     
     # 使用Accelerator准备模型、优化器等
-    model, optimizer, train_dataloader, lr_scheduler = accelerator.prepare(
-        model, optimizer, train_dataloader, lr_scheduler
+    # model, optimizer, train_dataloader, lr_scheduler = accelerator.prepare(
+    #     model, optimizer, train_dataloader, lr_scheduler
+    # )
+    model, _, train_dataloader, _ = accelerator.prepare(
+        model, None, train_dataloader, None
     )
     
     # 初始化评估组件（如果启用）
@@ -234,9 +237,9 @@ def main():
                 if training_args.max_grad_norm > 0:
                     accelerator.clip_grad_norm_(model.parameters(), training_args.max_grad_norm)
                 
-                optimizer.step()
-                lr_scheduler.step()
-                optimizer.zero_grad()
+                #optimizer.step()
+                #lr_scheduler.step()
+                #optimizer.zero_grad()
             
             # 更新统计信息
             loss_item = loss.detach().float()
@@ -247,7 +250,7 @@ def main():
             if accelerator.is_main_process:
                 progress_bar.set_postfix({
                     'loss': f"{loss_item:.4f}",
-                    'lr': f"{lr_scheduler.get_last_lr()[0]:.2e}",
+                    # 'lr': f"{lr_scheduler.get_last_lr()[0]:.2e}",
                     'step': global_step
                 })
             
@@ -260,7 +263,7 @@ def main():
                 if accelerator.is_main_process:
                     log_dict = {
                         "train_loss": avg_loss,
-                        "learning_rate": lr_scheduler.get_last_lr()[0],
+                        # "learning_rate": lr_scheduler.get_last_lr()[0],
                         "epoch": epoch,
                         "global_step": global_step
                     }
@@ -268,7 +271,7 @@ def main():
                     if training_args.report_to == "wandb":
                         wandb.log(log_dict, step=global_step)
                     
-                    logger.info(f"Step {global_step}: loss={avg_loss:.4f}, lr={lr_scheduler.get_last_lr()[0]:.2e}")
+                    logger.info(f"Step {global_step}: loss={avg_loss:.4f}")
                 
                 total_loss = 0.0
             

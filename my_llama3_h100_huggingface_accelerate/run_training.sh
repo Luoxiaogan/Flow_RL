@@ -59,6 +59,7 @@ echo "  OMP_NUM_THREADS: ${OMP_NUM_THREADS}"
 # 启动训练
 echo "🎯 使用DeepSpeed ZeRO-2开始训练..."
 accelerate launch \
+    --config_file /nas/ganluo/Flow_RL/my_llama3_h100_huggingface_accelerate/configs/accelerate_config.yaml \
     src/train.py \
     --model_name_or_path "${MODEL_NAME}" \
     --model_type "${MODEL_TYPE}" \
