@@ -159,7 +159,7 @@ class InPlaceEvaluationCallback(TrainerCallback):
                 torch_dtype=torch.bfloat16,
                 device_map={"": self.inference_device},
                 trust_remote_code=True,
-                attn_implementation="flash_attention_2" if hasattr(model.config, 'attn_implementation') else "eager"
+                attn_implementation="flash_attention_2"
             )
             
             # 设置为评估模式
@@ -243,22 +243,24 @@ class InPlaceEvaluationCallback(TrainerCallback):
             # 使用GatheredParameters聚合分片参数（阻塞式）
             with deepspeed.zero.GatheredParameters(actual_model.parameters(), modifier_rank=0):
                 if torch.distributed.get_rank() == 0:  # 只在rank 0执行权重拷贝
-                    logger.info("🎯 Rank 0: 开始收集聚合后的权重...")
+                    logger.info("🎯 Rank 0: 开始从GPU 0拷贝完整权重到GPU 7...")
                     
-                    # 构建state_dict，直接拷贝到GPU 7
+                    # 构建state_dict，直接从GPU 0拷贝到GPU 7
                     gathered_state_dict = {}
                     param_count = 0
                     for name, param in actual_model.named_parameters():
-                        if param.is_floating_point():
-                            # 关键：直接从聚合后的参数拷贝到GPU 7
-                            # 避免在训练GPU上创建中间副本
+                        if param.is_floating_point() and param.requires_grad:
+                            # 关键：从GPU 0直接拷贝到GPU 7
+                            # 只同步需要训练的参数，避免frozen参数
                             with torch.no_grad():
                                 gathered_state_dict[name] = param.data.clone().to(
-                                    self.inference_device, non_blocking=False
+                                    device=self.inference_device,  # GPU 7
+                                    dtype=param.dtype,
+                                    non_blocking=False
                                 )
                             param_count += 1
                     
-                    logger.info(f"✓ 已收集 {param_count} 个参数到GPU 7")
+                    logger.info(f"✓ 已拷贝 {param_count} 个训练参数从GPU 0到GPU 7")
                     
                     # 同步到推理模型
                     missing_keys, unexpected_keys = self.inference_model.load_state_dict(
@@ -274,26 +276,26 @@ class InPlaceEvaluationCallback(TrainerCallback):
                     del gathered_state_dict
                     torch.cuda.empty_cache()
                     
-                    logger.info("✅ Rank 0: 权重已成功同步到推理模型")
+                    logger.info("✅ Rank 0: 权重已成功同步到推理模型（GPU 7）")
                 else:
-                    logger.info(f"⚙️  Rank {torch.distributed.get_rank()}: 参与权重聚合，等待完成")
+                    logger.info(f"⚙️  Rank {torch.distributed.get_rank()}: 等待权重同步完成")
             
             # 再次同步所有进程，确保权重同步完全完成
             if torch.distributed.is_initialized():
                 torch.distributed.barrier()
-                logger.info("✓ 权重同步完成，所有进程已同步")
+                logger.info("🎯 权重同步完成，所有进程已同步")
             
             # 记录耗时
             sync_time = time.time() - sync_start
             self._weights_sync_time = sync_time
-            logger.info(f"🎯 串行权重同步完成，总耗时: {sync_time:.2f}秒")
+            logger.info(f"✅ ZeRO-3分片权重同步完成，总耗时: {sync_time:.2f}秒")
             logger.info("▶️  训练计算即将恢复，GPU 0-6状态完整保留")
             
             return True
             
         except Exception as e:
             sync_time = time.time() - sync_start
-            logger.error(f"❌ 串行权重同步失败 (耗时: {sync_time:.2f}秒): {e}")
+            logger.error(f"❌ ZeRO-3权重同步失败 (耗时: {sync_time:.2f}秒): {e}")
             logger.error("▶️  训练将恢复，推理回退到原方案")
             import traceback
             traceback.print_exc()
@@ -445,8 +447,8 @@ class InPlaceEvaluationCallback(TrainerCallback):
                     # 使用专用推理模型（完全在GPU 7上）
                     eval_model = self.inference_model
                     eval_tokenizer = self.inference_tokenizer
-                    logger.info(f"✅ 权重同步成功，推理将在 {self.inference_device} 上串行执行")
-                    logger.info("📍 GPU 0-6保持训练状态不变，只有GPU 7执行推理计算")
+                    logger.info(f"✅ 权重同步成功，推理将在 {self.inference_device} 上执行")
+                    logger.info("📍 GPU 0-6保持训练状态，只有GPU 7执行推理计算")
                 else:
                     logger.warning("⚠️  权重同步失败，回退到原有方案")
                     use_dedicated_inference = False
