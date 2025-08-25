@@ -15,21 +15,21 @@ test_data:
     drop: "New_evaluation_and_RL/parquet_and_jsonl_data/single/drop_test.jsonl"
     humaneval: "New_evaluation_and_RL/parquet_and_jsonl_data/single/humaneval_test.jsonl"
 
-# 评估调度
+# 评估调度 (7卡训练+1卡推理优化)
 schedule:
-  # 每N个训练步评估一次
-  interval: 10
+  # 每N个训练步评估一次 (增加间隔减少推理频率)
+  interval: 20
   
   # 评估的最大样本数（None表示全部）
   max_samples: 1  # 测试时减少，生产环境设为null
   
-  # 评估批次大小
+  # 评估批次大小 (单卡推理保持较小batch)
   batch_size: 1
 
-# 生成参数（评估时使用）
+# 生成参数（评估时使用，优化单卡推理）
 generation:
   # 这些参数会覆盖模型的generation_config.json以保证一致性
-  max_new_tokens: 2048
+  max_new_tokens: 1024  # 从2048减少到1024，减轻推理负担
   temperature: 0.6  # 固定值以保证可重复性
   top_p: 0.95
   top_k: 20

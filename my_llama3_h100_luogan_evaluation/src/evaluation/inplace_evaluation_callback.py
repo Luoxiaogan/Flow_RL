@@ -11,6 +11,7 @@ import torch
 from pathlib import Path
 from typing import Dict, Any, Optional
 from transformers import TrainerCallback, TrainerControl, TrainerState, TrainingArguments
+import deepspeed
 
 # 设置日志
 logging.basicConfig(level=logging.INFO)
@@ -99,10 +100,17 @@ class InPlaceEvaluationCallback(TrainerCallback):
         # 存储trainer引用以获取tokenizer
         self._trainer = None
         
+        # 7卡训练+1卡推理：专用推理模型（GPU 7）
+        self.inference_device = torch.device("cuda:7")
+        self.inference_model = None
+        self.inference_tokenizer = None
+        self._weights_sync_time = 0.0  # 权重同步耗时统计
+        
         logger.info(f"原地评估回调已初始化")
         logger.info(f"  Reward服务器URL: {self.reward_server_url}")
         logger.info(f"  评估间隔: 每{self.eval_interval}步")
         logger.info(f"  测试数据: {self.test_data_path}")
+        logger.info(f"  推理设备: {self.inference_device} (7卡训练+1卡推理方案)")
     
     def set_trainer(self, trainer):
         """
@@ -113,6 +121,183 @@ class InPlaceEvaluationCallback(TrainerCallback):
         """
         self._trainer = trainer
         logger.info("✓ Trainer引用已设置，tokenizer访问已就绪")
+    
+    def on_train_begin(self, args: TrainingArguments, state: TrainerState, 
+                       control: TrainerControl, model=None, **kwargs) -> TrainerControl:
+        """
+        训练开始时预加载推理模型到GPU 7
+        """
+        # 只在主进程加载推理模型
+        if not state.is_world_process_zero:
+            return control
+            
+        try:
+            logger.info("🚀 开始在GPU 7上预加载推理模型...")
+            
+            # 检查GPU 7是否可用
+            if not torch.cuda.is_available() or torch.cuda.device_count() < 8:
+                logger.error("GPU 7不可用，回退到原有推理方案")
+                return control
+            
+            # 获取模型路径
+            if hasattr(model, 'config') and hasattr(model.config, '_name_or_path'):
+                model_path = model.config._name_or_path
+            else:
+                # 从训练参数获取
+                model_path = getattr(args, 'model_name_or_path', None)
+                if not model_path:
+                    logger.error("无法确定模型路径，跳过推理模型预加载")
+                    return control
+            
+            logger.info(f"加载推理模型: {model_path}")
+            
+            # 加载推理模型到GPU 7
+            from transformers import AutoModelForCausalLM
+            
+            self.inference_model = AutoModelForCausalLM.from_pretrained(
+                model_path,
+                torch_dtype=torch.bfloat16,
+                device_map={"": self.inference_device},
+                trust_remote_code=True,
+                attn_implementation="flash_attention_2" if hasattr(model.config, 'attn_implementation') else "eager"
+            )
+            
+            # 设置为评估模式
+            self.inference_model.eval()
+            
+            # 获取tokenizer
+            if self._trainer and hasattr(self._trainer, 'tokenizer'):
+                self.inference_tokenizer = self._trainer.tokenizer
+                logger.info("✓ Tokenizer已从trainer获取")
+            else:
+                logger.warning("Trainer tokenizer不可用，将在评估时动态获取")
+            
+            # 显示GPU内存使用情况
+            if torch.cuda.is_available():
+                memory_allocated = torch.cuda.memory_allocated(self.inference_device) / 1024**3
+                memory_reserved = torch.cuda.memory_reserved(self.inference_device) / 1024**3
+                logger.info(f"GPU 7内存使用: 已分配 {memory_allocated:.2f}GB, 已预留 {memory_reserved:.2f}GB")
+            
+            logger.info("✅ 推理模型预加载完成")
+            
+        except Exception as e:
+            logger.error(f"推理模型预加载失败: {e}")
+            logger.warning("将回退到原有推理方案")
+            # 清理可能的部分加载资源
+            self.inference_model = None
+            self.inference_tokenizer = None
+        
+        return control
+    
+    def _sync_training_weights(self, training_model):
+        """
+        串行同步DeepSpeed ZeRO-3训练权重到推理模型
+        完全阻塞训练过程，确保GPU 0-6在此期间完全暂停
+        
+        Args:
+            training_model: 当前的训练模型（分布式）
+            
+        Returns:
+            bool: 同步是否成功
+        """
+        if not self.inference_model:
+            logger.warning("推理模型未初始化，跳过权重同步")
+            return False
+            
+        import time
+        sync_start = time.time()
+        
+        try:
+            logger.info("🔄 开始串行同步训练权重到推理模型...")
+            logger.info("⏸️  训练计算暂停，GPU 0-6保持状态不变，等待权重聚合")
+            
+            # 检查是否使用DeepSpeed
+            if not hasattr(training_model, 'module') and not hasattr(training_model, '_deepspeed_engine'):
+                logger.warning("未检测到DeepSpeed，尝试直接拷贝权重")
+                # 直接拷贝（非DeepSpeed情况）
+                state_dict = {}
+                for name, param in training_model.named_parameters():
+                    if param.is_floating_point():
+                        # 直接拷贝到GPU 7，避免在训练GPU上操作
+                        state_dict[name] = param.data.clone().to(self.inference_device)
+                
+                self.inference_model.load_state_dict(state_dict, strict=False)
+                logger.info("✓ 非DeepSpeed权重同步完成")
+                return True
+            
+            # DeepSpeed ZeRO-3权重聚合和同步（完全串行）
+            logger.info("🔄 DeepSpeed ZeRO-3串行权重聚合...")
+            logger.info(f"   所有rank ({torch.distributed.get_world_size()}) 将参与聚合")
+            
+            # 获取实际的模型（可能被包装在DeepSpeed引擎中）
+            if hasattr(training_model, 'module'):
+                actual_model = training_model.module
+            else:
+                actual_model = training_model
+            
+            # 强制同步所有进程，确保串行执行
+            if torch.distributed.is_initialized():
+                torch.distributed.barrier()
+                logger.info("✓ 所有进程已同步，开始权重聚合")
+            
+            # 使用GatheredParameters聚合分片参数（阻塞式）
+            with deepspeed.zero.GatheredParameters(actual_model.parameters(), modifier_rank=0):
+                if torch.distributed.get_rank() == 0:  # 只在rank 0执行权重拷贝
+                    logger.info("🎯 Rank 0: 开始收集聚合后的权重...")
+                    
+                    # 构建state_dict，直接拷贝到GPU 7
+                    gathered_state_dict = {}
+                    param_count = 0
+                    for name, param in actual_model.named_parameters():
+                        if param.is_floating_point():
+                            # 关键：直接从聚合后的参数拷贝到GPU 7
+                            # 避免在训练GPU上创建中间副本
+                            with torch.no_grad():
+                                gathered_state_dict[name] = param.data.clone().to(
+                                    self.inference_device, non_blocking=False
+                                )
+                            param_count += 1
+                    
+                    logger.info(f"✓ 已收集 {param_count} 个参数到GPU 7")
+                    
+                    # 同步到推理模型
+                    missing_keys, unexpected_keys = self.inference_model.load_state_dict(
+                        gathered_state_dict, strict=False
+                    )
+                    
+                    if missing_keys:
+                        logger.warning(f"推理模型缺少键: {len(missing_keys)} 个")
+                    if unexpected_keys:
+                        logger.warning(f"推理模型多余键: {len(unexpected_keys)} 个")
+                    
+                    # 清理临时字典，释放GPU 7内存
+                    del gathered_state_dict
+                    torch.cuda.empty_cache()
+                    
+                    logger.info("✅ Rank 0: 权重已成功同步到推理模型")
+                else:
+                    logger.info(f"⚙️  Rank {torch.distributed.get_rank()}: 参与权重聚合，等待完成")
+            
+            # 再次同步所有进程，确保权重同步完全完成
+            if torch.distributed.is_initialized():
+                torch.distributed.barrier()
+                logger.info("✓ 权重同步完成，所有进程已同步")
+            
+            # 记录耗时
+            sync_time = time.time() - sync_start
+            self._weights_sync_time = sync_time
+            logger.info(f"🎯 串行权重同步完成，总耗时: {sync_time:.2f}秒")
+            logger.info("▶️  训练计算即将恢复，GPU 0-6状态完整保留")
+            
+            return True
+            
+        except Exception as e:
+            sync_time = time.time() - sync_start
+            logger.error(f"❌ 串行权重同步失败 (耗时: {sync_time:.2f}秒): {e}")
+            logger.error("▶️  训练将恢复，推理回退到原方案")
+            import traceback
+            traceback.print_exc()
+            return False
     
     def on_step_end(self, args: TrainingArguments, state: TrainerState, 
                     control: TrainerControl, model=None, tokenizer=None, **kwargs) -> TrainerControl:
@@ -149,13 +334,31 @@ class InPlaceEvaluationCallback(TrainerCallback):
     def on_train_end(self, args: TrainingArguments, state: TrainerState, 
                      control: TrainerControl, **kwargs) -> TrainerControl:
         """
-        在训练结束时调用
+        在训练结束时调用，清理资源
         """
         # 生成最终总结报告
         if self.evaluation_results:
             self._generate_summary_report()
         
-        logger.info("训练和评估已完成")
+        # 清理推理模型资源
+        if state.is_world_process_zero and self.inference_model is not None:
+            logger.info("🧹 清理推理模型资源...")
+            try:
+                # 清理GPU内存
+                del self.inference_model
+                self.inference_model = None
+                self.inference_tokenizer = None
+                
+                # 清理GPU缓存
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+                    logger.info("✓ GPU缓存已清理")
+                
+                logger.info("✅ 推理模型资源清理完成")
+            except Exception as e:
+                logger.warning(f"资源清理时出现警告: {e}")
+        
+        logger.info("🎯 训练和评估已完成")
         return control
     
     def _run_evaluation_sync(self, model, tokenizer, global_step: int, output_dir: str):
@@ -222,19 +425,55 @@ class InPlaceEvaluationCallback(TrainerCallback):
                 test_samples = test_samples[:self.max_samples]
                 logger.info(f"限制评估样本数量: {self.max_samples}")
             
-            # 步骤3：使用当前模型权重生成解决方案
-            logger.info(f"使用当前模型权重生成解决方案（步数 {global_step}）")
+            # 步骤3：权重同步和推理（7卡训练+1卡推理方案）
+            logger.info(f"开始7卡训练+1卡推理评估（步数 {global_step}）")
             
-            # 切换到评估模式
-            model.eval()
+            # 决定使用哪种推理方式
+            use_dedicated_inference = (
+                self.inference_model is not None and 
+                self.inference_tokenizer is not None
+            )
+            
+            if use_dedicated_inference:
+                logger.info("✅ 使用专用推理模型（GPU 7）进行串行评估")
+                logger.info("⏸️  训练计算暂停，GPU 0-6保持内存状态，开始权重同步和推理")
+                
+                # 串行同步训练权重到推理模型
+                sync_success = self._sync_training_weights(model)
+                
+                if sync_success:
+                    # 使用专用推理模型（完全在GPU 7上）
+                    eval_model = self.inference_model
+                    eval_tokenizer = self.inference_tokenizer
+                    logger.info(f"✅ 权重同步成功，推理将在 {self.inference_device} 上串行执行")
+                    logger.info("📍 GPU 0-6保持训练状态不变，只有GPU 7执行推理计算")
+                else:
+                    logger.warning("⚠️  权重同步失败，回退到原有方案")
+                    use_dedicated_inference = False
+            
+            if not use_dedicated_inference:
+                logger.info("⚠️ 回退到原有推理方案（训练模型）")
+                # 回退到原有方案
+                model.eval()
+                eval_model = model
+                eval_tokenizer = tokenizer
+            
+            # 生成解决方案（串行执行）
+            if use_dedicated_inference:
+                logger.info("🎯 开始在GPU 7上串行生成解决方案...")
+                logger.info("📍 GPU 0-6维持训练状态，无计算活动，等待推理完成")
             
             solutions = await self._model_evaluator.generate_solutions_inplace(
-                model, tokenizer, test_samples, 
+                eval_model, eval_tokenizer, test_samples, 
                 batch_size=self.eval_batch_size
             )
             
-            # 切换回训练模式
-            model.train()
+            # 如果使用训练模型进行推理，恢复训练模式
+            if not use_dedicated_inference:
+                logger.info("▶️  恢复训练模式")
+                model.train()
+            else:
+                logger.info("✅ GPU 7推理完成，准备恢复训练")
             
             # 步骤4：从reward服务器收集分数
             logger.info("计算评估分数...")
@@ -264,6 +503,27 @@ class InPlaceEvaluationCallback(TrainerCallback):
             # 打印基准测试分数
             for benchmark, stats in report.get('benchmark_scores', {}).items():
                 logger.info(f"  {benchmark}: {stats['mean_score']:.2%} (n={stats['num_samples']})")
+            
+            # 性能监控报告
+            logger.info("📊 串行评估性能统计:")
+            if use_dedicated_inference:
+                logger.info(f"  ✅ 推理方案: 7卡训练 + 1卡串行推理 (GPU 7)")
+                logger.info(f"  ⏱️  权重同步耗时: {self._weights_sync_time:.2f}秒")
+                logger.info(f"  🔄 评估期间GPU 0-6保持训练状态，无计算操作")
+                logger.info("  ▶️  训练计算即将恢复，所有状态完整保留")
+            else:
+                logger.info(f"  ⚠️  推理方案: 回退到原有方案 (训练模型)")
+            
+            # GPU内存使用统计
+            if torch.cuda.is_available() and use_dedicated_inference:
+                memory_allocated = torch.cuda.memory_allocated(self.inference_device) / 1024**3
+                memory_reserved = torch.cuda.memory_reserved(self.inference_device) / 1024**3
+                logger.info(f"  💾 GPU 7内存: 已分配 {memory_allocated:.2f}GB, 已预留 {memory_reserved:.2f}GB")
+            
+            # 确保所有进程同步，然后恢复训练
+            if torch.distributed.is_initialized():
+                torch.distributed.barrier()
+                logger.info("✅ 所有进程已同步，训练即将恢复")
             
             # 评估后清理GPU缓存
             if torch.cuda.is_available():

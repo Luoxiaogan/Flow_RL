@@ -57,9 +57,9 @@ if [ "$MODEL_TYPE" = "qwen" ]; then
     DATASET_PATH="/nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl"
     OUTPUT_DIR="/nas/ganluo/sft_output/Qwen3-8B-inplace-eval"
     
-    # Qwen训练参数
-    PER_DEVICE_BATCH_SIZE=4
-    GRAD_ACCUM_STEPS=1
+    # Qwen训练参数 (7卡训练调整)
+    PER_DEVICE_BATCH_SIZE=2  # 从4调整为2，配合梯度累积
+    GRAD_ACCUM_STEPS=2       # 从1调整为2，保持训练稳定性
     LEARNING_RATE=2e-5
     MAX_SEQ_LENGTH=6500
     
@@ -69,9 +69,9 @@ elif [ "$MODEL_TYPE" = "llama" ]; then
     DATASET_PATH="/nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl"
     OUTPUT_DIR="/nas/ganluo/sft_output/Llama-3.1-8B-inplace-eval"
     
-    # Llama训练参数
-    PER_DEVICE_BATCH_SIZE=4
-    GRAD_ACCUM_STEPS=1
+    # Llama训练参数 (7卡训练调整)
+    PER_DEVICE_BATCH_SIZE=2  # 从4调整为2，配合梯度累积
+    GRAD_ACCUM_STEPS=2       # 从1调整为2，保持训练稳定性
     LEARNING_RATE=2e-5
     MAX_SEQ_LENGTH=6500
 else

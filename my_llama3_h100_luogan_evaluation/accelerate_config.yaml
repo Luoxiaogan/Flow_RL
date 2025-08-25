@@ -1,7 +1,7 @@
 # accelerate_config.yaml
 compute_environment: LOCAL_MACHINE
 distributed_type: DEEPSPEED
-num_processes: 8
+num_processes: 7  # 7卡训练，GPU 7用于推理
 num_machines: 1
 machine_rank: 0
 main_process_ip: null
