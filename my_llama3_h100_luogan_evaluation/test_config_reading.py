@@ -5,9 +5,24 @@
 import yaml
 import os
 import sys
+from pathlib import Path
 
-# 硬编码的配置文件路径
-CONFIG_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/config.yaml"
+def get_project_root():
+    """从root.yaml获取项目根路径"""
+    try:
+        script_dir = Path(__file__).parent
+        root_config_path = script_dir / "configs" / "root.yaml"
+        
+        with open(root_config_path, 'r', encoding='utf-8') as f:
+            config = yaml.safe_load(f)
+        
+        return config.get('root', '/nas/ganluo/Flow_RL')
+    except Exception:
+        return '/nas/ganluo/Flow_RL'
+
+# 动态获取配置文件路径
+PROJECT_ROOT = get_project_root()
+CONFIG_PATH = os.path.join(PROJECT_ROOT, "New_evaluation_and_RL/config.yaml")
 
 def test_config_reading():
     """测试从config.yaml读取reward服务器配置"""

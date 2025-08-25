@@ -3,16 +3,17 @@
 
 # 测试数据配置
 test_data:
-  # 测试数据路径（JSONL格式，只包含prompt，没有assistant回复）
+  # 测试数据路径（相对于项目根目录）
   # 格式：{"data_source": "...", "prompt": [...], "extra_info": {...}}
-  path: "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/single/test.jsonl"
+  path: "New_evaluation_and_RL/parquet_and_jsonl_data/single/test.jsonl"
   
-  # 不同基准测试的备选路径
+  # 不同基准测试的备选路径（相对于项目根目录）
+  # benchmark_paths是一个未实现的功能配置
   benchmark_paths:
-    gsm8k: "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/single/gsm8k_test.jsonl"
-    mbpp: "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/single/mbpp_test.jsonl"
-    drop: "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/single/drop_test.jsonl"
-    humaneval: "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/single/humaneval_test.jsonl"
+    gsm8k: "New_evaluation_and_RL/parquet_and_jsonl_data/single/gsm8k_test.jsonl"
+    mbpp: "New_evaluation_and_RL/parquet_and_jsonl_data/single/mbpp_test.jsonl"
+    drop: "New_evaluation_and_RL/parquet_and_jsonl_data/single/drop_test.jsonl"
+    humaneval: "New_evaluation_and_RL/parquet_and_jsonl_data/single/humaneval_test.jsonl"
 
 # 评估调度
 schedule:
@@ -48,8 +49,8 @@ generation:
 
 # Reward服务器配置
 reward_server:
-  # 硬编码的配置路径（按要求设定）
-  config_path: "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/config.yaml"
+  # 配置路径（相对于项目根目录）
+  config_path: "New_evaluation_and_RL/config.yaml"
   
   # 配置文件未找到时的备用设置
   fallback:

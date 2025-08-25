@@ -12,27 +12,39 @@ export PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True"
 export CUDA_LAUNCH_BLOCKING=0
 
 # ============================================
+# 获取项目根路径
+# ============================================
+# 获取脚本所在目录
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# 从root.yaml读取项目根路径
+ROOT=$(python3 "$SCRIPT_DIR/get_root.py" 2>/dev/null)
+if [ $? -ne 0 ]; then
+    echo "警告：无法读取root.yaml，使用默认服务器路径"
+    ROOT="/nas/ganluo/Flow_RL"
+fi
+echo "项目根路径: $ROOT"
+
+# ============================================
 # 模型配置
 # ============================================
 MODEL_TYPE="llama"  # "qwen" 或 "llama"
 USE_LOSS_MASK=true  # 启用损失掩码以改善训练效果
 
 # ============================================
-# 原地评估配置
+# 配置文件路径（基于根路径）
 # ============================================
-ENABLE_INPLACE_EVAL=true  # 启用原地评估
-EVAL_INTERVAL=50          # 每N步评估一次（不是检查点！）
-EVAL_BATCH_SIZE=4         # 评估批次大小
-MAX_EVAL_SAMPLES=20       # 限制评估样本数量用于测试（移除此项以进行完整评估）
+# Reward Server配置文件
+CONFIG_FILE="$ROOT/New_evaluation_and_RL/config.yaml"
+# 评估配置文件
+EVAL_CONFIG_FILE="$ROOT/my_llama3_h100_luogan_evaluation/configs/evaluation_config.yaml"
+# DeepSpeed配置
+DEEPSPEED_CONFIG="$ROOT/my_llama3_h100_luogan_evaluation/configs/deepspeed_config_z3.json"
 
 # ============================================
-# 配置文件路径（硬编码）
+# 通用配置
 # ============================================
-CONFIG_FILE="/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/config.yaml"
-
-# --- 通用配置 ---
 export WANDB_PROJECT="${MODEL_TYPE}-8b-workflow-inplace-eval"
-DEEPSPEED_CONFIG="/nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/configs/deepspeed_config_z3.json"
 
 # H100服务器配置
 NUM_GPUS=8
@@ -67,9 +79,61 @@ else
     exit 1
 fi
 
-# --- 评估数据路径 ---
-# 使用正确的测试数据（只有prompt，没有assistant回答）
-EVAL_TEST_DATA="/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/single/test.jsonl"
+# ============================================
+# 从evaluation_config.yaml读取原地评估配置
+# ============================================
+ENABLE_INPLACE_EVAL=true  # 启用原地评估
+
+# 计算训练总步数（用于更智能的配置分析）
+NUM_TRAIN_EPOCHS=10  # 训练轮数
+
+# 使用辅助脚本读取配置并分析训练信息
+if [ -f "$SCRIPT_DIR/read_eval_config.py" ]; then
+    # 传递训练参数给辅助脚本进行智能分析
+    eval $(python3 "$SCRIPT_DIR/read_eval_config.py" \
+        "$EVAL_CONFIG_FILE" \
+        --dataset "$DATASET_PATH" \
+        --batch-size "$PER_DEVICE_BATCH_SIZE" \
+        --grad-accum "$GRAD_ACCUM_STEPS" \
+        --num-gpus "$NUM_GPUS" \
+        --epochs "$NUM_TRAIN_EPOCHS" \
+        2>/dev/null)
+    
+    if [ $? -eq 0 ]; then
+        echo ""
+        echo "评估配置（从 $EVAL_CONFIG_FILE 读取）："
+        echo "  评估间隔: 每 $EVAL_INTERVAL 步"
+        echo "  评估批次大小: $EVAL_BATCH_SIZE"
+        echo "  最大评估样本数: ${MAX_EVAL_SAMPLES:-全部}"
+        echo "  测试数据: $EVAL_TEST_DATA"
+        
+        # 显示智能分析结果（如果有）
+        if [ ! -z "$TOTAL_TRAIN_SAMPLES" ]; then
+            echo ""
+            echo "训练数据分析："
+            echo "  训练样本总数: $TOTAL_TRAIN_SAMPLES"
+            echo "  全局批次大小: $GLOBAL_BATCH_SIZE"
+            echo "  每轮步数: $STEPS_PER_EPOCH"
+            echo "  总训练步数: $TOTAL_STEPS"
+            echo "  预计评估次数: $EXPECTED_EVAL_COUNT"
+        fi
+    else
+        echo "警告：无法读取评估配置，使用默认值"
+        EVAL_INTERVAL=50
+        EVAL_BATCH_SIZE=4
+        MAX_EVAL_SAMPLES=20
+        EVAL_TEST_DATA="$ROOT/New_evaluation_and_RL/parquet_and_jsonl_data/single/test.jsonl"
+    fi
+else
+    # 回退到默认值
+    echo "警告：配置读取脚本未找到，使用默认配置"
+    EVAL_INTERVAL=50
+    EVAL_BATCH_SIZE=4
+    MAX_EVAL_SAMPLES=20
+    EVAL_TEST_DATA="/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/single/test.jsonl"
+fi
+
+# --- 评估输出目录 ---
 EVAL_OUTPUT_DIR="${OUTPUT_DIR}/evaluation_reports"
 
 # 创建输出目录
@@ -121,6 +185,7 @@ echo ""
 echo "原地评估设置："
 echo "  已启用：$ENABLE_INPLACE_EVAL"
 if [ "$ENABLE_INPLACE_EVAL" = "true" ]; then
+    echo "  配置文件：$EVAL_CONFIG_FILE"
     echo "  测试数据：$EVAL_TEST_DATA"
     echo "  Reward服务器：$REWARD_URL (端口 $REWARD_PORT)"
     echo "  评估间隔：每$EVAL_INTERVAL步"
@@ -161,7 +226,7 @@ CMD_ARGS=(
     --model_type $MODEL_TYPE
     --dataset_path $DATASET_PATH
     --output_dir $OUTPUT_DIR
-    --num_train_epochs 10
+    --num_train_epochs $NUM_TRAIN_EPOCHS
     --per_device_train_batch_size $PER_DEVICE_BATCH_SIZE
     --per_device_eval_batch_size 2
     --gradient_accumulation_steps $GRAD_ACCUM_STEPS
@@ -201,6 +266,23 @@ if [ "$ENABLE_INPLACE_EVAL" = "true" ]; then
     fi
 fi
 
+# --- 动态生成accelerate配置文件 ---
+ACCELERATE_CONFIG_TEMP="/tmp/accelerate_config_${USER}_$$.yaml"
+cat > "$ACCELERATE_CONFIG_TEMP" <<EOF
+# 动态生成的accelerate配置文件
+compute_environment: LOCAL_MACHINE
+distributed_type: DEEPSPEED
+num_processes: 8
+num_machines: 1
+machine_rank: 0
+main_process_ip: null
+main_process_port: null
+deepspeed_config:
+  deepspeed_config_file: $DEEPSPEED_CONFIG
+  zero3_init_flag: true
+use_cpu: false
+EOF
+
 # --- 使用Accelerate启动训练 ---
 echo ""
 echo "开始使用原地评估进行训练..."
@@ -208,9 +290,12 @@ echo "将每$EVAL_INTERVAL步使用当前模型权重进行评估"
 echo ""
 
 python -m accelerate.commands.launch \
-    --config_file /nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/accelerate_config.yaml \
-    /nas/ganluo/Flow_RL/my_llama3_h100_luogan_evaluation/src/train.py \
+    --config_file "$ACCELERATE_CONFIG_TEMP" \
+    "$ROOT/my_llama3_h100_luogan_evaluation/src/train.py" \
     "${CMD_ARGS[@]}"
+
+# 清理临时文件
+rm -f "$ACCELERATE_CONFIG_TEMP"
 
 echo ""
 echo "训练完成！"

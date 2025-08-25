@@ -5,8 +5,23 @@
 """
 
 import json
+import yaml
+import os
 from pathlib import Path
 from transformers import AutoTokenizer
+
+def get_project_root():
+    """从root.yaml获取项目根路径"""
+    try:
+        script_dir = Path(__file__).parent
+        root_config_path = script_dir / "configs" / "root.yaml"
+        
+        with open(root_config_path, 'r', encoding='utf-8') as f:
+            config = yaml.safe_load(f)
+        
+        return config.get('root', '/nas/ganluo/Flow_RL')
+    except Exception:
+        return '/nas/ganluo/Flow_RL'
 
 def load_first_record(filepath):
     """加载JSONL文件的第一条记录"""
@@ -36,10 +51,11 @@ def main():
     print("=" * 80)
     
     # 文件路径
-    base_dir = "/Users/luogan/Code/workflow_generation/Flow_RL/training_data"
-    original_file = f"{base_dir}/0813_workspace_drop_COT_qwen_max/filtered_training_data.jsonl"
-    llama_file = f"{base_dir}/0813_filter之后的COT_SFT数据/merged_training_data_llama.jsonl"
-    qwen_file = f"{base_dir}/0813_filter之后的COT_SFT数据/merged_training_data_qwen.jsonl"
+    project_root = get_project_root()
+    base_dir = os.path.join(project_root, "training_data")
+    original_file = os.path.join(base_dir, "0813_workspace_drop_COT_qwen_max/filtered_training_data.jsonl")
+    llama_file = os.path.join(base_dir, "0813_filter之后的COT_SFT数据/merged_training_data_llama.jsonl")
+    qwen_file = os.path.join(base_dir, "0813_filter之后的COT_SFT数据/merged_training_data_qwen.jsonl")
     
     # 检查文件是否存在
     for filepath in [original_file, llama_file, qwen_file]:

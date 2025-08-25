@@ -16,8 +16,24 @@ from transformers import TrainerCallback, TrainerControl, TrainerState, Training
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# 硬编码配置文件路径
-CONFIG_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/config.yaml"
+def get_project_root():
+    """从root.yaml获取项目根路径"""
+    try:
+        # 获取当前文件的目录，向上两级找到项目目录
+        current_dir = Path(__file__).parent.parent.parent
+        root_config_path = current_dir / "configs" / "root.yaml"
+        
+        with open(root_config_path, 'r', encoding='utf-8') as f:
+            config = yaml.safe_load(f)
+        
+        return config.get('root', '/nas/ganluo/Flow_RL')
+    except Exception as e:
+        logger.warning(f"无法读取root.yaml: {e}")
+        return '/nas/ganluo/Flow_RL'  # 默认使用服务器路径
+
+# 动态获取配置文件路径
+PROJECT_ROOT = get_project_root()
+CONFIG_PATH = os.path.join(PROJECT_ROOT, "New_evaluation_and_RL/config.yaml")
 
 def load_reward_server_config():
     """从config.yaml读取reward server配置"""
