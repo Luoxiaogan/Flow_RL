@@ -59,8 +59,6 @@ echo "  OMP_NUM_THREADS: ${OMP_NUM_THREADS}"
 # 启动训练
 echo "🎯 使用DeepSpeed ZeRO-2开始训练..."
 accelerate launch \
-    --config_file configs/accelerate_config.yaml \
-    --deepspeed_config_file configs/deepspeed_zero2.json \
     src/train.py \
     --model_name_or_path "${MODEL_NAME}" \
     --model_type "${MODEL_TYPE}" \
