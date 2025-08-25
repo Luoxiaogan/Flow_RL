@@ -13,6 +13,11 @@ export WANDB_PROJECT="llama3-8b-accelerate-training"
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7  # 8卡均匀使用
 export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"  # 添加src到Python路径
 
+# DeepSpeed专用环境变量（重要：解决初始化冲突）
+export ACCELERATE_USE_DEEPSPEED=true
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export OMP_NUM_THREADS=1  # 避免系统过载
+
 # 模型和数据路径（本地测试路径，服务器上需要修改）
 MODEL_NAME="/nas/models/Meta-Llama-3.1-8B-Instruct"  # 服务器路径
 # MODEL_NAME="/Users/luogan/models/Meta-Llama-3.1-8B-Instruct"  # 本地路径（如果有）
@@ -45,9 +50,11 @@ LOGGING_STEPS=1
 WARMUP_RATIO=0.03
 USE_LOSS_MASK=true            # 必须开启
 
-# 添加环境变量
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-export ACCELERATE_USE_DEEPSPEED=true
+# 启动信息
+echo "🔧 环境变量配置完成"
+echo "  WANDB_PROJECT: ${WANDB_PROJECT}"
+echo "  ACCELERATE_USE_DEEPSPEED: ${ACCELERATE_USE_DEEPSPEED}"
+echo "  OMP_NUM_THREADS: ${OMP_NUM_THREADS}"
 
 # 启动训练
 echo "🎯 使用DeepSpeed ZeRO-2开始训练..."

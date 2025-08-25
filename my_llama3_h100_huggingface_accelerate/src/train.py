@@ -67,11 +67,8 @@ def main():
     parser = HfArgumentParser((ModelArguments, DataArguments, EvalArguments, TrainingArguments))
     model_args, data_args, eval_args, training_args = parser.parse_args_into_dataclasses()
 
-    # 初始化Accelerator（使用DeepSpeed时保持最简配置）
-    accelerator = Accelerator(
-        log_with="wandb" if training_args.report_to == "wandb" else None,
-        project_dir=training_args.logging_dir or "./logs"
-    )
+    # 初始化Accelerator（DeepSpeed要求完全无参数初始化）
+    accelerator = Accelerator()
     
     # 设置日志
     logging.basicConfig(
