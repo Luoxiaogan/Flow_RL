@@ -102,6 +102,14 @@ my_llama3_h100_luogan_evaluation/
 
 ## 注意事项
 
-- `accelerate_config.yaml` 在运行时动态生成，自动使用正确的路径
+- `accelerate_config.yaml` 中的 `deepspeed_config_file` 使用服务器路径（`/nas/ganluo/Flow_RL/...`）
+  - 这是因为该文件通常在服务器上运行
+  - 本地测试时会因路径不存在而报错，但不影响代码开发
 - 所有相对路径都相对于根路径进行解析
 - 默认使用服务器路径作为后备选项
+
+## 服务器部署检查清单
+
+1. 修改 `configs/root.yaml` 中的 root 路径
+2. 确认 `accelerate_config.yaml` 中的路径正确（默认已配置为服务器路径）
+3. 运行训练脚本

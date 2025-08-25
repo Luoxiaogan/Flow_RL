@@ -266,23 +266,6 @@ if [ "$ENABLE_INPLACE_EVAL" = "true" ]; then
     fi
 fi
 
-# --- 动态生成accelerate配置文件 ---
-ACCELERATE_CONFIG_TEMP="/tmp/accelerate_config_${USER}_$$.yaml"
-cat > "$ACCELERATE_CONFIG_TEMP" <<EOF
-# 动态生成的accelerate配置文件
-compute_environment: LOCAL_MACHINE
-distributed_type: DEEPSPEED
-num_processes: 8
-num_machines: 1
-machine_rank: 0
-main_process_ip: null
-main_process_port: null
-deepspeed_config:
-  deepspeed_config_file: $DEEPSPEED_CONFIG
-  zero3_init_flag: true
-use_cpu: false
-EOF
-
 # --- 使用Accelerate启动训练 ---
 echo ""
 echo "开始使用原地评估进行训练..."
@@ -290,12 +273,9 @@ echo "将每$EVAL_INTERVAL步使用当前模型权重进行评估"
 echo ""
 
 python -m accelerate.commands.launch \
-    --config_file "$ACCELERATE_CONFIG_TEMP" \
+    --config_file "$ROOT/my_llama3_h100_luogan_evaluation/accelerate_config.yaml" \
     "$ROOT/my_llama3_h100_luogan_evaluation/src/train.py" \
     "${CMD_ARGS[@]}"
-
-# 清理临时文件
-rm -f "$ACCELERATE_CONFIG_TEMP"
 
 echo ""
 echo "训练完成！"

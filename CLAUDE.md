@@ -395,3 +395,8 @@ When creating documentation files (README.md or other markdown documents):
 - to memorize 所有代码的注释都应该是英文，所有的print和log都应该是中文输出
 - to memorize 在本项目中，本地测试都需要source /opt/anaconda3/etc/profile.d/conda.sh && conda activate workflow
 - to memorize 写计划和回答问题使用简体中文
+- to memorize
+文件的唯一区别是：\
+本地/Users/luogan/Code/workflow_generation/Flow_RL\
+服务器/nas/ganluo/Flow_RL。\
+然后后面都是相对路径
