@@ -7,7 +7,7 @@ import os
 import sys
 import yaml
 import torch
-import asyncio
+# import asyncio  # 不再需要异步支持
 import logging
 from pathlib import Path
 from accelerate import Accelerator
@@ -286,14 +286,14 @@ def main():
                     unwrapped_model = accelerator.unwrap_model(model)
                     
                     # 执行评估 - 传递accelerator用于DDP主进程推理
-                    solutions = await evaluator.evaluate_during_training(
+                    solutions = evaluator.evaluate_during_training(
                         unwrapped_model, tokenizer, test_samples, eval_args.eval_batch_size, accelerator
                     )
                     
                     if solutions:
                         # 收集分数
                         logger.info("📊 正在计算评估分数...")
-                        scores = await score_collector.batch_evaluate(
+                        scores = score_collector.batch_evaluate(
                             test_samples, solutions, batch_size=eval_args.eval_batch_size
                         )
                         
@@ -304,7 +304,7 @@ def main():
                             'output_dir': training_args.output_dir
                         }
                         
-                        report = await report_generator.generate_report(
+                        report = report_generator.generate_report(
                             scores, checkpoint_info, test_samples
                         )
                         
@@ -374,12 +374,12 @@ def main():
             logger.info("🔍 执行最终评估...")
             
             try:
-                solutions = await evaluator.evaluate_during_training(
+                solutions = evaluator.evaluate_during_training(
                     unwrapped_model, tokenizer, test_samples, eval_args.eval_batch_size, accelerator
                 )
                 
                 if solutions:
-                    scores = await score_collector.batch_evaluate(
+                    scores = score_collector.batch_evaluate(
                         test_samples, solutions, batch_size=eval_args.eval_batch_size
                     )
                     
@@ -390,7 +390,7 @@ def main():
                         'final': True
                     }
                     
-                    final_report = await report_generator.generate_report(
+                    final_report = report_generator.generate_report(
                         scores, checkpoint_info, test_samples
                     )
                     
@@ -413,4 +413,4 @@ def main():
         logger.info("🎊 训练流程全部完成！")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()  # 直接调用，不再需要asyncio

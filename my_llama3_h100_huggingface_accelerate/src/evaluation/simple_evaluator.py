@@ -5,7 +5,7 @@
 """
 import re
 import torch
-import asyncio
+# import asyncio  # 不再需要异步支持
 import logging
 import json
 from typing import List, Dict, Any, Optional
@@ -80,8 +80,8 @@ class SimpleEvaluator:
         
         return test_samples
     
-    async def evaluate_during_training(self, model, tokenizer, test_samples: List[Dict],
-                                     batch_size: int = 1, accelerator=None) -> List[str]:
+    def evaluate_during_training(self, model, tokenizer, test_samples: List[Dict],
+                                batch_size: int = 1, accelerator=None) -> List[str]:
         """
         在训练过程中进行原地评估
         DDP优化版本：在主进程GPU（通常GPU 0）上执行推理，其他GPU保持idle
@@ -115,7 +115,7 @@ class SimpleEvaluator:
         
         try:
             # 生成解决方案 - 使用主进程推理策略
-            solutions = await self._generate_solutions_batch(
+            solutions = self._generate_solutions_batch(
                 model, tokenizer, test_samples, batch_size, inference_device
             )
             
@@ -137,8 +137,8 @@ class SimpleEvaluator:
         
         return solutions
     
-    async def _generate_solutions_batch(self, model, tokenizer, test_samples: List[Dict],
-                                       batch_size: int, inference_device=None) -> List[str]:
+    def _generate_solutions_batch(self, model, tokenizer, test_samples: List[Dict],
+                                 batch_size: int, inference_device=None) -> List[str]:
         """
         批量生成解决方案 - DDP主进程推理优化
         
@@ -166,7 +166,7 @@ class SimpleEvaluator:
                 
                 # 为批次生成解决方案
                 try:
-                    batch_solutions = await self._generate_single_batch(
+                    batch_solutions = self._generate_single_batch(
                         model, tokenizer, batch_samples, device
                     )
                     solutions.extend(batch_solutions)
@@ -182,8 +182,8 @@ class SimpleEvaluator:
         
         return solutions
     
-    async def _generate_single_batch(self, model, tokenizer, batch_samples: List[Dict],
-                                    device) -> List[str]:
+    def _generate_single_batch(self, model, tokenizer, batch_samples: List[Dict],
+                              device) -> List[str]:
         """
         为单个批次生成解决方案
         
@@ -298,7 +298,7 @@ class SimpleEvaluator:
 
 
 # 测试函数
-async def test_simple_evaluator():
+def test_simple_evaluator():
     """
     测试简化评估器
     """
@@ -331,4 +331,4 @@ async def test_simple_evaluator():
 
 
 if __name__ == "__main__":
-    asyncio.run(test_simple_evaluator())
+    test_simple_evaluator()  # 直接调用，不再需要asyncio

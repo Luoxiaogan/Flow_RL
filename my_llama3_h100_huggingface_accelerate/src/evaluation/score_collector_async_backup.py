@@ -1,22 +1,19 @@
-# -*- coding: utf-8 -*-
 """
-Score collector for interfacing with reward server - 同步版本
-使用requests替代aiohttp，移除async/await
+Score collector for interfacing with reward server
 """
 import os
-import requests
-import time
+import aiohttp
+import asyncio
 import logging
 import json
 from typing import List, Dict, Any, Optional
-from tqdm import tqdm
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm.asyncio import tqdm
 
 logger = logging.getLogger(__name__)
 
 class ScoreCollector:
     """
-    Collects evaluation scores from reward server - 同步版本
+    Collects evaluation scores from reward server
     """
     
     def __init__(self, server_url: str = 'http://localhost:8899'):
@@ -51,9 +48,9 @@ class ScoreCollector:
             if proxy_var in os.environ:
                 del os.environ[proxy_var]
     
-    def compute_score(self, request_data: Dict) -> Dict:
+    async def compute_score(self, request_data: Dict) -> Dict:
         """
-        Send single evaluation request to reward server - 同步版本
+        Send single evaluation request to reward server
         
         Args:
             request_data: Request data containing solution and metadata
@@ -67,26 +64,31 @@ class ScoreCollector:
             # Clear proxy before request
             self._clear_proxy_settings()
             
-            # Make synchronous request using requests
-            response = requests.post(
-                self.compute_endpoint,
-                json=request_data,
-                headers={'Content-Type': 'application/json'},
-                timeout=300,  # 5 minutes timeout
-                proxies={'http': None, 'https': None}  # Ignore system proxy
-            )
+            # Create session
+            timeout = aiohttp.ClientTimeout(total=300)  # 5 minutes timeout
+            connector = aiohttp.TCPConnector(force_close=True)
             
-            result = response.json()
-            
-            if result.get('success', False):
-                self.successful_requests += 1
-                return result
-            else:
-                self.failed_requests += 1
-                logger.warning(f"评估失败: {result.get('error', 'Unknown error')}")
-                return result
+            async with aiohttp.ClientSession(
+                connector=connector,
+                timeout=timeout,
+                trust_env=False  # Ignore system proxy
+            ) as session:
+                async with session.post(
+                    self.compute_endpoint,
+                    json=request_data,
+                    headers={'Content-Type': 'application/json'}
+                ) as response:
+                    result = await response.json()
+                    
+                    if result.get('success', False):
+                        self.successful_requests += 1
+                        return result
+                    else:
+                        self.failed_requests += 1
+                        logger.warning(f"评估失败: {result.get('error', 'Unknown error')}")
+                        return result
                         
-        except requests.exceptions.Timeout:
+        except asyncio.TimeoutError:
             self.failed_requests += 1
             logger.error("请求超时 (5分钟)")
             return {'success': False, 'error': 'Timeout', 'score': 0.0}
@@ -96,11 +98,11 @@ class ScoreCollector:
             logger.error(f"请求失败: {e}")
             return {'success': False, 'error': str(e), 'score': 0.0}
     
-    def batch_evaluate(self, test_samples: List[Dict], 
-                      solutions: List[str],
-                      batch_size: int = 8) -> List[Dict]:
+    async def batch_evaluate(self, test_samples: List[Dict], 
+                           solutions: List[str],
+                           batch_size: int = 8) -> List[Dict]:
         """
-        Evaluate multiple samples with threading for concurrency - 同步版本
+        Evaluate multiple samples with concurrency control
         
         Args:
             test_samples: List of test samples
@@ -117,10 +119,10 @@ class ScoreCollector:
         
         # Prepare all request data
         all_requests = []
-        for i, (sample, solution) in enumerate(zip(test_samples, solutions)):
+        for sample, solution in zip(test_samples, solutions):
             # Skip if no solution was generated
             if not solution:
-                all_requests.append((i, None))
+                all_requests.append(None)
                 continue
             
             # Extract data source with fallback
@@ -134,46 +136,48 @@ class ScoreCollector:
                 'extra_info': sample.get('extra_info', {})
             }
             print("🐺 🐺 🐺 🐺 🐺\n请求数据:\n", request_data)
-            all_requests.append((i, request_data))
+            all_requests.append(request_data)
         
-        # Process requests using ThreadPoolExecutor for concurrency
-        results = [None] * len(test_samples)
+        # Process in batches with concurrency control
+        results = []
+        semaphore = asyncio.Semaphore(batch_size)
         
-        def process_request(item):
-            """Process single request"""
-            index, request_data = item
-            
+        async def process_with_semaphore(request_data, index):
+            """Process single request with semaphore control"""
             if request_data is None:
-                return index, {'success': False, 'error': 'No solution generated', 'score': 0.0}
+                return {'success': False, 'error': 'No solution generated', 'score': 0.0}
             
-            result = self.compute_score(request_data)
-            print("🐺 🐺 🐺 🐺 🐺\n评估结果:\n", result)
-            return index, result
+            async with semaphore:
+                result = await self.compute_score(request_data)
+                print("🐺 🐺 🐺 🐺 🐺\n评估结果:\n", result)
+                return result
         
-        # Use ThreadPoolExecutor for concurrent requests
-        with ThreadPoolExecutor(max_workers=batch_size) as executor:
-            # Submit all tasks
-            future_to_index = {
-                executor.submit(process_request, req): req[0] 
-                for req in all_requests
-            }
-            
-            # Process results with progress bar
-            for future in tqdm(as_completed(future_to_index), 
-                             desc="评估进度", 
-                             total=len(future_to_index)):
-                try:
-                    index, result = future.result()
-                    results[index] = result
-                except Exception as e:
-                    index = future_to_index[future]
-                    logger.error(f"Task {index} failed: {e}")
-                    results[index] = {'success': False, 'error': str(e), 'score': 0.0}
+        # Create tasks for all requests
+        tasks = [
+            process_with_semaphore(req, i) 
+            for i, req in enumerate(all_requests)
+        ]
+        
+        # Process with progress bar
+        results = []
+        for task in tqdm.as_completed(tasks, desc="评估进度", total=len(tasks)):
+            result = await task
+            results.append(result)
+        
+        # Reorder results to match input order
+        ordered_results = [None] * len(tasks)
+        for i, task in enumerate(tasks):
+            try:
+                result = await task
+                ordered_results[i] = result
+            except Exception as e:
+                logger.error(f"Task {i} failed: {e}")
+                ordered_results[i] = {'success': False, 'error': str(e), 'score': 0.0}
         
         # Log statistics
-        self._log_statistics(results)
+        self._log_statistics(ordered_results)
         
-        return results
+        return ordered_results
     
     def _log_statistics(self, results: List[Dict]):
         """
@@ -210,10 +214,10 @@ class ScoreCollector:
         }
 
 
-# Test function - 同步版本
-def test_score_collector():
+# Test function
+async def test_score_collector():
     """
-    Test the score collector - 同步版本
+    Test the score collector
     """
     collector = ScoreCollector()
     
@@ -230,7 +234,7 @@ def test_score_collector():
     
     # Test single request
     print("Testing single request...")
-    result = collector.compute_score(test_request)
+    result = await collector.compute_score(test_request)
     print(f"Result: {result}")
     
     # Test batch evaluation
@@ -249,7 +253,7 @@ def test_score_collector():
     ]
     
     print("\nTesting batch evaluation...")
-    results = collector.batch_evaluate(test_samples, test_solutions, batch_size=2)
+    results = await collector.batch_evaluate(test_samples, test_solutions, batch_size=2)
     
     for i, result in enumerate(results):
         print(f"Sample {i}: {result}")
@@ -258,4 +262,4 @@ def test_score_collector():
 
 
 if __name__ == "__main__":
-    test_score_collector()
+    asyncio.run(test_score_collector())

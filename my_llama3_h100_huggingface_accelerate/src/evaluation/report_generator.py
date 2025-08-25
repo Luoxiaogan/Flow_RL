@@ -26,9 +26,9 @@ class ReportGenerator:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         logger.info(f"报告输出目录: {self.output_dir}")
     
-    async def generate_report(self, scores: List[Dict], 
-                             checkpoint_info: Dict,
-                             test_samples: List[Dict]) -> Dict:
+    def generate_report(self, scores: List[Dict], 
+                       checkpoint_info: Dict,
+                       test_samples: List[Dict]) -> Dict:
         """
         Generate comprehensive evaluation report
         
@@ -342,9 +342,8 @@ def test_report_generator():
         'output_dir': './output'
     }
     
-    # Generate report (synchronous for testing)
-    import asyncio
-    report = asyncio.run(generator.generate_report(scores, checkpoint_info, test_samples))
+    # Generate report (synchronous)
+    report = generator.generate_report(scores, checkpoint_info, test_samples)
     
     print("Report generated:")
     print(f"  Overall Score: {report['overall_score']:.2%}")
