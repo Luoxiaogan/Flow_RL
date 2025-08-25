@@ -6,6 +6,7 @@ __pycache__/
 build/
 dist/
 *.egg-info/
+.pytest_cache/
 
 # Outputs
 outputs/
@@ -13,25 +14,19 @@ checkpoint-*/
 *.log
 *_reports/
 *_test/
+*_callback_test/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS
 .DS_Store
-Thumbs.db
 
 # Environment
 .env
 venv/
 env/
-
-# Local configs
-local_*.yaml
-local_*.json
 *.local
 
 # Data
@@ -39,3 +34,15 @@ local_*.json
 *.parquet
 *.csv
 !examples/*.jsonl
+!test_data/*.jsonl
+
+# Models
+*.bin
+*.safetensors
+*.pth
+
+# Temporary
+*.tmp
+*.bak
+reorganization_report.json
+test_imports.py

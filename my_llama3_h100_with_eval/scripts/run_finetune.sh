@@ -20,7 +20,7 @@ USE_LOSS_MASK=true
 
 # --- 通用配置 ---
 export WANDB_PROJECT="${MODEL_TYPE}-8b-workflow-sft"
-DEEPSPEED_CONFIG="/nas/ganluo/Flow_RL/my_llama3_h100_new/configs/deepspeed_config_z3.json"
+DEEPSPEED_CONFIG="/nas/ganluo/Flow_RL//configs/training/deepspeed_z3.json"
 
 # H100服务器配置
 NUM_GPUS=8
@@ -105,6 +105,6 @@ fi
 
 # --- Accelerate 启动命令 ---
 python -m accelerate.commands.launch \
-    --config_file /nas/ganluo/Flow_RL/my_llama3_h100_new/accelerate_config.yaml \
-    /nas/ganluo/Flow_RL/my_llama3_h100_new/src/train.py \
+    --config_file /nas/ganluo/Flow_RL/my_llama3_h100_with_eval/configs/training/accelerate_config.yaml \
+    /nas/ganluo/Flow_RL/my_llama3_h100_with_eval/src/training/trainer.py \
     "${CMD_ARGS[@]}"

@@ -5,7 +5,7 @@ evaluation:
   
   # Reward server
   reward_server:
-    url: "http://localhost:8899"
+    url: "http://localhost:8897"
     timeout: 300
     max_retries: 3
   
@@ -26,3 +26,4 @@ evaluation:
     temperature: 0.7
     top_p: 0.9
     max_length: 4096
+    do_sample: true

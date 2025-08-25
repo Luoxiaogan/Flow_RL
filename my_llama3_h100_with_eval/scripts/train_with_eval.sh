@@ -28,7 +28,7 @@ MAX_EVAL_SAMPLES=50    # Limit evaluation samples for testing (remove for full e
 
 # --- Common Configuration ---
 export WANDB_PROJECT="${MODEL_TYPE}-8b-workflow-sft-with-eval"
-DEEPSPEED_CONFIG="/nas/ganluo/Flow_RL/my_llama3_h100_with_eval/configs/deepspeed_config_z3.json"
+DEEPSPEED_CONFIG="/nas/ganluo/Flow_RL/my_llama3_h100_with_eval/configs/training/deepspeed_z3.json"
 
 # H100 Server Configuration
 NUM_GPUS=8
@@ -180,8 +180,8 @@ echo "Starting training with automatic evaluation..."
 echo ""
 
 python -m accelerate.commands.launch \
-    --config_file /nas/ganluo/Flow_RL/my_llama3_h100_with_eval/accelerate_config.yaml \
-    /nas/ganluo/Flow_RL/my_llama3_h100_with_eval/src/train.py \
+    --config_file /nas/ganluo/Flow_RL/my_llama3_h100_with_eval/configs/training/accelerate_config.yaml \
+    /nas/ganluo/Flow_RL/my_llama3_h100_with_eval/src/training/trainer.py \
     "${CMD_ARGS[@]}"
 
 echo ""
