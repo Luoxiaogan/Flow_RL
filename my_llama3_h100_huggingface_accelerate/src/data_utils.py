@@ -28,6 +28,10 @@ class ModelArguments:
         default=False,
         metadata={"help": "仅对助手回复计算损失（损失掩码）"}
     )
+    gradient_checkpointing: bool = field(
+        default=False,
+        metadata={"help": "启用梯度检查点以节省内存（会稍微降低训练速度）"}
+    )
 
 
 @dataclass
@@ -134,18 +138,23 @@ def load_model(model_args: ModelArguments):
     if hasattr(model.config, "use_cache"):
         model.config.use_cache = False
     
+    # 启用梯度检查点（如果指定）
+    if hasattr(model_args, 'gradient_checkpointing') and model_args.gradient_checkpointing:
+        model.gradient_checkpointing_enable()
+        print("✓ 梯度检查点已启用（节省内存）")
+    
     print(f"✓ 模型加载成功")
     return model
 
 
-def formatting_prompts_func(examples, tokenizer, model_type):
+def formatting_prompts_func(examples, tokenizer, model_type=None):
     """
     根据模型类型格式化数据
     
     Args:
         examples: 数据样本
         tokenizer: 分词器
-        model_type: 模型类型
+        model_type: 模型类型（未使用，保持兼容性）
         
     Returns:
         格式化后的文本

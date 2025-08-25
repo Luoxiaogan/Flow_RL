@@ -34,73 +34,26 @@ ENABLE_EVAL=true  # 是否启用原地评估
 EVAL_INTERVAL=20  # 评估间隔
 MAX_EVAL_SAMPLES=5  # 评估样本数（测试时用小数值）
 
-# 训练超参数 - DDP优化配置（非ZeRO-3）
+# 训练超参数 - ZeRO-2优化配置
 NUM_EPOCHS=3
-PER_DEVICE_BATCH_SIZE=1  # 减小，因为每GPU现在存储完整模型（DDP vs ZeRO-3）
-GRAD_ACCUM_STEPS=4       # 增加，保持相同有效batch size
+PER_DEVICE_BATCH_SIZE=1      # 可以尝试2
+GRAD_ACCUM_STEPS=4            
 LEARNING_RATE=2e-5
-MAX_SEQ_LENGTH=6500
+MAX_SEQ_LENGTH=6500           # 现在可以用长序列了！
 SAVE_STEPS=500
 LOGGING_STEPS=1
 WARMUP_RATIO=0.03
+USE_LOSS_MASK=true            # 必须开启
 
-# 计算全局批次大小
-GLOBAL_BATCH_SIZE=$((8 * PER_DEVICE_BATCH_SIZE * GRAD_ACCUM_STEPS))  # = 1×4×8 = 32
-
-echo "📋 训练配置:"
-echo "  模型类型: ${MODEL_TYPE}"
-echo "  模型路径: ${MODEL_NAME}"
-echo "  数据集路径: ${DATASET_PATH}"
-echo "  输出目录: ${OUTPUT_DIR}"
-echo "  使用损失掩码: ${USE_LOSS_MASK}"
-echo "  启用原地评估: ${ENABLE_EVAL}"
-echo "  评估间隔: ${EVAL_INTERVAL}"
-echo "  最大序列长度: ${MAX_SEQ_LENGTH}"
-echo "  训练轮数: ${NUM_EPOCHS}"
-echo "  每设备批次大小: ${PER_DEVICE_BATCH_SIZE}"
-echo "  梯度累积步数: ${GRAD_ACCUM_STEPS}"
-echo "  全局批次大小: ${GLOBAL_BATCH_SIZE}"
-echo "  学习率: ${LEARNING_RATE}"
-echo ""
-
-# 检查关键文件是否存在
-echo "🔍 检查关键文件..."
-
-if [ ! -f "configs/accelerate_config.yaml" ]; then
-    echo "❌ 错误: 找不到 configs/accelerate_config.yaml"
-    exit 1
-fi
-
-if [ ! -f "configs/evaluation_config.yaml" ]; then
-    echo "❌ 错误: 找不到 configs/evaluation_config.yaml"
-    exit 1
-fi
-
-if [ ! -f "src/train.py" ]; then
-    echo "❌ 错误: 找不到 src/train.py"
-    exit 1
-fi
-
-echo "✅ 关键文件检查通过"
-
-# 创建输出目录
-mkdir -p "${OUTPUT_DIR}"
-mkdir -p "${OUTPUT_DIR}/evaluation_reports"
-mkdir -p "logs"
-
-echo "📁 输出目录已创建: ${OUTPUT_DIR}"
-
-# 检查Accelerate配置
-echo "🔧 验证Accelerate配置..."
-accelerate test --config_file configs/accelerate_config.yaml
+# 添加环境变量
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export ACCELERATE_USE_DEEPSPEED=true
 
 # 启动训练
-echo ""
-echo "🎯 开始训练..."
-echo "=================================================="
-
+echo "🎯 使用DeepSpeed ZeRO-2开始训练..."
 accelerate launch \
     --config_file configs/accelerate_config.yaml \
+    --deepspeed_config_file configs/deepspeed_zero2.json \
     src/train.py \
     --model_name_or_path "${MODEL_NAME}" \
     --model_type "${MODEL_TYPE}" \
@@ -124,7 +77,7 @@ accelerate launch \
     --save_steps "${SAVE_STEPS}" \
     --save_total_limit 3 \
     --report_to wandb \
-    --run_name "accelerate_$(date +%m%d_%H%M)" \
+    --run_name "zero2_$(date +%m%d_%H%M)" \
     --bf16 true \
     --tf32 true \
     --dataloader_drop_last true \
@@ -133,20 +86,5 @@ accelerate launch \
     --max_grad_norm 1.0 \
     --weight_decay 0.01 \
     --logging_dir "${OUTPUT_DIR}/logs" \
-    --seed 42
-
-EXIT_CODE=$?
-
-echo ""
-echo "=================================================="
-if [ ${EXIT_CODE} -eq 0 ]; then
-    echo "🎉 训练成功完成！"
-    echo "📁 输出目录: ${OUTPUT_DIR}"
-    echo "📊 评估报告: ${OUTPUT_DIR}/evaluation_reports/"
-    echo "📝 训练日志: ${OUTPUT_DIR}/logs/"
-else
-    echo "❌ 训练失败，退出代码: ${EXIT_CODE}"
-    echo "🔍 请检查上述日志信息"
-fi
-
-echo "=================================================="
+    --seed 42 \
+    --gradient_checkpointing true
