@@ -154,14 +154,25 @@ class InPlaceEvaluationCallback(TrainerCallback):
             # 加载推理模型到GPU 7
             from transformers import AutoModelForCausalLM
             
-            self.inference_model = AutoModelForCausalLM.from_pretrained(
-                model_path,
-                torch_dtype=torch.bfloat16,
-                device_map={"": self.inference_device},
-                trust_remote_code=True,
-                attn_implementation="flash_attention_2"
-            )
-            
+            # self.inference_model = AutoModelForCausalLM.from_pretrained(
+            #     model_path,
+            #     torch_dtype=torch.bfloat16,
+            #     device_map={"": self.inference_device}, # 这行导致错误
+            #     trust_remote_code=True,
+            #     attn_implementation="flash_attention_2"
+            # )
+
+            with torch.cuda.device(self.inference_device):
+                self.inference_model = AutoModelForCausalLM.from_pretrained(
+                    model_path,
+                    torch_dtype=torch.bfloat16,
+                    trust_remote_code=True,
+                    attn_implementation="flash_attention_2"
+                    # 移除device_map参数
+                )
+                # 确保模型在正确设备上  
+                self.inference_model = self.inference_model.to(self.inference_device)
+
             # 设置为评估模式
             self.inference_model.eval()
             

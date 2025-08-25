@@ -400,3 +400,5 @@ When creating documentation files (README.md or other markdown documents):
 本地/Users/luogan/Code/workflow_generation/Flow_RL\
 服务器/nas/ganluo/Flow_RL。\
 然后后面都是相对路径
+- 在所有的自动执行中，最后的git add .; git commit; git push都不允许直接自动，而是需要再询问我一次（停止）。
+- 遇到git push的SSH密钥问题，用~/.ssh/github_key
