@@ -85,17 +85,39 @@ def main():
             project=os.environ.get("WANDB_PROJECT", "llama3-8b-accelerate-training"),
             name=f"{model_args.model_type}_deepspeed_zero2_{training_args.run_name or ''}",
             config={
+                # 模型配置
                 "model_type": model_args.model_type,
                 "model_path": model_args.model_name_or_path,
-                "dataset_path": data_args.dataset_path,
+                "use_flash_attention_2": model_args.use_flash_attention_2,
                 "use_loss_mask": model_args.use_loss_mask,
-                "enable_eval": eval_args.enable_inplace_eval,
-                "eval_interval": eval_args.eval_interval,
+                
+                # 数据配置
+                "dataset_path": data_args.dataset_path,
                 "max_seq_length": data_args.max_seq_length,
+                
+                # 训练配置
                 "per_device_train_batch_size": training_args.per_device_train_batch_size,
                 "gradient_accumulation_steps": training_args.gradient_accumulation_steps,
-                "num_train_epochs": training_args.num_train_epochs
-            }
+                "num_train_epochs": training_args.num_train_epochs,
+                "learning_rate": training_args.learning_rate,
+                "warmup_ratio": training_args.warmup_ratio,
+                "weight_decay": training_args.weight_decay,
+                "max_grad_norm": training_args.max_grad_norm,
+                "bf16": training_args.bf16,
+                "gradient_checkpointing": training_args.gradient_checkpointing,
+                
+                # 评估配置
+                "enable_eval": eval_args.enable_inplace_eval,
+                "eval_interval": eval_args.eval_interval,
+                "eval_batch_size": eval_args.eval_batch_size,
+                "max_eval_samples": eval_args.max_eval_samples,
+                
+                # 硬件配置
+                "num_gpus": accelerator.num_processes,
+                "device": str(accelerator.device),
+                "mixed_precision": accelerator.mixed_precision
+            },
+            tags=[model_args.model_type, "deepspeed-zero2", "accelerate"]
         )
     
     # 加载tokenizer和模型
@@ -111,6 +133,11 @@ def main():
     train_dataset = load_and_process_dataset(
         data_args, tokenizer, model_args.model_type, model_args.use_loss_mask
     )
+    
+    # 记录数据集大小到W&B
+    if training_args.report_to == "wandb" and accelerator.is_main_process:
+        wandb.config.update({"dataset_size": len(train_dataset)})
+        logger.info(f"📊 数据集大小已记录到WandB: {len(train_dataset)} samples")
     
     # 设置数据collator
     if model_args.use_loss_mask:
@@ -154,14 +181,14 @@ def main():
         print(f"🐺 🐺 🐺 🐺 🐺 :eval_config = \n{eval_config}")
         
         # 初始化评估组件
-        evaluator = SimpleEvaluator()
+        evaluator = SimpleEvaluator(eval_config)
 
         # 从reward_server配置构建正确的URL
         reward_config = eval_config.get('reward_server', {})
         fallback_config = reward_config.get('fallback', {})
         print(f"🐺 🐺 🐺 🐺 🐺 :fallback_config = \n{fallback_config}")
         # server_host = fallback_config.get('host', 'localhost')
-        server_port = fallback_config.get('prot', 8899)
+        server_port = fallback_config.get('port', 8899)
         print(f"🐺 🐺 🐺 🐺 🐺 : port = {server_port}")
         server_url=f"http://localhost:{server_port}"
         print(f"🐺 🐺 🐺 🐺 🐺 :server_url={server_url}")
@@ -286,11 +313,17 @@ def main():
                     )
                     
                     # 生成报告
+                    # 构建checkpoint信息
+                    checkpoint_info = {
+                        'step': global_step,
+                        'epoch': epoch,
+                        'model_path': model_args.model_name_or_path
+                    }
+                    
                     report = report_generator.generate_report(
-                        test_samples=test_samples,
-                        solutions=solutions,
                         scores=scores,
-                        step=global_step
+                        checkpoint_info=checkpoint_info,
+                        test_samples=test_samples
                     )
                     
                     # 保存评估报告
@@ -300,13 +333,51 @@ def main():
                         report_generator.save_report(report, report_path)
                         logger.info(f"✅ 评估报告已保存到 {report_path}")
                     
-                    # 记录到W&B
+                    # 记录到W&B（增强版）
                     if training_args.report_to == "wandb":
-                        wandb.log({
-                            "eval_accuracy": report["accuracy"],
-                            "eval_total_score": report["total_score"],
-                            "eval_max_score": report["max_score"]
-                        }, step=global_step)
+                        # 分析评估失败原因
+                        failed_count = sum(1 for s in scores if not s.get('success', False))
+                        extraction_failures = sum(1 for s in scores 
+                                                if s.get('error', '').lower().find('no_workflow_code') >= 0 
+                                                or s.get('error', '').lower().find('no workflow') >= 0)
+                        timeout_failures = sum(1 for s in scores 
+                                             if 'timeout' in s.get('error', '').lower())
+                        
+                        # 基础评估指标
+                        eval_metrics = {
+                            "eval/accuracy": report["accuracy"],
+                            "eval/total_score": report["total_score"], 
+                            "eval/max_score": report["max_score"],
+                            "eval/min_score": report.get("min_score", 0),
+                            "eval/avg_score": report["avg_score"],
+                            "eval/success_rate": report.get("success_rate", 0),
+                            "eval/num_samples": len(test_samples),
+                            # 新增失败分析指标
+                            "eval/failed_count": failed_count,
+                            "eval/extraction_failures": extraction_failures,
+                            "eval/timeout_failures": timeout_failures,
+                            "eval/failure_rate": failed_count / len(test_samples) if test_samples else 0
+                        }
+                        
+                        # 按数据源分类的指标（如果存在）
+                        if "breakdown_by_source" in report:
+                            for source, metrics in report["breakdown_by_source"].items():
+                                eval_metrics[f"eval/{source}/accuracy"] = metrics.get("accuracy", 0)
+                                eval_metrics[f"eval/{source}/avg_score"] = metrics.get("avg_score", 0)
+                                eval_metrics[f"eval/{source}/count"] = metrics.get("count", 0)
+                        
+                        # 生成参数记录（首次评估时）
+                        if global_step == eval_args.eval_interval:
+                            wandb.log({
+                                "config/max_input_length": evaluator.max_input_length,
+                                "config/max_new_tokens": evaluator.generation_config.get('max_new_tokens', 2048),
+                                "config/temperature": evaluator.generation_config.get('temperature', 0.6),
+                                "config/top_p": evaluator.generation_config.get('top_p', 0.95),
+                                "config/top_k": evaluator.generation_config.get('top_k', 20)
+                            })
+                        
+                        wandb.log(eval_metrics, step=global_step)
+                        logger.info(f"📊 评估指标已记录到WandB")
                     
                     model.train()
     

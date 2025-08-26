@@ -161,7 +161,8 @@ def formatting_prompts_func(examples, tokenizer, model_type=None):
         text = tokenizer.apply_chat_template(
             messages,
             tokenize=False,
-            add_generation_prompt=False
+            add_generation_prompt=False,
+            enable_thinking=True # 显式设置
         )
         output_texts.append(text)
     

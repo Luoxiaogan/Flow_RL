@@ -480,3 +480,4 @@ model, _, train_dataloader, _ = accelerator.prepare(
 - 训练稳定进行，GPU内存使用符合ZeRO-2预期 (约34GB/GPU vs 纯DDP的84GB/GPU)
 
 **注意**: 此解决方案已在 `my_llama3_h100_huggingface_accelerate/` 中成功验证并部署。
+- 对于SFT训练+同时evaluation，只看my_llama3_h100_huggingface_accelerate里面的文件了。其他my_llama3_h100_*/的都不看

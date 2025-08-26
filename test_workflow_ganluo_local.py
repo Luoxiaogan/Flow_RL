@@ -11,37 +11,34 @@ import json
 import importlib
 from typing import Dict, Any
 import logging
-from pathlib import Path
 
 # 添加项目路径
-# sys.path.append('/Users/luogan/Code/workflow_generation/Flow_RL')
-# os.chdir('/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE')
-METAGPT_LOCAL = Path(__file__).parent / "Test_FILE" / "metagpt_local" / "metagpt_local"
-if METAGPT_LOCAL.exists():
-    sys.path.insert(0, str(METAGPT_LOCAL))
+sys.path.append('/Users/luogan/Code/workflow_generation/Flow_RL')
+os.chdir('/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE')
+
 # ========================================
 #           配 置 区
 # ========================================
 
 # Workflow文件路径
-WORKFLOW_PATH = "测试_CLAUDE_4_的_workflow.py"
+WORKFLOW_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/tmp_workflow.py"
 
 # Benchmark名称（可以从workflow路径自动推断）
-BENCHMARK = "mbpp"  # gsm8k, mbpp, drop, etc.
+BENCHMARK = "drop"  # gsm8k, mbpp, drop, etc.
 
 # 数据集路径
-DATASET_PATH = "Processed_dataset/drop/train_select_400.jsonl"
+DATASET_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/drop/train.jsonl"
 
 # 测试数据的索引
 TEST_INDEX = 5
 
 # LLM配置
 LLM_CONFIG = {
-    "provider": "openai",
-    "model": "qwen-turbo",
-    "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-    "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
-}
+        "provider": "openai",
+        "model": "qwen-turbo",
+        "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    }
 
 # 工作流执行超时（秒）
 WORKFLOW_TIMEOUT = 360
@@ -159,6 +156,8 @@ async def test_workflow():
         script_parts["workflow_code"] + "\n" +
         script_parts["python_end"]
     )
+
+    print(f"完整脚本: \n{full_script}\n")
     
     # 6. 准备执行环境
     print("⚙️  准备执行环境...")

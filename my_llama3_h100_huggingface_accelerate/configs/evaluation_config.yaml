@@ -25,26 +25,27 @@ schedule:
   # 评估批次大小 - 8卡可以共享负载
   batch_size: 1
 
+# Tokenization参数（输入长度控制）
+tokenization:
+  # 输入prompt的最大长度（需要给生成预留空间）
+  max_input_length: 6000  # 允许较长的prompt输入
+  # 注意：max_input_length + max_new_tokens ≤ 模型最大长度(通常8192)
+  # 当前设置：6000 + 2048 = 8048 < 8192 ✓
+
 # 生成参数（评估时使用）
 generation:
-  # 这些参数会覆盖模型的generation_config.json以保证一致性
-  max_new_tokens: 2048  # 适中的生成长度
-  temperature: 0.6  # 固定值以保证可重现性
-  top_p: 0.95
-  top_k: 20
-  do_sample: true
+  # 核心参数：这些参数作为基础，模型自带的配置会覆盖这些值
+  max_new_tokens: 2048  # 适中的生成长度（关键参数，通常模型没有定义）
+  temperature: 0.6      # 控制创造性（较低值=更确定性输出）
+  top_p: 0.95          # 核采样阈值
+  top_k: 20            # Top-K采样（与top_p配合使用）
+  do_sample: true      # 启用采样策略（而非贪婪解码）
   
-  # 使用模型的generation_config.json作为基础
-  use_model_config: true  # 如果为true，从模型加载并用上述参数覆盖
-  
-  # 重复惩罚
-  repetition_penalty: 1.0
-  
-  # 早停
-  early_stopping: false
-  
-  # Beam数量（1 = 贪婪/采样，>1 = beam搜索）
-  num_beams: 1
+  # 注意：以下参数已删除，因为它们是无效的默认值
+  # - repetition_penalty: 1.0 (等于没有惩罚，让模型自己决定)
+  # - early_stopping: false (默认值，只在beam search时有意义)
+  # - num_beams: 1 (默认值，表示不使用beam search)
+  # - use_model_config: true (代码已无条件加载模型配置)
 
 # Reward服务器配置
 reward_server:

@@ -133,7 +133,23 @@ class ScoreCollector:
                 'ground_truth': sample.get('reward_model', {}).get('ground_truth', 'default'),
                 'extra_info': sample.get('extra_info', {})
             }
-            print("🐺 🐺 🐺 🐺 🐺\n请求数据:\n", request_data)
+            
+            # 增强日志：记录生成文本的格式信息
+            logger.debug(f"样本 {i} - 数据源: {data_source}")
+            logger.debug(f"生成文本长度: {len(solution)} 字符")
+            
+            # 检查是否包含期望的格式标记
+            if "```python" in solution:
+                logger.debug("✓ 检测到```python格式标记")
+            elif "<code>" in solution:
+                logger.warning("⚠️ 检测到旧格式<code>标记（reward server可能不支持）")
+            else:
+                logger.warning("⚠️ 未检测到代码格式标记，可能导致提取失败")
+            
+            # 记录前500字符用于调试
+            preview = solution[:500] + "..." if len(solution) > 500 else solution
+            logger.debug(f"生成文本预览: {preview}")
+            
             all_requests.append((i, request_data))
         
         # Process requests using ThreadPoolExecutor for concurrency
@@ -147,7 +163,22 @@ class ScoreCollector:
                 return index, {'success': False, 'error': 'No solution generated', 'score': 0.0}
             
             result = self.compute_score(request_data)
-            print("🐺 🐺 🐺 🐺 🐺\n评估结果:\n", result)
+            
+            # 增强日志：记录评估结果详情
+            if result.get('success'):
+                logger.debug(f"样本 {index} 评估成功: 分数={result.get('score', 0)}")
+            else:
+                error_msg = result.get('error', 'Unknown error')
+                logger.warning(f"样本 {index} 评估失败: {error_msg}")
+                
+                # 分析失败原因
+                if 'no_workflow_code' in error_msg.lower() or 'no workflow' in error_msg.lower():
+                    logger.warning(f"  → 原因: workflow代码提取失败")
+                elif 'timeout' in error_msg.lower():
+                    logger.warning(f"  → 原因: 执行超时")
+                elif 'connection' in error_msg.lower() or 'network' in error_msg.lower():
+                    logger.warning(f"  → 原因: 网络连接问题")
+            
             return index, result
         
         # Use ThreadPoolExecutor for concurrent requests
