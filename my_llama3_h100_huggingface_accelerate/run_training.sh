@@ -9,7 +9,7 @@ echo "🚀 启动基于Accelerate的简化训练系统..."
 echo "=================================================="
 
 # 环境变量设置
-export WANDB_PROJECT="llama3-8b-accelerate-training"
+export WANDB_PROJECT="qwen3-8b-accelerate-training"
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7  # 8卡均匀使用
 export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"  # 添加src到Python路径
 
@@ -19,13 +19,13 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export OMP_NUM_THREADS=1  # 避免系统过载
 
 # 模型和数据路径（本地测试路径，服务器上需要修改）
-MODEL_NAME="/nas/models/Meta-Llama-3.1-8B-Instruct"  # 服务器路径
+MODEL_NAME="/nas/models/Qwen3-8B"  # 服务器路径
 # MODEL_NAME="/Users/luogan/models/Meta-Llama-3.1-8B-Instruct"  # 本地路径（如果有）
 
 DATASET_PATH="/nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl"  # 服务器路径
 # DATASET_PATH="training_data/sample.jsonl"  # 本地测试路径
 
-OUTPUT_DIR="/nas/ganluo/sft_output/Llama-3.1-8B-accelerate-$(date +%Y%m%d_%H%M%S)"  # 服务器路径
+OUTPUT_DIR="/nas/ganluo/sft_output/qwen3-8B-accelerate-$(date +%Y%m%d_%H%M%S)"  # 服务器路径
 # OUTPUT_DIR="./outputs/$(date +%Y%m%d_%H%M%S)"  # 本地路径
 
 # 评估数据路径
@@ -33,7 +33,7 @@ EVAL_TEST_DATA_PATH="/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl
 # EVAL_TEST_DATA_PATH="test_data/sample_test.jsonl"  # 本地路径
 
 # 训练参数
-MODEL_TYPE="llama"  # 或 "qwen"
+MODEL_TYPE="qwen"  # 或 "qwen"
 USE_LOSS_MASK=true  # 是否使用损失掩码（必须开启）
 ENABLE_EVAL=true  # 是否启用原地评估
 EVAL_INTERVAL=2  # 评估间隔

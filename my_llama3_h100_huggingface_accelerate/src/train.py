@@ -150,6 +150,8 @@ def main():
     if eval_args.enable_inplace_eval and accelerator.is_main_process:
         # 加载评估配置
         eval_config = load_evaluation_config("/nas/ganluo/Flow_RL/my_llama3_h100_huggingface_accelerate/configs/evaluation_config.yaml")
+
+        print(f"🐺 🐺 🐺 🐺 🐺 :eval_config = \n{eval_config}")
         
         # 初始化评估组件
         evaluator = SimpleEvaluator()
