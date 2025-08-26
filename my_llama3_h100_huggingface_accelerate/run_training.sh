@@ -35,8 +35,8 @@ EVAL_TEST_DATA_PATH="/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl
 # 训练参数
 MODEL_TYPE="qwen"  # 或 "qwen"
 USE_LOSS_MASK=true  # 是否使用损失掩码（必须开启）
-ENABLE_EVAL=true  # 是否启用原地评估
-EVAL_INTERVAL=2  # 评估间隔
+ENABLE_EVAL=false  # 是否启用原地评估
+EVAL_INTERVAL=200  # 评估间隔
 MAX_EVAL_SAMPLES=1  # 评估样本数（测试时用小数值）
 
 # 训练超参数 - ZeRO-2优化配置（与deepspeed_zero2.json保持一致）

@@ -1278,8 +1278,16 @@ class ScoreFlowRewardCalculator:
             return None
         
         # 尝试提取<code>标签内的代码
-        code_pattern = r'<code>(.*?)</code>'
-        matches = re.findall(code_pattern, response, re.DOTALL)
+
+        code_pattern = re.compile(r'```python\s*\n(.*?)\n```', re.DOTALL)
+        matches_python = code_pattern.findall(response)
+        print(f"🐺 🐺 🐺 🐺 matches_python=\n\n{matches_python}\n\n")
+
+        # code_pattern = r'<code>(.*?)</code>'
+        # matches_code = re.findall(code_pattern, response, re.DOTALL)
+        # print(f"🐺 🐺 🐺 🐺 matches_code=\n\n{matches_code}\n\n")
+
+        matches = matches_python
         
         if matches:
             workflow_code = matches[0].strip()
@@ -1295,6 +1303,7 @@ class ScoreFlowRewardCalculator:
             return workflow_code
         
         # 如果没有找到code标签，尝试查找class Workflow定义
+        print("如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义")
         class_pattern = r'(class\s+Workflow.*?)(?=class\s+\w+|$)'
         matches = re.findall(class_pattern, response, re.DOTALL)
         

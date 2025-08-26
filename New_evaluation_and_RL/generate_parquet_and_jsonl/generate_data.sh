@@ -63,7 +63,7 @@ echo "✅ 当前conda环境: $CONDA_DEFAULT_ENV"
 export PYTHONUNBUFFERED=1
 
 # 设置输出目录
-OUTPUT_DIR="$NEW_EVAL_ROOT/parquet_and_jsonl_data/RL"
+OUTPUT_DIR="$NEW_EVAL_ROOT/parquet_and_jsonl_data/new"
 
 # 检查并创建输出目录
 echo "📂 检查输出目录: $OUTPUT_DIR"
