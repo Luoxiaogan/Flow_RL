@@ -50,7 +50,7 @@ class SimpleEvaluator:
         print(f"🐺 🐺 🐺 🐺 🐺 : 是否clear_cache = {self.clear_cache}")
         
         logger.info(f"✓ 简化评估器初始化完成")
-        logger.info(f"  最大生成长度: {self.generation_config.get('max_new_tokens', 1024)}")
+        logger.info(f"  最大生成长度: {self.generation_config.get('max_new_tokens', 8192)}")
         logger.info(f"  缓存清理: {self.clear_cache}")
     
     def load_test_data(self, test_data_path: str, max_samples: Optional[int] = None) -> List[Dict]:
@@ -299,7 +299,7 @@ class SimpleEvaluator:
         
         # 从配置文件读取参数
         generation_kwargs.update({
-            'max_new_tokens': self.generation_config.get('max_new_tokens', 1024),
+            'max_new_tokens': self.generation_config.get('max_new_tokens', 8192),
             'temperature': self.generation_config.get('temperature', 0.6),
             'top_p': self.generation_config.get('top_p', 0.95),
             'top_k': self.generation_config.get('top_k', 20),
