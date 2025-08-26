@@ -37,7 +37,7 @@ MODEL_TYPE="llama"  # 或 "qwen"
 USE_LOSS_MASK=true  # 是否使用损失掩码（必须开启）
 ENABLE_EVAL=true  # 是否启用原地评估
 EVAL_INTERVAL=20  # 评估间隔
-MAX_EVAL_SAMPLES=5  # 评估样本数（测试时用小数值）
+MAX_EVAL_SAMPLES=1  # 评估样本数（测试时用小数值）
 
 # 训练超参数 - ZeRO-2优化配置（与deepspeed_zero2.json保持一致）
 NUM_EPOCHS=3
@@ -54,6 +54,14 @@ echo "🔧 环境变量配置完成"
 echo "  WANDB_PROJECT: ${WANDB_PROJECT}"
 echo "  ACCELERATE_USE_DEEPSPEED: ${ACCELERATE_USE_DEEPSPEED}"
 echo "  OMP_NUM_THREADS: ${OMP_NUM_THREADS}"
+
+# 自动更新DeepSpeed配置（基于当前数据集和参数）
+echo "🔄 自动更新DeepSpeed配置..."
+python /nas/ganluo/Flow_RL/my_llama3_h100_huggingface_accelerate/update_deepspeed_config.py
+if [ $? -ne 0 ]; then
+    echo "❌ DeepSpeed配置更新失败，请检查参数设置"
+    exit 1
+fi
 
 # 启动训练
 echo "🎯 使用DeepSpeed ZeRO-2开始训练..."
