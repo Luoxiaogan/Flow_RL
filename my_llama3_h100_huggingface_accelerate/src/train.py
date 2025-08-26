@@ -153,8 +153,18 @@ def main():
         
         # 初始化评估组件
         evaluator = SimpleEvaluator()
+
+        # 从reward_server配置构建正确的URL
+        reward_config = eval_config.get('reward_server', {})
+        fallback_config = reward_config.get('fallback', {})
+        print(f"🐺 🐺 🐺 🐺 🐺 :fallback_config = \n{fallback_config}")
+        # server_host = fallback_config.get('host', 'localhost')
+        server_port = fallback_config.get('prot', 8899)
+        print(f"🐺 🐺 🐺 🐺 🐺 : port = {server_port}")
+        server_url=f"http://localhost:{server_port}"
+        print(f"🐺 🐺 🐺 🐺 🐺 :server_url={server_url}")
         score_collector = ScoreCollector(
-            compute_endpoint=eval_config.get('compute_endpoint', 'http://localhost:5000/compute')
+            server_url=server_url
         )
         report_generator = ReportGenerator()
         
@@ -167,7 +177,7 @@ def main():
     
     # 计算总训练步数（用于进度条）
     num_update_steps_per_epoch = len(train_dataloader) // training_args.gradient_accumulation_steps
-    max_train_steps = training_args.num_train_epochs * num_update_steps_per_epoch
+    max_train_steps = int(training_args.num_train_epochs * num_update_steps_per_epoch)
     
     # 创建进度条
     progress_bar = tqdm(

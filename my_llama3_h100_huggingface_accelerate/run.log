@@ -1,0 +1,836 @@
+🚀 启动基于Accelerate的简化训练系统...
+==================================================
+🔧 环境变量配置完成
+  WANDB_PROJECT: llama3-8b-accelerate-training
+  ACCELERATE_USE_DEEPSPEED: true
+  OMP_NUM_THREADS: 1
+🔄 自动更新DeepSpeed配置...
+
+🚀 开始自动更新DeepSpeed配置...
+
+📝 解析run_training.sh参数...
+
+📊 统计数据集: /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl
+   样本数: 1313
+
+🔍 验证accelerate_config.yaml...
+
+============================================================
+📊 配置计算结果:
+============================================================
+  数据集大小: 1313 samples
+  GPU数量: 8
+  每GPU微批次: 1
+  梯度累积步数: 4
+  全局批次大小: 32
+  每轮步数: 42
+  训练轮数: 3
+  总训练步数: 126
+  预热步数: 3
+  学习率: 1e-05
+============================================================
+
+✅ 批次大小验证: 32 = 8 × 1 × 4
+
+💾 保存配置到: /nas/ganluo/Flow_RL/my_llama3_h100_huggingface_accelerate/configs/deepspeed_zero2.json
+
+✅ DeepSpeed配置更新成功！
+
+============================================================
+⚠️  重要提醒:
+============================================================
+请确保以下参数在run_training.sh中保持一致:
+  PER_DEVICE_BATCH_SIZE=1
+  GRAD_ACCUM_STEPS=4
+  LEARNING_RATE=1e-05
+  WARMUP_RATIO=0.03
+============================================================
+🎯 使用DeepSpeed ZeRO-2开始训练...
+[2025-08-26 01:53:40,373] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-26 01:53:42,167] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-26 01:53:51,931] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-26 01:53:53,121] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-26 01:53:53,422] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-26 01:53:53,423] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-26 01:53:53,427] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-26 01:53:53,432] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-26 01:53:53,433] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-26 01:53:53,433] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-08-26 01:53:53,730] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-26 01:53:54,250] [INFO] [comm.py:676:init_distributed] cdb=None
+08/26/2025 01:53:54 - INFO - __main__ - Distributed environment: DEEPSPEED  Backend: nccl
+Num processes: 8
+Process index: 4
+Local process index: 4
+Device: cuda:4
+
+Mixed precision type: bf16
+ds_config: {'bf16': {'enabled': True}, 'optimizer': {'type': 'AdamW', 'params': {'lr': 1e-05, 'betas': [0.9, 0.999], 'eps': 1e-08, 'weight_decay': 0.01}}, 'scheduler': {'type': 'WarmupDecayLR', 'params': {'warmup_min_lr': 0, 'warmup_max_lr': 1e-05, 'warmup_num_steps': 3, 'total_num_steps': 126}}, 'zero_optimization': {'stage': 2, 'offload_optimizer': {'device': 'none'}, 'allgather_partitions': True, 'allgather_bucket_size': 500000000.0, 'reduce_scatter': True, 'reduce_bucket_size': 500000000.0, 'overlap_comm': True, 'contiguous_gradients': True}, 'gradient_accumulation_steps': 4, 'gradient_clipping': 1.0, 'steps_per_print': inf, 'train_batch_size': 32, 'train_micro_batch_size_per_gpu': 1, 'wall_clock_breakdown': False, 'fp16': {'enabled': False}}
+
+[2025-08-26 01:53:55,008] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+正在加载 llama 模型，路径: /nas/models/Meta-Llama-3.1-8B-Instruct...
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 27.26it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 28.59it/s]
+✓ 模型加载成功
+正在加载数据集，路径: /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+[2025-08-26 01:53:55,408] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-26 01:53:55,408] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-26 01:53:55,462] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-26 01:53:55,484] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-26 01:53:55,527] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-26 01:53:55,555] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-26 01:53:55,594] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-08-26 01:53:55,938] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-26 01:53:55,945] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-26 01:53:56,008] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-26 01:53:56,114] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-26 01:53:56,229] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-26 01:53:56,232] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-08-26 01:53:56,232] [INFO] [comm.py:707:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+08/26/2025 01:53:56 - INFO - __main__ - Distributed environment: DEEPSPEED  Backend: nccl
+Num processes: 8
+Process index: 6
+Local process index: 6
+Device: cuda:6
+
+Mixed precision type: bf16
+ds_config: {'bf16': {'enabled': True}, 'optimizer': {'type': 'AdamW', 'params': {'lr': 1e-05, 'betas': [0.9, 0.999], 'eps': 1e-08, 'weight_decay': 0.01}}, 'scheduler': {'type': 'WarmupDecayLR', 'params': {'warmup_min_lr': 0, 'warmup_max_lr': 1e-05, 'warmup_num_steps': 3, 'total_num_steps': 126}}, 'zero_optimization': {'stage': 2, 'offload_optimizer': {'device': 'none'}, 'allgather_partitions': True, 'allgather_bucket_size': 500000000.0, 'reduce_scatter': True, 'reduce_bucket_size': 500000000.0, 'overlap_comm': True, 'contiguous_gradients': True}, 'gradient_accumulation_steps': 4, 'gradient_clipping': 1.0, 'steps_per_print': inf, 'train_batch_size': 32, 'train_micro_batch_size_per_gpu': 1, 'wall_clock_breakdown': False, 'fp16': {'enabled': False}}
+
+正在加载 llama 模型，路径: /nas/models/Meta-Llama-3.1-8B-Instruct...
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]数据集样本键: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+第一条消息: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 27.55it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 29.63it/s]
+✓ 模型加载成功
+正在加载数据集，路径: /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+08/26/2025 01:53:57 - INFO - __main__ - Distributed environment: DEEPSPEED  Backend: nccl
+Num processes: 8
+Process index: 0
+Local process index: 0
+Device: cuda:0
+
+Mixed precision type: bf16
+ds_config: {'bf16': {'enabled': True}, 'optimizer': {'type': 'AdamW', 'params': {'lr': 1e-05, 'betas': [0.9, 0.999], 'eps': 1e-08, 'weight_decay': 0.01}}, 'scheduler': {'type': 'WarmupDecayLR', 'params': {'warmup_min_lr': 0, 'warmup_max_lr': 1e-05, 'warmup_num_steps': 3, 'total_num_steps': 126}}, 'zero_optimization': {'stage': 2, 'offload_optimizer': {'device': 'none'}, 'allgather_partitions': True, 'allgather_bucket_size': 500000000.0, 'reduce_scatter': True, 'reduce_bucket_size': 500000000.0, 'overlap_comm': True, 'contiguous_gradients': True}, 'gradient_accumulation_steps': 4, 'gradient_clipping': 1.0, 'steps_per_print': inf, 'train_batch_size': 32, 'train_micro_batch_size_per_gpu': 1, 'wall_clock_breakdown': False, 'fp16': {'enabled': False}}
+
+为 llama 使用损失掩码（仅对助手回复计算损失）
+✓ 数据集处理完成，样本数: 1313
+[2025-08-26 01:53:57,611] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+正在加载 llama 模型，路径: /nas/models/Meta-Llama-3.1-8B-Instruct...
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 27.71it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 29.74it/s]
+✓ 模型加载成功
+08/26/2025 01:53:58 - INFO - __main__ - ✓ 梯度检查点已启用（节省内存）
+正在加载数据集，路径: /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+数据集样本键: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+第一条消息: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+为 llama 使用损失掩码（仅对助手回复计算损失）
+✓ 数据集处理完成，样本数: 1313
+[2025-08-26 01:53:58,647] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+08/26/2025 01:53:58 - INFO - __main__ - Distributed environment: DEEPSPEED  Backend: nccl
+Num processes: 8
+Process index: 2
+Local process index: 2
+Device: cuda:2
+
+Mixed precision type: bf16
+ds_config: {'bf16': {'enabled': True}, 'optimizer': {'type': 'AdamW', 'params': {'lr': 1e-05, 'betas': [0.9, 0.999], 'eps': 1e-08, 'weight_decay': 0.01}}, 'scheduler': {'type': 'WarmupDecayLR', 'params': {'warmup_min_lr': 0, 'warmup_max_lr': 1e-05, 'warmup_num_steps': 3, 'total_num_steps': 126}}, 'zero_optimization': {'stage': 2, 'offload_optimizer': {'device': 'none'}, 'allgather_partitions': True, 'allgather_bucket_size': 500000000.0, 'reduce_scatter': True, 'reduce_bucket_size': 500000000.0, 'overlap_comm': True, 'contiguous_gradients': True}, 'gradient_accumulation_steps': 4, 'gradient_clipping': 1.0, 'steps_per_print': inf, 'train_batch_size': 32, 'train_micro_batch_size_per_gpu': 1, 'wall_clock_breakdown': False, 'fp16': {'enabled': False}}
+
+08/26/2025 01:53:58 - INFO - __main__ - Distributed environment: DEEPSPEED  Backend: nccl
+Num processes: 8
+Process index: 3
+Local process index: 3
+Device: cuda:3
+
+Mixed precision type: bf16
+ds_config: {'bf16': {'enabled': True}, 'optimizer': {'type': 'AdamW', 'params': {'lr': 1e-05, 'betas': [0.9, 0.999], 'eps': 1e-08, 'weight_decay': 0.01}}, 'scheduler': {'type': 'WarmupDecayLR', 'params': {'warmup_min_lr': 0, 'warmup_max_lr': 1e-05, 'warmup_num_steps': 3, 'total_num_steps': 126}}, 'zero_optimization': {'stage': 2, 'offload_optimizer': {'device': 'none'}, 'allgather_partitions': True, 'allgather_bucket_size': 500000000.0, 'reduce_scatter': True, 'reduce_bucket_size': 500000000.0, 'overlap_comm': True, 'contiguous_gradients': True}, 'gradient_accumulation_steps': 4, 'gradient_clipping': 1.0, 'steps_per_print': inf, 'train_batch_size': 32, 'train_micro_batch_size_per_gpu': 1, 'wall_clock_breakdown': False, 'fp16': {'enabled': False}}
+
+数据集样本键: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+第一条消息: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+08/26/2025 01:53:58 - INFO - __main__ - Distributed environment: DEEPSPEED  Backend: nccl
+Num processes: 8
+Process index: 5
+Local process index: 5
+Device: cuda:5
+
+Mixed precision type: bf16
+ds_config: {'bf16': {'enabled': True}, 'optimizer': {'type': 'AdamW', 'params': {'lr': 1e-05, 'betas': [0.9, 0.999], 'eps': 1e-08, 'weight_decay': 0.01}}, 'scheduler': {'type': 'WarmupDecayLR', 'params': {'warmup_min_lr': 0, 'warmup_max_lr': 1e-05, 'warmup_num_steps': 3, 'total_num_steps': 126}}, 'zero_optimization': {'stage': 2, 'offload_optimizer': {'device': 'none'}, 'allgather_partitions': True, 'allgather_bucket_size': 500000000.0, 'reduce_scatter': True, 'reduce_bucket_size': 500000000.0, 'overlap_comm': True, 'contiguous_gradients': True}, 'gradient_accumulation_steps': 4, 'gradient_clipping': 1.0, 'steps_per_print': inf, 'train_batch_size': 32, 'train_micro_batch_size_per_gpu': 1, 'wall_clock_breakdown': False, 'fp16': {'enabled': False}}
+
+为 llama 使用损失掩码（仅对助手回复计算损失）
+08/26/2025 01:53:59 - INFO - __main__ - Distributed environment: DEEPSPEED  Backend: nccl
+Num processes: 8
+Process index: 7
+Local process index: 7
+Device: cuda:7
+
+Mixed precision type: bf16
+ds_config: {'bf16': {'enabled': True}, 'optimizer': {'type': 'AdamW', 'params': {'lr': 1e-05, 'betas': [0.9, 0.999], 'eps': 1e-08, 'weight_decay': 0.01}}, 'scheduler': {'type': 'WarmupDecayLR', 'params': {'warmup_min_lr': 0, 'warmup_max_lr': 1e-05, 'warmup_num_steps': 3, 'total_num_steps': 126}}, 'zero_optimization': {'stage': 2, 'offload_optimizer': {'device': 'none'}, 'allgather_partitions': True, 'allgather_bucket_size': 500000000.0, 'reduce_scatter': True, 'reduce_bucket_size': 500000000.0, 'overlap_comm': True, 'contiguous_gradients': True}, 'gradient_accumulation_steps': 4, 'gradient_clipping': 1.0, 'steps_per_print': inf, 'train_batch_size': 32, 'train_micro_batch_size_per_gpu': 1, 'wall_clock_breakdown': False, 'fp16': {'enabled': False}}
+
+✓ 数据集处理完成，样本数: 1313
+[2025-08-26 01:53:59,048] [INFO] [logging.py:107:log_dist] [Rank 0] DeepSpeed info: version=0.17.2, git-hash=unknown, git-branch=unknown
+[2025-08-26 01:53:59,049] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+正在加载 llama 模型，路径: /nas/models/Meta-Llama-3.1-8B-Instruct...
+08/26/2025 01:53:59 - INFO - __main__ - Distributed environment: DEEPSPEED  Backend: nccl
+Num processes: 8
+Process index: 1
+Local process index: 1
+Device: cuda:1
+
+Mixed precision type: bf16
+ds_config: {'bf16': {'enabled': True}, 'optimizer': {'type': 'AdamW', 'params': {'lr': 1e-05, 'betas': [0.9, 0.999], 'eps': 1e-08, 'weight_decay': 0.01}}, 'scheduler': {'type': 'WarmupDecayLR', 'params': {'warmup_min_lr': 0, 'warmup_max_lr': 1e-05, 'warmup_num_steps': 3, 'total_num_steps': 126}}, 'zero_optimization': {'stage': 2, 'offload_optimizer': {'device': 'none'}, 'allgather_partitions': True, 'allgather_bucket_size': 500000000.0, 'reduce_scatter': True, 'reduce_bucket_size': 500000000.0, 'overlap_comm': True, 'contiguous_gradients': True}, 'gradient_accumulation_steps': 4, 'gradient_clipping': 1.0, 'steps_per_print': inf, 'train_batch_size': 32, 'train_micro_batch_size_per_gpu': 1, 'wall_clock_breakdown': False, 'fp16': {'enabled': False}}
+
+正在加载 llama 模型，路径: /nas/models/Meta-Llama-3.1-8B-Instruct...
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+正在加载 llama 模型，路径: /nas/models/Meta-Llama-3.1-8B-Instruct...
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 26.82it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 28.93it/s]
+Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 27.43it/s]✓ 模型加载成功
+正在加载数据集，路径: /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 29.49it/s]
+✓ 模型加载成功
+正在加载数据集，路径: /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 27.45it/s]正在加载 llama 模型，路径: /nas/models/Meta-Llama-3.1-8B-Instruct...
+Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 29.54it/s]
+✓ 模型加载成功
+正在加载数据集，路径: /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+正在加载 llama 模型，路径: /nas/models/Meta-Llama-3.1-8B-Instruct...
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 27.66it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 29.66it/s]
+✓ 模型加载成功
+正在加载数据集，路径: /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 27.39it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 29.46it/s]
+✓ 模型加载成功
+正在加载数据集，路径: /nas/ganluo/Flow_RL/training_data/training_data_raw_0825/filtered.jsonl...
+数据集样本键: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+第一条消息: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+数据集样本键: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+第一条消息: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+数据集样本键: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+第一条消息: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+为 llama 使用损失掩码（仅对助手回复计算损失）
+为 llama 使用损失掩码（仅对助手回复计算损失）
+为 llama 使用损失掩码（仅对助手回复计算损失）
+✓ 数据集处理完成，样本数: 1313
+[2025-08-26 01:54:00,264] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+✓ 数据集处理完成，样本数: 1313
+[2025-08-26 01:54:00,332] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+✓ 数据集处理完成，样本数: 1313
+[2025-08-26 01:54:00,355] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+数据集样本键: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+第一条消息: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+数据集样本键: dict_keys(['workflow_id', 'benchmark', 'data_indices', 'messages'])
+第一条消息: {'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}
+为 llama 使用损失掩码（仅对助手回复计算损失）
+✓ 数据集处理完成，样本数: 1313
+为 llama 使用损失掩码（仅对助手回复计算损失）
+[2025-08-26 01:54:00,663] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+✓ 数据集处理完成，样本数: 1313
+[2025-08-26 01:54:00,757] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 8
+[2025-08-26 01:54:05,681] [INFO] [engine.py:1339:_configure_distributed_model] ********** distributed groups summary **********
+	 self.dp_world_size=8
+	 self.mp_world_size=1
+	 self.seq_dp_world_size=8
+	 self.sequence_parallel_size=1
+***********************************************
+[2025-08-26 01:54:17,615] [INFO] [logging.py:107:log_dist] [Rank 0] DeepSpeed Flops Profiler Enabled: False
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.025524139404296875 seconds
+Loading extension module fused_adam...
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.10118985176086426 seconds
+Time to load fused_adam op: 0.10141468048095703 seconds
+Loading extension module fused_adam...
+Loading extension module fused_adam...
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.10134458541870117 seconds
+Time to load fused_adam op: 0.10151052474975586 seconds
+Time to load fused_adam op: 0.10144853591918945 seconds
+[2025-08-26 01:54:17,726] [INFO] [logging.py:107:log_dist] [Rank 0] Using DeepSpeed Optimizer param name adamw as basic optimizer
+[2025-08-26 01:54:17,726] [INFO] [logging.py:107:log_dist] [Rank 0] Removing param_group that has no 'params' in the basic Optimizer
+Loading extension module fused_adam...
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.10167241096496582 seconds
+Time to load fused_adam op: 0.10216188430786133 seconds
+[2025-08-26 01:54:17,734] [INFO] [logging.py:107:log_dist] [Rank 0] DeepSpeed Basic Optimizer = FusedAdam
+[2025-08-26 01:54:17,734] [INFO] [utils.py:59:is_zero_supported_optimizer] Checking ZeRO support for optimizer=FusedAdam type=<class 'deepspeed.ops.adam.fused_adam.FusedAdam'>
+[2025-08-26 01:54:17,734] [INFO] [logging.py:107:log_dist] [Rank 0] Creating torch.bfloat16 ZeRO stage 2 optimizer
+[2025-08-26 01:54:17,734] [INFO] [stage_1_and_2.py:172:__init__] Reduce bucket size 500000000
+[2025-08-26 01:54:17,734] [INFO] [stage_1_and_2.py:173:__init__] Allgather bucket size 500000000
+[2025-08-26 01:54:17,734] [INFO] [stage_1_and_2.py:174:__init__] CPU Offload: False
+[2025-08-26 01:54:17,734] [INFO] [stage_1_and_2.py:175:__init__] Round robin gradient partitioning: False
+[2025-08-26 01:54:41,297] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-26 01:54:45,005] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-26 01:54:45,043] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-26 01:54:45,883] [INFO] [utils.py:781:see_memory_usage] Before initializing optimizer states
+[2025-08-26 01:54:45,883] [INFO] [utils.py:782:see_memory_usage] MA 18.7 GB         Max_MA 20.57 GB         CA 20.59 GB         Max_CA 21 GB 
+[2025-08-26 01:54:45,884] [INFO] [utils.py:789:see_memory_usage] CPU Virtual Memory:  used = 137.88 GB, percent = 6.9%
+[2025-08-26 01:54:45,937] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-26 01:54:46,351] [INFO] [utils.py:781:see_memory_usage] After initializing optimizer states
+[2025-08-26 01:54:46,352] [INFO] [utils.py:782:see_memory_usage] MA 18.7 GB         Max_MA 22.44 GB         CA 24.32 GB         Max_CA 24 GB 
+[2025-08-26 01:54:46,352] [INFO] [utils.py:789:see_memory_usage] CPU Virtual Memory:  used = 131.29 GB, percent = 6.6%
+[2025-08-26 01:54:46,352] [INFO] [stage_1_and_2.py:599:__init__] optimizer state initialized
+[2025-08-26 01:54:46,515] [INFO] [utils.py:781:see_memory_usage] After initializing ZeRO optimizer
+[2025-08-26 01:54:46,516] [INFO] [utils.py:782:see_memory_usage] MA 18.7 GB         Max_MA 18.7 GB         CA 24.32 GB         Max_CA 24 GB 
+[2025-08-26 01:54:46,516] [INFO] [utils.py:789:see_memory_usage] CPU Virtual Memory:  used = 131.29 GB, percent = 6.6%
+[2025-08-26 01:54:46,517] [INFO] [logging.py:107:log_dist] [Rank 0] DeepSpeed Final Optimizer = DeepSpeedZeroOptimizer
+[2025-08-26 01:54:46,517] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-26 01:54:46,517] [INFO] [logging.py:107:log_dist] [Rank 0] DeepSpeed using configured LR scheduler = WarmupDecayLR
+[2025-08-26 01:54:46,517] [INFO] [logging.py:107:log_dist] [Rank 0] DeepSpeed LR Scheduler = <deepspeed.runtime.lr_schedules.WarmupDecayLR object at 0x7fec280fd8a0>
+[2025-08-26 01:54:46,517] [INFO] [logging.py:107:log_dist] [Rank 0] step=0, skipped=0, lr=[0], mom=[[0.9, 0.999]]
+[2025-08-26 01:54:46,518] [INFO] [logging.py:107:log_dist] [Rank 0] [TorchCheckpointEngine] Initialized with serialization = True
+[2025-08-26 01:54:46,518] [INFO] [config.py:954:print] DeepSpeedEngine configuration:
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   activation_checkpointing_config  {
+    "partition_activations": false, 
+    "contiguous_memory_optimization": false, 
+    "cpu_checkpointing": false, 
+    "number_checkpoints": null, 
+    "synchronize_checkpoint_boundary": false, 
+    "profile": false
+}
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   aio_config ................... {'block_size': 1048576, 'queue_depth': 8, 'intra_op_parallelism': 1, 'single_submit': False, 'overlap_events': True, 'use_gds': False}
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   amp_enabled .................. False
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   amp_params ................... False
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   autotuning_config ............ {
+    "enabled": false, 
+    "start_step": null, 
+    "end_step": null, 
+    "metric_path": null, 
+    "arg_mappings": null, 
+    "metric": "throughput", 
+    "model_info": null, 
+    "results_dir": "autotuning_results", 
+    "exps_dir": "autotuning_exps", 
+    "overwrite": true, 
+    "fast": true, 
+    "start_profile_step": 3, 
+    "end_profile_step": 5, 
+    "tuner_type": "gridsearch", 
+    "tuner_early_stopping": 5, 
+    "tuner_num_trials": 50, 
+    "model_info_path": null, 
+    "mp_size": 1, 
+    "max_train_batch_size": null, 
+    "min_train_batch_size": 1, 
+    "max_train_micro_batch_size_per_gpu": 1.024000e+03, 
+    "min_train_micro_batch_size_per_gpu": 1, 
+    "num_tuning_micro_batch_sizes": 3
+}
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   bfloat16_config .............. enabled=True immediate_grad_update=False check_grad_overflow=False
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   checkpoint_config ............ {'tag_validation': 'WARN', 'checkpoint_serialization': True, 'writer': None}
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   checkpoint_parallel_write_pipeline  False
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   checkpoint_tag_validation_enabled  True
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   checkpoint_tag_validation_fail  False
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   comms_config ................. <deepspeed.comm.config.DeepSpeedCommsConfig object at 0x7fec28891870>
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   communication_data_type ...... None
+[2025-08-26 01:54:46,518] [INFO] [config.py:958:print]   compile_config ............... deepcompile=False free_activation=False offload_activation=False offload_opt_states=False double_buffer=True symmetric_memory=False debug_log=False offload_parameters=False sync_before_reduce=False sync_after_reduce=False sync_before_allgather=False sync_after_allgather=False keep_int_input_tensors=True keep_all_input_tensors=False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   compression_config ........... {'weight_quantization': {'shared_parameters': {'enabled': False, 'quantizer_kernel': False, 'schedule_offset': 0, 'quantize_groups': 1, 'quantize_verbose': False, 'quantization_type': 'symmetric', 'quantize_weight_in_forward': False, 'rounding': 'nearest', 'fp16_mixed_quantize': False, 'quantize_change_ratio': 0.001}, 'different_groups': {}}, 'activation_quantization': {'shared_parameters': {'enabled': False, 'quantization_type': 'symmetric', 'range_calibration': 'dynamic', 'schedule_offset': 1000}, 'different_groups': {}}, 'sparse_pruning': {'shared_parameters': {'enabled': False, 'method': 'l1', 'schedule_offset': 1000}, 'different_groups': {}}, 'row_pruning': {'shared_parameters': {'enabled': False, 'method': 'l1', 'schedule_offset': 1000}, 'different_groups': {}}, 'head_pruning': {'shared_parameters': {'enabled': False, 'method': 'topk', 'schedule_offset': 1000}, 'different_groups': {}}, 'channel_pruning': {'shared_parameters': {'enabled': False, 'method': 'l1', 'schedule_offset': 1000}, 'different_groups': {}}, 'layer_reduction': {'enabled': False}}
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   curriculum_enabled_legacy .... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   curriculum_params_legacy ..... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   data_efficiency_config ....... {'enabled': False, 'seed': 1234, 'data_sampling': {'enabled': False, 'num_epochs': 1000, 'num_workers': 0, 'pin_memory': False, 'curriculum_learning': {'enabled': False}, 'dynamic_batching': {'enabled': False, 'lr_scaling_method': 'linear', 'min_batch_size': 1, 'max_batch_size': None, 'sequence_picking_order': 'dataloader', 'verbose': False}}, 'data_routing': {'enabled': False, 'random_ltd': {'enabled': False, 'layer_token_lr_schedule': {'enabled': False}}}}
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   data_efficiency_enabled ...... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   dataloader_drop_last ......... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   disable_allgather ............ False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   dump_state ................... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   eigenvalue_enabled ........... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   eigenvalue_gas_boundary_resolution  1
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   eigenvalue_layer_name ........ bert.encoder.layer
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   eigenvalue_layer_num ......... 0
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   eigenvalue_max_iter .......... 100
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   eigenvalue_stability ......... 1e-06
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   eigenvalue_tol ............... 0.01
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   eigenvalue_verbose ........... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   elasticity_enabled ........... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   float16_config ............... enabled=False auto_cast=False loss_scale=0.0 initial_scale_power=16 loss_scale_window=1000 hysteresis=2 consecutive_hysteresis=False min_loss_scale=1 fp16_master_weights_and_grads=False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   flops_profiler_config ........ {
+    "enabled": false, 
+    "recompute_fwd_factor": 0.0, 
+    "profile_step": 1, 
+    "module_depth": -1, 
+    "top_modules": 1, 
+    "detailed": true, 
+    "output_file": null
+}
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   global_rank .................. 0
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   grad_accum_dtype ............. None
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   gradient_accumulation_steps .. 4
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   gradient_clipping ............ 1.0
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   gradient_predivide_factor .... 1.0
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   graph_harvesting ............. False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   hybrid_engine ................ enabled=False max_out_tokens=512 inference_tp_size=1 release_inference_cache=False pin_parameters=True tp_gather_partition_size=8
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   load_universal_checkpoint .... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   memory_breakdown ............. False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   mics_hierarchial_params_gather  False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   mics_shard_size .............. -1
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   monitor_config ............... tensorboard=TensorBoardConfig(enabled=False, output_path='', job_name='DeepSpeedJobName') comet=CometConfig(enabled=False, samples_log_interval=100, project=None, workspace=None, api_key=None, experiment_name=None, experiment_key=None, online=None, mode=None) wandb=WandbConfig(enabled=False, group=None, team=None, project='deepspeed') csv_monitor=CSVConfig(enabled=False, output_path='', job_name='DeepSpeedJobName')
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   nebula_config ................ {
+    "enabled": false, 
+    "persistent_storage_path": null, 
+    "persistent_time_interval": 100, 
+    "num_of_version_in_retention": 2, 
+    "enable_nebula_load": true, 
+    "load_path": null
+}
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   optimizer_legacy_fusion ...... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   optimizer_name ............... adamw
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   optimizer_params ............. {'lr': 1e-05, 'betas': [0.9, 0.999], 'eps': 1e-08, 'weight_decay': 0.01}
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   pipeline ..................... {'stages': 'auto', 'partition': 'best', 'seed_layers': False, 'activation_checkpoint_interval': 0, 'pipe_partitioned': True, 'grad_partitioned': True}
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   pld_enabled .................. False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   pld_params ................... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   prescale_gradients ........... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   scheduler_name ............... WarmupDecayLR
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   scheduler_params ............. {'warmup_min_lr': 0, 'warmup_max_lr': 1e-05, 'warmup_num_steps': 3, 'total_num_steps': 126}
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   seq_parallel_communication_data_type  torch.float32
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   sparse_attention ............. None
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   sparse_gradients_enabled ..... False
+[2025-08-26 01:54:46,519] [INFO] [config.py:958:print]   steps_per_print .............. inf
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   tensor_parallel_config ....... dtype=torch.float16 autotp_size=0 tp_overlap_comm=False tensor_parallel=TPConfig(tp_size=1, tp_grain_size=1, mpu=None, tp_group=None) injection_policy_tuple=None keep_module_on_host=False replace_with_kernel_inject=False
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   timers_config ................ enabled=True synchronized=True
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   torch_autocast_dtype ......... None
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   torch_autocast_enabled ....... False
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   torch_autocast_lower_precision_safe_modules  None
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   train_batch_size ............. 32
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   train_micro_batch_size_per_gpu  1
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   use_data_before_expert_parallel_  False
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   use_node_local_storage ....... False
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   wall_clock_breakdown ......... False
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   weight_quantization_config ... None
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   world_size ................... 8
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   zero_allow_untested_optimizer  False
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   zero_config .................. stage=2 contiguous_gradients=True reduce_scatter=True reduce_bucket_size=500000000 use_multi_rank_bucket_allreduce=True allgather_partitions=True allgather_bucket_size=500000000 overlap_comm=True load_from_fp32_weights=True elastic_checkpoint=False offload_param=None offload_optimizer=DeepSpeedZeroOffloadOptimizerConfig(device='none', nvme_path=None, buffer_count=4, pin_memory=False, pipeline_read=False, pipeline_write=False, fast_init=False, ratio=1.0) sub_group_size=1000000000 cpu_offload_param=None cpu_offload_use_pin_memory=None cpu_offload=None prefetch_bucket_size=50000000 param_persistence_threshold=100000 model_persistence_threshold=9223372036854775807 max_live_parameters=1000000000 max_reuse_distance=1000000000 gather_16bit_weights_on_model_save=False module_granularity_threshold=0 use_all_reduce_for_fetch_params=False stage3_gather_fp16_weights_on_model_save=False ignore_unused_parameters=True legacy_stage1=False round_robin_gradients=False zero_hpz_partition_size=1 zero_quantized_weights=False zero_quantized_nontrainable_weights=False zero_quantized_gradients=False zeropp_loco_param=None mics_shard_size=-1 mics_hierarchical_params_gather=False memory_efficient_linear=True pipeline_loading_checkpoint=False override_module_apply=True log_trace_cache_warnings=False
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   zero_enabled ................. True
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   zero_force_ds_cpu_optimizer .. True
+[2025-08-26 01:54:46,520] [INFO] [config.py:958:print]   zero_optimization_stage ...... 2
+[2025-08-26 01:54:46,520] [INFO] [config.py:944:print_user_config]   json = {
+    "bf16": {
+        "enabled": true
+    }, 
+    "optimizer": {
+        "type": "AdamW", 
+        "params": {
+            "lr": 1e-05, 
+            "betas": [0.9, 0.999], 
+            "eps": 1e-08, 
+            "weight_decay": 0.01
+        }
+    }, 
+    "scheduler": {
+        "type": "WarmupDecayLR", 
+        "params": {
+            "warmup_min_lr": 0, 
+            "warmup_max_lr": 1e-05, 
+            "warmup_num_steps": 3, 
+            "total_num_steps": 126
+        }
+    }, 
+    "zero_optimization": {
+        "stage": 2, 
+        "offload_optimizer": {
+            "device": "none"
+        }, 
+        "allgather_partitions": true, 
+        "allgather_bucket_size": 5.000000e+08, 
+        "reduce_scatter": true, 
+        "reduce_bucket_size": 5.000000e+08, 
+        "overlap_comm": true, 
+        "contiguous_gradients": true
+    }, 
+    "gradient_accumulation_steps": 4, 
+    "gradient_clipping": 1.0, 
+    "steps_per_print": inf, 
+    "train_batch_size": 32, 
+    "train_micro_batch_size_per_gpu": 1, 
+    "wall_clock_breakdown": false, 
+    "fp16": {
+        "enabled": false
+    }
+}
+08/26/2025 01:54:46 - INFO - __main__ - 已加载评估配置: /nas/ganluo/Flow_RL/my_llama3_h100_huggingface_accelerate/configs/evaluation_config.yaml
+🐺 🐺 🐺 🐺 🐺 : eval_config = 
+None
+
+🐺 🐺 🐺 🐺 🐺 : generation_config = 
+{}
+
+🐺 🐺 🐺 🐺 🐺 : max_input_length = 
+6500
+
+🐺 🐺 🐺 🐺 🐺 : optimization_config = 
+{}
+
+🐺 🐺 🐺 🐺 🐺 : 是否clear_cache = True
+08/26/2025 01:54:46 - INFO - evaluation.simple_evaluator - ✓ 简化评估器初始化完成
+08/26/2025 01:54:46 - INFO - evaluation.simple_evaluator -   最大生成长度: 1024
+08/26/2025 01:54:46 - INFO - evaluation.simple_evaluator -   缓存清理: True
+🐺 🐺 🐺 🐺 🐺 :fallback_config = 
+{'host': 'localhost', 'port': 8897, 'timeout': 300}
+🐺 🐺 🐺 🐺 🐺 : port = 8899
+🐺 🐺 🐺 🐺 🐺 :server_url=http://localhost:8899
+08/26/2025 01:54:46 - INFO - evaluation.report_generator - 报告输出目录: evaluation_reports
+✓ 成功加载 1 个测试样本
+  （限制为最多 1 个样本）
+08/26/2025 01:54:46 - INFO - __main__ - 已加载 1 个评估样本
+训练进度:   0%|          | 0/123 [00:00<?, ?it/s]08/26/2025 01:54:46 - INFO - __main__ - 🚀 开始训练...
+08/26/2025 01:54:46 - INFO - __main__ -   训练轮数 = 3.0
+08/26/2025 01:54:46 - INFO - __main__ -   每设备批次大小 = 1
+08/26/2025 01:54:46 - INFO - __main__ -   梯度累积步数 = 4
+08/26/2025 01:54:46 - INFO - __main__ -   总优化步数 = 123
+[2025-08-26 01:54:46,774] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-26 01:54:46,896] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-08-26 01:54:49,022] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+训练进度:   0%|          | 0/123 [00:16<?, ?it/s, loss=16.5909, epoch=0, step=0]训练进度:   1%|          | 1/123 [00:16<33:01, 16.24s/it, loss=16.5909, epoch=0, step=0]08/26/2025 01:55:02 - INFO - __main__ - Step 1: loss=4.1477
+训练进度:   1%|          | 1/123 [00:21<33:01, 16.24s/it, loss=15.8609, epoch=0, step=1]训练进度:   2%|▏         | 2/123 [00:21<20:12, 10.02s/it, loss=15.8609, epoch=0, step=1]08/26/2025 01:55:08 - INFO - __main__ - Step 2: loss=15.9701
+08/26/2025 01:55:08 - INFO - __main__ - 📊 开始评估 (Step 2)...
+🐺 🐺 🐺 🐺 🐺 : 测试样本(可能多个) = 
+
+[{'data_source': 'workflow_gsm8k', 'prompt': [{'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}, {'role': 'user', 'content': '### 1. Problem Domain Overview\nThe target domain is the **GSM8K benchmark** (Grade School Math 8K). These are mathematical word problems designed at elementary school difficulty level.\n\n**Core Characteristics:**\n- **Input:** A word problem describing a real-world scenario with embedded numerical values and relationships\n- **Required Skills:** Mathematical modeling, sequential calculation, unit tracking, and arithmetic operations\n- **Answer Type:** Always a single numerical value (integer or decimal)\n\n**Common Problem Types:**\n- **Sequential Operations:** Multiple steps that build on each other (deposit then withdrawal)\n- **Rate Problems:** Distance/speed/time, work rates, unit prices\n- **Proportional Reasoning:** Ratios, percentages, fractions, scaling\n- **Distribution Problems:** Dividing quantities, equal sharing, remainders\n- **Comparison Problems:** Finding differences, determining "how many more"\n- **Multi-entity Tracking:** Problems involving multiple people/objects with different quantities\n\n**Mathematical Operations:**\n- Basic arithmetic: addition, subtraction, multiplication, division\n- Fractions and decimals\n- Percentages and proportions\n- Simple algebra (solving for unknowns)\n- Unit conversions\n\n**Critical Challenges:**\n- **Hidden Steps:** Some calculations require intermediate steps not explicitly stated\n- **Order of Operations:** Must correctly sequence multiple calculations\n- **Unit Consistency:** Keeping track of units (dollars, hours, items) throughout\n- **Contextual Constraints:** Real-world constraints (can\'t have negative items, fractional people)\n\n**Key Success Factors:**\n- Clear identification of known values and unknowns\n- Systematic step-by-step calculation with explicit intermediate results\n- Verification that the answer makes sense in context\n- Proper handling of units and decimal places\n- Working through the problem chronologically when time-based\n\n### 2. Available Operators & Building Blocks\n\nAll operators follow a consistent interface pattern and are initialized with the problem text. They are available as `self.operator_name`.\n\n**Important Note:** The operators are pre-initialized with `self.problem_text`. Each operator automatically includes it in their prompts (you\'ll see it as "**Original Problem:**" in their internal prompts). You don\'t need to worry about losing the problem context - it\'s always available to every operator call behind the scenes, regardless of what you pass as the context parameter.\n\n\n#### 🔑 **CRITICAL: Understanding Parameters**\n\n**The `instruction` Parameter (Required for all operators):**\n- **Purpose:** Contains the COMPLETE strategic directive that fully specifies what the operator should do\n- **Content:** Should be **comprehensive and detailed** - think of it as a full prompt that leaves nothing ambiguous\n- **Length:** Can and SHOULD be long when needed (100-500+ words is perfectly acceptable and often necessary)\n- **Dynamic Construction:** Can include information extracted from previous steps, specific constraints, detailed reasoning strategies, and formatted requirements\n- **Key Principle:** Since we\'re building reusable workflows, problem-specific information cannot be hardcoded in the workflow structure. While instructions can dynamically incorporate relevant extracted information to guide the operation, the main data to be processed should remain in the context parameter.\n\n**The `context` Parameter (Required for all operators except Generate):**\n- **Purpose:** Provides the INPUT DATA that the instruction will operate on\n- **Content:** The actual text, data, or results from previous operations - this is the primary information source\n- **Type:** String for Generate/Revise/Summarize operators\n- **Usage:** Think of it as the "working material" that the instruction processes\n- **Note:** Ensemble uses `contexts` (plural) which takes List[str] instead of a single string\n\n### Core Operators\n\n**1. Generate: CREATE new information**\n- **Signature:** `await self.generate(instruction: str, context: str = "") -> str`\n- **Purpose:** Produces new text, analysis, or reasoning based on strategic instructions\n\n**2. Revise: IMPROVE existing information**\n- **Signature:** `await self.revise(instruction: str, context: str) -> str`\n- **Purpose:** Critiques and refines existing text based on specific improvement criteria\n\n**3. Summarize: COMPRESS information**\n- **Signature:** `await self.summarize(instruction: str, context: str) -> str`\n- **Purpose:** Condenses text while preserving key information relevant to the problem\n\n**4. Ensemble: DECIDE between or synthesize options**\n- **Signature:** `await self.ensemble(instruction: str, contexts: List[str]) -> str`\n- **Purpose:** Evaluates, compares, or merges multiple candidate solutions\n\n### 3. Key Design Principles\n\n**Dynamic Instruction Construction:**\nExtract information early, then incorporate it into subsequent instructions using f-strings:\n```python\nextraction = await self.generate(instruction="Extract all numerical values...", context=self.problem_text)\nanalysis = await self.generate(\n    instruction=f"Given these extracted values: {extraction}\nNow solve step by step...",\n    context=self.problem_text\n)\n```\n\n**Parallel Execution:**\nUse `asyncio.gather()` for independent operations:\n```python\nresults = await asyncio.gather(\n    self.generate(instruction="Approach 1...", context=...),\n    self.generate(instruction="Approach 2...", context=...)\n)\nfinal = await self.ensemble(instruction="Select best...", contexts=results)\n```\n\n**Common Pitfalls:**\n- ❌ Don\'t hardcode problem-specific data in workflow code\n- ❌ Don\'t use `await` inside list comprehensions (blocks parallelism)\n- ✅ Do use detailed instructions (100-500+ words when needed)\n- ✅ Do extract info dynamically and incorporate into instructions\n\n#### **🚀 Innovation Guidelines:**\n\n**Maximize the power of instructions by:**\n- Building multi-paragraph instructions that leave nothing to interpretation\n- Dynamically incorporating ALL relevant extracted information\n- Creating instruction templates that adapt based on detected patterns\n- Using instructions to implement complex reasoning strategies\n- Including specific formatting requirements and output structures\n\n**Remember:**\n- Instructions are mini-prompts - make them as detailed as needed\n- Extract early, enrich instructions throughout\n- The workflow provides structure; instructions provide intelligence\n- Never hardcode problem-specific data in the workflow code itself\n- Always pass context appropriately - empty string for initial Generate, List for Ensemble\n\n#### **Common Pitfalls to Avoid:**\n\n```python\n# ❌ WRONG: Hardcoding problem-specific information\nresult = await self.generate(\n    instruction="Count how many field goals the Patriots scored",  # Too specific!\n    context=self.problem_text\n)\n\n# ✅ CORRECT: Generic instruction that works for any problem\nresult = await self.generate(\n    instruction="Identify what the question is asking for, then count or calculate the requested value",\n    context=self.problem_text\n)\n\n# ❌ WRONG: Sequential execution when parallel is possible\nresult1 = await self.generate(...)  # Waits\nresult2 = await self.generate(...)  # Then waits again\n\n# ✅ CORRECT: Parallel execution for independent operations\nresults = await asyncio.gather(\n    self.generate(...),\n    self.generate(...)\n)\n```\n\n### 4. Your Task: Complete the `run_workflow` Method\n\nYour task is to write the Python code for the `run_workflow` method within the provided template. Focus on creating a robust, reusable workflow that leverages detailed instructions.\n\n**Base Template:**\n<think>\n[Your step-by-step reasoning about the workflow strategy, why you chose specific operators, and how you\'ll use instructions effectively]\n</think>\n<code>\nclass Workflow:\n    def __init__(self, config, problem) -> None:\n        # --- DO NOT MODIFY THIS SECTION ---\n        self.config = config\n        self.problem_text = problem\n        self.llm = create(config)\n        \n        self.generate = operator.Generate(self.llm, self.problem_text)\n        self.revise = operator.Revise(self.llm, self.problem_text)\n        self.summarize = operator.Summarize(self.llm, self.problem_text)\n        self.ensemble = operator.Ensemble(self.llm, self.problem_text)\n\n    async def run_workflow(self):\n        """\n        Implement the core problem-solving logic here.\n        Remember: \n        - Use detailed, comprehensive instructions\n        - Dynamic instruction construction is powerful\n        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]\n        """\n        import asyncio\n        # --- YOUR WORKFLOW LOGIC HERE ---\n</code>\n\n### 5. Critical Rules\n\n**A. Generality:** Create templates for problem CLASSES, not specific instances\n**B. Instructions:** Use comprehensive, detailed instructions (100-500+ words OK)\n**C. Parameters:** `instruction` (str) + `context` (str) for most; `contexts` (List[str]) for Ensemble\n**D. Control Flow:** Branch on operator results, not direct problem_text parsing\n**E. Complexity:** Typically 3-8 operator calls, parallelize when possible\n**F. Response Format:** ONLY `<think>...</think>` followed by `<code>...</code>`\n\n### 6. Illustrative Example(s)\n\nThe following examples help you understand the problem type. Create a workflow for the *class* of problems, not just these instances.\n\n---\n**QUESTION:**\n4 adults and 8 children are to share 8 packets of chocolate bars. Each packet contains 5 chocolate bars. If each adult gets 6 chocolate bars and the rest are to be shared equally among the children, how many will each child get?\n---\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:'}], 'ability': 'workflow', 'reward_model': {'ground_truth': 'default'}, 'extra_info': {'raw_data': 291, 'test_cases': [238], 'data_path': '/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl'}}]
+
+
+🐺 🐺 🐺 🐺 🐺 : 推理设备 = 
+
+cuda:0
+
+
+08/26/2025 01:55:08 - INFO - evaluation.simple_evaluator - 开始原地评估: 1 个样本
+08/26/2025 01:55:08 - INFO - evaluation.simple_evaluator - 评估批次大小: 1
+08/26/2025 01:55:08 - INFO - evaluation.simple_evaluator - 推理设备: cuda:0 （DDP主进程推理模式）
+🐺 🐺 🐺 🐺 🐺 使用推理设备: cuda:0 （主进程推理模式）
+
+生成解决方案:   0%|          | 0/1 [00:00<?, ?it/s][A🐺 🐺 🐺 🐺 🐺 batch_samples: 
+
+[{'data_source': 'workflow_gsm8k', 'prompt': [{'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}, {'role': 'user', 'content': '### 1. Problem Domain Overview\nThe target domain is the **GSM8K benchmark** (Grade School Math 8K). These are mathematical word problems designed at elementary school difficulty level.\n\n**Core Characteristics:**\n- **Input:** A word problem describing a real-world scenario with embedded numerical values and relationships\n- **Required Skills:** Mathematical modeling, sequential calculation, unit tracking, and arithmetic operations\n- **Answer Type:** Always a single numerical value (integer or decimal)\n\n**Common Problem Types:**\n- **Sequential Operations:** Multiple steps that build on each other (deposit then withdrawal)\n- **Rate Problems:** Distance/speed/time, work rates, unit prices\n- **Proportional Reasoning:** Ratios, percentages, fractions, scaling\n- **Distribution Problems:** Dividing quantities, equal sharing, remainders\n- **Comparison Problems:** Finding differences, determining "how many more"\n- **Multi-entity Tracking:** Problems involving multiple people/objects with different quantities\n\n**Mathematical Operations:**\n- Basic arithmetic: addition, subtraction, multiplication, division\n- Fractions and decimals\n- Percentages and proportions\n- Simple algebra (solving for unknowns)\n- Unit conversions\n\n**Critical Challenges:**\n- **Hidden Steps:** Some calculations require intermediate steps not explicitly stated\n- **Order of Operations:** Must correctly sequence multiple calculations\n- **Unit Consistency:** Keeping track of units (dollars, hours, items) throughout\n- **Contextual Constraints:** Real-world constraints (can\'t have negative items, fractional people)\n\n**Key Success Factors:**\n- Clear identification of known values and unknowns\n- Systematic step-by-step calculation with explicit intermediate results\n- Verification that the answer makes sense in context\n- Proper handling of units and decimal places\n- Working through the problem chronologically when time-based\n\n### 2. Available Operators & Building Blocks\n\nAll operators follow a consistent interface pattern and are initialized with the problem text. They are available as `self.operator_name`.\n\n**Important Note:** The operators are pre-initialized with `self.problem_text`. Each operator automatically includes it in their prompts (you\'ll see it as "**Original Problem:**" in their internal prompts). You don\'t need to worry about losing the problem context - it\'s always available to every operator call behind the scenes, regardless of what you pass as the context parameter.\n\n\n#### 🔑 **CRITICAL: Understanding Parameters**\n\n**The `instruction` Parameter (Required for all operators):**\n- **Purpose:** Contains the COMPLETE strategic directive that fully specifies what the operator should do\n- **Content:** Should be **comprehensive and detailed** - think of it as a full prompt that leaves nothing ambiguous\n- **Length:** Can and SHOULD be long when needed (100-500+ words is perfectly acceptable and often necessary)\n- **Dynamic Construction:** Can include information extracted from previous steps, specific constraints, detailed reasoning strategies, and formatted requirements\n- **Key Principle:** Since we\'re building reusable workflows, problem-specific information cannot be hardcoded in the workflow structure. While instructions can dynamically incorporate relevant extracted information to guide the operation, the main data to be processed should remain in the context parameter.\n\n**The `context` Parameter (Required for all operators except Generate):**\n- **Purpose:** Provides the INPUT DATA that the instruction will operate on\n- **Content:** The actual text, data, or results from previous operations - this is the primary information source\n- **Type:** String for Generate/Revise/Summarize operators\n- **Usage:** Think of it as the "working material" that the instruction processes\n- **Note:** Ensemble uses `contexts` (plural) which takes List[str] instead of a single string\n\n### Core Operators\n\n**1. Generate: CREATE new information**\n- **Signature:** `await self.generate(instruction: str, context: str = "") -> str`\n- **Purpose:** Produces new text, analysis, or reasoning based on strategic instructions\n\n**2. Revise: IMPROVE existing information**\n- **Signature:** `await self.revise(instruction: str, context: str) -> str`\n- **Purpose:** Critiques and refines existing text based on specific improvement criteria\n\n**3. Summarize: COMPRESS information**\n- **Signature:** `await self.summarize(instruction: str, context: str) -> str`\n- **Purpose:** Condenses text while preserving key information relevant to the problem\n\n**4. Ensemble: DECIDE between or synthesize options**\n- **Signature:** `await self.ensemble(instruction: str, contexts: List[str]) -> str`\n- **Purpose:** Evaluates, compares, or merges multiple candidate solutions\n\n### 3. Key Design Principles\n\n**Dynamic Instruction Construction:**\nExtract information early, then incorporate it into subsequent instructions using f-strings:\n```python\nextraction = await self.generate(instruction="Extract all numerical values...", context=self.problem_text)\nanalysis = await self.generate(\n    instruction=f"Given these extracted values: {extraction}\nNow solve step by step...",\n    context=self.problem_text\n)\n```\n\n**Parallel Execution:**\nUse `asyncio.gather()` for independent operations:\n```python\nresults = await asyncio.gather(\n    self.generate(instruction="Approach 1...", context=...),\n    self.generate(instruction="Approach 2...", context=...)\n)\nfinal = await self.ensemble(instruction="Select best...", contexts=results)\n```\n\n**Common Pitfalls:**\n- ❌ Don\'t hardcode problem-specific data in workflow code\n- ❌ Don\'t use `await` inside list comprehensions (blocks parallelism)\n- ✅ Do use detailed instructions (100-500+ words when needed)\n- ✅ Do extract info dynamically and incorporate into instructions\n\n#### **🚀 Innovation Guidelines:**\n\n**Maximize the power of instructions by:**\n- Building multi-paragraph instructions that leave nothing to interpretation\n- Dynamically incorporating ALL relevant extracted information\n- Creating instruction templates that adapt based on detected patterns\n- Using instructions to implement complex reasoning strategies\n- Including specific formatting requirements and output structures\n\n**Remember:**\n- Instructions are mini-prompts - make them as detailed as needed\n- Extract early, enrich instructions throughout\n- The workflow provides structure; instructions provide intelligence\n- Never hardcode problem-specific data in the workflow code itself\n- Always pass context appropriately - empty string for initial Generate, List for Ensemble\n\n#### **Common Pitfalls to Avoid:**\n\n```python\n# ❌ WRONG: Hardcoding problem-specific information\nresult = await self.generate(\n    instruction="Count how many field goals the Patriots scored",  # Too specific!\n    context=self.problem_text\n)\n\n# ✅ CORRECT: Generic instruction that works for any problem\nresult = await self.generate(\n    instruction="Identify what the question is asking for, then count or calculate the requested value",\n    context=self.problem_text\n)\n\n# ❌ WRONG: Sequential execution when parallel is possible\nresult1 = await self.generate(...)  # Waits\nresult2 = await self.generate(...)  # Then waits again\n\n# ✅ CORRECT: Parallel execution for independent operations\nresults = await asyncio.gather(\n    self.generate(...),\n    self.generate(...)\n)\n```\n\n### 4. Your Task: Complete the `run_workflow` Method\n\nYour task is to write the Python code for the `run_workflow` method within the provided template. Focus on creating a robust, reusable workflow that leverages detailed instructions.\n\n**Base Template:**\n<think>\n[Your step-by-step reasoning about the workflow strategy, why you chose specific operators, and how you\'ll use instructions effectively]\n</think>\n<code>\nclass Workflow:\n    def __init__(self, config, problem) -> None:\n        # --- DO NOT MODIFY THIS SECTION ---\n        self.config = config\n        self.problem_text = problem\n        self.llm = create(config)\n        \n        self.generate = operator.Generate(self.llm, self.problem_text)\n        self.revise = operator.Revise(self.llm, self.problem_text)\n        self.summarize = operator.Summarize(self.llm, self.problem_text)\n        self.ensemble = operator.Ensemble(self.llm, self.problem_text)\n\n    async def run_workflow(self):\n        """\n        Implement the core problem-solving logic here.\n        Remember: \n        - Use detailed, comprehensive instructions\n        - Dynamic instruction construction is powerful\n        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]\n        """\n        import asyncio\n        # --- YOUR WORKFLOW LOGIC HERE ---\n</code>\n\n### 5. Critical Rules\n\n**A. Generality:** Create templates for problem CLASSES, not specific instances\n**B. Instructions:** Use comprehensive, detailed instructions (100-500+ words OK)\n**C. Parameters:** `instruction` (str) + `context` (str) for most; `contexts` (List[str]) for Ensemble\n**D. Control Flow:** Branch on operator results, not direct problem_text parsing\n**E. Complexity:** Typically 3-8 operator calls, parallelize when possible\n**F. Response Format:** ONLY `<think>...</think>` followed by `<code>...</code>`\n\n### 6. Illustrative Example(s)\n\nThe following examples help you understand the problem type. Create a workflow for the *class* of problems, not just these instances.\n\n---\n**QUESTION:**\n4 adults and 8 children are to share 8 packets of chocolate bars. Each packet contains 5 chocolate bars. If each adult gets 6 chocolate bars and the rest are to be shared equally among the children, how many will each child get?\n---\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:'}], 'ability': 'workflow', 'reward_model': {'ground_truth': 'default'}, 'extra_info': {'raw_data': 291, 'test_cases': [238], 'data_path': '/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl'}}]
+
+
+🐺 🐺 🐺 🐺 🐺 sample: 
+
+{'data_source': 'workflow_gsm8k', 'prompt': [{'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}, {'role': 'user', 'content': '### 1. Problem Domain Overview\nThe target domain is the **GSM8K benchmark** (Grade School Math 8K). These are mathematical word problems designed at elementary school difficulty level.\n\n**Core Characteristics:**\n- **Input:** A word problem describing a real-world scenario with embedded numerical values and relationships\n- **Required Skills:** Mathematical modeling, sequential calculation, unit tracking, and arithmetic operations\n- **Answer Type:** Always a single numerical value (integer or decimal)\n\n**Common Problem Types:**\n- **Sequential Operations:** Multiple steps that build on each other (deposit then withdrawal)\n- **Rate Problems:** Distance/speed/time, work rates, unit prices\n- **Proportional Reasoning:** Ratios, percentages, fractions, scaling\n- **Distribution Problems:** Dividing quantities, equal sharing, remainders\n- **Comparison Problems:** Finding differences, determining "how many more"\n- **Multi-entity Tracking:** Problems involving multiple people/objects with different quantities\n\n**Mathematical Operations:**\n- Basic arithmetic: addition, subtraction, multiplication, division\n- Fractions and decimals\n- Percentages and proportions\n- Simple algebra (solving for unknowns)\n- Unit conversions\n\n**Critical Challenges:**\n- **Hidden Steps:** Some calculations require intermediate steps not explicitly stated\n- **Order of Operations:** Must correctly sequence multiple calculations\n- **Unit Consistency:** Keeping track of units (dollars, hours, items) throughout\n- **Contextual Constraints:** Real-world constraints (can\'t have negative items, fractional people)\n\n**Key Success Factors:**\n- Clear identification of known values and unknowns\n- Systematic step-by-step calculation with explicit intermediate results\n- Verification that the answer makes sense in context\n- Proper handling of units and decimal places\n- Working through the problem chronologically when time-based\n\n### 2. Available Operators & Building Blocks\n\nAll operators follow a consistent interface pattern and are initialized with the problem text. They are available as `self.operator_name`.\n\n**Important Note:** The operators are pre-initialized with `self.problem_text`. Each operator automatically includes it in their prompts (you\'ll see it as "**Original Problem:**" in their internal prompts). You don\'t need to worry about losing the problem context - it\'s always available to every operator call behind the scenes, regardless of what you pass as the context parameter.\n\n\n#### 🔑 **CRITICAL: Understanding Parameters**\n\n**The `instruction` Parameter (Required for all operators):**\n- **Purpose:** Contains the COMPLETE strategic directive that fully specifies what the operator should do\n- **Content:** Should be **comprehensive and detailed** - think of it as a full prompt that leaves nothing ambiguous\n- **Length:** Can and SHOULD be long when needed (100-500+ words is perfectly acceptable and often necessary)\n- **Dynamic Construction:** Can include information extracted from previous steps, specific constraints, detailed reasoning strategies, and formatted requirements\n- **Key Principle:** Since we\'re building reusable workflows, problem-specific information cannot be hardcoded in the workflow structure. While instructions can dynamically incorporate relevant extracted information to guide the operation, the main data to be processed should remain in the context parameter.\n\n**The `context` Parameter (Required for all operators except Generate):**\n- **Purpose:** Provides the INPUT DATA that the instruction will operate on\n- **Content:** The actual text, data, or results from previous operations - this is the primary information source\n- **Type:** String for Generate/Revise/Summarize operators\n- **Usage:** Think of it as the "working material" that the instruction processes\n- **Note:** Ensemble uses `contexts` (plural) which takes List[str] instead of a single string\n\n### Core Operators\n\n**1. Generate: CREATE new information**\n- **Signature:** `await self.generate(instruction: str, context: str = "") -> str`\n- **Purpose:** Produces new text, analysis, or reasoning based on strategic instructions\n\n**2. Revise: IMPROVE existing information**\n- **Signature:** `await self.revise(instruction: str, context: str) -> str`\n- **Purpose:** Critiques and refines existing text based on specific improvement criteria\n\n**3. Summarize: COMPRESS information**\n- **Signature:** `await self.summarize(instruction: str, context: str) -> str`\n- **Purpose:** Condenses text while preserving key information relevant to the problem\n\n**4. Ensemble: DECIDE between or synthesize options**\n- **Signature:** `await self.ensemble(instruction: str, contexts: List[str]) -> str`\n- **Purpose:** Evaluates, compares, or merges multiple candidate solutions\n\n### 3. Key Design Principles\n\n**Dynamic Instruction Construction:**\nExtract information early, then incorporate it into subsequent instructions using f-strings:\n```python\nextraction = await self.generate(instruction="Extract all numerical values...", context=self.problem_text)\nanalysis = await self.generate(\n    instruction=f"Given these extracted values: {extraction}\nNow solve step by step...",\n    context=self.problem_text\n)\n```\n\n**Parallel Execution:**\nUse `asyncio.gather()` for independent operations:\n```python\nresults = await asyncio.gather(\n    self.generate(instruction="Approach 1...", context=...),\n    self.generate(instruction="Approach 2...", context=...)\n)\nfinal = await self.ensemble(instruction="Select best...", contexts=results)\n```\n\n**Common Pitfalls:**\n- ❌ Don\'t hardcode problem-specific data in workflow code\n- ❌ Don\'t use `await` inside list comprehensions (blocks parallelism)\n- ✅ Do use detailed instructions (100-500+ words when needed)\n- ✅ Do extract info dynamically and incorporate into instructions\n\n#### **🚀 Innovation Guidelines:**\n\n**Maximize the power of instructions by:**\n- Building multi-paragraph instructions that leave nothing to interpretation\n- Dynamically incorporating ALL relevant extracted information\n- Creating instruction templates that adapt based on detected patterns\n- Using instructions to implement complex reasoning strategies\n- Including specific formatting requirements and output structures\n\n**Remember:**\n- Instructions are mini-prompts - make them as detailed as needed\n- Extract early, enrich instructions throughout\n- The workflow provides structure; instructions provide intelligence\n- Never hardcode problem-specific data in the workflow code itself\n- Always pass context appropriately - empty string for initial Generate, List for Ensemble\n\n#### **Common Pitfalls to Avoid:**\n\n```python\n# ❌ WRONG: Hardcoding problem-specific information\nresult = await self.generate(\n    instruction="Count how many field goals the Patriots scored",  # Too specific!\n    context=self.problem_text\n)\n\n# ✅ CORRECT: Generic instruction that works for any problem\nresult = await self.generate(\n    instruction="Identify what the question is asking for, then count or calculate the requested value",\n    context=self.problem_text\n)\n\n# ❌ WRONG: Sequential execution when parallel is possible\nresult1 = await self.generate(...)  # Waits\nresult2 = await self.generate(...)  # Then waits again\n\n# ✅ CORRECT: Parallel execution for independent operations\nresults = await asyncio.gather(\n    self.generate(...),\n    self.generate(...)\n)\n```\n\n### 4. Your Task: Complete the `run_workflow` Method\n\nYour task is to write the Python code for the `run_workflow` method within the provided template. Focus on creating a robust, reusable workflow that leverages detailed instructions.\n\n**Base Template:**\n<think>\n[Your step-by-step reasoning about the workflow strategy, why you chose specific operators, and how you\'ll use instructions effectively]\n</think>\n<code>\nclass Workflow:\n    def __init__(self, config, problem) -> None:\n        # --- DO NOT MODIFY THIS SECTION ---\n        self.config = config\n        self.problem_text = problem\n        self.llm = create(config)\n        \n        self.generate = operator.Generate(self.llm, self.problem_text)\n        self.revise = operator.Revise(self.llm, self.problem_text)\n        self.summarize = operator.Summarize(self.llm, self.problem_text)\n        self.ensemble = operator.Ensemble(self.llm, self.problem_text)\n\n    async def run_workflow(self):\n        """\n        Implement the core problem-solving logic here.\n        Remember: \n        - Use detailed, comprehensive instructions\n        - Dynamic instruction construction is powerful\n        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]\n        """\n        import asyncio\n        # --- YOUR WORKFLOW LOGIC HERE ---\n</code>\n\n### 5. Critical Rules\n\n**A. Generality:** Create templates for problem CLASSES, not specific instances\n**B. Instructions:** Use comprehensive, detailed instructions (100-500+ words OK)\n**C. Parameters:** `instruction` (str) + `context` (str) for most; `contexts` (List[str]) for Ensemble\n**D. Control Flow:** Branch on operator results, not direct problem_text parsing\n**E. Complexity:** Typically 3-8 operator calls, parallelize when possible\n**F. Response Format:** ONLY `<think>...</think>` followed by `<code>...</code>`\n\n### 6. Illustrative Example(s)\n\nThe following examples help you understand the problem type. Create a workflow for the *class* of problems, not just these instances.\n\n---\n**QUESTION:**\n4 adults and 8 children are to share 8 packets of chocolate bars. Each packet contains 5 chocolate bars. If each adult gets 6 chocolate bars and the rest are to be shared equally among the children, how many will each child get?\n---\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:'}], 'ability': 'workflow', 'reward_model': {'ground_truth': 'default'}, 'extra_info': {'raw_data': 291, 'test_cases': [238], 'data_path': '/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl'}}
+
+
+🐺 🐺 🐺 🐺 🐺 sample['prompt']: 
+
+[{'role': 'system', 'content': '\nYour fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.\n\nYour core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:\n1. A high-level description of the problem domain\n2. A strictly defined set of callable software "Operators" that serve as your only building blocks\n3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern\n\n**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**\n\nYour generated Python workflow must be robust enough to work for any problem instance within the described domain.\n\nCrucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.\n'}, {'role': 'user', 'content': '### 1. Problem Domain Overview\nThe target domain is the **GSM8K benchmark** (Grade School Math 8K). These are mathematical word problems designed at elementary school difficulty level.\n\n**Core Characteristics:**\n- **Input:** A word problem describing a real-world scenario with embedded numerical values and relationships\n- **Required Skills:** Mathematical modeling, sequential calculation, unit tracking, and arithmetic operations\n- **Answer Type:** Always a single numerical value (integer or decimal)\n\n**Common Problem Types:**\n- **Sequential Operations:** Multiple steps that build on each other (deposit then withdrawal)\n- **Rate Problems:** Distance/speed/time, work rates, unit prices\n- **Proportional Reasoning:** Ratios, percentages, fractions, scaling\n- **Distribution Problems:** Dividing quantities, equal sharing, remainders\n- **Comparison Problems:** Finding differences, determining "how many more"\n- **Multi-entity Tracking:** Problems involving multiple people/objects with different quantities\n\n**Mathematical Operations:**\n- Basic arithmetic: addition, subtraction, multiplication, division\n- Fractions and decimals\n- Percentages and proportions\n- Simple algebra (solving for unknowns)\n- Unit conversions\n\n**Critical Challenges:**\n- **Hidden Steps:** Some calculations require intermediate steps not explicitly stated\n- **Order of Operations:** Must correctly sequence multiple calculations\n- **Unit Consistency:** Keeping track of units (dollars, hours, items) throughout\n- **Contextual Constraints:** Real-world constraints (can\'t have negative items, fractional people)\n\n**Key Success Factors:**\n- Clear identification of known values and unknowns\n- Systematic step-by-step calculation with explicit intermediate results\n- Verification that the answer makes sense in context\n- Proper handling of units and decimal places\n- Working through the problem chronologically when time-based\n\n### 2. Available Operators & Building Blocks\n\nAll operators follow a consistent interface pattern and are initialized with the problem text. They are available as `self.operator_name`.\n\n**Important Note:** The operators are pre-initialized with `self.problem_text`. Each operator automatically includes it in their prompts (you\'ll see it as "**Original Problem:**" in their internal prompts). You don\'t need to worry about losing the problem context - it\'s always available to every operator call behind the scenes, regardless of what you pass as the context parameter.\n\n\n#### 🔑 **CRITICAL: Understanding Parameters**\n\n**The `instruction` Parameter (Required for all operators):**\n- **Purpose:** Contains the COMPLETE strategic directive that fully specifies what the operator should do\n- **Content:** Should be **comprehensive and detailed** - think of it as a full prompt that leaves nothing ambiguous\n- **Length:** Can and SHOULD be long when needed (100-500+ words is perfectly acceptable and often necessary)\n- **Dynamic Construction:** Can include information extracted from previous steps, specific constraints, detailed reasoning strategies, and formatted requirements\n- **Key Principle:** Since we\'re building reusable workflows, problem-specific information cannot be hardcoded in the workflow structure. While instructions can dynamically incorporate relevant extracted information to guide the operation, the main data to be processed should remain in the context parameter.\n\n**The `context` Parameter (Required for all operators except Generate):**\n- **Purpose:** Provides the INPUT DATA that the instruction will operate on\n- **Content:** The actual text, data, or results from previous operations - this is the primary information source\n- **Type:** String for Generate/Revise/Summarize operators\n- **Usage:** Think of it as the "working material" that the instruction processes\n- **Note:** Ensemble uses `contexts` (plural) which takes List[str] instead of a single string\n\n### Core Operators\n\n**1. Generate: CREATE new information**\n- **Signature:** `await self.generate(instruction: str, context: str = "") -> str`\n- **Purpose:** Produces new text, analysis, or reasoning based on strategic instructions\n\n**2. Revise: IMPROVE existing information**\n- **Signature:** `await self.revise(instruction: str, context: str) -> str`\n- **Purpose:** Critiques and refines existing text based on specific improvement criteria\n\n**3. Summarize: COMPRESS information**\n- **Signature:** `await self.summarize(instruction: str, context: str) -> str`\n- **Purpose:** Condenses text while preserving key information relevant to the problem\n\n**4. Ensemble: DECIDE between or synthesize options**\n- **Signature:** `await self.ensemble(instruction: str, contexts: List[str]) -> str`\n- **Purpose:** Evaluates, compares, or merges multiple candidate solutions\n\n### 3. Key Design Principles\n\n**Dynamic Instruction Construction:**\nExtract information early, then incorporate it into subsequent instructions using f-strings:\n```python\nextraction = await self.generate(instruction="Extract all numerical values...", context=self.problem_text)\nanalysis = await self.generate(\n    instruction=f"Given these extracted values: {extraction}\nNow solve step by step...",\n    context=self.problem_text\n)\n```\n\n**Parallel Execution:**\nUse `asyncio.gather()` for independent operations:\n```python\nresults = await asyncio.gather(\n    self.generate(instruction="Approach 1...", context=...),\n    self.generate(instruction="Approach 2...", context=...)\n)\nfinal = await self.ensemble(instruction="Select best...", contexts=results)\n```\n\n**Common Pitfalls:**\n- ❌ Don\'t hardcode problem-specific data in workflow code\n- ❌ Don\'t use `await` inside list comprehensions (blocks parallelism)\n- ✅ Do use detailed instructions (100-500+ words when needed)\n- ✅ Do extract info dynamically and incorporate into instructions\n\n#### **🚀 Innovation Guidelines:**\n\n**Maximize the power of instructions by:**\n- Building multi-paragraph instructions that leave nothing to interpretation\n- Dynamically incorporating ALL relevant extracted information\n- Creating instruction templates that adapt based on detected patterns\n- Using instructions to implement complex reasoning strategies\n- Including specific formatting requirements and output structures\n\n**Remember:**\n- Instructions are mini-prompts - make them as detailed as needed\n- Extract early, enrich instructions throughout\n- The workflow provides structure; instructions provide intelligence\n- Never hardcode problem-specific data in the workflow code itself\n- Always pass context appropriately - empty string for initial Generate, List for Ensemble\n\n#### **Common Pitfalls to Avoid:**\n\n```python\n# ❌ WRONG: Hardcoding problem-specific information\nresult = await self.generate(\n    instruction="Count how many field goals the Patriots scored",  # Too specific!\n    context=self.problem_text\n)\n\n# ✅ CORRECT: Generic instruction that works for any problem\nresult = await self.generate(\n    instruction="Identify what the question is asking for, then count or calculate the requested value",\n    context=self.problem_text\n)\n\n# ❌ WRONG: Sequential execution when parallel is possible\nresult1 = await self.generate(...)  # Waits\nresult2 = await self.generate(...)  # Then waits again\n\n# ✅ CORRECT: Parallel execution for independent operations\nresults = await asyncio.gather(\n    self.generate(...),\n    self.generate(...)\n)\n```\n\n### 4. Your Task: Complete the `run_workflow` Method\n\nYour task is to write the Python code for the `run_workflow` method within the provided template. Focus on creating a robust, reusable workflow that leverages detailed instructions.\n\n**Base Template:**\n<think>\n[Your step-by-step reasoning about the workflow strategy, why you chose specific operators, and how you\'ll use instructions effectively]\n</think>\n<code>\nclass Workflow:\n    def __init__(self, config, problem) -> None:\n        # --- DO NOT MODIFY THIS SECTION ---\n        self.config = config\n        self.problem_text = problem\n        self.llm = create(config)\n        \n        self.generate = operator.Generate(self.llm, self.problem_text)\n        self.revise = operator.Revise(self.llm, self.problem_text)\n        self.summarize = operator.Summarize(self.llm, self.problem_text)\n        self.ensemble = operator.Ensemble(self.llm, self.problem_text)\n\n    async def run_workflow(self):\n        """\n        Implement the core problem-solving logic here.\n        Remember: \n        - Use detailed, comprehensive instructions\n        - Dynamic instruction construction is powerful\n        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]\n        """\n        import asyncio\n        # --- YOUR WORKFLOW LOGIC HERE ---\n</code>\n\n### 5. Critical Rules\n\n**A. Generality:** Create templates for problem CLASSES, not specific instances\n**B. Instructions:** Use comprehensive, detailed instructions (100-500+ words OK)\n**C. Parameters:** `instruction` (str) + `context` (str) for most; `contexts` (List[str]) for Ensemble\n**D. Control Flow:** Branch on operator results, not direct problem_text parsing\n**E. Complexity:** Typically 3-8 operator calls, parallelize when possible\n**F. Response Format:** ONLY `<think>...</think>` followed by `<code>...</code>`\n\n### 6. Illustrative Example(s)\n\nThe following examples help you understand the problem type. Create a workflow for the *class* of problems, not just these instances.\n\n---\n**QUESTION:**\n4 adults and 8 children are to share 8 packets of chocolate bars. Each packet contains 5 chocolate bars. If each adult gets 6 chocolate bars and the rest are to be shared equally among the children, how many will each child get?\n---\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:'}]
+
+
+🐺 🐺 🐺 🐺 🐺 应用聊天模板之后的prompt: 
+
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+Your fundamental purpose is to act as an expert and highly abstract **System Architect**. You translate formal problem specifications into universal, reusable Python solution blueprints.
+
+Your core task is to **generalize**, not to solve. You will receive a detailed specification for a class of problems, which includes:
+1. A high-level description of the problem domain
+2. A strictly defined set of callable software "Operators" that serve as your only building blocks
+3. An illustrative example instance, provided solely to help you understand the abstract reasoning pattern
+
+**Your response MUST strictly adhere to a two-part format: first, a `<think>...</think>` block for your reasoning, followed by a `<code>...</code>` block for the Python solution.**
+
+Your generated Python workflow must be robust enough to work for any problem instance within the described domain.
+
+Crucially, the skill you are developing must be transferable. You should be prepared to receive specifications for **entirely new problem domains and new sets of operators** in the future and apply the same rigorous process of abstraction and generalization.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+### 1. Problem Domain Overview
+The target domain is the **GSM8K benchmark** (Grade School Math 8K). These are mathematical word problems designed at elementary school difficulty level.
+
+**Core Characteristics:**
+- **Input:** A word problem describing a real-world scenario with embedded numerical values and relationships
+- **Required Skills:** Mathematical modeling, sequential calculation, unit tracking, and arithmetic operations
+- **Answer Type:** Always a single numerical value (integer or decimal)
+
+**Common Problem Types:**
+- **Sequential Operations:** Multiple steps that build on each other (deposit then withdrawal)
+- **Rate Problems:** Distance/speed/time, work rates, unit prices
+- **Proportional Reasoning:** Ratios, percentages, fractions, scaling
+- **Distribution Problems:** Dividing quantities, equal sharing, remainders
+- **Comparison Problems:** Finding differences, determining "how many more"
+- **Multi-entity Tracking:** Problems involving multiple people/objects with different quantities
+
+**Mathematical Operations:**
+- Basic arithmetic: addition, subtraction, multiplication, division
+- Fractions and decimals
+- Percentages and proportions
+- Simple algebra (solving for unknowns)
+- Unit conversions
+
+**Critical Challenges:**
+- **Hidden Steps:** Some calculations require intermediate steps not explicitly stated
+- **Order of Operations:** Must correctly sequence multiple calculations
+- **Unit Consistency:** Keeping track of units (dollars, hours, items) throughout
+- **Contextual Constraints:** Real-world constraints (can't have negative items, fractional people)
+
+**Key Success Factors:**
+- Clear identification of known values and unknowns
+- Systematic step-by-step calculation with explicit intermediate results
+- Verification that the answer makes sense in context
+- Proper handling of units and decimal places
+- Working through the problem chronologically when time-based
+
+### 2. Available Operators & Building Blocks
+
+All operators follow a consistent interface pattern and are initialized with the problem text. They are available as `self.operator_name`.
+
+**Important Note:** The operators are pre-initialized with `self.problem_text`. Each operator automatically includes it in their prompts (you'll see it as "**Original Problem:**" in their internal prompts). You don't need to worry about losing the problem context - it's always available to every operator call behind the scenes, regardless of what you pass as the context parameter.
+
+
+#### 🔑 **CRITICAL: Understanding Parameters**
+
+**The `instruction` Parameter (Required for all operators):**
+- **Purpose:** Contains the COMPLETE strategic directive that fully specifies what the operator should do
+- **Content:** Should be **comprehensive and detailed** - think of it as a full prompt that leaves nothing ambiguous
+- **Length:** Can and SHOULD be long when needed (100-500+ words is perfectly acceptable and often necessary)
+- **Dynamic Construction:** Can include information extracted from previous steps, specific constraints, detailed reasoning strategies, and formatted requirements
+- **Key Principle:** Since we're building reusable workflows, problem-specific information cannot be hardcoded in the workflow structure. While instructions can dynamically incorporate relevant extracted information to guide the operation, the main data to be processed should remain in the context parameter.
+
+**The `context` Parameter (Required for all operators except Generate):**
+- **Purpose:** Provides the INPUT DATA that the instruction will operate on
+- **Content:** The actual text, data, or results from previous operations - this is the primary information source
+- **Type:** String for Generate/Revise/Summarize operators
+- **Usage:** Think of it as the "working material" that the instruction processes
+- **Note:** Ensemble uses `contexts` (plural) which takes List[str] instead of a single string
+
+### Core Operators
+
+**1. Generate: CREATE new information**
+- **Signature:** `await self.generate(instruction: str, context: str = "") -> str`
+- **Purpose:** Produces new text, analysis, or reasoning based on strategic instructions
+
+**2. Revise: IMPROVE existing information**
+- **Signature:** `await self.revise(instruction: str, context: str) -> str`
+- **Purpose:** Critiques and refines existing text based on specific improvement criteria
+
+**3. Summarize: COMPRESS information**
+- **Signature:** `await self.summarize(instruction: str, context: str) -> str`
+- **Purpose:** Condenses text while preserving key information relevant to the problem
+
+**4. Ensemble: DECIDE between or synthesize options**
+- **Signature:** `await self.ensemble(instruction: str, contexts: List[str]) -> str`
+- **Purpose:** Evaluates, compares, or merges multiple candidate solutions
+
+### 3. Key Design Principles
+
+**Dynamic Instruction Construction:**
+Extract information early, then incorporate it into subsequent instructions using f-strings:
+```python
+extraction = await self.generate(instruction="Extract all numerical values...", context=self.problem_text)
+analysis = await self.generate(
+    instruction=f"Given these extracted values: {extraction}
+Now solve step by step...",
+    context=self.problem_text
+)
+```
+
+**Parallel Execution:**
+Use `asyncio.gather()` for independent operations:
+```python
+results = await asyncio.gather(
+    self.generate(instruction="Approach 1...", context=...),
+    self.generate(instruction="Approach 2...", context=...)
+)
+final = await self.ensemble(instruction="Select best...", contexts=results)
+```
+
+**Common Pitfalls:**
+- ❌ Don't hardcode problem-specific data in workflow code
+- ❌ Don't use `await` inside list comprehensions (blocks parallelism)
+- ✅ Do use detailed instructions (100-500+ words when needed)
+- ✅ Do extract info dynamically and incorporate into instructions
+
+#### **🚀 Innovation Guidelines:**
+
+**Maximize the power of instructions by:**
+- Building multi-paragraph instructions that leave nothing to interpretation
+- Dynamically incorporating ALL relevant extracted information
+- Creating instruction templates that adapt based on detected patterns
+- Using instructions to implement complex reasoning strategies
+- Including specific formatting requirements and output structures
+
+**Remember:**
+- Instructions are mini-prompts - make them as detailed as needed
+- Extract early, enrich instructions throughout
+- The workflow provides structure; instructions provide intelligence
+- Never hardcode problem-specific data in the workflow code itself
+- Always pass context appropriately - empty string for initial Generate, List for Ensemble
+
+#### **Common Pitfalls to Avoid:**
+
+```python
+# ❌ WRONG: Hardcoding problem-specific information
+result = await self.generate(
+    instruction="Count how many field goals the Patriots scored",  # Too specific!
+    context=self.problem_text
+)
+
+# ✅ CORRECT: Generic instruction that works for any problem
+result = await self.generate(
+    instruction="Identify what the question is asking for, then count or calculate the requested value",
+    context=self.problem_text
+)
+
+# ❌ WRONG: Sequential execution when parallel is possible
+result1 = await self.generate(...)  # Waits
+result2 = await self.generate(...)  # Then waits again
+
+# ✅ CORRECT: Parallel execution for independent operations
+results = await asyncio.gather(
+    self.generate(...),
+    self.generate(...)
+)
+```
+
+### 4. Your Task: Complete the `run_workflow` Method
+
+Your task is to write the Python code for the `run_workflow` method within the provided template. Focus on creating a robust, reusable workflow that leverages detailed instructions.
+
+**Base Template:**
+<think>
+[Your step-by-step reasoning about the workflow strategy, why you chose specific operators, and how you'll use instructions effectively]
+</think>
+<code>
+class Workflow:
+    def __init__(self, config, problem) -> None:
+        # --- DO NOT MODIFY THIS SECTION ---
+        self.config = config
+        self.problem_text = problem
+        self.llm = create(config)
+        
+        self.generate = operator.Generate(self.llm, self.problem_text)
+        self.revise = operator.Revise(self.llm, self.problem_text)
+        self.summarize = operator.Summarize(self.llm, self.problem_text)
+        self.ensemble = operator.Ensemble(self.llm, self.problem_text)
+
+    async def run_workflow(self):
+        """
+        Implement the core problem-solving logic here.
+        Remember: 
+        - Use detailed, comprehensive instructions
+        - Dynamic instruction construction is powerful
+        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]
+        """
+        import asyncio
+        # --- YOUR WORKFLOW LOGIC HERE ---
+</code>
+
+### 5. Critical Rules
+
+**A. Generality:** Create templates for problem CLASSES, not specific instances
+**B. Instructions:** Use comprehensive, detailed instructions (100-500+ words OK)
+**C. Parameters:** `instruction` (str) + `context` (str) for most; `contexts` (List[str]) for Ensemble
+**D. Control Flow:** Branch on operator results, not direct problem_text parsing
+**E. Complexity:** Typically 3-8 operator calls, parallelize when possible
+**F. Response Format:** ONLY `<think>...</think>` followed by `<code>...</code>`
+
+### 6. Illustrative Example(s)
+
+The following examples help you understand the problem type. Create a workflow for the *class* of problems, not just these instances.
+
+---
+**QUESTION:**
+4 adults and 8 children are to share 8 packets of chocolate bars. Each packet contains 5 chocolate bars. If each adult gets 6 chocolate bars and the rest are to be shared equally among the children, how many will each child get?
+---
+
+### 6. Your Response
+Now, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+
+
+🐺 🐺 🐺 🐺 🐺 从配置文件(self.generation_config)读取的参数 = 
+
+{'max_new_tokens': 1024, 'temperature': 0.6, 'top_p': 0.95, 'top_k': 20, 'do_sample': True, 'repetition_penalty': 1.0, 'early_stopping': False, 'num_beams': 1, 'pad_token_id': None}
+
+
+🐺 🐺 🐺 🐺 🐺 generation_kwargs = 
+
+{'max_new_tokens': 1024, 'temperature': 0.6, 'top_p': 0.95, 'top_k': 20, 'do_sample': True, 'repetition_penalty': 1.0, 'early_stopping': False, 'num_beams': 1, 'pad_token_id': None}
+
+
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+🐺 🐺 🐺 🐺 🐺 解码为文本,outputs = 
+
+['<think>\nTo create a robust, reusable workflow for the GSM8K benchmark, we\'ll focus on developing a generalized strategy that can handle various problem types within this domain. Given the problem characteristics, we\'ll leverage the provided operators to implement a workflow that can tackle sequential operations, rate problems, proportional reasoning, distribution problems, comparison problems, and multi-entity tracking.\n\nFirst, we need to identify the key elements of the problem: the number of adults and children, the total number of chocolate packets, the number of chocolate bars in each packet, and the number of chocolate bars each adult gets. These will be our context and the basis for our instructions.\n\nThe workflow will involve the following steps:\n\n1.  **Extract numerical values**: We\'ll use the `Generate` operator to extract the relevant numerical values from the problem text, such as the number of adults, children, chocolate packets, and chocolate bars per packet.\n2.  **Calculate total chocolate bars**: We\'ll use the `Generate` operator to calculate the total number of chocolate bars available.\n3.  **Determine each adult\'s share**: We\'ll use the `Generate` operator to calculate how many chocolate bars each adult gets.\n4.  **Calculate remaining chocolate bars**: We\'ll use the `Generate` operator to determine the remaining chocolate bars after adults\' shares are taken.\n5.  **Calculate each child\'s share**: We\'ll use the `Generate` operator to calculate how many chocolate bars each child gets.\n6.  **Verify the result**: We\'ll use the `Summarize` operator to verify that the result makes sense in the context of the problem.\n\nTo make the workflow more efficient, we\'ll use parallel execution where possible. We\'ll also ensure that our instructions are comprehensive and detailed, leaving nothing to interpretation.\n\nHere\'s a possible implementation of the `run_workflow` method:\n\n```python\nasync def run_workflow(self):\n    # Extract numerical values\n    adults = await self.generate(\n        instruction="Identify the number of adults in the problem",\n        context=self.problem_text\n    )\n    children = await self.generate(\n        instruction="Identify the number of children in the problem",\n        context=self.problem_text\n    )\n    packets = await self.generate(\n        instruction="Identify the number of chocolate packets in the problem",\n        context=self.problem_text\n    )\n    bars_per_packet = await self.generate(\n        instruction="Identify the number of chocolate bars in each packet",\n        context=self.problem_text\n    )\n    adult_share = await self.generate(\n        instruction="Determine how many chocolate bars each adult gets",\n        context=self.problem_text\n    )\n\n    # Calculate total chocolate bars\n    total_bars = await self.generate(\n        instruction=f"Calculate the total number of chocolate bars: {packets} * {bars_per_packet}",\n        context=self.problem_text\n    )\n\n    # Determine each adult\'s share\n    adult_bars = await self.generate(\n        instruction=f"Calculate the total number of chocolate bars for adults: {adults} * {adult_share}",\n        context=self.problem_text\n    )\n\n    # Calculate remaining chocolate bars\n    remaining_bars = await self.generate(\n        instruction=f"Calculate the remaining chocolate bars: {total_bars} - {adult_bars}",\n        context=self.problem_text\n    )\n\n    # Calculate each child\'s share\n    child_share = await self.generate(\n        instruction=f"Calculate the number of chocolate bars each child gets: {remaining_bars} / {children}",\n        context=self.problem_text\n    )\n\n    # Verify the result\n    summary = await self.summarize(\n        instruction="Summarize the solution",\n        context=f"Each child will get {child_share} chocolate bars."\n    )\n\n    return summary\n```\n\nThis workflow should be able to handle various problem instances within the GSM8K benchmark. However, please note that this is a generalized solution and may require adjustments based on specific problem requirements.\n\nThe key to this workflow is the use of comprehensive instructions that leave nothing to interpretation. By extracting information dynamically and incorporating it into instructions, we ensure that the workflow remains robust and reusable across different problem instances.\n\n**Code Implementation:**\n\n```python\nimport asyncio\n\nclass Workflow:\n    def __init__(self, config, problem) -> None:\n        # --- DO NOT MODIFY THIS SECTION ---\n        self.config = config\n        self.problem_text = problem\n        self.llm = create(config)\n        \n        self.generate = operator.Generate(self.llm, self.problem_text)\n        self.revise = operator.Revise(self.llm, self.problem_text)\n        self.summarize = operator.Summarize(self.llm, self.problem_text)\n        self.ensemble = operator.Ensemble(self.llm, self.problem_text)\n\n    async def run_workflow(self):\n        # Extract numerical values\n        adults = await self.generate(\n            instruction="Identify the number of adults in the problem",\n            context=self.problem_text\n        )\n        children = await self.generate(\n            instruction="Identify the number']
+
+
+
+生成解决方案: 100%|██████████| 1/1 [00:18<00:00, 18.83s/it][A生成解决方案: 100%|██████████| 1/1 [00:18<00:00, 18.83s/it]
+08/26/2025 01:55:27 - INFO - evaluation.simple_evaluator - ✓ 评估完成，生成了 1 个解决方案
+08/26/2025 01:55:27 - INFO - evaluation.simple_evaluator -   其他GPU (1-7) 在推理期间保持idle状态
+08/26/2025 01:55:27 - INFO - evaluation.score_collector - 开始批量评估 1 个样本 (并发数: 8)
+🐺 🐺 🐺 🐺 🐺
+请求数据:
+ {'data_source': 'workflow_gsm8k', 'solution_str': '<think>\nTo create a robust, reusable workflow for the GSM8K benchmark, we\'ll focus on developing a generalized strategy that can handle various problem types within this domain. Given the problem characteristics, we\'ll leverage the provided operators to implement a workflow that can tackle sequential operations, rate problems, proportional reasoning, distribution problems, comparison problems, and multi-entity tracking.\n\nFirst, we need to identify the key elements of the problem: the number of adults and children, the total number of chocolate packets, the number of chocolate bars in each packet, and the number of chocolate bars each adult gets. These will be our context and the basis for our instructions.\n\nThe workflow will involve the following steps:\n\n1.  **Extract numerical values**: We\'ll use the `Generate` operator to extract the relevant numerical values from the problem text, such as the number of adults, children, chocolate packets, and chocolate bars per packet.\n2.  **Calculate total chocolate bars**: We\'ll use the `Generate` operator to calculate the total number of chocolate bars available.\n3.  **Determine each adult\'s share**: We\'ll use the `Generate` operator to calculate how many chocolate bars each adult gets.\n4.  **Calculate remaining chocolate bars**: We\'ll use the `Generate` operator to determine the remaining chocolate bars after adults\' shares are taken.\n5.  **Calculate each child\'s share**: We\'ll use the `Generate` operator to calculate how many chocolate bars each child gets.\n6.  **Verify the result**: We\'ll use the `Summarize` operator to verify that the result makes sense in the context of the problem.\n\nTo make the workflow more efficient, we\'ll use parallel execution where possible. We\'ll also ensure that our instructions are comprehensive and detailed, leaving nothing to interpretation.\n\nHere\'s a possible implementation of the `run_workflow` method:\n\n```python\nasync def run_workflow(self):\n    # Extract numerical values\n    adults = await self.generate(\n        instruction="Identify the number of adults in the problem",\n        context=self.problem_text\n    )\n    children = await self.generate(\n        instruction="Identify the number of children in the problem",\n        context=self.problem_text\n    )\n    packets = await self.generate(\n        instruction="Identify the number of chocolate packets in the problem",\n        context=self.problem_text\n    )\n    bars_per_packet = await self.generate(\n        instruction="Identify the number of chocolate bars in each packet",\n        context=self.problem_text\n    )\n    adult_share = await self.generate(\n        instruction="Determine how many chocolate bars each adult gets",\n        context=self.problem_text\n    )\n\n    # Calculate total chocolate bars\n    total_bars = await self.generate(\n        instruction=f"Calculate the total number of chocolate bars: {packets} * {bars_per_packet}",\n        context=self.problem_text\n    )\n\n    # Determine each adult\'s share\n    adult_bars = await self.generate(\n        instruction=f"Calculate the total number of chocolate bars for adults: {adults} * {adult_share}",\n        context=self.problem_text\n    )\n\n    # Calculate remaining chocolate bars\n    remaining_bars = await self.generate(\n        instruction=f"Calculate the remaining chocolate bars: {total_bars} - {adult_bars}",\n        context=self.problem_text\n    )\n\n    # Calculate each child\'s share\n    child_share = await self.generate(\n        instruction=f"Calculate the number of chocolate bars each child gets: {remaining_bars} / {children}",\n        context=self.problem_text\n    )\n\n    # Verify the result\n    summary = await self.summarize(\n        instruction="Summarize the solution",\n        context=f"Each child will get {child_share} chocolate bars."\n    )\n\n    return summary\n```\n\nThis workflow should be able to handle various problem instances within the GSM8K benchmark. However, please note that this is a generalized solution and may require adjustments based on specific problem requirements.\n\nThe key to this workflow is the use of comprehensive instructions that leave nothing to interpretation. By extracting information dynamically and incorporating it into instructions, we ensure that the workflow remains robust and reusable across different problem instances.\n\n**Code Implementation:**\n\n```python\nimport asyncio\n\nclass Workflow:\n    def __init__(self, config, problem) -> None:\n        # --- DO NOT MODIFY THIS SECTION ---\n        self.config = config\n        self.problem_text = problem\n        self.llm = create(config)\n        \n        self.generate = operator.Generate(self.llm, self.problem_text)\n        self.revise = operator.Revise(self.llm, self.problem_text)\n        self.summarize = operator.Summarize(self.llm, self.problem_text)\n        self.ensemble = operator.Ensemble(self.llm, self.problem_text)\n\n    async def run_workflow(self):\n        # Extract numerical values\n        adults = await self.generate(\n            instruction="Identify the number of adults in the problem",\n            context=self.problem_text\n        )\n        children = await self.generate(\n            instruction="Identify the number', 'ground_truth': 'default', 'extra_info': {'raw_data': 291, 'test_cases': [238], 'data_path': '/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/test.jsonl'}}
+
+评估进度:   0%|          | 0/1 [00:00<?, ?it/s][A🐺 🐺 🐺 🐺 🐺
+评估结果:
+ {'message': 'Score computed successfully', 'score': 0.0, 'success': True}
+
+评估进度: 100%|██████████| 1/1 [00:01<00:00,  1.04s/it][A评估进度: 100%|██████████| 1/1 [00:01<00:00,  1.04s/it]
+08/26/2025 01:55:28 - INFO - evaluation.score_collector - 评估统计:
+08/26/2025 01:55:28 - INFO - evaluation.score_collector -   总数: 1
+08/26/2025 01:55:28 - INFO - evaluation.score_collector -   成功: 1 (100.0%)
+08/26/2025 01:55:28 - INFO - evaluation.score_collector -   失败: 0 (0.0%)
+08/26/2025 01:55:28 - INFO - evaluation.score_collector -   平均分数: 0.000
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_huggingface_accelerate/src/train.py", line 336, in <module>
+[rank0]:     main()
+[rank0]:   File "/nas/ganluo/Flow_RL/my_llama3_h100_huggingface_accelerate/src/train.py", line 287, in main
+[rank0]:     report = report_generator.generate_report(
+[rank0]: TypeError: ReportGenerator.generate_report() got an unexpected keyword argument 'solutions'
+训练进度:   2%|▏         | 2/123 [00:42<42:25, 21.03s/it, loss=15.8609, epoch=0, step=1]
+[rank0]:[W826 01:55:28.044970358 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+W0826 01:55:30.354108 153572 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 154090 closing signal SIGTERM
+W0826 01:55:30.360004 153572 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 154091 closing signal SIGTERM
+W0826 01:55:30.365700 153572 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 154092 closing signal SIGTERM
+W0826 01:55:30.369346 153572 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 154093 closing signal SIGTERM
+W0826 01:55:30.375627 153572 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 154094 closing signal SIGTERM
+W0826 01:55:30.385978 153572 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 154095 closing signal SIGTERM
+W0826 01:55:30.391285 153572 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 154096 closing signal SIGTERM
+E0826 01:55:33.443758 153572 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 154089) of binary: /root/miniforge3/envs/wf_rl/bin/python3.10
+Traceback (most recent call last):
+  File "/root/miniforge3/envs/wf_rl/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/accelerate/commands/accelerate_cli.py", line 48, in main
+    args.func(args)
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1159, in launch_command
+    deepspeed_launcher(args)
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/accelerate/commands/launch.py", line 852, in deepspeed_launcher
+    distrib_run.run(args)
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/torch/distributed/run.py", line 909, in run
+    elastic_launch(
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+src/train.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2025-08-26_01:55:30
+  host      : ctyun172022236189.et1032-ctyun
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 154089)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

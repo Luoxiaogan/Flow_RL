@@ -40,7 +40,7 @@ services:
   scoreflow_reward:
     enabled: true
     host: "0.0.0.0"
-    port: 8897
+    port: 8899
     timeout: 4800           # workflow执行超时：80分钟（4800秒）
     max_concurrent_requests: 10     # 最大并发请求数（同时处理的请求数量限制）
     request_queue_timeout: 4800     # 请求排队超时时间：80分钟（4800秒）

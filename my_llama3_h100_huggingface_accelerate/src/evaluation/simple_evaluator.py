@@ -28,15 +28,26 @@ class SimpleEvaluator:
         Args:
             eval_config: 从evaluation_config.yaml读取的评估配置
         """
+        print(f"🐺 🐺 🐺 🐺 🐺 : eval_config = \n{eval_config}\n")
+
         # 从配置中提取generation参数
         self.generation_config = eval_config.get('generation', {}) if eval_config else {}
+
+        print(f"🐺 🐺 🐺 🐺 🐺 : generation_config = \n{self.generation_config}\n")
         
         # 从generation配置中读取max_new_tokens
-        self.max_input_length = self.generation_config.get('max_new_tokens', 1024) + 1024  # 留出生成空间
+        self.max_input_length = self.generation_config.get('max_new_tokens', 1024) + 5476  # 留出生成空间
+
+        print(f"🐺 🐺 🐺 🐺 🐺 : max_input_length = \n{self.max_input_length}\n")
         
         # 性能优化配置
         self.optimization_config = eval_config.get('optimization', {}) if eval_config else {}
+
+        print(f"🐺 🐺 🐺 🐺 🐺 : optimization_config = \n{self.optimization_config}\n")
+
         self.clear_cache = self.optimization_config.get('clear_cache', True)
+
+        print(f"🐺 🐺 🐺 🐺 🐺 : 是否clear_cache = {self.clear_cache}")
         
         logger.info(f"✓ 简化评估器初始化完成")
         logger.info(f"  最大生成长度: {self.generation_config.get('max_new_tokens', 1024)}")
@@ -53,6 +64,8 @@ class SimpleEvaluator:
         Returns:
             测试样本列表
         """
+        print(f"🐺 🐺 🐺 🐺 🐺 : 测试数据文件路径 = {test_data_path}")
+
         if not test_data_path or not Path(test_data_path).exists():
             logger.error(f"测试数据文件不存在: {test_data_path}")
             return []
@@ -64,6 +77,9 @@ class SimpleEvaluator:
                 for line in f:
                     if line.strip():
                         sample = json.loads(line.strip())
+
+                        print(f"🐺 🐺 🐺 🐺 🐺 : sample = \n\n{sample}\n\n")
+
                         test_samples.append(sample)
                         
                         # 限制样本数
@@ -96,12 +112,16 @@ class SimpleEvaluator:
         Returns:
             生成的解决方案列表
         """
+
+        print(f"🐺 🐺 🐺 🐺 🐺 : 测试样本(可能多个) = \n\n{test_samples}\n\n")
+
         if not test_samples:
             logger.warning("没有测试样本，跳过评估")
             return []
         
         # 确定推理设备：在主进程GPU上执行推理
         inference_device = accelerator.device if accelerator else next(model.parameters()).device
+        print(f"🐺 🐺 🐺 🐺 🐺 : 推理设备 = \n\n{inference_device}\n\n")
         
         logger.info(f"开始原地评估: {len(test_samples)} 个样本")
         logger.info(f"评估批次大小: {batch_size}")
@@ -158,10 +178,10 @@ class SimpleEvaluator:
         # 使用指定的推理设备或从模型自动检测
         device = inference_device if inference_device else next(model.parameters()).device
         logger.debug(f"使用推理设备: {device} （主进程推理模式）")
+        print(f"🐺 🐺 🐺 🐺 🐺 使用推理设备: {device} （主进程推理模式）")
         
         with torch.no_grad():
-            for i in tqdm(range(0, len(test_samples), batch_size), 
-                         desc="生成解决方案", total=total_batches):
+            for i in tqdm(range(0, len(test_samples), batch_size), desc="生成解决方案", total=total_batches):
                 batch_samples = test_samples[i:i + batch_size]
                 
                 # 为批次生成解决方案
@@ -198,8 +218,11 @@ class SimpleEvaluator:
         """
         # 准备提示词
         prompts = []
+        print(f"🐺 🐺 🐺 🐺 🐺 batch_samples: \n\n{batch_samples}\n\n")
         for sample in batch_samples:
             # 提取prompt
+            print(f"🐺 🐺 🐺 🐺 🐺 sample: \n\n{sample}\n\n")
+            print(f"🐺 🐺 🐺 🐺 🐺 sample['prompt']: \n\n{sample['prompt']}\n\n")
             if 'prompt' in sample:
                 # 检查prompt是否已经是列表（messages格式）
                 if isinstance(sample['prompt'], list):
@@ -209,9 +232,11 @@ class SimpleEvaluator:
                         tokenize=False,
                         add_generation_prompt=True
                     )
+                    print(f"🐺 🐺 🐺 🐺 🐺 应用聊天模板之后的prompt: \n\n{prompt}\n\n")
                 else:
                     # 直接使用字符串prompt
                     prompt = sample['prompt']
+                    print("🐺 🐺 🐺 🐺 🐺 使用字符串prompt")
                 prompts.append(prompt)
             else:
                 logger.warning("样本缺少prompt字段，使用空字符串")
@@ -233,6 +258,7 @@ class SimpleEvaluator:
         
         # 准备生成配置
         generation_kwargs = self._prepare_generation_config(model)
+        print(f"🐺 🐺 🐺 🐺 🐺 generation_kwargs = \n\n{generation_kwargs}\n\n")
         
         # 生成
         try:
@@ -251,6 +277,7 @@ class SimpleEvaluator:
                 generated_tokens, 
                 skip_special_tokens=True
             )
+            print(f"🐺 🐺 🐺 🐺 🐺 解码为文本,outputs = \n\n{solutions}\n\n")
             
             return solutions
             
@@ -282,6 +309,7 @@ class SimpleEvaluator:
             'num_beams': self.generation_config.get('num_beams', 1),
             'pad_token_id': getattr(model.config, 'pad_token_id', None) or getattr(model.config, 'eos_token_id', None)
         })
+        print(f"🐺 🐺 🐺 🐺 🐺 从配置文件(self.generation_config)读取的参数 = \n\n{generation_kwargs}\n\n")
         
         # 如果配置要求使用模型自带配置作为基础
         if self.generation_config.get('use_model_config', False):

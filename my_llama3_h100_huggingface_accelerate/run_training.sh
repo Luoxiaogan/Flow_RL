@@ -36,14 +36,14 @@ EVAL_TEST_DATA_PATH="/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl
 MODEL_TYPE="llama"  # 或 "qwen"
 USE_LOSS_MASK=true  # 是否使用损失掩码（必须开启）
 ENABLE_EVAL=true  # 是否启用原地评估
-EVAL_INTERVAL=20  # 评估间隔
+EVAL_INTERVAL=2  # 评估间隔
 MAX_EVAL_SAMPLES=1  # 评估样本数（测试时用小数值）
 
 # 训练超参数 - ZeRO-2优化配置（与deepspeed_zero2.json保持一致）
 NUM_EPOCHS=3
 PER_DEVICE_BATCH_SIZE=1      # 与deepspeed配置的train_micro_batch_size_per_gpu一致
 GRAD_ACCUM_STEPS=4            # 与deepspeed配置的gradient_accumulation_steps一致
-LEARNING_RATE=2e-5            # 与deepspeed配置的lr一致
+LEARNING_RATE=1e-5            # 与deepspeed配置的lr一致
 MAX_SEQ_LENGTH=6500           # 长序列训练
 SAVE_STEPS=500
 LOGGING_STEPS=1
