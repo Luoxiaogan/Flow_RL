@@ -8,6 +8,7 @@ import re
 import json
 import asyncio
 import logging
+from loguru import logger as loguru_logger
 import importlib
 import traceback
 import random
@@ -181,13 +182,64 @@ class MetaGPTNativeTokenTracker:
 # 创建全局Token追踪器
 GLOBAL_TOKEN_TRACKER = MetaGPTNativeTokenTracker()
 
-# DEBUG模式控制
-DEBUG = 1  # 改为1启用debug模式
+# DEBUG和SILENT模式控制 - 从config.yaml读取
+if CONFIG_FILE.exists():
+    with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+        _config_for_debug = yaml.safe_load(f)
+        # 从scoreflow_reward服务配置中读取debug和silent设置
+        scoreflow_config = _config_for_debug.get('services', {}).get('scoreflow_reward', {})
+        DEBUG = int(scoreflow_config.get('debug', False))
+        SILENT = scoreflow_config.get('silent', False)
+        print(f"📝 Debug日志模式: {'开启' if DEBUG else '关闭'} (从config.yaml读取)")
+        print(f"🔇 静默模式: {'开启' if SILENT else '关闭'} (从config.yaml读取)")
+else:
+    DEBUG = 0  # 默认关闭debug
+    SILENT = False  # 默认关闭静默模式
+    print(f"📝 Debug日志模式: 关闭 (默认值)")
+    print(f"🔇 静默模式: 关闭 (默认值)")
+
 DEBUG_PATH = PROJECT_ROOT / "debug_logs"  # 存储在evaluation_workflow目录下
+
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+if SILENT:
+    # 禁用特定库的日志
+    logging.getLogger("httpx").setLevel(logging.ERROR)
+    logging.getLogger("httpcore").setLevel(logging.ERROR)  # httpx 的底层库
+    logging.getLogger("openai").setLevel(logging.ERROR)     # OpenAI SDK 的 HTTP 日志
+    logging.getLogger("metagpt").setLevel(logging.ERROR)    # MetaGPT 的日志
+    # 禁用 loguru 的 metagpt 日志
+    loguru_logger.disable("metagpt")
+
+
+def debug_print(*args, **kwargs):
+    """
+    Debug模式下的条件打印函数
+    只有当DEBUG == 1时才会输出，否则静默
+    
+    Usage:
+        debug_print("这条消息只在debug模式下显示")
+        debug_print("变量值:", variable, "状态:", status)
+    """
+    if DEBUG == 1:
+        print(*args, **kwargs)
+
+
+def silent_print(*args, **kwargs):
+    """
+    非静默模式下的条件打印函数
+    只有当SILENT == False时才会输出到终端
+    用于显示详细信息，在静默模式下会被屏蔽
+    
+    Usage:
+        silent_print("详细执行信息")  # 静默模式下不显示
+        print("关键结果信息")  # 始终显示
+    """
+    if not SILENT:
+        print(*args, **kwargs)
 
 # Debug日志记录器
 debug_data = {
@@ -247,8 +299,10 @@ class TeeOutput:
     
     def write(self, message):
         """写入到终端和文件"""
-        self.terminal.write(message)
-        self.terminal.flush()  # 立即刷新终端
+        # 根据SILENT设置决定是否写到终端
+        if not SILENT:
+            self.terminal.write(message)
+            self.terminal.flush()  # 立即刷新终端
         self.file.write(message)
         self.file.flush()  # 立即刷新文件
         return len(message)
@@ -415,10 +469,10 @@ class IndividualTestCaseLogger:
         
         # 记录开始
         print(f"{'='*60}")
-        print(f"Test Case {self.test_case_index} - 独立执行日志")
-        print(f"开始时间: {datetime.now().isoformat()}")
-        print(f"日志文件: {self.log_file_path}")
-        print(f"🔍 验证信息: 此日志文件将执行test_case_index={self.test_case_index}的内容")
+        silent_print(f"Test Case {self.test_case_index} - 独立执行日志")
+        silent_print(f"开始时间: {datetime.now().isoformat()}")
+        silent_print(f"日志文件: {self.log_file_path}")
+        silent_print(f"🔍 验证信息: 此日志文件将执行test_case_index={self.test_case_index}的内容")
         print(f"{'='*60}")
         
         return self
@@ -427,11 +481,11 @@ class IndividualTestCaseLogger:
         """退出上下文时安全关闭独立日志"""
         # 记录结束
         print(f"{'='*60}")
-        print(f"Test Case {self.test_case_index} - 执行完成")
+        silent_print(f"Test Case {self.test_case_index} - 执行完成")
         print(f"结束时间: {datetime.now().isoformat()}")
         print(f"🔍 验证信息: 此日志文件完成了test_case_index={self.test_case_index}的处理")
         if exc_type:
-            print(f"执行异常: {exc_type.__name__}: {exc_val}")
+            silent_print(f"执行异常: {exc_type.__name__}: {exc_val}")
         print(f"{'='*60}")
         
         # 恢复原始输出
@@ -457,14 +511,15 @@ class SimpleTeeOutput:
     
     def write(self, message):
         """安全写入到终端和文件"""
-        # 写入终端
-        try:
-            self.terminal.write(message)
-            self.terminal.flush()
-        except Exception:
-            pass
+        # 根据SILENT设置决定是否写到终端
+        if not SILENT:
+            try:
+                self.terminal.write(message)
+                self.terminal.flush()
+            except Exception:
+                pass
         
-        # 写入文件
+        # 始终写入文件
         try:
             if self.file_handle and not self.file_handle.closed:
                 self.file_handle.write(message)
@@ -524,18 +579,18 @@ class WorkflowExecutionManager:
         self.results_collector = []
         self.results_lock = asyncio.Lock()
         
-        print(f"📁 创建workflow目录: {self.workflow_dir}")
-        print(f"🔄 初始化并行执行管理器 - ID: {self.workflow_id}")
-        print(f"📊 准备执行{len(test_cases)}个test cases: {test_cases}")
+        silent_print(f"📁 创建workflow目录: {self.workflow_dir}")
+        silent_print(f"🔄 初始化并行执行管理器 - ID: {self.workflow_id}")
+        silent_print(f"📊 准备执行{len(test_cases)}个test cases: {test_cases}")
     
     def __enter__(self):
         """简化的上下文管理器入口 - 不再需要全局日志重定向"""
-        print(f"🚀 开始并行执行会话 - ID: {self.workflow_id}")
+        silent_print(f"🚀 开始并行执行会话 - ID: {self.workflow_id}")
         return self
     
     def __exit__(self, exc_type, exc_val, exc_tb):
         """简化的上下文管理器出口 - 主要用于清理和汇总"""
-        print(f"🏁 并行执行会话结束 - ID: {self.workflow_id}")
+        silent_print(f"🏁 并行执行会话结束 - ID: {self.workflow_id}")
         if exc_type:
             print(f"⚠️ 执行过程中发生异常: {exc_type.__name__}: {exc_val}")
     
@@ -544,7 +599,7 @@ class WorkflowExecutionManager:
         code_file = self.workflow_dir / "workflow.py"
         with open(code_file, 'w', encoding='utf-8') as f:
             f.write(workflow_code)
-        print(f"💾 保存workflow代码: {code_file}")
+        silent_print(f"💾 保存workflow代码: {code_file}")
     
     def save_metadata(self, extra_info: Dict):
         """保存元数据"""
@@ -558,7 +613,7 @@ class WorkflowExecutionManager:
         meta_file = self.workflow_dir / "metadata.json"
         with open(meta_file, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, ensure_ascii=False, indent=2)
-        print(f"💾 保存元数据: {meta_file}")
+        silent_print(f"💾 保存元数据: {meta_file}")
     
     async def execute_test_case(self, calculator, workflow_code: str, 
                               test_case_index: int, dataset_path: str) -> Dict:
@@ -568,14 +623,14 @@ class WorkflowExecutionManager:
         # 记录开始时间
         start_time = time.time()
         
-        print(f"\n📝 开始记录test case {test_case_index}的执行日志: {log_file}")
+        silent_print(f"\n📝 开始记录test case {test_case_index}的执行日志: {log_file}")
         
         # 使用日志捕获器执行
         with WorkflowExecutionLogger(log_file):
             print(f"{'='*60}")
-            print(f"开始执行Test Case: {test_case_index}")
+            silent_print(f"开始执行Test Case: {test_case_index}")
             print(f"时间: {datetime.now().isoformat()}")
-            print(f"Workflow ID: {self.workflow_id}")
+            silent_print(f"Workflow ID: {self.workflow_id}")
             print(f"Data Source: {self.data_source}")
             print(f"{'='*60}\n")
             
@@ -590,7 +645,7 @@ class WorkflowExecutionManager:
                 success = True
                 error_msg = ""
                 
-                print(f"\n✅ Test Case {test_case_index} 执行成功")
+                silent_print(f"\n✅ Test Case {test_case_index} 执行成功")
                 
                 # 清理临时属性
                 if hasattr(calculator, '_current_workflow_dir'):
@@ -600,14 +655,14 @@ class WorkflowExecutionManager:
                 success = False
                 error_msg = self._sanitize_error(str(e))
                 score = 0.0
-                print(f"\n❌ Test Case {test_case_index} 执行失败")
+                silent_print(f"\n❌ Test Case {test_case_index} 执行失败")
                 print(f"错误: {e}")
                 traceback.print_exc()
             
             # 记录结束信息
             duration = time.time() - start_time
             print(f"\n{'='*60}")
-            print(f"Test Case {test_case_index} 执行完成")
+            silent_print(f"Test Case {test_case_index} 执行完成")
             print(f"成功: {success}")
             print(f"分数: {score}")
             print(f"耗时: {duration:.2f}秒")
@@ -811,11 +866,11 @@ class WorkflowExecutionManager:
             start_time = time.time()
             
             try:
-                print(f"🔧 设置执行环境...")
+                silent_print(f"🔧 设置执行环境...")
                 # 设置当前workflow目录，供compute_score_for_testcase使用
                 calculator._current_workflow_dir = self.workflow_dir
                 
-                print(f"⚡ 开始执行workflow...")
+                silent_print(f"⚡ 开始执行workflow...")
 
                 # 执行单个test case
                 score = await calculator.compute_score_for_testcase(
@@ -824,7 +879,7 @@ class WorkflowExecutionManager:
                 
                 success = True
                 error_msg = ""
-                print(f"✅ 执行成功，得分: {score:.3f}")
+                silent_print(f"✅ 执行成功，得分: {score:.3f}")
                 
                 # 清理临时属性
                 if hasattr(calculator, '_current_workflow_dir'):
@@ -834,7 +889,7 @@ class WorkflowExecutionManager:
                 success = False
                 error_msg = self._sanitize_error(str(e))
                 score = 0.0
-                print(f"❌ 执行失败: {e}")
+                silent_print(f"❌ 执行失败: {e}")
             
             # 计算执行时间
             duration = time.time() - start_time
@@ -849,7 +904,7 @@ class WorkflowExecutionManager:
                 "timestamp": datetime.now().isoformat()
             }
             
-            print(f"📝 执行完成 - 耗时: {duration:.2f}秒")
+            silent_print(f"📝 执行完成 - 耗时: {duration:.2f}秒")
             return result_record
     
     def _finalize_and_save_summary(self, total_duration: float) -> float:
@@ -1029,7 +1084,7 @@ class ScoreFlowRewardCalculator:
         
         # 从config.yaml加载配置（不再依赖config.json）
         if CONFIG_FILE.exists():
-            print("\n🚀 使用config.yaml:", CONFIG_FILE)
+            silent_print("\n🚀 使用config.yaml:", CONFIG_FILE)
             # 使用metagpt_api_proxy配置
             proxy_port = config.get('services', {}).get('metagpt_api_proxy', {}).get('port', 5009)
             temperature = config.get('api_metagpt', {}).get('temperature', 0.1)
@@ -1040,7 +1095,7 @@ class ScoreFlowRewardCalculator:
                 'base_url': f'http://localhost:{proxy_port}',
                 'temperature': temperature
             }
-            print("\n🚀 llm_config (for MetaGPT operators):\n", self.llm_config)
+            silent_print("\n🚀 llm_config (for MetaGPT operators):\n", self.llm_config)
             
             # 从scoreflow_reward服务配置获取超时等参数
             scoreflow_config = config.get('services', {}).get('scoreflow_reward', {})
@@ -1050,23 +1105,32 @@ class ScoreFlowRewardCalculator:
                 'test_cases_per_task': 3,
                 'max_concurrent': 5
             }
-            print("\n🚀 reward_config:\n", self.reward_config)
+            debug_print("\n🚀 reward_config:\n", self.reward_config)
             
             # 加载token惩罚配置
             self.token_penalty_config = scoreflow_config.get('token_penalty', {})
-            print("\n🚀 token_penalty_config:\n", self.token_penalty_config)
+            debug_print("\n🚀 token_penalty_config:\n", self.token_penalty_config)
             
             # 加载token惩罚配置
             self.token_penalty_config = scoreflow_config.get('token_penalty', {})
-            print("\n🚀 token_penalty_config:\n", self.token_penalty_config)
+            debug_print("\n🚀 token_penalty_config:\n", self.token_penalty_config)
             
             # 读取workspace配置
-            self.workspace_path = Path(scoreflow_config.get('workspace', 
-                str(PROJECT_ROOT / "workspace")))
-            print(f"\n🚀 workspace路径: {self.workspace_path}")
+            workspace_relative = scoreflow_config.get('workspace', 'workspace')
+            debug_print("scoreflow_config.get('workspace')=", workspace_relative)
+            
+            # 将相对路径与project_root_path拼接成绝对路径
+            debug_print("⚠️ ⚠️ ⚠️ ⚠️ ⚠️ project_root_path=", project_root_path)
+            if workspace_relative:
+                self.workspace_path = project_root_path / workspace_relative
+            else:
+                # 如果没有配置，使用默认路径
+                self.workspace_path = project_root_path / "workspace"
+            
+            debug_print(f"\n🚀 workspace路径: {self.workspace_path}")
         else:
             # 默认配置
-            print("\n⚠️ Config file not found, using defaults")
+            debug_print("\n⚠️ Config file not found, using defaults")
             self.llm_config = {
                 'provider': 'openai',
                 'model': 'qwen-turbo',
@@ -1097,7 +1161,7 @@ class ScoreFlowRewardCalculator:
         # 加载benchmark mapping
         self.benchmark_mapping = self._load_benchmark_mapping()
         
-        logger.info("ScoreFlowRewardCalculator initialized")
+        silent_print("ScoreFlowRewardCalculator initialized")
         
         # 记录初始化完成
         debug_log("init", {
@@ -1145,7 +1209,7 @@ class ScoreFlowRewardCalculator:
 
         code_pattern = re.compile(r'```python\s*\n(.*?)\n```', re.DOTALL)
         matches_python = code_pattern.findall(response)
-        print(f"🐺 🐺 🐺 🐺 matches_python=\n\n{matches_python}\n\n")
+        silent_print(f"🐺 🐺 🐺 🐺 matches_python=\n\n{matches_python}\n\n")
 
         # code_pattern = r'<code>(.*?)</code>'
         # matches_code = re.findall(code_pattern, response, re.DOTALL)
@@ -1167,7 +1231,7 @@ class ScoreFlowRewardCalculator:
             return workflow_code
         
         # 如果没有找到code标签，尝试查找class Workflow定义
-        print("如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义如果没有找到code标签，尝试查找class Workflow定义")
+        debug_print("没有找到```python ```包裹的部分")
         class_pattern = r'(class\s+Workflow.*?)(?=class\s+\w+|$)'
         matches = re.findall(class_pattern, response, re.DOTALL)
         
@@ -1230,8 +1294,8 @@ class ScoreFlowRewardCalculator:
                 base_name = '_'.join(benchmark_name.split('_')[:-1])
                 benchmark_info = self.benchmark_mapping.get(base_name)
                 if benchmark_info:
-                    logger.info(f"Using base benchmark '{base_name}' mapping for '{benchmark_name}'")
-            
+                    silent_print(f"Using base benchmark '{base_name}' mapping for '{benchmark_name}'")
+
             if benchmark_info:
                 # 使用mapping中的handler class名称和路径
                 handler_class_name = benchmark_info['handler_class']
@@ -1276,7 +1340,7 @@ class ScoreFlowRewardCalculator:
             handler = handler_class(dataset_path=dataset_path, config=metagpt_config)
             
             self._handler_cache[cache_key] = handler
-            logger.info(f"Loaded handler {handler_class_name} for {benchmark_name}")
+            silent_print(f"Loaded handler {handler_class_name} for {benchmark_name}")
             return handler
             
         except Exception as e:
@@ -1408,12 +1472,12 @@ class ScoreFlowRewardCalculator:
             })
             
             # 4. 准备执行环境
-            print("/n 🚀开始准备执行环境")
+            debug_print("/n 🚀开始准备执行环境")
             execution_namespace = {}
             
             # 加载operator模块（使用common operators）
             operator_module = importlib.import_module("ScoreFlow.scripts.common.operator")
-            print("/n 🚀加载common operator成功")
+            debug_print("/n 🚀加载common operator成功")
             # 准备全局命名空间
             exec_globals = {
                 'asyncio': aio,
@@ -1450,16 +1514,16 @@ class ScoreFlowRewardCalculator:
             # 如果没有特定的operator_an，尝试使用common的
             try:
                 common_an_module = importlib.import_module("ScoreFlow.scripts.common.operator_an")
-                print("/n 🚀🚀🚀加载common operator_an 成功")
+                debug_print("/n 🚀🚀🚀加载common operator_an 成功")
                 for attr_name in dir(common_an_module):
                     if not attr_name.startswith('_'):
                         exec_globals[attr_name] = getattr(common_an_module, attr_name)
-                print("/n 🚀加载common operator_an的模块成功")
+                debug_print("/n 🚀加载common operator_an的模块成功")
                 logger.debug("Using common operator_an module")
             except ModuleNotFoundError:
                 logger.debug("No operator_an module found, proceeding without it")
-                print("/n 🚀 未找到可选的 'operator_an.py' 模块，跳过注入。")
-            
+                debug_print("/n 🚀 未找到可选的 'operator_an.py' 模块，跳过注入。")
+
             # 5. 执行脚本获取Workflow类
             exec(full_script_code, exec_globals, execution_namespace)
             
@@ -1468,9 +1532,9 @@ class ScoreFlowRewardCalculator:
                 raise ValueError(f"No 'Workflow' class found in the executed script for {workflow_id}")
             
             # 6. 准备LLM配置
-            print(f"\n 🚀 我们输出llm_config = \n{self.llm_config}\n")
+            debug_print(f"\n 🚀 我们输出llm_config = \n{self.llm_config}\n")
             provider = self.llm_config.get('provider', 'openai')
-            print(f"\n 🚀 我们输出从llm_config得到的provider = \n{provider}\n")
+            debug_print(f"\n 🚀 我们输出从llm_config得到的provider = \n{provider}\n")
             api_type_map = {
                 'openai': LLMType.OPENAI, 'azure': LLMType.AZURE, 
                 'gemini': LLMType.GEMINI, 'claude': LLMType.CLAUDE,
@@ -1610,7 +1674,7 @@ class ScoreFlowRewardCalculator:
             
             # 添加清晰的验证日志，确保test case索引匹配
             print(f"\n🔍 开始处理Test Case {test_case_index}:")
-            print(f"   - Benchmark: {benchmark_name}")
+            silent_print(f"   - Benchmark: {benchmark_name}")
             print(f"   - Dataset: {dataset_path}")
             if 'question' in verification_data:
                 print(f"   - 问题: {verification_data['question'][:100]}...")
@@ -1966,10 +2030,10 @@ async def _compute_score_async(data_source: str, solution_str: str, ground_truth
             else:
                 # 直接拼接
                 data_path = os.path.join(PROCESSED_DATASET_PATH, data_path)
-        
+
         logger.info(f"Computing reward for benchmark: {benchmark_name} with {len(test_cases)} test cases")
-        logger.info(f"Data path: {data_path}")
-        
+        silent_print(f"Data path: {data_path}")
+
         # 记录任务详情
         debug_log("task", {
             "event": "task_details",

@@ -7,7 +7,7 @@
 # 本地: /Users/luogan/Code/workflow_generation/Flow_RL
 # 服务器: /nas/ganluo/Flow_RL
 # project_root: "/nas/ganluo/Flow_RL"
-project_root: "/nas/ganluo/Flow_RL"
+project_root: "/Users/luogan/Code/workflow_generation/Flow_RL"
 
 api_metagpt:
   temperature: 0.9
@@ -18,10 +18,10 @@ services:
     enabled: true
     host: "localhost"
     port: 5019
-    target_url: "http://39.96.211.155:8000/proxy/api/openai/v1"
-    # http://39.96.211.155:8000/proxy/api/openai/v1/chat/completions
-    # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    target_api_key: "8cf060f9e1f444858609730176542253"  # 目标API的密钥
+    # target_url: "http://39.96.211.155:8000/proxy/api/openai/v1"
+    # target_url: "http://39.96.211.155:8000/proxy/api/openai/v1/chat/completions"
+    target_url: "https://idealab.alibaba-inc.com/api/openai/v1"
+    target_api_key: "81e9da25d75e14edcf835e4145fba534"  # 目标API的密钥
     rate_per_second: 4      # 每秒分发请求数（支持小数，如0.2表示5秒一个请求）
     max_concurrency: 90     # 最大并发请求数（同时处理的请求数量限制）
     debug: false            # true: 显示所有请求详情, false: 仅显示进度条和错误
@@ -46,7 +46,8 @@ services:
     max_concurrent_requests: 10     # 最大并发请求数（同时处理的请求数量限制）
     request_queue_timeout: 4800     # 请求排队超时时间：80分钟（4800秒）
     client_http_timeout: 4800        # 客户端HTTP连接超时：80分钟（4800秒）
-    debug: false
+    debug: false            # 控制是否保存debug日志文件到debug_logs/目录
+    silent: true           # 控制终端输出详细程度：true=静默模式(只显示关键信息)，false=详细输出
     workspace: "New_evaluation_and_RL/workspace"  # workflow执行日志保存目录 (相对于project_root)
     
     # Token费用惩罚配置

@@ -7,6 +7,7 @@ import sys
 import json
 import asyncio
 import logging
+from loguru import logger as loguru_logger
 import traceback
 import yaml
 from pathlib import Path
@@ -40,9 +41,46 @@ from scoreflow_reward_utils import compute_score, get_calculator
 # 导入并发控制模块
 from concurrency_limiter import init_limiter, get_limiter, with_concurrency_limit
 
+if CONFIG_FILE.exists():
+    with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+        _config_for_debug = yaml.safe_load(f)
+        # 从scoreflow_reward服务配置中读取debug和silent设置
+        scoreflow_config = _config_for_debug.get('services', {}).get('scoreflow_reward', {})
+        DEBUG = int(scoreflow_config.get('debug', False))
+        SILENT = scoreflow_config.get('silent', False)
+        print(f"[SERVER] 📝 Debug日志模式: {'开启' if DEBUG else '关闭'} (从config.yaml读取)")
+        print(f"[SERVER] 🔇 静默模式: {'开启' if SILENT else '关闭'} (从config.yaml读取)")
+else:
+    DEBUG = 0  # 默认关闭debug
+    SILENT = False  # 默认关闭静默模式
+    print(f"[SERVER] 📝 Debug日志模式: 关闭 (默认值)")
+    print(f"[SERVER] 🔇 静默模式: 关闭 (默认值)")
+
+def silent_print(*args, **kwargs):
+    """
+    非静默模式下的条件打印函数
+    只有当SILENT == False时才会输出到终端
+    用于显示详细信息，在静默模式下会被屏蔽
+    
+    Usage:
+        silent_print("详细执行信息")  # 静默模式下不显示
+        print("关键结果信息")  # 始终显示
+    """
+    if not SILENT:
+        print(*args, **kwargs)
+
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+if SILENT:
+    # 禁用特定库的日志
+    logging.getLogger("httpx").setLevel(logging.ERROR)
+    logging.getLogger("httpcore").setLevel(logging.ERROR)  # httpx 的底层库
+    logging.getLogger("openai").setLevel(logging.ERROR)     # OpenAI SDK 的 HTTP 日志
+    logging.getLogger("metagpt").setLevel(logging.ERROR)    # MetaGPT 的日志
+    # 禁用 loguru 的 metagpt 日志
+    loguru_logger.disable("metagpt")
 
 # 创建Flask应用
 app = Flask(__name__)
@@ -123,13 +161,13 @@ def compute_score_endpoint():
         ground_truth = data['ground_truth']
         extra_info = data['extra_info']
         
-        logger.info(f"Processing request for benchmark: {data_source}")
-        logger.info(f"Extra info: {json.dumps(extra_info, indent=2)}")
+        silent_print(f"Processing request for benchmark: {data_source}")
+        silent_print(f"Extra info: {json.dumps(extra_info, indent=2)}")
         
         # 调用计算函数
         score = compute_score(data_source, solution_str, ground_truth, extra_info)
         
-        logger.info(f"Computed score: {score}")
+        print(f"🌟 🌟 🌟 🌟 🌟 Computed score: {score}")
         
         return jsonify({
             'success': True,
@@ -301,7 +339,7 @@ def main():
     app.run(
         host=args.host,
         port=args.port,
-        debug=args.debug,
+        debug=False,  # 强制关闭Flask debug模式，避免开发服务器的调试输出
         threaded=True
     )
 
