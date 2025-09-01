@@ -6,7 +6,7 @@ curl -X POST http://localhost:8899/compute_score \
     "ground_truth": "default",
     "extra_info": {
       "test_cases": [15],
-      "data_path": "/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/gsm8k/1000_train.jsonl"
+      "data_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/1000_train.jsonl"
     }
   }'
 

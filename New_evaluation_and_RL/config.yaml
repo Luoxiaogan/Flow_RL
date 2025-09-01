@@ -7,7 +7,7 @@
 # 本地: /Users/luogan/Code/workflow_generation/Flow_RL
 # 服务器: /nas/ganluo/Flow_RL
 # project_root: "/nas/ganluo/Flow_RL"
-project_root: "/Users/luogan/Code/workflow_generation/Flow_RL"
+project_root: "/nas/ganluo/Flow_RL"
 
 api_metagpt:
   temperature: 0.9
@@ -18,9 +18,10 @@ services:
     enabled: true
     host: "localhost"
     port: 5019
-    target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    target_url: "http://39.96.211.155:8000/proxy/api/openai/v1"
+    # http://39.96.211.155:8000/proxy/api/openai/v1/chat/completions
     # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    target_api_key: "sk-0040331ac2d442b6b813304a807d88cd"  # 目标API的密钥
+    target_api_key: "8cf060f9e1f444858609730176542253"  # 目标API的密钥
     rate_per_second: 4      # 每秒分发请求数（支持小数，如0.2表示5秒一个请求）
     max_concurrency: 90     # 最大并发请求数（同时处理的请求数量限制）
     debug: false            # true: 显示所有请求详情, false: 仅显示进度条和错误

@@ -22,7 +22,7 @@
 # =============================================================================
 
 # 选择的数据集 (空格分隔，必须在benchmark_mapping.jsonl中存在)
-HARDCODED_BENCHMARKS="humaneval gsm8k mbpp drop hotpotqa"
+HARDCODED_BENCHMARKS="humaneval gsm8k mbpp drop"
 
 # 每条数据随机选择的test_cases数目
 HARDCODED_TEST_CASES_PER_ENTRY=4
@@ -63,7 +63,7 @@ echo "✅ 当前conda环境: $CONDA_DEFAULT_ENV"
 export PYTHONUNBUFFERED=1
 
 # 设置输出目录
-OUTPUT_DIR="$NEW_EVAL_ROOT/parquet_and_jsonl_data/new"
+OUTPUT_DIR="$NEW_EVAL_ROOT/parquet_and_jsonl_data/0901_test_RL"
 
 # 检查并创建输出目录
 echo "📂 检查输出目录: $OUTPUT_DIR"
