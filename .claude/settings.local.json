@@ -36,7 +36,8 @@
       "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/github_key\" git push)",
       "Bash(sed:*)",
       "Bash(git pull:*)",
-      "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/github_key\" git pull)"
+      "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/github_key\" git pull)",
+      "Bash(git restore:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

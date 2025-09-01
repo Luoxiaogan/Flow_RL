@@ -28,14 +28,14 @@ schedule:
 # Tokenization参数（输入长度控制）
 tokenization:
   # 输入prompt的最大长度（需要给生成预留空间）
-  max_input_length: 6000  # 允许较长的prompt输入
+  max_input_length: 6500  # 允许较长的prompt输入
   # 注意：max_input_length + max_new_tokens ≤ 模型最大长度(通常8192)
   # 当前设置：6000 + 2048 = 8048 < 8192 ✓
 
 # 生成参数（评估时使用）
 generation:
   # 核心参数：这些参数作为基础，模型自带的配置会覆盖这些值
-  max_new_tokens: 2048  # 适中的生成长度（关键参数，通常模型没有定义）
+  max_new_tokens: 2400  # 适中的生成长度（关键参数，通常模型没有定义）
   temperature: 0.6      # 控制创造性（较低值=更确定性输出）
   top_p: 0.95          # 核采样阈值
   top_k: 20            # Top-K采样（与top_p配合使用）

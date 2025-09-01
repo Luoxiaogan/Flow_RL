@@ -238,11 +238,11 @@ class SimpleEvaluator:
                         add_generation_prompt=True,
                         enable_thinking=True # 显式设置
                     )
-                    print(f"🐺 🐺 🐺 🐺 🐺 应用聊天模板之后的prompt: \n\n{prompt}\n\n")
+                    # print(f"🐺 🐺 🐺 🐺 🐺 应用聊天模板之后的prompt: \n\n{prompt}\n\n")
                 else:
                     # 直接使用字符串prompt
                     prompt = sample['prompt']
-                    print("🐺 🐺 🐺 🐺 🐺 使用字符串prompt")
+                    # print("🐺 🐺 🐺 🐺 🐺 使用字符串prompt")
                 prompts.append(prompt)
             else:
                 logger.warning("样本缺少prompt字段，使用空字符串")
@@ -264,7 +264,7 @@ class SimpleEvaluator:
         
         # 准备生成配置
         generation_kwargs = self._prepare_generation_config(model)
-        print(f"🐺 🐺 🐺 🐺 🐺 generation_kwargs = \n\n{generation_kwargs}\n\n")
+        # print(f"🐺 🐺 🐺 🐺 🐺 generation_kwargs = \n\n{generation_kwargs}\n\n")
         
         # 生成
         try:
@@ -283,7 +283,7 @@ class SimpleEvaluator:
                 generated_tokens, 
                 skip_special_tokens=True
             )
-            print(f"🐺 🐺 🐺 🐺 🐺 解码为文本,outputs = \n\n{solutions}\n\n")
+            # print(f"🐺 🐺 🐺 🐺 🐺 解码为文本,outputs = \n\n{solutions}\n\n")
             
             return solutions
             
@@ -308,43 +308,44 @@ class SimpleEvaluator:
         base_params = {}
         
         # 必要参数（带默认值）
-        base_params['max_new_tokens'] = self.generation_config.get('max_new_tokens', 8192)
-        base_params['do_sample'] = self.generation_config.get('do_sample', True)
-        base_params['pad_token_id'] = getattr(model.config, 'pad_token_id', None) or getattr(model.config, 'eos_token_id', None)
+        base_params['max_new_tokens'] = 4096
+        # base_params['do_sample'] = self.generation_config.get('do_sample', True)
+        # base_params['pad_token_id'] = getattr(model.config, 'pad_token_id', None) or getattr(model.config, 'eos_token_id', None)
         
         # 可选参数：只在配置中明确设置时才添加
-        optional_params = ['temperature', 'top_p', 'top_k', 'repetition_penalty', 'num_beams', 'early_stopping']
-        for param in optional_params:
-            if param in self.generation_config:
-                base_params[param] = self.generation_config[param]
+        # optional_params = ['temperature', 'top_p', 'top_k', 'repetition_penalty', 'num_beams', 'early_stopping']
+        # for param in optional_params:
+        #     if param in self.generation_config:
+        #         base_params[param] = self.generation_config[param]
         
         generation_kwargs.update(base_params)
         print(f"🐺 🐺 🐺 🐺 🐺 从配置文件(self.generation_config)读取的基础参数 = \n\n{generation_kwargs}\n\n")
         
         # Step 2: 如果模型有自带的generation_config.json，让模型配置覆盖基础配置
         # 注意：现在是无条件尝试加载模型配置（不再需要use_model_config标志）
-        if hasattr(model, 'generation_config') and model.generation_config:
-            try:
-                # 获取模型的generation config
-                model_gen_config = model.generation_config.to_dict()
-                logger.info(f"加载模型generation_config.json: {list(model_gen_config.keys())}")
+        # if hasattr(model, 'generation_config') and model.generation_config:
+        #     try:
+        #         # 获取模型的generation config
+        #         model_gen_config = model.generation_config.to_dict()
+        #         logger.info(f"加载模型generation_config.json: {list(model_gen_config.keys())}")
                 
-                # 模型配置覆盖evaluation配置（模型参数优先级更高）
-                for key, value in model_gen_config.items():
-                    if key not in ['transformers_version', 'pad_token_id']:  # 跳过特殊键
-                        generation_kwargs[key] = value
-                        logger.info(f"使用模型的{key}: {value}")
+        #         # 模型配置覆盖evaluation配置（模型参数优先级更高）
+        #         for key, value in model_gen_config.items():
+        #             if key not in ['transformers_version', 'pad_token_id'] and key in ['top_k', 'top_p', 'temperature']:  # 跳过特殊键
+        #                 generation_kwargs[key] = value
+        #                 logger.info(f"使用模型的{key}: {value}")
                 
-                print(f"🐺 🐺 🐺 🐺 🐺 模型配置覆盖后的参数 = \n\n{generation_kwargs}\n\n")
-            except Exception as e:
-                logger.warning(f"无法加载模型generation config: {e}")
+        #         print(f"🐺 🐺 🐺 🐺 🐺 模型配置覆盖后的参数 = \n\n{generation_kwargs}\n\n")
+        #     except Exception as e:
+        #         logger.warning(f"无法加载模型generation config: {e}")
         
-        # Step 3: 确保关键参数存在（特别是max_new_tokens）
-        if 'max_new_tokens' not in generation_kwargs or generation_kwargs.get('max_new_tokens') is None:
-            generation_kwargs['max_new_tokens'] = self.generation_config.get('max_new_tokens', 8192)
-            logger.info(f"使用evaluation config的max_new_tokens: {generation_kwargs['max_new_tokens']}")
+        # # Step 3: 确保关键参数存在（特别是max_new_tokens）
+        # if 'max_new_tokens' not in generation_kwargs or generation_kwargs.get('max_new_tokens') is None:
+        #     generation_kwargs['max_new_tokens'] = self.generation_config.get('max_new_tokens', 8192)
+        #     logger.info(f"使用evaluation config的max_new_tokens: {generation_kwargs['max_new_tokens']}")
         
-        logger.debug(f"生成配置: {generation_kwargs}")
+        # logger.debug(f"生成配置: {generation_kwargs}")
+        print(f"🐺 🐺 🐺 🐺 🐺 生成配置: {generation_kwargs}")
         return generation_kwargs
 
 

@@ -70,7 +70,7 @@ class EvalArguments:
 
 def setup_tokenizer(model_name: str, model_type: str):
     """
-    根据模型类型设置tokenizer
+    最简化的tokenizer配置 - 基于长度的DataCollator让pad_token选择无关紧要
     
     Args:
         model_name: 模型名称或路径
@@ -84,16 +84,21 @@ def setup_tokenizer(model_name: str, model_type: str):
         trust_remote_code=True
     )
     
-    if model_type == "llama":
-        # Llama特定设置
+    # 简单确保有pad_token即可（用什么都行，因为DataCollator基于长度处理）
+    if tokenizer.pad_token is None:
+        # 可以安全地使用eos_token作为pad_token
+        # 因为DataCollator会将padding位置的labels设为-100
         tokenizer.pad_token = tokenizer.eos_token
-        if tokenizer.pad_token_id is None:
-            tokenizer.pad_token_id = tokenizer.eos_token_id
-    elif model_type == "qwen":
-        # Qwen特定设置
-        # Qwen通常已经有pad_token，但检查一下
-        if tokenizer.pad_token is None:
-            tokenizer.pad_token = tokenizer.eos_token
+        tokenizer.pad_token_id = tokenizer.eos_token_id
+    
+    # 打印配置信息
+    print(f"✓ Tokenizer配置 [{model_type}]:")
+    print(f"  EOS Token ID: {tokenizer.eos_token_id}")
+    print(f"  PAD Token ID: {tokenizer.pad_token_id}")
+    if tokenizer.pad_token_id == tokenizer.eos_token_id:
+        print(f"  📝 pad_token = eos_token，但这没问题！")
+        print(f"     DataCollator基于序列长度处理，padding位置labels=-100")
+    print(f"  词表大小: {len(tokenizer)}")
     
     return tokenizer
 

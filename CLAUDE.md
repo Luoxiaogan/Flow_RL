@@ -481,3 +481,5 @@ model, _, train_dataloader, _ = accelerator.prepare(
 
 **注意**: 此解决方案已在 `my_llama3_h100_huggingface_accelerate/` 中成功验证并部署。
 - 对于SFT训练+同时evaluation，只看my_llama3_h100_huggingface_accelerate里面的文件了。其他my_llama3_h100_*/的都不看
+- cp命令可以直接使用绝对路径：/Users/luogan/Code/workflow_generation/Flow_RL/my_llama3_h100_huggingface_accelerate。/Users/luogan/Code/workflow_generation/Flow_RL/my_llama3_h100_trl。
+- cp 命令使用绝对路径，但是不要带有""和''，一个具体的成功的例子: cp -r /Users/luogan/Code/workflow_generation/Flow_RL/my_llama3_h100_huggingface_accelerate /Users/luogan/Code/workflow_generation/Flow_RL/my_llama3_h100_trl

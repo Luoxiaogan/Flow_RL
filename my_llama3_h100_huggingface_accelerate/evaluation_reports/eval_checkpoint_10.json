@@ -1,0 +1,31 @@
+{
+  "checkpoint": {
+    "step": 10,
+    "epoch": 0,
+    "model_path": "/nas/models/Qwen3-8B"
+  },
+  "timestamp": "2025-08-26T19:53:58.235318",
+  "total_samples": 1,
+  "evaluation_results": {
+    "total": 1,
+    "successful": 1,
+    "failed": 0,
+    "mean_score": 0.0,
+    "max_score": 0.0,
+    "min_score": 0.0,
+    "std_score": 0.0
+  },
+  "benchmark_scores": {
+    "gsm8k": {
+      "num_samples": 1,
+      "num_successful": 1,
+      "mean_score": 0.0,
+      "max_score": 0.0,
+      "min_score": 0.0,
+      "std_score": 0.0,
+      "success_rate": 1.0
+    }
+  },
+  "overall_score": 0.0,
+  "success_rate": 1.0
+}
