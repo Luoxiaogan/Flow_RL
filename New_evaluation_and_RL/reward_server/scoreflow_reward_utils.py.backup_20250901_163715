@@ -449,6 +449,60 @@ class IndividualTestCaseLogger:
                 pass  # 忽略关闭错误
 
 
+class MinimalLogger:
+    """最小化日志输出器 - 仅显示关键信息"""
+    def __init__(self):
+        self.original_stdout = None
+        self.original_stderr = None
+        
+    def __enter__(self):
+        # 保存原始输出
+        self.original_stdout = sys.stdout
+        self.original_stderr = sys.stderr
+        
+        # 创建过滤输出对象
+        sys.stdout = FilteredOutput(self.original_stdout)
+        sys.stderr = FilteredOutput(self.original_stderr)
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # 恢复原始输出
+        sys.stdout = self.original_stdout
+        sys.stderr = self.original_stderr
+
+
+class FilteredOutput:
+    """过滤输出 - 只显示验证和分数信息"""
+    def __init__(self, terminal):
+        self.terminal = terminal
+        self.buffer = []
+        
+    def write(self, message):
+        # 只输出包含特定关键字的行
+        keywords = ['✅', '❌', '分数', 'score', 'Score', '验证', '判断结果', 
+                   'Test Case', 'test case', '平均', 'Average', '🏁', '执行完成']
+        if any(keyword in message for keyword in keywords):
+            self.terminal.write(message)
+            self.terminal.flush()
+        # 其他输出静默处理
+        return len(message)
+    
+    def flush(self):
+        self.terminal.flush()
+    
+    def isatty(self):
+        try:
+            return self.terminal.isatty()
+        except Exception:
+            return False
+    
+    def fileno(self):
+        try:
+            return self.terminal.fileno()
+        except Exception:
+            return -1
+
+
 class SimpleTeeOutput:
     """简化的双向输出类 - 用于独立日志"""
     def __init__(self, terminal, file_handle):
@@ -505,16 +559,27 @@ class SimpleTeeOutput:
 class WorkflowExecutionManager:
     """管理单个workflow的执行和日志记录 - 并行执行+安全汇总模式"""
     
-    def __init__(self, workspace_path: Path, data_source: str, test_cases: List[int]):
+    def __init__(self, workspace_path: Path, data_source: str, test_cases: List[int], debug_mode: bool = False):
         """初始化执行管理器"""
-        # 创建workflow专属目录
+        self.debug_mode = debug_mode  # 新增debug模式参数
+        
+        # 创建workflow标识
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         random_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
-        self.workflow_id = f"workflow_{timestamp}_{random_id}"
         
-        # 创建目录结构
-        self.workflow_dir = workspace_path / data_source / self.workflow_id
-        self.workflow_dir.mkdir(parents=True, exist_ok=True)
+        if debug_mode:
+            # debug模式：创建完整目录结构
+            self.workflow_id = f"workflow_{timestamp}_{random_id}"
+            self.workflow_dir = workspace_path / data_source / self.workflow_id
+            self.workflow_dir.mkdir(parents=True, exist_ok=True)
+            print(f"📁 创建workflow目录: {self.workflow_dir}")
+            print(f"🔄 初始化并行执行管理器 - ID: {self.workflow_id}")
+        else:
+            # 非debug模式：使用临时标识，不创建目录
+            self.workflow_id = f"temp_{timestamp}_{random_id}"
+            self.workflow_dir = None
+            print(f"🚀 非debug模式：不保存日志文件")
+            print(f"🔄 临时执行ID: {self.workflow_id}")
         
         # 基本信息
         self.test_cases = test_cases
@@ -524,8 +589,6 @@ class WorkflowExecutionManager:
         self.results_collector = []
         self.results_lock = asyncio.Lock()
         
-        print(f"📁 创建workflow目录: {self.workflow_dir}")
-        print(f"🔄 初始化并行执行管理器 - ID: {self.workflow_id}")
         print(f"📊 准备执行{len(test_cases)}个test cases: {test_cases}")
     
     def __enter__(self):
@@ -541,6 +604,9 @@ class WorkflowExecutionManager:
     
     def save_workflow_code(self, workflow_code: str):
         """保存workflow代码"""
+        if not self.debug_mode:
+            return  # 非debug模式不保存
+        
         code_file = self.workflow_dir / "workflow.py"
         with open(code_file, 'w', encoding='utf-8') as f:
             f.write(workflow_code)
@@ -548,6 +614,9 @@ class WorkflowExecutionManager:
     
     def save_metadata(self, extra_info: Dict):
         """保存元数据"""
+        if not self.debug_mode:
+            return  # 非debug模式不保存
+        
         metadata = {
             "workflow_id": self.workflow_id,
             "data_source": self.data_source,
@@ -792,7 +861,7 @@ class WorkflowExecutionManager:
     async def _execute_single_test_case_isolated(self, calculator, workflow_code: str, 
                                                test_case_index: int, dataset_path: str) -> dict:
         """
-        执行单个test case，使用独立日志文件，避免I/O冲突
+        执行单个test case，根据debug模式选择日志策略
         
         Args:
             calculator: ScoreFlowRewardCalculator实例
@@ -803,58 +872,99 @@ class WorkflowExecutionManager:
         Returns:
             执行结果字典
         """
-        # 创建独立日志文件路径
-        individual_log_file = self.workflow_dir / f"test_case_{test_case_index}.log"
+        start_time = time.time()
         
-        # 使用独立日志管理器
-        with IndividualTestCaseLogger(individual_log_file, test_case_index):
-            start_time = time.time()
+        if self.debug_mode:
+            # Debug模式：使用完整日志
+            individual_log_file = self.workflow_dir / f"test_case_{test_case_index}.log"
             
-            try:
-                print(f"🔧 设置执行环境...")
-                # 设置当前workflow目录，供compute_score_for_testcase使用
-                calculator._current_workflow_dir = self.workflow_dir
-                
-                print(f"⚡ 开始执行workflow...")
+            # 使用独立日志管理器
+            with IndividualTestCaseLogger(individual_log_file, test_case_index):
+                try:
+                    print(f"🔧 设置执行环境...")
+                    # 设置当前workflow目录，供compute_score_for_testcase使用
+                    calculator._current_workflow_dir = self.workflow_dir
+                    
+                    print(f"⚡ 开始执行workflow...")
 
-                # 执行单个test case
-                score = await calculator.compute_score_for_testcase(
-                    workflow_code, self.data_source, test_case_index, dataset_path
-                )
+                    # 执行单个test case
+                    score = await calculator.compute_score_for_testcase(
+                        workflow_code, self.data_source, test_case_index, dataset_path
+                    )
+                    
+                    success = True
+                    error_msg = ""
+                    print(f"✅ 执行成功，得分: {score:.3f}")
+                    
+                    # 清理临时属性
+                    if hasattr(calculator, '_current_workflow_dir'):
+                        delattr(calculator, '_current_workflow_dir')
+                    
+                except Exception as e:
+                    success = False
+                    error_msg = self._sanitize_error(str(e))
+                    score = 0.0
+                    print(f"❌ 执行失败: {e}")
                 
-                success = True
-                error_msg = ""
-                print(f"✅ 执行成功，得分: {score:.3f}")
+                # 计算执行时间
+                duration = time.time() - start_time
                 
-                # 清理临时属性
-                if hasattr(calculator, '_current_workflow_dir'):
-                    delattr(calculator, '_current_workflow_dir')
+                # 构建结果记录
+                result_record = {
+                    "test_case": test_case_index,
+                    "success": success,
+                    "score": score,
+                    "duration": duration,
+                    "error": error_msg,
+                    "timestamp": datetime.now().isoformat()
+                }
                 
-            except Exception as e:
-                success = False
-                error_msg = self._sanitize_error(str(e))
-                score = 0.0
-                print(f"❌ 执行失败: {e}")
-            
-            # 计算执行时间
-            duration = time.time() - start_time
-            
-            # 构建结果记录
-            result_record = {
-                "test_case": test_case_index,
-                "success": success,
-                "score": score,
-                "duration": duration,
-                "error": error_msg,
-                "timestamp": datetime.now().isoformat()
-            }
-            
-            print(f"📝 执行完成 - 耗时: {duration:.2f}秒")
-            return result_record
+                print(f"📝 执行完成 - 耗时: {duration:.2f}秒")
+                return result_record
+        else:
+            # 非debug模式：使用最小化输出
+            with MinimalLogger():
+                try:
+                    # 设置当前workflow目录为None（不保存调试文件）
+                    calculator._current_workflow_dir = None
+                    
+                    # 执行单个test case
+                    score = await calculator.compute_score_for_testcase(
+                        workflow_code, self.data_source, test_case_index, dataset_path
+                    )
+                    
+                    success = True
+                    error_msg = ""
+                    print(f"✅ Test Case {test_case_index}: 分数={score:.3f}")
+                    
+                    # 清理临时属性
+                    if hasattr(calculator, '_current_workflow_dir'):
+                        delattr(calculator, '_current_workflow_dir')
+                    
+                except Exception as e:
+                    success = False
+                    error_msg = self._sanitize_error(str(e))
+                    score = 0.0
+                    print(f"❌ Test Case {test_case_index}: 失败")
+                
+                # 计算执行时间
+                duration = time.time() - start_time
+                
+                # 构建结果记录
+                result_record = {
+                    "test_case": test_case_index,
+                    "success": success,
+                    "score": score,
+                    "duration": duration,
+                    "error": error_msg,
+                    "timestamp": datetime.now().isoformat()
+                }
+                
+                return result_record
     
     def _finalize_and_save_summary(self, total_duration: float) -> float:
         """
-        All-Reduce汇总阶段：处理所有收集的结果，串行写入汇总文件
+        All-Reduce汇总阶段：处理所有收集的结果，根据debug模式决定是否保存文件
         
         Args:
             total_duration: 总执行时间
@@ -862,6 +972,27 @@ class WorkflowExecutionManager:
         Returns:
             最终平均分数
         """
+        if not self.debug_mode:
+            # 非debug模式：仅计算并返回分数，不保存文件
+            if not self.results_collector:
+                print("⚠️ 没有收集到任何结果")
+                return 0.0
+            
+            all_scores = [r.get('score', 0.0) for r in self.results_collector]
+            avg_score = sum(all_scores) / len(all_scores) if all_scores else 0.0
+            successful_count = sum(1 for r in self.results_collector if r.get('success', False))
+            total_test_cases = len(self.results_collector)
+            
+            print(f"\n{'='*60}")
+            print(f"🏁 执行完成")
+            print(f"总测试案例: {total_test_cases}")
+            print(f"成功: {successful_count} | 失败: {total_test_cases - successful_count}")
+            print(f"✅ 平均分数: {avg_score:.3f}")
+            print(f"总耗时: {total_duration:.2f}秒")
+            print(f"{'='*60}")
+            return avg_score
+        
+        # Debug模式：完整的保存逻辑
         print(f"\n📊 开始All-Reduce汇总阶段...")
         
         if not self.results_collector:
@@ -1044,13 +1175,16 @@ class ScoreFlowRewardCalculator:
             
             # 从scoreflow_reward服务配置获取超时等参数
             scoreflow_config = config.get('services', {}).get('scoreflow_reward', {})
+            self.debug_mode = scoreflow_config.get('debug', False)  # 新增：读取debug配置
             self.reward_config = {
                 'timeout': scoreflow_config.get('timeout', 300),
                 'client_http_timeout': scoreflow_config.get('client_http_timeout', 600),  # 新增：HTTP客户端超时
                 'test_cases_per_task': 3,
-                'max_concurrent': 5
+                'max_concurrent': 5,
+                'debug': self.debug_mode  # 传递debug配置
             }
             print("\n🚀 reward_config:\n", self.reward_config)
+            print(f"\n🚀 Debug模式: {'开启' if self.debug_mode else '关闭'}")
             
             # 加载token惩罚配置
             self.token_penalty_config = scoreflow_config.get('token_penalty', {})
@@ -1067,6 +1201,7 @@ class ScoreFlowRewardCalculator:
         else:
             # 默认配置
             print("\n⚠️ Config file not found, using defaults")
+            self.debug_mode = False  # 默认关闭debug
             self.llm_config = {
                 'provider': 'openai',
                 'model': 'qwen-turbo',
@@ -1078,7 +1213,8 @@ class ScoreFlowRewardCalculator:
                 'timeout': 300,
                 'client_http_timeout': 600,  # 默认HTTP客户端超时
                 'test_cases_per_task': 3,
-                'max_concurrent': 5
+                'max_concurrent': 5,
+                'debug': self.debug_mode
             }
             self.token_penalty_config = {}  # 默认禁用token惩罚
             self.workspace_path = PROJECT_ROOT / "workspace"
@@ -1985,7 +2121,8 @@ async def _compute_score_async(data_source: str, solution_str: str, ground_truth
         manager = WorkflowExecutionManager(
             calculator.workspace_path,
             data_source,
-            test_cases
+            test_cases,
+            debug_mode=calculator.debug_mode  # 传递debug配置
         )
         
         # 保存workflow代码和元数据

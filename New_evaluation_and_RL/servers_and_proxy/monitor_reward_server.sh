@@ -66,8 +66,8 @@ fi
 check_api_proxy() {
     echo -e "${CYAN}检查 API 代理服务...${NC}"
     
-    # 尝试连接API代理
-    if curl -s -o /dev/null -w "%{http_code}" "http://localhost:$API_PROXY_PORT/" 2>/dev/null | grep -q "404\|200\|405"; then
+    # 尝试连接API代理的健康检查端点
+    if curl -s -o /dev/null -w "%{http_code}" "http://localhost:$API_PROXY_PORT/health" 2>/dev/null | grep -q "200"; then
         echo -e "${GREEN}✅ API代理服务 (localhost:$API_PROXY_PORT) 连接正常${NC}"
         return 0
     else

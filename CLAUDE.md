@@ -5,6 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This device is a windows device.
 ## Project Overview
 
+**📖 架构文档：** 关于API代理和Reward服务器的详细架构，请参阅 `New_evaluation_and_RL/documentation/api_proxy_and_reward_server_architecture.md`
+
 Flow_RL is a workflow generation and execution system with three main purposes:
 
 1. **Synthetic SFT Data Generation**: Generates meta-workflows that can solve all problems in a given benchmark using predefined operators, executes them, and saves successful ones as training data
@@ -274,11 +276,39 @@ The system operates in three phases:
 - **Fully Supported**: GSM8K, MBPP
 - **Not Yet Supported**: DROP, HotpotQA, HumanEval, MATH
 
+## API Proxy and Reward Server Architecture
+
+**📚 重要：关于API代理和Reward服务器的详细架构说明，请阅读：**
+**`New_evaluation_and_RL/documentation/api_proxy_and_reward_server_architecture.md`**
+
+该文档包含：
+- 系统架构设计和服务交互流程
+- API代理服务（端口5019）的速率限制和并发控制机制
+- ScoreFlow Reward服务器（端口8899）的workflow执行管理
+- Token计量系统和费用惩罚机制
+- 服务启动顺序和配置管理
+- 故障排查和性能调优指南
+- 生产环境部署建议
+
+### 快速启动
+
+```bash
+# 1. 启动API代理服务（必须先启动）
+bash New_evaluation_and_RL/servers_and_proxy/start_api_proxy.sh
+
+# 2. 启动Reward服务器
+bash New_evaluation_and_RL/servers_and_proxy/start_scoreflow_reward.sh
+
+# 3. 监控服务状态
+bash New_evaluation_and_RL/servers_and_proxy/monitor_reward_server.sh
+```
+
 ## API Configuration
 
 The system uses OpenAI-compatible APIs configured in:
 - `Test_FILE/config2.yaml`: MetaGPT execution configuration
 - `run_workflow_system.sh`: API pool for workflow generation (see API_POOL and EXEC_LLM variables)
+- `New_evaluation_and_RL/config.yaml`: 统一配置文件，包含API代理和Reward服务器的所有配置
 
 ## veRL (Reinforcement Learning) Support
 
@@ -342,27 +372,31 @@ print(f"Reward: {score:.3f}")
 
 ## Important Notes
 
-1. **Directory Requirements**: Always run from `Test_FILE/` directory to ensure config2.yaml is found
-2. **Path Dependencies**: Many scripts use absolute server paths - local execution may require path adjustments
-3. **Environment Setup**:
+1. **API Proxy and Reward Server**: 
+   - **必读文档**: `New_evaluation_and_RL/documentation/api_proxy_and_reward_server_architecture.md`
+   - API代理必须先于Reward服务器启动
+   - 服务间通过HTTP协议通信，API代理在5019端口，Reward服务器在8899端口
+2. **Directory Requirements**: Always run from `Test_FILE/` directory to ensure config2.yaml is found
+3. **Path Dependencies**: Many scripts use absolute server paths - local execution may require path adjustments
+4. **Environment Setup**:
    - Use `workflow` conda environment for workflow operations
    - Use `qzh` conda environment for LLaMA3 fine-tuning
-4. **MetaGPT**: Uses a local installation at `/home/lg/workflow_tooluse/ScoreFlow/metagpt_local` (old version)
-5. **Execution Limits**:
+5. **MetaGPT**: Uses a local installation at `/home/lg/workflow_tooluse/ScoreFlow/metagpt_local` (old version)
+6. **Execution Limits**:
    - Workflow execution timeout: 180 seconds per workflow
    - Maximum concurrent tasks during generation: 10 (configurable in run_workflow_system.sh)
-6. **Parameter Reference**: See `./Test_FILE/V2版本.md` for detailed parameter documentation
-7. **veRL Data Generation**: 
+7. **Parameter Reference**: See `./Test_FILE/V2版本.md` for detailed parameter documentation
+8. **veRL Data Generation**: 
    - Strictly reuses existing workflow generation logic from `workflow_generator.py`
    - Reward function strictly reuses existing workflow execution logic from `workflow_executor.py`
    - Train/test split default: 80% training, 20% testing with no overlap
    - Generated data stored in parquet format for efficient processing
-8. **veRL Training**:
+9. **veRL Training**:
    - Default model: Qwen2.5-Math-7B-Instruct
    - Uses PPO (Proximal Policy Optimization) algorithm
    - Training data paths must be adjusted in `test.sh` before running
    - Supports both GSM8K and MBPP benchmarks
-9. **SFT Training (`my_llama3_h100_new/`)**:
+10. **SFT Training (`my_llama3_h100_new/`)**:
    - **Environment**: Use `verl` conda environment
    - **Import Fix**: When running directly, imports are adjusted to handle module paths
    - **Loss Masking**: Optional feature to train only on assistant responses

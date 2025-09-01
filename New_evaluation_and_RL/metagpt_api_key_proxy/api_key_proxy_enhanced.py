@@ -9,7 +9,7 @@ import requests
 import time
 import threading
 import signal
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from pathlib import Path
 from tqdm import tqdm
 from collections import deque
@@ -133,6 +133,18 @@ if not DEBUG_MODE:
     )
 
 app = Flask(__name__)
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    """健康检查端点 - 不转发到上游"""
+    return jsonify({
+        'status': 'healthy',
+        'service': 'metagpt_api_proxy',
+        'port': PORT,
+        'target': TARGET_URL,
+        'rate_limit': f'{RATE_PER_SECOND} req/s',
+        'max_concurrency': MAX_CONCURRENCY
+    }), 200
 
 @app.route('/', defaults={'path': ''}, methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
 @app.route('/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])

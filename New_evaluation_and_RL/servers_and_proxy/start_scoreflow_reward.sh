@@ -100,7 +100,7 @@ echo -e "${GREEN}✓ MetaGPT环境变量已设置${NC}"
 
 # 检查API代理服务连通性
 echo -e "${YELLOW}检查API代理服务连通性...${NC}"
-if curl -s -o /dev/null -w "%{http_code}" http://localhost:$API_PROXY_PORT/ | grep -q "404\|200"; then
+if curl -s -o /dev/null -w "%{http_code}" http://localhost:$API_PROXY_PORT/health | grep -q "200"; then
     echo -e "${GREEN}✓ API代理服务 (localhost:$API_PROXY_PORT) 连接成功${NC}"
 else
     echo -e "${RED}⚠️  警告: 无法连接到API代理服务 (localhost:$API_PROXY_PORT)${NC}"
