@@ -19,9 +19,9 @@ defaults:
 data:
   # 数据文件
   train_files: 
-    - "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/RL/train.parquet"
+    - "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0901_test_RL/train.parquet"
   val_files: 
-    - "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/RL/test.parquet"
+    - "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0901_test_RL/test.parquet"
   
   # 批次和序列长度
   train_batch_size: 16
@@ -359,13 +359,13 @@ trainer:
   
   nnodes: 1
   n_gpus_per_node: 8
-  save_freq: 10
+  save_freq: 100
   esi_redundant_time: 0
   resume_mode: auto
   resume_from_path: null
   val_before_train: true
   val_only: false
-  test_freq: 2
+  test_freq: 3
   critic_warmup: 0
   
   default_hdfs_dir: null

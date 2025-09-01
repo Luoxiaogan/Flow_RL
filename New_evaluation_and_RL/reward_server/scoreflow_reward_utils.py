@@ -211,6 +211,7 @@ if SILENT:
     logging.getLogger("httpcore").setLevel(logging.ERROR)  # httpx 的底层库
     logging.getLogger("openai").setLevel(logging.ERROR)     # OpenAI SDK 的 HTTP 日志
     logging.getLogger("metagpt").setLevel(logging.ERROR)    # MetaGPT 的日志
+    logging.getLogger("werkzeug").setLevel(logging.ERROR)  # 禁用 Flask 访问日志
     # 禁用 loguru 的 metagpt 日志
     loguru_logger.disable("metagpt")
 
