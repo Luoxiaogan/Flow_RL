@@ -57,6 +57,10 @@ class Qwen3ThinkingDataset(RLHFDataset):
         logger.info(f"最大prompt长度: {self.config.get('max_prompt_length', 'N/A')}")
         logger.info(f"最大响应长度: {self.config.get('max_response_length', 'N/A')}")
         logger.info("=" * 60)
+        logger.info(f"Tokenizer model_max_length: {self.tokenizer.model_max_length}")
+        logger.info(f"Config max_prompt_length: {self.config.get('max_prompt_length')}")
+        logger.info(f"实际使用: {self.config.get('max_prompt_length', 8192)}")
+        logger.info("=" * 60)
     
     def _validate_tokenizer_thinking_support(self):
         """
@@ -162,7 +166,7 @@ class Qwen3ThinkingDataset(RLHFDataset):
             # 进行tokenization
             encoded = self.tokenizer(
                 processed_text,
-                truncation=True,
+                truncation=True, # 强制截断到max_length, 但是其实会先过一遍VERL层, 然后才到dataset层.
                 max_length=self.config.get('max_prompt_length', 8192),
                 padding='max_length',
                 return_tensors='pt'

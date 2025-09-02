@@ -24,28 +24,28 @@ data:
     - "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0901_test_RL/test.parquet"
   
   # 批次和序列长度
-  train_batch_size: 16
-  max_prompt_length: 8192
-  max_response_length: 16384
-  
+  train_batch_size: 16 # 8个GPU的总批次大小
+  max_prompt_length: 8192 # prompt的最大token数
+  max_response_length: 16384 # response的最大token数
+
   # 数据键名
-  prompt_key: prompt
-  response_key: response
-  reward_fn_key: data_source  # VERL需要这个字段
+  prompt_key: prompt # 指定parquet文件中prompt列的名称
+  response_key: response # 指定parquet文件中response列的名称（可选，用于SFT预训练）
+  reward_fn_key: data_source  # VERL需要这个字段, 用于reward计算的标识列（如"gsm8k"、"mbpp"），传递给compute_score()函数
   
   # 数据处理选项
-  return_raw_input_ids: false
-  return_raw_chat: false
-  return_full_prompt: false
-  filter_overlong_prompts: true
+  return_raw_input_ids: false # 不返回原始token IDs，使用处理后的格式
+  return_raw_chat: false # 不返回原始对话格式，应用chat template
+  return_full_prompt: false # 只返回需要生成的部分，不包含完整prompt
+  filter_overlong_prompts: true # 是否过滤超长prompt
   filter_overlong_prompts_workers: 1
-  truncation: error
-  shuffle: true
+  truncation: error # 超长处理策略, 遇到超长序列抛出错误，不进行截断. 
+  shuffle: true # 打乱训练数据顺序
   
   # 分词器和图像处理
-  tokenizer: null
+  tokenizer: null # 自动从模型路径加载对应的tokenizer
   image_key: images
-  trust_remote_code: true
+  trust_remote_code: true # 应用到自动加载的tokenizer
   
   # 自定义数据集
   custom_cls:
@@ -56,20 +56,20 @@ data:
 # Actor-Rollout-Reference配置 - 完整覆盖
 # ---------------------------------------------------------------------
 actor_rollout_ref:
-  hybrid_engine: true
+  hybrid_engine: true # 训练用PyTorch，推理用SGLang
   
   # 模型配置
   model:
     path: /nas/models/Qwen3-8B
-    custom_chat_template: null  # Qwen3不需要自定义template
+    custom_chat_template: null  # Qwen3不需要自定义template，使用模型自带的chat template
     torch_dtype: bfloat16
     use_shm: false
     external_lib: null
     override_config: {}
-    enable_gradient_checkpointing: true
+    enable_gradient_checkpointing: true # 启用梯度检查点，节省显存, 不保存中间激活值，反向传播时重新计算
     enable_activation_offload: false
     use_remove_padding: false
-    lora_rank: 0
+    lora_rank: 0 # 不使用LoRA
     lora_alpha: 16
     target_modules: all-linear
     exclude_modules: null
@@ -136,12 +136,12 @@ actor_rollout_ref:
     temperature: 0.6
     top_k: 20
     top_p: 0.95
-    n: 2
+    n: 2 # 每个prompt生成2个不同的响应
     
     # 序列长度
-    prompt_length: 8192
-    response_length: 16384
-    
+    prompt_length: 8192 # 生成时的prompt长度
+    response_length: 16384 # 生成时的response长度
+
     # vLLM/SGLang参数
     dtype: bfloat16
     gpu_memory_utilization: 0.5

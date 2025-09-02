@@ -290,6 +290,21 @@ The system operates in three phases:
 - 故障排查和性能调优指南
 - 生产环境部署建议
 
+## VERL RL Training System Architecture
+
+**📖 重要：关于VERL强化学习训练系统的完整架构说明，请阅读：**
+**`New_evaluation_and_RL/documentation/RL_training_system_architecture.md`**
+
+该文档包含：
+- VERL框架与PPO算法的完整实现架构
+- Qwen3思维模式的全栈支持机制
+- $LIST$标记系统解决Hydra参数传递问题
+- 三层服务健康检查与自动恢复机制
+- 事件循环冲突的线程隔离解决方案
+- 并发控制与资源管理的信号量实现
+- 配置文件到训练命令的完整转换流程
+- Reward服务器与RL训练的深度集成
+
 ### 快速启动
 
 ```bash

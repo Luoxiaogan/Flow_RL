@@ -68,3 +68,17 @@ New_evaluation_and_RL/RL_part/New_evaluation_and_RL
 my_llama3_h100_trl/my_llama3_h100_huggingface_accelerate/
 my_llama3_h100_trl/
 New_evaluation_and_RL/New_evaluation_and_RL/workspace/
+
+# Windows reserved names
+nul
+NUL
+aux
+AUX
+con
+CON
+prn
+PRN
+com[1-9]
+COM[1-9]
+lpt[1-9]
+LPT[1-9]
