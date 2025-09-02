@@ -7,7 +7,7 @@
 # 本地: /Users/luogan/Code/workflow_generation/Flow_RL
 # 服务器: /nas/ganluo/Flow_RL
 # project_root: "/nas/ganluo/Flow_RL"
-project_root: "/nas/ganluo/Flow_RL"
+project_root: "/Users/luogan/Code/workflow_generation/Flow_RL"
 
 api_metagpt:
   temperature: 0.9

@@ -13,7 +13,7 @@ DATASET_PATH="/nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/custom_datasets/
 # 直接执行
 python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
     --config-path=${CONFIG_DIR} \
-    --config-name=qwen3_thinking_config \
+    --config-name=qwen3_simplified \
     data.custom_cls.path=${DATASET_PATH} \
     data.custom_cls.name=Qwen3ThinkingDataset \
     "$@"  # 传递任何额外的命令行参数

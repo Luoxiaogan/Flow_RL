@@ -1,0 +1,94 @@
+# Qwen3 Thinking模式GRPO训练配置 - 精简版
+defaults:
+  - ppo_trainer  # 继承VERL的完整PPO配置
+  - _self_
+
+# 数据配置 - 只保留必要的修改
+data:
+  train_files: ["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0901_test_RL/train.parquet"]
+  val_files: ["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0901_test_RL/test.parquet"]
+  train_batch_size: 16
+  max_prompt_length: 8192
+  max_response_length: 8192
+  filter_overlong_prompts: true
+  filter_overlong_prompts_workers: 4  # 加速数据预处理
+  dataloader_num_workers: 4  # 并行数据加载
+  shuffle: true  # 默认值，但明确更好
+  custom_cls:
+    path: /nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/custom_datasets/qwen3_thinking_dataset.py
+    name: Qwen3ThinkingDataset
+
+# Actor-Rollout-Reference配置
+actor_rollout_ref:
+  model:
+    path: /nas/models/Qwen3-8B
+    trust_remote_code: true
+    enable_gradient_checkpointing: true
+  
+  actor:
+    ppo_mini_batch_size: 64  # GRPO必需：train_batch_size*rollout.n = 16*4 = 64
+    ppo_micro_batch_size_per_gpu: 2
+    use_dynamic_bsz: false
+    ppo_max_token_len_per_gpu: 20000  # (8192+8192)*1.25 安全余量
+    grad_clip: 1.0  # 明确设置，便于调试
+    use_kl_loss: true  # GRPO使用独立KL损失
+    kl_loss_coef: 0.001
+    kl_loss_type: low_var_kl
+    optim:
+      lr: 2e-6
+      lr_warmup_steps: -1  # 默认值
+      lr_warmup_steps_ratio: 0.05  # 前10%的步数
+      warmup_style: linear  # 线性增长比常数更平滑
+      min_lr_ratio: 0.1  # 最终学习率是初始的10%
+      num_cycles: 0.5  # 半个余弦周期
+    checkpoint:
+      save_contents: ['model', 'extra']  # 保存权重和训练状态
+      load_contents: ['model', 'extra']
+    
+  ref: # 与actor相同，但不更新
+    log_prob_micro_batch_size_per_gpu: 2
+    fsdp_config:
+      param_offload: false  # 重要：设置为true可以节省显存
+  
+  rollout:
+    name: sglang
+    n: 4  # GRPO核心参数
+    temperature: 0.7
+    top_k: 50
+    top_p: 0.95
+    prompt_length: 8192
+    response_length: 8192
+    gpu_memory_utilization: 0.6  # 提高GPU利用率
+    dtype: bfloat16
+    log_prob_micro_batch_size_per_gpu: 2
+    tensor_model_parallel_size: 1  # 明确不使用TP
+    max_num_seqs: 128  # 降低并发度，您的长序列不需要太高
+    engine_kwargs:
+      sglang:
+        trust_remote_code: true
+    val_kwargs:
+      response_length: 4096  # 验证时用更短的长度
+
+# 算法配置 - GRPO特有
+algorithm:
+  adv_estimator: grpo
+  use_kl_in_reward: false  # 默认, GRPO不在奖励中使用KL
+
+reward_model:
+  enable: false  # 不使用预训练奖励模型
+  reward_manager: prime  # 如果您的奖励函数支持并行
+
+custom_reward_function:
+  path: /nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py
+  name: compute_score
+
+# 训练器配置
+trainer:
+  total_epochs: 15
+  save_freq: 100
+  test_freq: 5
+  critic_warmup: 0
+  project_name: verl_qwen3_thinking
+  experiment_name: qwen3_8b_with_thinking
+  logger: ['console', 'wandb']
+  default_local_dir: /nas/ganluo/Flow_RL/rl_out/checkpoints
