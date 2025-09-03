@@ -63,6 +63,7 @@ fi
 # ========================================
 # 2. 选择配置文件
 # ========================================
+# 默认配置文件（已注释掉 template 和 enable_thinking，使用模型自带配置）
 CONFIG_FILE="$SCRIPT_DIR/examples/train_lora/qwen3_thinking_lora_with_generation.yaml"
 
 # 允许通过参数覆盖配置文件
@@ -71,6 +72,7 @@ if [ ! -z "$1" ] && [ -f "$1" ]; then
     echo "使用自定义配置文件: $CONFIG_FILE"
 else
     echo "使用默认配置文件: $CONFIG_FILE"
+    echo "说明: template 和 enable_thinking 已注释，将使用 Qwen3 模型自带的 tokenizer_config.json"
 fi
 
 # 检查配置文件是否存在
@@ -92,11 +94,28 @@ mkdir -p "$OUTPUT_DIR"
 cp "$CONFIG_FILE" "$OUTPUT_DIR/training_config.yaml"
 
 # ========================================
-# 4. 启动训练
+# 4. 检测实际使用的 Template
+# ========================================
+echo ""
+echo "🔍 检测实际使用的 Chat Template..."
+echo ""
+
+# 运行检测脚本
+if [ -f "$SCRIPT_DIR/detect_template.py" ]; then
+    python "$SCRIPT_DIR/detect_template.py" "$CONFIG_FILE"
+    echo ""
+    echo "提示: 以上为 Template 检测结果，请确认是否符合预期"
+    read -p "按 Enter 继续训练，或按 Ctrl+C 取消... "
+else
+    echo "⚠️ 检测脚本不存在，跳过 template 检测"
+fi
+
+# ========================================
+# 5. 启动训练
 # ========================================
 echo ""
 echo "========================================" 
-echo "开始训练"
+echo "开始训练 Qwen3-8B-Thinking LoRA"
 echo "配置文件: $CONFIG_FILE"
 echo "输出目录: $OUTPUT_DIR"
 echo "样本生成: 启用（查看训练日志观察生成样本）"
