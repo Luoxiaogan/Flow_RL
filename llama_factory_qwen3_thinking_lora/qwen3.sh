@@ -5,7 +5,7 @@
 # ========================================
 
 # 设置环境变量
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=5
 
 # 生成时间戳
 export TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
@@ -84,25 +84,25 @@ fi
 # ========================================
 # 3. 创建输出目录
 # ========================================
-# 创建临时配置文件，替换 ${TIMESTAMP}
-TEMP_CONFIG="/tmp/qwen3_lora_config_${TIMESTAMP}.yaml"
-sed "s/\${TIMESTAMP}/$TIMESTAMP/g" "$CONFIG_FILE" > "$TEMP_CONFIG"
 
-# 从临时配置文件提取输出目录
-OUTPUT_DIR=$(grep -m1 '^output_dir:' "$TEMP_CONFIG" \
-  | sed -E 's/^output_dir:[[:space:]]*//' \
-  | tr -d '\r\n' \
-  | xargs)
+lora_rank=$(grep -m1 '^lora_rank:' "$CONFIG_FILE" | awk '{print $2}')
+learning_rate=$(grep -m1 '^learning_rate:' "$CONFIG_FILE" | awk '{print $2}')
+num_train_epochs=$(grep -m1 '^num_train_epochs:' "$CONFIG_FILE" | awk '{print $2}')
+output_dir=$(grep -m1 '^output_dir:' "$CONFIG_FILE" | awk '{print $2}') # 这个是/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/sft_output/Qwen3-8B_lora/train_with_generation
+RUN_NAME="rank=${lora_rank}_lr=${learning_rate}_epochs=${num_train_epochs}_with_inference"
+OUTPUT_DIR="${output_dir}_${RUN_NAME}_${TIMESTAMP}"
+
 echo "输出目录: $OUTPUT_DIR"
-
 mkdir -p "$OUTPUT_DIR"
 
-# 复制原始和处理后的配置文件到输出目录（用于记录）
-cp "$CONFIG_FILE" "$OUTPUT_DIR/training_config_original.yaml"
-cp "$TEMP_CONFIG" "$OUTPUT_DIR/training_config.yaml"
+export WANDB_PROJECT="qwen3_thinking_lora"
+export WANDB_NAME="$RUN_NAME"
 
-# 更新 CONFIG_FILE 为临时文件
-CONFIG_FILE="$TEMP_CONFIG"
+FINAL_YAML="$OUTPUT_DIR/config.yaml"
+sed \
+  -e "s|\${TIMESTAMP}|${TIMESTAMP}|g" \
+  -e "s|train_with_generation|${RUN_NAME}_train_with_generation|g" \
+  "$CONFIG_FILE" > "$FINAL_YAML"
 
 # ========================================
 # 4. 检测实际使用的 Template
@@ -134,7 +134,7 @@ echo "========================================"
 echo ""
 
 # 使用 llamafactory-cli 启动训练
-llamafactory-cli train "$CONFIG_FILE" 2>&1 | tee "$OUTPUT_DIR/training.log"
+llamafactory-cli train "$FINAL_YAML" 2>&1 | tee "$OUTPUT_DIR/training.log"
 
 
 # ========================================
@@ -156,11 +156,4 @@ if ls "$OUTPUT_DIR"/generation_samples*.jsonl 1> /dev/null 2>&1; then
         line_count=$(wc -l < "$file")
         echo "  - $(basename "$file"): $line_count 条记录"
     done
-fi
-
-# 清理临时文件
-if [ -f "$TEMP_CONFIG" ]; then
-    rm "$TEMP_CONFIG"
-    echo ""
-    echo "已清理临时配置文件"
 fi
