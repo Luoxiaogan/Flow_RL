@@ -424,6 +424,10 @@ class WorkflowExecutionLogger:
         sys.stdout = self.original_stdout
         sys.stderr = self.original_stderr
         
+        # ✅ 关键修复：清理TeeOutput引用，防止内存泄漏
+        self.tee_stdout = None
+        self.tee_stderr = None
+        
         # 关闭日志文件
         if self.log_file:
             self.log_file.close()
@@ -495,6 +499,10 @@ class IndividualTestCaseLogger:
         if self.original_stderr:
             sys.stderr = self.original_stderr
         
+        # ✅ 关键修复：清理SimpleTeeOutput引用，防止内存泄漏
+        self.tee_stdout = None
+        self.tee_stderr = None
+        
         # 安全关闭日志文件
         if self.log_file and not self.log_file.closed:
             try:
@@ -513,6 +521,7 @@ class SimpleTeeOutput:
         object.__setattr__(self, '_closed', False)
         object.__setattr__(self, '_error_count', 0)
         object.__setattr__(self, '_initialized', True)  # 标记初始化完成
+        object.__setattr__(self, '_lock', threading.RLock())  # 添加线程锁保护
     
     def __getattr__(self, name):
         """捕获所有属性访问失败的情况，提供默认值"""
@@ -543,6 +552,24 @@ class SimpleTeeOutput:
     
     def write(self, message):
         """安全写入到终端和文件"""
+        # 尝试获取锁，如果锁不存在则创建一个
+        try:
+            lock = getattr(self, '_lock', None)
+            if lock is None:
+                lock = threading.RLock()
+                object.__setattr__(self, '_lock', lock)
+        except:
+            lock = None
+        
+        # 使用锁保护写操作（如果锁可用）
+        if lock:
+            with lock:
+                return self._do_write(message)
+        else:
+            return self._do_write(message)
+    
+    def _do_write(self, message):
+        """实际的写操作逻辑"""
         # 根据SILENT设置决定是否写到终端
         if not SILENT:
             try:
@@ -650,6 +677,34 @@ class SimpleTeeOutput:
         except Exception:
             pass
         return -1
+    
+    def close(self):
+        """显式关闭方法 - 安全清理资源"""
+        try:
+            # 标记为已关闭
+            object.__setattr__(self, '_closed', True)
+            
+            # 尝试关闭文件句柄
+            file_handle = getattr(self, '_file_handle', None)
+            if file_handle and hasattr(file_handle, 'close'):
+                try:
+                    if hasattr(file_handle, 'closed'):
+                        if not file_handle.closed:
+                            file_handle.close()
+                    else:
+                        file_handle.close()
+                except:
+                    pass
+        except:
+            pass
+    
+    def __del__(self):
+        """析构方法 - 最后的资源清理防线"""
+        try:
+            # 确保文件句柄被关闭
+            self.close()
+        except:
+            pass  # 绝对不能在__del__中抛出异常
 
 
 class WorkflowExecutionManager:
