@@ -101,7 +101,7 @@ def calculate_params_for_rank(rank, hidden_size, intermediate_size, num_layers, 
 if __name__ == "__main__":
     # Qwen3-8B 配置
     calculate_lora_params(
-        model_name="Qwen3-8B",
+        model_name="/nas/models/Qwen3-8B",
         lora_rank=8,
         lora_target="all",
         hidden_size=4096,
