@@ -86,3 +86,7 @@ LPT[1-9]
 llama_factory_qwen3_thinking_lora/sft_output/
 /nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/Merged_weight/
 /nas/ganluo/Flow_RL/rl_out/checkpoints/
+llama_factory_qwen3_thinking_lora/local_save/rank_8/
+llama_factory_qwen3_thinking_lora/local_save/rank_16/
+llama_factory_qwen3_thinking_lora/local_save/*.zip
+llama_factory_qwen3_thinking_lora/local_save/*.jsonl
