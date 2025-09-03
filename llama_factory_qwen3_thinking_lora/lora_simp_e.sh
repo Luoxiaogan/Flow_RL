@@ -84,19 +84,25 @@ fi
 # ========================================
 # 3. 创建输出目录
 # ========================================
-# 从配置文件提取输出目录（替换 ${TIMESTAMP} 变量）
-# OUTPUT_DIR=$(grep "output_dir:" "$CONFIG_FILE" | sed "s/.*output_dir: *//" | sed "s/\${TIMESTAMP}/$TIMESTAMP/g")
-OUTPUT_DIR=$(grep -m1 '^output_dir:' "$CONFIG_FILE" \
+# 创建临时配置文件，替换 ${TIMESTAMP}
+TEMP_CONFIG="/tmp/qwen3_lora_config_${TIMESTAMP}.yaml"
+sed "s/\${TIMESTAMP}/$TIMESTAMP/g" "$CONFIG_FILE" > "$TEMP_CONFIG"
+
+# 从临时配置文件提取输出目录
+OUTPUT_DIR=$(grep -m1 '^output_dir:' "$TEMP_CONFIG" \
   | sed -E 's/^output_dir:[[:space:]]*//' \
-  | sed "s/\${TIMESTAMP}/$TIMESTAMP/g" \
   | tr -d '\r\n' \
   | xargs)
 echo "输出目录: $OUTPUT_DIR"
 
 mkdir -p "$OUTPUT_DIR"
 
-# 复制配置文件到输出目录（用于记录）
-cp "$CONFIG_FILE" "$OUTPUT_DIR/training_config.yaml"
+# 复制原始和处理后的配置文件到输出目录（用于记录）
+cp "$CONFIG_FILE" "$OUTPUT_DIR/training_config_original.yaml"
+cp "$TEMP_CONFIG" "$OUTPUT_DIR/training_config.yaml"
+
+# 更新 CONFIG_FILE 为临时文件
+CONFIG_FILE="$TEMP_CONFIG"
 
 # ========================================
 # 4. 检测实际使用的 Template
@@ -150,4 +156,11 @@ if ls "$OUTPUT_DIR"/generation_samples*.jsonl 1> /dev/null 2>&1; then
         line_count=$(wc -l < "$file")
         echo "  - $(basename "$file"): $line_count 条记录"
     done
+fi
+
+# 清理临时文件
+if [ -f "$TEMP_CONFIG" ]; then
+    rm "$TEMP_CONFIG"
+    echo ""
+    echo "已清理临时配置文件"
 fi
