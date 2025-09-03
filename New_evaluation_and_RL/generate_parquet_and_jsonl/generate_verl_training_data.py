@@ -190,24 +190,24 @@ class VerlTrainingDataGenerator:
                 if handler_dir.startswith(scoreflow_root):
                     # Remove scoreflow_root prefix and leading slash
                     relative_path = handler_dir[len(scoreflow_root):].lstrip('/')
-                    conditions_path = relative_path.replace('/', '.') + '.conditions'
+                    conditions_path = relative_path.replace('/', '.') + '.conditions_simp'
                 else:
                     # Fallback: extract ScoreFlow part from absolute path
                     if handler_dir.startswith('/'):
                         scoreflow_index = handler_dir.find('ScoreFlow')
                         if scoreflow_index != -1:
                             relative_path = handler_dir[scoreflow_index:]
-                            conditions_path = relative_path.replace('/', '.') + '.conditions'
+                            conditions_path = relative_path.replace('/', '.') + '.conditions_simp'
                         else:
                             raise ValueError(f"Cannot find ScoreFlow in handler_dir: {handler_dir}")
                     else:
-                        conditions_path = handler_dir.replace('/', '.') + '.conditions'
+                        conditions_path = handler_dir.replace('/', '.') + '.conditions_simp'
             else:
                 # Fallback to default naming rules
                 if benchmark_name.startswith("high_level_math"):
-                    conditions_path = "ScoreFlow.scripts.high_level_math.conditions"
+                    conditions_path = "ScoreFlow.scripts.high_level_math.conditions_simp"
                 else:
-                    conditions_path = f"ScoreFlow.scripts.{benchmark_name}.conditions"
+                    conditions_path = f"ScoreFlow.scripts.{benchmark_name}.conditions_simp"
             
             # Import conditions module
             conditions_module = importlib.import_module(conditions_path)
