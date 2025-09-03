@@ -340,7 +340,7 @@ def main():
     app.run(
         host=args.host,
         port=args.port,
-        debug=False,  # 强制关闭Flask debug模式，避免开发服务器的调试输出
+        debug=True,  # 强制关闭Flask debug模式，避免开发服务器的调试输出
         threaded=True
     )
 

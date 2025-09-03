@@ -21,7 +21,7 @@ cd "$SCRIPT_DIR"
 echo "检查 LLaMA-Factory 补丁状态..."
 
 # 尝试找到 llamafactory 安装位置
-LLAMA_FACTORY_PATH=$(python -c "import llamafactory; import os; print(os.path.dirname(llamafactory.__file__))" 2>/dev/null)
+LLAMA_FACTORY_PATH=$(python -c "import llamafactory; import os; print(os.path.dirname(llamafactory.__file__))" 2>/dev/null | tail -n 1)
 
 if [ -z "$LLAMA_FACTORY_PATH" ]; then
     echo "错误: 未找到 LLaMA-Factory 安装"

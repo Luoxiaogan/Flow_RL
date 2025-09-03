@@ -1,0 +1,24 @@
+[2025-09-03 03:06:06,730] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-09-03 03:06:07,757] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/jieba/_compat.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+INFO 09-03 03:06:09 [importing.py:53] Triton module has been replaced with a placeholder.
+INFO 09-03 03:06:09 [__init__.py:239] Automatically detected platform cuda.
+Traceback (most recent call last):
+  File "/root/miniforge3/envs/wf_rl/bin/llamafactory-cli", line 8, in <module>
+    sys.exit(main())
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/llamafactory/cli.py", line 151, in main
+    COMMAND_MAP[command]()
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/llamafactory/train/tuner.py", line 110, in run_exp
+    _training_function(config={"args": args, "callbacks": callbacks})
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/llamafactory/train/tuner.py", line 55, in _training_function
+    model_args, data_args, training_args, finetuning_args, generating_args = get_train_args(args)
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/llamafactory/hparams/parser.py", line 208, in get_train_args
+    model_args, data_args, training_args, finetuning_args, generating_args = _parse_train_args(args)
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/llamafactory/hparams/parser.py", line 186, in _parse_train_args
+    return _parse_args(parser, args, allow_extra_keys=allow_extra_keys)
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/llamafactory/hparams/parser.py", line 80, in _parse_args
+    return parser.parse_dict(args, allow_extra_keys=allow_extra_keys)
+  File "/root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/transformers/hf_argparser.py", line 396, in parse_dict
+    raise ValueError(f"Some keys are not used by the HfArgumentParser: {sorted(unused_keys)}")
+ValueError: Some keys are not used by the HfArgumentParser: ['--output_dir', '/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/sft_output/Qwen3-8B_lora/train_with_generation_20250903_030535\ntrue']
