@@ -85,7 +85,12 @@ fi
 # 3. 创建输出目录
 # ========================================
 # 从配置文件提取输出目录（替换 ${TIMESTAMP} 变量）
-OUTPUT_DIR=$(grep "output_dir:" "$CONFIG_FILE" | sed "s/.*output_dir: *//" | sed "s/\${TIMESTAMP}/$TIMESTAMP/g")
+# OUTPUT_DIR=$(grep "output_dir:" "$CONFIG_FILE" | sed "s/.*output_dir: *//" | sed "s/\${TIMESTAMP}/$TIMESTAMP/g")
+OUTPUT_DIR=$(grep -m1 '^output_dir:' "$CONFIG_FILE" \
+  | sed -E 's/^output_dir:[[:space:]]*//' \
+  | sed "s/\${TIMESTAMP}/$TIMESTAMP/g" \
+  | tr -d '\r\n' \
+  | xargs)
 echo "输出目录: $OUTPUT_DIR"
 
 mkdir -p "$OUTPUT_DIR"
@@ -123,9 +128,8 @@ echo "========================================"
 echo ""
 
 # 使用 llamafactory-cli 启动训练
-llamafactory-cli train "$CONFIG_FILE" \
-    --output_dir "$OUTPUT_DIR" \
-    2>&1 | tee "$OUTPUT_DIR/training.log"
+llamafactory-cli train "$CONFIG_FILE" 2>&1 | tee "$OUTPUT_DIR/training.log"
+
 
 # ========================================
 # 5. 训练完成后处理

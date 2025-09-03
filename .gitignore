@@ -82,3 +82,5 @@ com[1-9]
 COM[1-9]
 lpt[1-9]
 LPT[1-9]
+
+llama_factory_qwen3_thinking_lora/sft_output/
