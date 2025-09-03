@@ -505,96 +505,138 @@ class IndividualTestCaseLogger:
 
 
 class SimpleTeeOutput:
-    """简化的双向输出类 - 用于独立日志（增强版，防止属性丢失）"""
+    """简化的双向输出类 - 超级防御版，处理所有属性丢失情况"""
     def __init__(self, terminal, file_handle):
-        self.terminal = terminal
-        self._file_handle = file_handle  # 使用私有属性防止意外覆盖
-        self._closed = False  # 标记文件是否已关闭
-        self._error_count = 0  # 错误计数器
+        # 使用object.__setattr__确保属性设置成功，避免被覆盖
+        object.__setattr__(self, 'terminal', terminal)
+        object.__setattr__(self, '_file_handle', file_handle)
+        object.__setattr__(self, '_closed', False)
+        object.__setattr__(self, '_error_count', 0)
+        object.__setattr__(self, '_initialized', True)  # 标记初始化完成
+    
+    def __getattr__(self, name):
+        """捕获所有属性访问失败的情况，提供默认值"""
+        # 提供所有可能丢失属性的默认值
+        if name == '_initialized':
+            return False
+        if name == '_closed':
+            return True  # 默认为已关闭，停止文件写入
+        if name == '_error_count':
+            return 0
+        if name == '_file_handle':
+            return None
+        if name == 'terminal':
+            # 返回标准输出作为备用
+            return sys.__stdout__ if hasattr(sys, '__stdout__') else None
+        # 其他未知属性
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
     
     @property
     def file_handle(self):
-        """安全访问file_handle属性，防止AttributeError"""
-        # 防御性编程：确保属性存在
-        if not hasattr(self, '_file_handle'):
-            # 属性丢失时的恢复机制
-            self._file_handle = None
-            self._closed = True
-            if self._error_count == 0:
-                # 只记录第一次错误
-                logger.warning("SimpleTeeOutput: file_handle attribute lost, degrading to terminal-only mode")
-            self._error_count += 1
-        return self._file_handle
+        """完全防御性的file_handle访问"""
+        try:
+            # 尝试正常访问
+            return self._file_handle if hasattr(self, '_file_handle') else None
+        except AttributeError:
+            # 如果仍然失败，返回None
+            return None
     
     def write(self, message):
         """安全写入到终端和文件"""
         # 根据SILENT设置决定是否写到终端
         if not SILENT:
             try:
-                # 增加hasattr检查
-                if hasattr(self, 'terminal') and self.terminal:
-                    self.terminal.write(message)
-                    self.terminal.flush()
+                # 获取terminal，使用__getattr__提供的默认值
+                terminal = getattr(self, 'terminal', None)
+                if terminal:
+                    terminal.write(message)
+                    terminal.flush()
             except Exception:
                 pass
         
-        # 始终尝试写入文件（增强错误处理）
+        # 始终尝试写入文件（超级防御性错误处理）
         try:
             # 使用property安全访问file_handle
             file_handle = self.file_handle
-            if file_handle and not self._closed:
+            # 安全获取_closed属性
+            is_closed = getattr(self, '_closed', True)
+            
+            if file_handle and not is_closed:
                 # 三重检查：属性存在、不为None、文件未关闭
                 if hasattr(file_handle, 'closed'):
                     if not file_handle.closed:
                         file_handle.write(message)
                         file_handle.flush()
                     else:
-                        self._closed = True
+                        # 尝试设置_closed标志
+                        try:
+                            object.__setattr__(self, '_closed', True)
+                        except:
+                            pass
                 else:
                     # file_handle没有closed属性，尝试直接写入
                     file_handle.write(message)
                     file_handle.flush()
         except (ValueError, OSError, AttributeError) as e:
-            # 发生任何文件相关错误时，标记为已关闭
-            self._closed = True
-            if self._error_count < 5:  # 限制错误日志数量
-                logger.debug(f"SimpleTeeOutput write error (count={self._error_count}): {type(e).__name__}")
-                self._error_count += 1
+            # 发生任何文件相关错误时，尝试标记为已关闭
+            try:
+                object.__setattr__(self, '_closed', True)
+                error_count = getattr(self, '_error_count', 0)
+                if error_count < 5:  # 限制错误日志数量
+                    logger.debug(f"SimpleTeeOutput write error (count={error_count}): {type(e).__name__}")
+                    object.__setattr__(self, '_error_count', error_count + 1)
+            except:
+                pass  # 即使设置属性失败也不崩溃
         except Exception:
             # 捕获所有其他异常，确保不会崩溃
-            self._closed = True
-            pass
+            try:
+                object.__setattr__(self, '_closed', True)
+            except:
+                pass
         
         return len(message) if message else 0
     
     def flush(self):
         """安全刷新缓冲区"""
         try:
-            if hasattr(self, 'terminal') and self.terminal:
-                self.terminal.flush()
+            # 安全获取terminal
+            terminal = getattr(self, 'terminal', None)
+            if terminal:
+                terminal.flush()
         except Exception:
             pass
         
         try:
             # 使用property安全访问
             file_handle = self.file_handle
-            if file_handle and not self._closed:
+            # 安全获取_closed属性
+            is_closed = getattr(self, '_closed', True)
+            
+            if file_handle and not is_closed:
                 if hasattr(file_handle, 'closed'):
                     if not file_handle.closed:
                         file_handle.flush()
                 else:
                     file_handle.flush()
         except (ValueError, OSError, AttributeError):
-            self._closed = True
+            # 尝试标记为已关闭
+            try:
+                object.__setattr__(self, '_closed', True)
+            except:
+                pass
         except Exception:
-            self._closed = True
-            pass
+            # 尝试标记为已关闭
+            try:
+                object.__setattr__(self, '_closed', True)
+            except:
+                pass
     
     def isatty(self):
         """检查是否是终端"""
         try:
-            if hasattr(self, 'terminal') and self.terminal:
-                return self.terminal.isatty()
+            terminal = getattr(self, 'terminal', None)
+            if terminal:
+                return terminal.isatty()
         except Exception:
             pass
         return False
@@ -602,8 +644,9 @@ class SimpleTeeOutput:
     def fileno(self):
         """返回文件描述符"""
         try:
-            if hasattr(self, 'terminal') and self.terminal:
-                return self.terminal.fileno()
+            terminal = getattr(self, 'terminal', None)
+            if terminal:
+                return terminal.fileno()
         except Exception:
             pass
         return -1
