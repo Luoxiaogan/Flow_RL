@@ -10,6 +10,7 @@ import logging
 from typing import List, Dict, Any, Optional, Union
 
 from .model_interface import BaseModelInterface
+from .api_connection_pool import APIConnectionPool
 
 logger = logging.getLogger(__name__)
 
@@ -197,7 +198,7 @@ class APIModelInterface(BaseModelInterface):
     
     async def _make_api_request(self, endpoint: str, api_key: str, request_data: dict) -> dict:
         """
-        Make API request
+        Make API request using connection pool
         
         Args:
             endpoint: API endpoint URL
@@ -220,25 +221,34 @@ class APIModelInterface(BaseModelInterface):
         # Determine URL based on API type
         if self.api_type == 'openai':
             url = f"{endpoint}/v1/chat/completions"
+            session_key = 'openai'
         elif self.api_type == 'azure':
             # Azure OpenAI has different URL structure
             url = f"{endpoint}/openai/deployments/{self.model}/chat/completions?api-version=2023-05-15"
             headers['api-key'] = api_key
             del headers['Authorization']
+            session_key = 'azure'
         else:
             # Custom API - assume OpenAI-compatible
             url = f"{endpoint}/v1/chat/completions"
+            session_key = f'custom_{endpoint.replace("://", "_").replace("/", "_")}'
         
-        # Make request
-        timeout = aiohttp.ClientTimeout(total=self.timeout)
+        # Get session from pool
+        session = await APIConnectionPool.get_session(
+            key=session_key,
+            timeout=self.timeout
+        )
         
-        async with aiohttp.ClientSession(timeout=timeout) as session:
+        # Make request using pooled session
+        try:
             async with session.post(url, json=request_data, headers=headers) as response:
                 if response.status == 200:
                     return await response.json()
                 else:
                     error_text = await response.text()
                     raise RuntimeError(f"API error {response.status}: {error_text}")
+        except asyncio.TimeoutError:
+            raise RuntimeError(f"API request timeout after {self.timeout} seconds")
     
     async def cleanup(self):
         """

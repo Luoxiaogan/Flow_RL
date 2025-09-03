@@ -13,6 +13,9 @@ from .model_factory import ModelFactory
 from .reward_server_checker import RewardServerChecker
 from .score_collector import ScoreCollector
 from .report_generator import ReportGenerator
+from .resource_manager import ModelResourceManager, GlobalResourceTracker
+from .config_validator import ConfigValidator
+from .api_connection_pool import APIConnectionPool
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +77,26 @@ class UnifiedBatchEvaluator:
         
         # Step 1: Validate all configurations
         logger.info("验证模型配置...")
+        
+        # Validate overall config structure
+        full_config = {
+            'test_data': {'path': str(self.test_data_path), 'max_samples': self.max_samples},
+            'reward_server': {'url': self.reward_server_url},
+            'evaluation': {
+                'batch_size': self.eval_batch_size,
+                'output_dir': str(self.output_dir),
+                'save_intermediate': self.save_intermediate
+            },
+            'models': model_configs
+        }
+        
+        validation_errors = ConfigValidator.validate_config(full_config, strict=False)
+        if validation_errors:
+            logger.warning(f"配置验证发现 {len(validation_errors)} 个警告")
+            for error in validation_errors:
+                logger.warning(f"  - {error}")
+        
+        # Also validate individual model configs with factory
         for config in model_configs:
             try:
                 ModelFactory.validate_config(config)
@@ -161,6 +184,9 @@ class UnifiedBatchEvaluator:
         # Summary
         self._print_summary(successful_models, failed_models, total_time)
         
+        # Clean up any remaining resources
+        await self._cleanup_resources()
+        
         return {
             'model_reports': self.model_reports,
             'comparison': comparison,
@@ -170,9 +196,26 @@ class UnifiedBatchEvaluator:
             'output_dir': str(self.output_dir)
         }
     
+    async def _cleanup_resources(self):
+        """
+        Clean up all resources (models and API connections)
+        """
+        logger.info("清理资源...")
+        
+        # Clean up any remaining models
+        active_count = GlobalResourceTracker.get_active_count()
+        if active_count > 0:
+            logger.warning(f"发现 {active_count} 个未清理的模型，正在清理...")
+            await GlobalResourceTracker.cleanup_all()
+        
+        # Clean up API connection pool
+        await APIConnectionPool.cleanup()
+        
+        logger.info("资源清理完成")
+    
     async def _evaluate_single_model(self, model_config: Dict[str, Any]) -> Dict:
         """
-        Evaluate a single model (local or API)
+        Evaluate a single model (local or API) with resource management
         
         Args:
             model_config: Model configuration
@@ -183,69 +226,70 @@ class UnifiedBatchEvaluator:
         model_name = model_config.get('name', 'unnamed')
         
         # Create model interface using factory
-        model = ModelFactory.create_model(model_config)
+        model_interface = ModelFactory.create_model(model_config)
         
-        try:
-            # Initialize model
-            logger.info(f"[{model_name}] 初始化模型...")
-            await model.initialize()
-            
-            # Generate solutions
-            logger.info(f"[{model_name}] 生成解决方案...")
-            solutions = []
-            
-            # Process in batches for progress display
-            batch_size = self.eval_batch_size
-            total_batches = (len(self.test_samples) + batch_size - 1) // batch_size
-            
-            for i in tqdm(range(0, len(self.test_samples), batch_size),
-                         desc=f"[{model_name}] 生成",
-                         total=total_batches):
-                batch = self.test_samples[i:i + batch_size]
+        # Use resource manager to ensure cleanup
+        async with ModelResourceManager(model_interface) as model:
+            try:
+                # Register with global tracker
+                await GlobalResourceTracker.register(model)
                 
-                # Generate for each sample in batch
-                batch_solutions = []
-                for sample in batch:
-                    try:
-                        # Get generation parameters
-                        gen_params = model_config.get('generation_params', {})
-                        
-                        # Generate solution
-                        solution = await model.generate_solution(sample, **gen_params)
-                        batch_solutions.append(solution)
-                        
-                    except Exception as e:
-                        logger.warning(f"[{model_name}] 生成失败: {e}")
-                        batch_solutions.append("")  # Empty solution for failed generation
+                # Generate solutions
+                logger.info(f"[{model_name}] 生成解决方案...")
+                solutions = []
                 
-                solutions.extend(batch_solutions)
+                # Process in batches for progress display
+                batch_size = self.eval_batch_size
+                total_batches = (len(self.test_samples) + batch_size - 1) // batch_size
                 
-                # Brief pause to avoid overwhelming API
-                if model_config.get('type') == 'api':
-                    await asyncio.sleep(0.1)
-            
-            # Evaluate solutions
-            logger.info(f"[{model_name}] 计算评估分数...")
-            scores = await self.score_collector.batch_evaluate(
-                self.test_samples,
-                solutions,
-                batch_size=self.eval_batch_size,
-                model_name=model_name
-            )
-            
-            # Generate report
-            logger.info(f"[{model_name}] 生成评估报告...")
-            report = await self.report_generator.generate_model_report(
-                scores,
-                model_config,
-                self.test_samples
-            )
-            
-            return report
-            
-        finally:
-            # Clean up model resources
-            await model.cleanup()
+                for i in tqdm(range(0, len(self.test_samples), batch_size),
+                             desc=f"[{model_name}] 生成",
+                             total=total_batches):
+                    batch = self.test_samples[i:i + batch_size]
+                    
+                    # Generate for each sample in batch
+                    batch_solutions = []
+                    for sample in batch:
+                        try:
+                            # Get generation parameters
+                            gen_params = model_config.get('generation_params', {})
+                            
+                            # Generate solution
+                            solution = await model.generate_solution(sample, **gen_params)
+                            batch_solutions.append(solution)
+                            
+                        except Exception as e:
+                            logger.warning(f"[{model_name}] 生成失败: {e}")
+                            batch_solutions.append("")  # Empty solution for failed generation
+                    
+                    solutions.extend(batch_solutions)
+                    
+                    # Brief pause to avoid overwhelming API
+                    if model_config.get('type') == 'api':
+                        await asyncio.sleep(0.1)
+                
+                # Evaluate solutions
+                logger.info(f"[{model_name}] 计算评估分数...")
+                scores = await self.score_collector.batch_evaluate(
+                    self.test_samples,
+                    solutions,
+                    batch_size=self.eval_batch_size,
+                    model_name=model_name
+                )
+                
+                # Generate report
+                logger.info(f"[{model_name}] 生成评估报告...")
+                report = await self.report_generator.generate_model_report(
+                    scores,
+                    model_config,
+                    self.test_samples
+                )
+                
+                return report
+                
+            finally:
+                # Unregister from global tracker
+                await GlobalResourceTracker.unregister(model)
     
     def _load_test_data(self) -> List[Dict]:
         """
