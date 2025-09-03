@@ -16,7 +16,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   data.filter_overlong_prompts_workers=4 \
   data.dataloader_num_workers=4 \
   data.shuffle=true \
-  ++actor_rollout_ref.model.path=/nas/models/Qwen3-8B \
+  ++actor_rollout_ref.model.path=/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/Merged_weight/Qwen3-8B/rank_8_epoch_2 \
   ++actor_rollout_ref.model.trust_remote_code=true \
   ++actor_rollout_ref.model.enable_gradient_checkpointing=true \
   ++actor_rollout_ref.actor.ppo_mini_batch_size=16 \
@@ -61,7 +61,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   trainer.save_freq=100 \
   trainer.test_freq=5 \
   trainer.critic_warmup=0 \
-  trainer.project_name=verl_qwen3_thinking \
+  trainer.project_name=qwen3_rl_sfter_sft \
   trainer.experiment_name=qwen3_8b_with_thinking \
   trainer.logger='["console","wandb"]' \
   trainer.default_local_dir=/nas/ganluo/Flow_RL/rl_out/checkpoints

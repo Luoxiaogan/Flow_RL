@@ -84,3 +84,5 @@ lpt[1-9]
 LPT[1-9]
 
 llama_factory_qwen3_thinking_lora/sft_output/
+/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/Merged_weight/
+/nas/ganluo/Flow_RL/rl_out/checkpoints/
