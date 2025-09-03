@@ -9,10 +9,10 @@ from typing import List, Dict, Any, Optional, Union
 from datetime import datetime
 import torch
 
-from .reward_server_checker import RewardServerChecker
+from ..utils.reward_server_checker import RewardServerChecker
 from .model_evaluator import ModelEvaluator
-from .score_collector import ScoreCollector
-from .report_generator import ReportGenerator
+from ..utils.score_collector import ScoreCollector
+from ..utils.report_generator import ReportGenerator
 
 logger = logging.getLogger(__name__)
 

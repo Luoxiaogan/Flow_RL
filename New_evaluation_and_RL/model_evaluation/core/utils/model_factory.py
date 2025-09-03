@@ -5,9 +5,9 @@ import logging
 from typing import Dict, Any
 from pathlib import Path
 
-from .model_interface import BaseModelInterface
-from .local_model_interface import LocalModelInterface
-from .api_model_interface import APIModelInterface
+from ..interfaces.model_interface import BaseModelInterface
+from ..interfaces.local_model_interface import LocalModelInterface
+from ..interfaces.api_model_interface import APIModelInterface
 
 logger = logging.getLogger(__name__)
 

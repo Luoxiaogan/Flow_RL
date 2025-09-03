@@ -8,10 +8,10 @@ services:
   metagpt_api_proxy:    # MetaGPT operator执行时使用的API代理
     enabled: true
     host: "localhost"
-    port: 5009
+    port: 5019
     target_url: "https://idealab.alibaba-inc.com/api/openai/v1/chat/completions"
     # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    target_api_key: "956c41bd0f31beaf68b871d4987af4bb"  # 目标API的密钥
+    target_api_key: "81e9da25d75e14edcf835e4145fba534"  # 目标API的密钥
     rate_per_second: 3      # 每秒分发请求数（支持小数，如0.2表示5秒一个请求）
     debug: false            # true: 显示所有请求详情, false: 仅显示进度条和错误
     

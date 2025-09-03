@@ -10,7 +10,7 @@ import logging
 from typing import List, Dict, Any, Optional, Union
 
 from .model_interface import BaseModelInterface
-from .api_connection_pool import APIConnectionPool
+from ..utils.api_connection_pool import APIConnectionPool
 
 logger = logging.getLogger(__name__)
 

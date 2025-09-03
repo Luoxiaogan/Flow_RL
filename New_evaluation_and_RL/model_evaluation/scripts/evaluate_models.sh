@@ -31,7 +31,7 @@ else
 fi
 
 # Parse arguments
-CONFIG_FILE="evaluation_config.yaml"
+CONFIG_FILE="../configs/evaluation_config.yaml"
 MAX_SAMPLES=""
 OUTPUT_DIR=""
 BATCH_SIZE=""
@@ -63,7 +63,7 @@ while [[ $# -gt 0 ]]; do
             echo "使用方法: $0 [选项]"
             echo ""
             echo "选项:"
-            echo "  -c, --config FILE      配置文件 (默认: evaluation_config.yaml)"
+            echo "  -c, --config FILE      配置文件 (默认: ../configs/evaluation_config.yaml)"
             echo "  -n, --max-samples N    最大评估样本数"
             echo "  -o, --output-dir DIR   输出目录"
             echo "  -b, --batch-size N     批处理大小"

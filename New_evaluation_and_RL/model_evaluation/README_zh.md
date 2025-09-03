@@ -1,270 +1,345 @@
-# 模型评估模块
+# 模型评估框架
 
-一个全面的批量模型评估系统，用于测试多个模型在workflow生成任务上的表现并生成对比报告。
+用于评估本地和API语言模型在各种基准测试上性能的综合框架。
 
-## 🌟 功能特点
+**📁 重构目录组织**: 该模块已重新组织，清晰分离配置、脚本和核心功能，提升可维护性。
 
-- **批量评估**：在同一数据集上测试多个模型
-- **异步处理**：高效的并发评估与内存管理
-- **全面报告**：支持JSON、Markdown、CSV格式，包含对比图表
-- **灵活配置**：基于YAML的配置，支持参数覆盖
-- **错误处理**：优雅处理模型失败情况
-- **内存管理**：模型间自动清理GPU缓存
+## 📁 目录结构
+
+```
+model_evaluation/
+├── configs/                    # 配置文件
+│   ├── evaluation_config.yaml  # 单模型评估配置  
+│   ├── example_config.yaml     # 示例配置模板
+│   └── models_config.yaml      # 批量评估模型配置
+├── scripts/                    # 可执行脚本和入口点
+│   ├── evaluate_all_models.sh  # 统一模型评估脚本 (Linux/macOS)
+│   ├── evaluate_all_models.bat # 统一模型评估脚本 (Windows)
+│   ├── evaluate_models.sh      # 传统批量评估脚本 (Linux/macOS) 
+│   ├── evaluate_models.bat     # 传统批量评估脚本 (Windows)
+│   ├── run_evaluation.py       # 单模型评估入口
+│   └── run_unified_evaluation.py # 统一评估入口
+├── core/                       # 按组件类型分类的核心功能
+│   ├── __init__.py
+│   ├── interfaces/             # 模型接口抽象
+│   │   ├── __init__.py
+│   │   ├── model_interface.py      # 所有模型的基础接口
+│   │   ├── local_model_interface.py # 本地模型实现
+│   │   └── api_model_interface.py   # API模型实现  
+│   ├── evaluators/             # 批量和统一评估逻辑
+│   │   ├── __init__.py
+│   │   ├── model_evaluator.py      # 核心评估逻辑
+│   │   ├── batch_evaluator.py      # 批量评估编排
+│   │   └── unified_batch_evaluator.py # 高级统一评估
+│   └── utils/                  # 支撑工具和助手
+│       ├── __init__.py
+│       ├── api_connection_pool.py  # API连接管理
+│       ├── config_validator.py     # 配置验证
+│       ├── model_factory.py        # 模型创建工厂
+│       ├── report_generator.py     # 结果报告和可视化
+│       ├── resource_manager.py     # GPU资源管理
+│       ├── reward_server_checker.py # Reward服务器健康检查
+│       └── score_collector.py      # 分数收集和处理
+└── __init__.py                 # 主模块入口 (向后兼容)
+```
 
 ## 🚀 快速开始
 
-### 1. 前置条件
+### 前置条件
 
+1. **环境设置**
+   ```bash
+   # Linux/macOS
+   source /opt/anaconda3/etc/profile.d/conda.sh
+   conda activate workflow
+   
+   # Windows
+   conda activate workflow
+   ```
+
+2. **所需依赖**
+   ```bash
+   pip install torch transformers aiohttp peft bitsandbytes pandas matplotlib seaborn tqdm pyyaml
+   ```
+
+3. **启动Reward服务器** (必需)
+   ```bash
+   # Linux/macOS/WSL
+   bash ../servers_and_proxy/start_scoreflow_reward.sh
+   
+   # Windows
+   ..\servers_and_proxy\start_scoreflow_reward.bat
+   ```
+
+### 使用示例
+
+#### 1. 统一模型评估 (推荐)
+
+**Linux/macOS:**
 ```bash
-# 激活conda环境
-source /opt/anaconda3/etc/profile.d/conda.sh && conda activate workflow
-
-# 启动reward服务器（必需）
-bash ../servers_and_proxy/start_scoreflow_reward.sh
+cd scripts/
+./evaluate_all_models.sh
 ```
 
-### 2. 基本使用
-
-```bash
-# 使用默认配置运行
-bash evaluate_models.sh
-
-# 快速测试（10个样本）
-bash evaluate_models.sh -n 10 -y
-
-# 使用自定义配置
-bash evaluate_models.sh -c example_config.yaml
+**Windows:**
+```batch
+cd scripts
+evaluate_all_models.bat
 ```
 
-### 3. Python API
+**带参数使用:**
+```bash
+# Linux/macOS
+./evaluate_all_models.sh -c ../configs/models_config.yaml -n 100 -o ../results -f api
 
-```python
-import asyncio
-from model_evaluation import BatchModelEvaluator
+# Windows  
+evaluate_all_models.bat -c ..\configs\models_config.yaml -n 100 -o ..\results -f api
+```
 
-# 配置
-config = {
-    'test_data_path': 'test_data.jsonl',
-    'reward_server_url': 'http://localhost:8899',
-    'output_dir': 'evaluation_reports',
-    'eval_batch_size': 8,
-    'max_samples': 100
-}
+#### 2. 单模型评估
 
-# 模型列表
-models = [
-    {'name': 'Model-1', 'path': 'path/to/model1'},
-    {'name': 'Model-2', 'path': 'path/to/model2'}
-]
+```bash
+cd scripts/
+python run_evaluation.py --config ../configs/evaluation_config.yaml --max-samples 50
+```
 
-# 运行评估
-evaluator = BatchModelEvaluator(config)
-results = asyncio.run(evaluator.evaluate_models(models))
+#### 3. 自定义统一评估
+
+```bash
+cd scripts/
+python run_unified_evaluation.py --config ../configs/models_config.yaml --batch-size 4
 ```
 
 ## ⚙️ 配置说明
 
-### 主配置文件
-
-编辑 `evaluation_config.yaml`：
+### 统一模型配置 (`configs/models_config.yaml`)
 
 ```yaml
-test_data:
-  path: "path/to/test_data.jsonl"
-  max_samples: null  # null表示使用所有样本
-
-reward_server:
-  url: "http://localhost:8899"
+models:
+  # 本地模型
+  - name: "llama-3-8b-instruct" 
+    type: "local"
+    model_path: "/path/to/model"
+    load_in_4bit: true
+    generation_params:
+      max_new_tokens: 4096
+      temperature: 0.7
+    
+  # API模型  
+  - name: "gpt-4"
+    type: "api"
+    api_base: "https://api.openai.com/v1"
+    api_key: "${OPENAI_API_KEY}"
+    model: "gpt-4"
+    generation_params:
+      max_new_tokens: 4096
+      temperature: 0.8
 
 evaluation:
-  batch_size: 8
-  output_dir: "./evaluation_reports"
+  benchmark: "gsm8k"          # gsm8k, mbpp, hotpotqa, 等
+  max_samples: 100            # 测试样本数量 
+  batch_size: 4               # 处理批次大小
+  timeout: 180                # 每次评估超时时间 (秒)
+  
+output:
+  save_results: true
+  output_dir: "./evaluation_results"
+  generate_report: true
+  save_detailed_csv: true
+```
+
+### 单模型配置 (`configs/evaluation_config.yaml`)
+
+```yaml
+model:
+  name: "test-model"
+  type: "local"              # 或 "api"
+  model_path: "/path/to/model"
   generation_params:
     max_new_tokens: 4096
     temperature: 0.7
-    top_p: 0.9
-
-models:
-  - name: "模型名称"
-    path: "模型路径"
-    type: "huggingface"  # 或 "checkpoint", "local"
-    generation_params:  # 可选的参数覆盖
-      temperature: 0.8
+    
+evaluation:
+  benchmark: "gsm8k" 
+  max_samples: 50
+  batch_size: 2
+  
+output:
+  output_dir: "./results"
+  generate_charts: true
 ```
 
-### 模型类型
+## 📊 命令行选项
 
-- **huggingface**：来自HuggingFace Hub的模型
-- **checkpoint**：本地微调的检查点
-- **local**：本地模型目录
-
-## 📁 输出结构
-
-```
-evaluation_reports/
-├── model_*.json            # 单个模型报告
-├── model_*.md              # Markdown格式报告
-├── model_comparison.json   # 对比数据
-├── model_comparison.md     # 对比报告
-├── detailed_results.csv    # 详细CSV数据
-├── charts/
-│   ├── overall_scores.png  # 分数对比图
-│   └── benchmark_heatmap.png # 性能热力图
-└── evaluation_*.log        # 执行日志
-```
-
-## 📊 报告内容
-
-### 单个模型报告
-- 总体分数和成功率
-- 每个基准测试的性能指标
-- 统计分析（平均值、最大值、最小值、标准差）
-- 详细的错误追踪
-
-### 对比报告
-- 按总体分数的模型排名
-- 特定基准测试的对比
-- 最佳/最差模型识别
-- 便于对比的可视化图表
-
-## 🔧 命令行选项
+### 统一评估脚本选项
 
 ```bash
-run_evaluation.py [选项]
-
 选项:
-  --config, -c 文件      配置文件（默认：evaluation_config.yaml）
-  --test-data, -t 文件   测试数据文件（覆盖配置）
-  --max-samples, -n N    最大评估样本数
-  --output-dir, -o 目录  输出目录
-  --batch-size, -b N     批处理大小
-  --log-level, -l 级别   日志级别（DEBUG/INFO/WARNING/ERROR）
+  -c, --config FILE      模型配置文件 (默认: ../configs/models_config.yaml)
+  -n, --max-samples N    最大评估样本数
+  -o, --output-dir DIR   输出目录
+  -b, --batch-size N     批处理大小  
+  -f, --filter TYPE      过滤模型类型 (api/local/等)
+  -l, --limit N          限制评估的模型数量
+  -y, --yes              跳过确认提示
+  -h, --help             显示帮助信息
+```
+
+### 单模型评估选项
+
+```bash
+选项:
+  --config, -c           配置文件路径
+  --test-data, -t        测试数据文件路径  
+  --max-samples, -n      最大样本数量
+  --output-dir, -o       输出目录
+  --batch-size, -b       处理批次大小
+  --log-level, -l        日志级别 (DEBUG/INFO/WARNING/ERROR)
   --yes, -y              跳过确认提示
 ```
 
-## 🎯 高级用法
+## 🔧 架构特性
 
-### 自定义测试数据
+### 核心设计原则
 
-创建JSONL格式的测试数据：
+1. **关注点分离**: 配置、脚本和核心逻辑清晰分离
+2. **统一接口**: 本地和API模型的单一接口
+3. **资源管理**: 本地模型的智能GPU内存管理  
+4. **异步处理**: 高效并发评估与连接池
+5. **健康监控**: 自动Reward服务器健康检查
+6. **丰富报告**: 带可视化的综合评估报告
 
-```json
-{"data_source": "workflow_gsm8k", "prompt": [...], "reward_model": {...}}
-{"data_source": "workflow_mbpp", "prompt": [...], "reward_model": {...}}
+### 关键组件
+
+- **Interfaces**: 支持本地和API模型的抽象模型接口
+- **Evaluators**: 具有高级资源管理的批处理逻辑
+- **Utils**: 用于验证、报告和基础设施的支撑工具
+
+### 导入使用 (向后兼容)
+
+```python
+# 主要导入 - 完全向后兼容
+from model_evaluation import (
+    BatchModelEvaluator,
+    UnifiedBatchEvaluator, 
+    BaseModelInterface,
+    LocalModelInterface,
+    APIModelInterface,
+    ModelFactory,
+    RewardServerChecker,
+    ScoreCollector
+)
+
+# 从组织结构直接导入
+from model_evaluation.core.interfaces import LocalModelInterface
+from model_evaluation.core.evaluators import UnifiedBatchEvaluator  
+from model_evaluation.core.utils import ModelFactory, ReportGenerator
 ```
 
-### 添加新模型
+## 📈 输出结构
 
-1. 编辑 `evaluation_config.yaml`
-2. 添加模型配置：
-   ```yaml
-   - name: "我的自定义模型"
-     path: "/path/to/model"
-     type: "checkpoint"
-     generation_params:
-       temperature: 0.75
-   ```
-3. 运行评估
+```
+evaluation_results/
+├── model_*.json                # 单个模型详细报告
+├── model_*.md                  # 人类可读的markdown报告  
+├── model_comparison.json       # 模型间对比数据
+├── model_comparison.md         # 对比总结报告
+├── detailed_results.csv        # CSV格式完整结果
+├── charts/                     # 生成的可视化图表
+│   ├── overall_scores.png      # 分数对比柱状图
+│   ├── benchmark_heatmap.png   # 性能热力图  
+│   └── model_rankings.png      # 排名可视化
+└── logs/
+    ├── evaluation_*.log        # 详细执行日志
+    └── error_*.log             # 错误跟踪日志
+```
 
-## 🔍 故障排查
+## 🛠️ 开发与扩展
+
+### 添加新模型类型
+
+1. 在 `core/interfaces/` 中创建新接口
+2. 扩展 `BaseModelInterface` 
+3. 更新 `core/utils/model_factory.py` 中的 `ModelFactory`
+4. 添加配置示例和测试
+
+### 添加新基准测试
+
+1. 更新 `core/evaluators/` 中的评估逻辑
+2. 添加基准特定的配置模式
+3. 根据需要更新Reward服务器集成
+4. 添加验证和错误处理
+
+### 自定义评估指标
+
+1. 在 `core/utils/score_collector.py` 中扩展 `ScoreCollector`  
+2. 在 `ReportGenerator` 中更新报告生成
+3. 根据需要添加新的可视化类型
+
+## 🐛 问题排查
 
 ### 常见问题
 
-1. **Reward服务器未运行**
+1. **重构后导入错误**
    ```bash
+   # 确保正确的PYTHONPATH
+   export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+   
+   # 测试导入
+   python -c "from model_evaluation import BatchModelEvaluator; print('OK')"
+   ```
+
+2. **Reward服务器连接问题**  
+   ```bash
+   # 检查健康状态
+   curl -s http://localhost:8899/health
+   
+   # 如需要重启
    bash ../servers_and_proxy/start_scoreflow_reward.sh
    ```
 
-2. **内存不足**
-   - 在配置中减小batch_size
-   - 使用--max-samples处理更少的样本
-   - 模型在评估后会自动清理
+3. **找不到配置文件**
+   ```bash
+   # 确保从正确目录运行
+   cd scripts/  
+   ls ../configs/  # 应显示yaml文件
+   ```
 
-3. **找不到测试数据**
-   - 首先生成测试数据：
-     ```bash
-     cd ../generate_parquet_and_jsonl
-     python generate_verl_training_data.py
-     ```
+4. **GPU内存问题**
+   - 在配置中减小 `batch_size`
+   - 使用更小的 `max_samples` 进行测试  
+   - 为本地模型启用4位量化
 
-4. **模型加载错误**
-   - 验证模型路径存在
-   - 检查CUDA/PyTorch兼容性
-   - 确保足够的GPU内存
-
-## 🔄 与训练集成
-
-此模块与训练管道集成：
-
-1. 使用SFT/RL训练模型
-2. 从基准测试生成测试数据
-3. 评估训练的检查点
-4. 与基准模型对比
-5. 选择最佳模型
-
-## ⚡ 性能提示
-
-- 使用较小的max_samples进行快速测试
-- 根据GPU内存调整batch_size
-- 仅在需要时生成图表
-- 使用example_config.yaml进行测试
-
-## 💡 使用示例
-
-### 示例1：评估微调模型
-
-```yaml
-# fine_tuned_eval.yaml
-models:
-  - name: "基础模型"
-    path: "Qwen/Qwen2.5-7B-Instruct"
-  - name: "微调-1000步"
-    path: "./checkpoints/checkpoint-1000"
-  - name: "微调-5000步"
-    path: "./checkpoints/checkpoint-5000"
-```
+### 健康检查
 
 ```bash
-bash evaluate_models.sh -c fine_tuned_eval.yaml
+# 验证目录结构
+ls -la configs/ scripts/ core/
+
+# 测试Python模块结构  
+cd model_evaluation
+python -c "from core.utils import RewardServerChecker; print('模块结构正常')"
+
+# 验证配置
+cd scripts/
+python -c "import yaml; print(yaml.safe_load(open('../configs/example_config.yaml')))"
 ```
 
-### 示例2：快速对比测试
+## 📄 从旧结构迁移
 
-```bash
-# 仅使用10个样本快速对比
-bash evaluate_models.sh -n 10 -o quick_test/ -y
-```
+重构保持完全向后兼容性:
 
-### 示例3：生产环境评估
+- 所有现有导入语句继续工作
+- 配置文件路径在脚本中自动更新
+- 旧的脚本名称和参数保持功能  
+- API接口保持不变
 
-```bash
-# 完整评估，所有样本
-bash evaluate_models.sh -c production_config.yaml -o production_results/
-```
+**新结构优势:**
+- 更好的代码组织和可维护性
+- 更清晰的关注点分离
+- 更容易测试和调试
+- 改进的IDE支持和导航
 
-## 📝 注意事项
+## 📝 许可证  
 
-1. **服务依赖**：必须先启动Reward服务器
-2. **路径配置**：确保测试数据路径正确
-3. **GPU资源**：评估大模型需要足够的GPU内存
-4. **并发限制**：默认并发数为8，可根据服务器性能调整
-5. **结果保存**：所有结果自动保存，支持断点续传
-
-## 🛠️ 开发指南
-
-### 扩展新功能
-
-1. 继承 `ModelEvaluator` 类实现自定义评估器
-2. 扩展 `ReportGenerator` 添加新的报告格式
-3. 修改 `ScoreCollector` 支持新的评分方式
-
-### 贡献代码
-
-1. Fork项目
-2. 创建功能分支
-3. 提交更改
-4. 创建Pull Request
-
-## 📄 许可证
-
-作为Flow_RL项目的一部分。请参见主项目LICENSE文件。
+Flow_RL项目的一部分 - 许可证详情请参见主项目文档。

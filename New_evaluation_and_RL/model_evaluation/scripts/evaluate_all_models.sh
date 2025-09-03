@@ -41,7 +41,7 @@ else
 fi
 
 # Parse arguments
-CONFIG_FILE="models_config.yaml"
+CONFIG_FILE="../configs/models_config.yaml"
 MAX_SAMPLES=""
 OUTPUT_DIR=""
 BATCH_SIZE=""
@@ -55,7 +55,7 @@ show_help() {
     echo "使用方法: $0 [选项]"
     echo ""
     echo "选项:"
-    echo "  -c, --config FILE      模型配置文件 (默认: models_config.yaml)"
+    echo "  -c, --config FILE      模型配置文件 (默认: ../configs/models_config.yaml)"
     echo "  -n, --max-samples N    最大评估样本数"
     echo "  -o, --output-dir DIR   输出目录"
     echo "  -b, --batch-size N     批处理大小"

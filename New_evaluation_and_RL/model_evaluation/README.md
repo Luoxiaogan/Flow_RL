@@ -1,223 +1,345 @@
-# Model Evaluation Module
+# Model Evaluation Framework
 
-A comprehensive batch model evaluation system for testing multiple models on workflow generation tasks and generating comparison reports.
+A comprehensive framework for evaluating both local and API-based language models on various benchmarks.
 
-## Features
+**📁 Restructured Directory Organization**: This module has been reorganized with clean separation between configurations, scripts, and core functionality for better maintainability.
 
-- **Batch Evaluation**: Test multiple models on the same dataset
-- **Async Processing**: Efficient concurrent evaluation with memory management
-- **Comprehensive Reports**: JSON, Markdown, CSV formats with comparison charts
-- **Flexible Configuration**: YAML-based configuration with parameter overrides
-- **Error Handling**: Graceful handling of model failures
-- **Memory Management**: Automatic GPU cache clearing between models
+## 📁 Directory Structure
 
-## Quick Start
+```
+model_evaluation/
+├── configs/                    # Configuration files
+│   ├── evaluation_config.yaml  # Single model evaluation config  
+│   ├── example_config.yaml     # Example configuration template
+│   └── models_config.yaml      # Batch evaluation models config
+├── scripts/                    # Executable scripts and entry points
+│   ├── evaluate_all_models.sh  # Unified model evaluation (Linux/macOS)
+│   ├── evaluate_all_models.bat # Unified model evaluation (Windows)
+│   ├── evaluate_models.sh      # Legacy batch evaluation (Linux/macOS) 
+│   ├── evaluate_models.bat     # Legacy batch evaluation (Windows)
+│   ├── run_evaluation.py       # Single model evaluation entry
+│   └── run_unified_evaluation.py # Unified evaluation entry
+├── core/                       # Core functionality by component type
+│   ├── __init__.py
+│   ├── interfaces/             # Model interface abstractions
+│   │   ├── __init__.py
+│   │   ├── model_interface.py      # Base interface for all models
+│   │   ├── local_model_interface.py # Local model implementation
+│   │   └── api_model_interface.py   # API model implementation  
+│   ├── evaluators/             # Batch and unified evaluation logic
+│   │   ├── __init__.py
+│   │   ├── model_evaluator.py      # Core evaluation logic
+│   │   ├── batch_evaluator.py      # Batch evaluation orchestration
+│   │   └── unified_batch_evaluator.py # Advanced unified evaluation
+│   └── utils/                  # Supporting utilities and helpers
+│       ├── __init__.py
+│       ├── api_connection_pool.py  # API connection management
+│       ├── config_validator.py     # Configuration validation
+│       ├── model_factory.py        # Model creation factory
+│       ├── report_generator.py     # Results reporting & visualization
+│       ├── resource_manager.py     # GPU resource management
+│       ├── reward_server_checker.py # Health checks for reward server
+│       └── score_collector.py      # Score collection and processing
+└── __init__.py                 # Main module entry (backward compatible)
+```
 
-### 1. Prerequisites
+## 🚀 Quick Start
+
+### Prerequisites
+
+1. **Environment Setup**
+   ```bash
+   # Linux/macOS
+   source /opt/anaconda3/etc/profile.d/conda.sh
+   conda activate workflow
+   
+   # Windows
+   conda activate workflow
+   ```
+
+2. **Required Dependencies**
+   ```bash
+   pip install torch transformers aiohttp peft bitsandbytes pandas matplotlib seaborn tqdm pyyaml
+   ```
+
+3. **Start Reward Server** (Required)
+   ```bash
+   # Linux/macOS/WSL
+   bash ../servers_and_proxy/start_scoreflow_reward.sh
+   
+   # Windows
+   ..\servers_and_proxy\start_scoreflow_reward.bat
+   ```
+
+### Usage Examples
+
+#### 1. Unified Model Evaluation (Recommended)
+
+**Linux/macOS:**
+```bash
+cd scripts/
+./evaluate_all_models.sh
+```
+
+**Windows:**
+```batch
+cd scripts
+evaluate_all_models.bat
+```
+
+**With Parameters:**
+```bash
+# Linux/macOS
+./evaluate_all_models.sh -c ../configs/models_config.yaml -n 100 -o ../results -f api
+
+# Windows  
+evaluate_all_models.bat -c ..\configs\models_config.yaml -n 100 -o ..\results -f api
+```
+
+#### 2. Single Model Evaluation
 
 ```bash
-# Activate conda environment
-source /opt/anaconda3/etc/profile.d/conda.sh && conda activate workflow
-
-# Start reward server (required)
-bash ../servers_and_proxy/start_scoreflow_reward.sh
+cd scripts/
+python run_evaluation.py --config ../configs/evaluation_config.yaml --max-samples 50
 ```
 
-### 2. Basic Usage
+#### 3. Custom Unified Evaluation
 
 ```bash
-# Run with default configuration
-bash evaluate_models.sh
-
-# Quick test with 10 samples
-bash evaluate_models.sh -n 10 -y
-
-# Use custom configuration
-bash evaluate_models.sh -c example_config.yaml
+cd scripts/
+python run_unified_evaluation.py --config ../configs/models_config.yaml --batch-size 4
 ```
 
-### 3. Python API
+## ⚙️ Configuration
 
-```python
-import asyncio
-from model_evaluation import BatchModelEvaluator
-
-# Configuration
-config = {
-    'test_data_path': 'test_data.jsonl',
-    'reward_server_url': 'http://localhost:8899',
-    'output_dir': 'evaluation_reports',
-    'eval_batch_size': 8,
-    'max_samples': 100
-}
-
-# Model list
-models = [
-    {'name': 'Model-1', 'path': 'path/to/model1'},
-    {'name': 'Model-2', 'path': 'path/to/model2'}
-]
-
-# Run evaluation
-evaluator = BatchModelEvaluator(config)
-results = asyncio.run(evaluator.evaluate_models(models))
-```
-
-## Configuration
-
-### Main Configuration File
-
-Edit `evaluation_config.yaml`:
+### Unified Models Configuration (`configs/models_config.yaml`)
 
 ```yaml
-test_data:
-  path: "path/to/test_data.jsonl"
-  max_samples: null  # null for all samples
-
-reward_server:
-  url: "http://localhost:8899"
+models:
+  # Local models
+  - name: "llama-3-8b-instruct" 
+    type: "local"
+    model_path: "/path/to/model"
+    load_in_4bit: true
+    generation_params:
+      max_new_tokens: 4096
+      temperature: 0.7
+    
+  # API models  
+  - name: "gpt-4"
+    type: "api"
+    api_base: "https://api.openai.com/v1"
+    api_key: "${OPENAI_API_KEY}"
+    model: "gpt-4"
+    generation_params:
+      max_new_tokens: 4096
+      temperature: 0.8
 
 evaluation:
-  batch_size: 8
-  output_dir: "./evaluation_reports"
+  benchmark: "gsm8k"          # gsm8k, mbpp, hotpotqa, etc.
+  max_samples: 100            # Number of test samples 
+  batch_size: 4               # Processing batch size
+  timeout: 180                # Timeout per evaluation (seconds)
+  
+output:
+  save_results: true
+  output_dir: "./evaluation_results"
+  generate_report: true
+  save_detailed_csv: true
+```
+
+### Single Model Configuration (`configs/evaluation_config.yaml`)
+
+```yaml
+model:
+  name: "test-model"
+  type: "local"              # or "api"
+  model_path: "/path/to/model"
   generation_params:
     max_new_tokens: 4096
     temperature: 0.7
-    top_p: 0.9
-
-models:
-  - name: "Model-Name"
-    path: "model/path"
-    type: "huggingface"  # or "checkpoint", "local"
-    generation_params:  # optional override
-      temperature: 0.8
+    
+evaluation:
+  benchmark: "gsm8k" 
+  max_samples: 50
+  batch_size: 2
+  
+output:
+  output_dir: "./results"
+  generate_charts: true
 ```
 
-### Model Types
+## 📊 Command Line Options
 
-- **huggingface**: Models from HuggingFace Hub
-- **checkpoint**: Local fine-tuned checkpoints
-- **local**: Local model directories
-
-## Output Structure
-
-```
-evaluation_reports/
-├── model_*.json            # Individual model reports
-├── model_*.md              # Markdown reports
-├── model_comparison.json   # Comparison data
-├── model_comparison.md     # Comparison report
-├── detailed_results.csv    # Detailed CSV data
-├── charts/
-│   ├── overall_scores.png  # Score comparison chart
-│   └── benchmark_heatmap.png # Performance heatmap
-└── evaluation_*.log        # Execution logs
-```
-
-## Report Contents
-
-### Individual Model Report
-- Overall score and success rate
-- Per-benchmark performance metrics
-- Statistical analysis (mean, max, min, std)
-- Detailed error tracking
-
-### Comparison Report
-- Model rankings by overall score
-- Benchmark-specific comparisons
-- Best/worst model identification
-- Visual charts for easy comparison
-
-## Command Line Options
+### Unified Evaluation Script Options
 
 ```bash
-run_evaluation.py [options]
-
 Options:
-  --config, -c FILE      Config file (default: evaluation_config.yaml)
-  --test-data, -t FILE   Test data file (overrides config)
-  --max-samples, -n N    Maximum samples to evaluate
-  --output-dir, -o DIR   Output directory
-  --batch-size, -b N     Batch size for processing
-  --log-level, -l LEVEL  Log level (DEBUG/INFO/WARNING/ERROR)
-  --yes, -y              Skip confirmation prompt
+  -c, --config FILE      Model config file (default: ../configs/models_config.yaml)
+  -n, --max-samples N    Maximum evaluation samples
+  -o, --output-dir DIR   Output directory
+  -b, --batch-size N     Batch processing size  
+  -f, --filter TYPE      Filter model types (api/local/etc.)
+  -l, --limit N          Limit number of models to evaluate
+  -y, --yes              Skip confirmation prompts
+  -h, --help             Show help information
 ```
 
-## Advanced Usage
+### Single Model Evaluation Options
 
-### Custom Test Data
-
-Create test data in JSONL format:
-
-```json
-{"data_source": "workflow_gsm8k", "prompt": [...], "reward_model": {...}}
-{"data_source": "workflow_mbpp", "prompt": [...], "reward_model": {...}}
+```bash
+Options:
+  --config, -c           Configuration file path
+  --test-data, -t        Test data file path  
+  --max-samples, -n      Maximum number of samples
+  --output-dir, -o       Output directory
+  --batch-size, -b       Batch size for processing
+  --log-level, -l        Logging level (DEBUG/INFO/WARNING/ERROR)
+  --yes, -y              Skip confirmation prompts
 ```
 
-### Adding New Models
+## 🔧 Architecture & Features
 
-1. Edit `evaluation_config.yaml`
-2. Add model configuration:
-   ```yaml
-   - name: "My-Custom-Model"
-     path: "/path/to/model"
-     type: "checkpoint"
-     generation_params:
-       temperature: 0.75
-   ```
-3. Run evaluation
+### Core Design Principles
 
-### Parallel Evaluation
+1. **Separation of Concerns**: Clean separation between configs, scripts, and core logic
+2. **Unified Interface**: Single interface for local and API models
+3. **Resource Management**: Intelligent GPU memory management for local models  
+4. **Async Processing**: Efficient concurrent evaluation with connection pooling
+5. **Health Monitoring**: Automatic reward server health checks
+6. **Rich Reporting**: Comprehensive evaluation reports with visualizations
 
-For faster evaluation with multiple GPUs:
+### Key Components
+
+- **Interfaces**: Abstract model interfaces supporting both local and API models
+- **Evaluators**: Batch processing logic with advanced resource management
+- **Utils**: Supporting utilities for validation, reporting, and infrastructure
+
+### Import Usage (Backward Compatible)
 
 ```python
-# Future enhancement: Multi-GPU support
-# Currently processes models sequentially to manage memory
+# Main imports - fully backward compatible
+from model_evaluation import (
+    BatchModelEvaluator,
+    UnifiedBatchEvaluator, 
+    BaseModelInterface,
+    LocalModelInterface,
+    APIModelInterface,
+    ModelFactory,
+    RewardServerChecker,
+    ScoreCollector
+)
+
+# Direct imports from organized structure
+from model_evaluation.core.interfaces import LocalModelInterface
+from model_evaluation.core.evaluators import UnifiedBatchEvaluator  
+from model_evaluation.core.utils import ModelFactory, ReportGenerator
 ```
 
-## Troubleshooting
+## 📈 Output Structure
+
+```
+evaluation_results/
+├── model_*.json                # Individual model detailed reports
+├── model_*.md                  # Human-readable markdown reports  
+├── model_comparison.json       # Cross-model comparison data
+├── model_comparison.md         # Comparison summary report
+├── detailed_results.csv        # Complete results in CSV format
+├── charts/                     # Generated visualization charts
+│   ├── overall_scores.png      # Score comparison bar chart
+│   ├── benchmark_heatmap.png   # Performance heatmap  
+│   └── model_rankings.png      # Ranking visualization
+└── logs/
+    ├── evaluation_*.log        # Detailed execution logs
+    └── error_*.log             # Error tracking logs
+```
+
+## 🛠️ Development & Extensibility
+
+### Adding New Model Types
+
+1. Create new interface in `core/interfaces/`
+2. Extend `BaseModelInterface` 
+3. Update `ModelFactory` in `core/utils/model_factory.py`
+4. Add configuration examples and tests
+
+### Adding New Benchmarks
+
+1. Update evaluation logic in `core/evaluators/`
+2. Add benchmark-specific configuration schemas
+3. Update reward server integration if needed
+4. Add validation and error handling
+
+### Custom Evaluation Metrics
+
+1. Extend `ScoreCollector` in `core/utils/score_collector.py`  
+2. Update report generation in `ReportGenerator`
+3. Add new visualization types if needed
+
+## 🐛 Troubleshooting
 
 ### Common Issues
 
-1. **Reward Server Not Running**
+1. **Import Errors After Restructuring**
    ```bash
+   # Ensure proper PYTHONPATH
+   export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+   
+   # Test imports
+   python -c "from model_evaluation import BatchModelEvaluator; print('OK')"
+   ```
+
+2. **Reward Server Connection Issues**  
+   ```bash
+   # Check health
+   curl -s http://localhost:8899/health
+   
+   # Restart if needed
    bash ../servers_and_proxy/start_scoreflow_reward.sh
    ```
 
-2. **Out of Memory**
-   - Reduce batch_size in configuration
-   - Process fewer samples with --max-samples
-   - Models are automatically cleared after evaluation
+3. **Configuration File Not Found**
+   ```bash
+   # Ensure running from correct directory
+   cd scripts/  
+   ls ../configs/  # Should show yaml files
+   ```
 
-3. **Test Data Not Found**
-   - Generate test data first:
-     ```bash
-     cd ../generate_parquet_and_jsonl
-     python generate_verl_training_data.py
-     ```
+4. **GPU Memory Issues**
+   - Reduce `batch_size` in configuration
+   - Use smaller `max_samples` for testing  
+   - Enable 4-bit quantization for local models
 
-4. **Model Loading Errors**
-   - Verify model path exists
-   - Check CUDA/PyTorch compatibility
-   - Ensure sufficient GPU memory
+### Health Checks
 
-## Integration with Training
+```bash
+# Verify directory structure
+ls -la configs/ scripts/ core/
 
-This module integrates with the training pipeline:
+# Test Python module structure  
+cd model_evaluation
+python -c "from core.utils import RewardServerChecker; print('Module structure OK')"
 
-1. Train models using SFT/RL training
-2. Generate test data from benchmarks
-3. Evaluate trained checkpoints
-4. Compare with baseline models
-5. Select best performing model
+# Validate configuration
+cd scripts/
+python -c "import yaml; print(yaml.safe_load(open('../configs/example_config.yaml')))"
+```
 
-## Performance Tips
+## 📄 Migration from Old Structure
 
-- Use smaller max_samples for quick testing
-- Adjust batch_size based on GPU memory
-- Enable chart generation only when needed
-- Use example_config.yaml for testing
+The restructuring maintains full backward compatibility:
 
-## License
+- All existing import statements continue to work
+- Configuration file paths are automatically updated in scripts
+- Old script names and parameters remain functional  
+- API interfaces remain unchanged
 
-Part of the Flow_RL project. See main project LICENSE.
+**New structure benefits:**
+- Better code organization and maintainability
+- Clearer separation of concerns
+- Easier testing and debugging
+- Improved IDE support and navigation
+
+## 📝 License  
+
+Part of the Flow_RL project - see main project documentation for license details.

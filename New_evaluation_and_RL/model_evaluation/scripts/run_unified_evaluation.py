@@ -15,7 +15,7 @@ from datetime import datetime
 # Add parent directory to path
 sys.path.append(str(Path(__file__).parent.parent))
 
-from model_evaluation.unified_batch_evaluator import UnifiedBatchEvaluator
+from core.evaluators import UnifiedBatchEvaluator
 
 # Setup logging
 def setup_logging(log_level='INFO', log_file=None):
@@ -230,8 +230,8 @@ def parse_arguments():
     parser.add_argument(
         '--config', '-c',
         type=str,
-        default='models_config.yaml',
-        help='模型配置文件路径 (默认: models_config.yaml)'
+        default='../configs/models_config.yaml',
+        help='模型配置文件路径 (默认: ../configs/models_config.yaml)'
     )
     
     parser.add_argument(

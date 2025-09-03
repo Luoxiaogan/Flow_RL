@@ -1,38 +1,38 @@
 """
 Model evaluation module for batch testing and comparison
 Supports both local models and API models
+
+Directory structure:
+- configs/: Configuration files (YAML)
+- scripts/: Executable scripts and entry points
+- core/: Core functionality organized by component type
+  - interfaces/: Model interface abstractions
+  - evaluators/: Batch and unified evaluation logic
+  - utils/: Supporting utilities and helpers
 """
 
-# Core components
-from .reward_server_checker import RewardServerChecker
-from .score_collector import ScoreCollector
-from .report_generator import ReportGenerator
+# Import all from core module for backward compatibility
+from .core import *
 
-# Model interfaces
-from .model_interface import BaseModelInterface
-from .local_model_interface import LocalModelInterface
-from .api_model_interface import APIModelInterface
-from .model_factory import ModelFactory
-
-# Evaluators
-from .model_evaluator import ModelEvaluator
-from .batch_evaluator import BatchModelEvaluator
-from .unified_batch_evaluator import UnifiedBatchEvaluator
-
+# Explicitly re-export for better IDE support
 __all__ = [
-    # Core
-    'RewardServerChecker',
-    'ScoreCollector',
-    'ReportGenerator',
-    
     # Interfaces
     'BaseModelInterface',
     'LocalModelInterface',
     'APIModelInterface',
-    'ModelFactory',
     
     # Evaluators
     'ModelEvaluator',
     'BatchModelEvaluator',
-    'UnifiedBatchEvaluator'
+    'UnifiedBatchEvaluator',
+    
+    # Utils
+    'APIConnectionPool',
+    'ConfigValidator',
+    'ModelFactory',
+    'ReportGenerator',
+    'ModelResourceManager',
+    'GlobalResourceTracker',
+    'RewardServerChecker',
+    'ScoreCollector'
 ]
