@@ -1,0 +1,61 @@
+### model
+model_name_or_path: Qwen/Qwen3-8B
+trust_remote_code: true
+
+### method
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0
+lora_target: all
+
+### dataset
+dataset: sft_data_simple
+dataset_dir: data
+template: qwen3
+cutoff_len: 6500  # 支持长思维链
+max_samples: 100000
+overwrite_cache: true
+preprocessing_num_workers: 16
+packing: false
+enable_thinking: true  # 启用思维模式
+
+### output
+output_dir: saves/Qwen3-8B-Thinking/lora/train_with_generation_${TIMESTAMP}
+logging_steps: 5
+save_steps: 10
+plot_loss: true
+overwrite_output_dir: true
+save_only_model: false
+report_to: none  # choices: [none, wandb, tensorboard, swanlab, mlflow]
+include_num_input_tokens_seen: true
+
+### train
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 4
+learning_rate: 5.0e-5
+num_train_epochs: 1.0
+lr_scheduler_type: cosine
+warmup_steps: 20
+max_grad_norm: 1.0
+optim: adamw_torch
+bf16: true
+flash_attn: auto
+ddp_timeout: 180000000
+resume_from_checkpoint: null
+
+### eval (可选)
+# eval_dataset: sft_data_simple_eval
+# val_size: 0.1
+# per_device_eval_batch_size: 2
+# eval_strategy: steps
+# eval_steps: 100
+
+### sample generation during training
+sample_generation_steps: 100           # 每100步生成一次（生产环境建议500）
+sample_generation_num: 2               # 每次生成2个样本
+sample_generation_max_tokens: 4096     # 支持完整思维链生成
+sample_generation_temperature: 0.7     # 采样温度（思维链建议0.7）
+save_generation_samples: true          # 保存生成历史到文件
