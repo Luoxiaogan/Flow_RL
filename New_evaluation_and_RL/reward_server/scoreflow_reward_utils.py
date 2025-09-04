@@ -521,7 +521,12 @@ class SimpleTeeOutput:
         object.__setattr__(self, '_closed', False)
         object.__setattr__(self, '_error_count', 0)
         object.__setattr__(self, '_initialized', True)  # 标记初始化完成
-        object.__setattr__(self, '_lock', threading.RLock())  # 添加线程锁保护
+        # 安全导入threading模块，防止在某些执行环境中不可用
+        try:
+            import threading
+            object.__setattr__(self, '_lock', threading.RLock())  # 添加线程锁保护
+        except ImportError:
+            object.__setattr__(self, '_lock', None)  # 如果threading不可用，设为None
     
     def __getattr__(self, name):
         """捕获所有属性访问失败的情况，提供默认值"""
@@ -556,8 +561,13 @@ class SimpleTeeOutput:
         try:
             lock = getattr(self, '_lock', None)
             if lock is None:
-                lock = threading.RLock()
-                object.__setattr__(self, '_lock', lock)
+                # 安全导入threading模块
+                try:
+                    import threading
+                    lock = threading.RLock()
+                    object.__setattr__(self, '_lock', lock)
+                except ImportError:
+                    lock = None  # 如果threading不可用，设为None
         except:
             lock = None
         
