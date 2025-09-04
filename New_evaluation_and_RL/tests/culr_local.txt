@@ -1,4 +1,4 @@
-curl -X POST http://localhost:8899/compute_score \
+curl --noproxy "*" -X POST http://localhost:8899/compute_score \
   -H "Content-Type: application/json" \
   -d '{
     "data_source": "gsm8k",

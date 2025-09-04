@@ -37,7 +37,8 @@
       "Bash(sed:*)",
       "Bash(git pull:*)",
       "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/github_key\" git pull)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(time curl:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
