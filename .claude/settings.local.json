@@ -38,6 +38,8 @@
       "Bash(git pull:*)",
       "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/github_key\" git pull)",
       "Bash(git restore:*)",
+      "Bash(time curl:*)"
+      "Bash(git restore:*)",
       "Bash(dir:*)",
       "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL/**)",
       "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\metagpt_api_key_proxy/**)",

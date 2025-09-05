@@ -1,5 +1,5 @@
 #!/bin/bash
-# VERL RL训练命令 - 生成时间: 2025-09-01 22:32:57
+# VERL RL训练命令 - 生成时间: 2025-09-02 16:54:29
 
 # 设置环境变量
 export USE_SGLANG=1
@@ -7,11 +7,11 @@ export NCCL_DEBUG=INFO
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 
 # 执行训练命令
-python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
+python /Users/luogan/Code/workflow_generation/Flow_RL/verl/verl/trainer/main_ppo.py \
   --config-path=config \
   --config-name=ppo_trainer.yaml \
-  'data.train_files=["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/RL/train.parquet"]' \
-  'data.val_files=["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/RL/test.parquet"]' \
+  'data.train_files=["/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/RL/train.parquet"]' \
+  'data.val_files=["/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/RL/test.parquet"]' \
   data.train_batch_size=16 \
   data.max_prompt_length=8192 \
   data.max_response_length=8192 \
@@ -62,8 +62,8 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++trainer.wandb_notes="PPO training with ScoreFlow rewards" \
   ++trainer.wandb_save_code=true \
   ++trainer.wandb_log_model=false \
-  ++trainer.default_local_dir=/nas/ganluo/Flow_RL/rl_out/checkpoints \
+  ++trainer.default_local_dir=/Users/luogan/Code/workflow_generation/Flow_RL/rl_out/checkpoints \
   ++reward_model.reward_manager=prime \
-  ++custom_reward_function.path=/nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py \
+  ++custom_reward_function.path=/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py \
   ++custom_reward_function.name=compute_score \
 

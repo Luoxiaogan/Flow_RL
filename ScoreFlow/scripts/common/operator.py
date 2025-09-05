@@ -1,5 +1,6 @@
 # common/operator.py
 
+import os
 import asyncio
 import logging
 from typing import Any, Dict, List, Union
@@ -58,8 +59,10 @@ class Generate(Operator):
     根据指令和上下文，生成新的、非结构化的文本。
     """
     async def __call__(self, instruction: str = "", context: str = "") -> str:
-        print("=" * 60)
-        print("\n🚀 执行 operator: Generate")
+        # 检查SILENT模式环境变量
+        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+            print("=" * 60)
+            print("\n🚀 执行 operator: Generate")
         prompt = f"""You are a helpful assistant. Follow the instruction to generate a response.
 
 **Instruction:**
@@ -84,8 +87,10 @@ class Revise(Operator):
     根据指令，对一个已有的文本（草稿）进行审查和修订。
     """
     async def __call__(self, instruction: str = "", context: str = "") -> str:
-        print("=" * 60)
-        print("\n🚀 执行 operator: Revise")
+        # 检查SILENT模式环境变量
+        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+            print("=" * 60)
+            print("\n🚀 执行 operator: Revise")
         prompt = f"""You are an expert editor. Your task is to revise the provided text based on the given instruction, and the goal is to improve the performance on answering the original problem.
 
 **Instruction on how to revise:**
@@ -119,8 +124,10 @@ class Summarize(Operator):
     将长文本缩减为核心要点。
     """
     async def __call__(self, instruction: str = "", context: str = "") -> str:
-        print("=" * 60)
-        print("\n🚀 执行 operator: Summarize")
+        # 检查SILENT模式环境变量
+        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+            print("=" * 60)
+            print("\n🚀 执行 operator: Summarize")
         prompt = f"""You are an expert summarizer. Your task is to read the following text and summarize its key points, especially those relevant to the original problem.
 
 **Instruction on how to summarize:**
@@ -146,8 +153,10 @@ class Ensemble(Operator):
     根据指令，从多个候选项中选择或融合。
     """
     async def __call__(self, instruction: str = "", contexts: List[str] = []) -> str:
-        print("=" * 60)
-        print("\n🚀 执行 operator: Ensemble")
+        # 检查SILENT模式环境变量
+        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+            print("=" * 60)
+            print("\n🚀 执行 operator: Ensemble")
         formatted_contexts = ""
         for i, context in enumerate(contexts):
             formatted_contexts += f"<option index='{i+1}'>\n{context}\n</option>\n\n"

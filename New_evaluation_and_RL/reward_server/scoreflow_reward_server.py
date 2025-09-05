@@ -2,16 +2,13 @@
 ScoreFlow Reward Server
 Provides REST API for computing rewards in environments with MetaGPT installed
 """
-import os
 import sys
 import json
-import asyncio
 import logging
 from loguru import logger as loguru_logger
 import traceback
 import yaml
 from pathlib import Path
-from typing import Dict, Any
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import argparse
@@ -67,7 +64,8 @@ def silent_print(*args, **kwargs):
         print("关键结果信息")  # 始终显示
     """
     if not SILENT:
-        print(*args, **kwargs)
+        # 添加flush=True确保立即输出
+        print(*args, flush=True, **kwargs)
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -162,13 +160,8 @@ def compute_score_endpoint():
         ground_truth = data['ground_truth']
         extra_info = data['extra_info']
         
-        silent_print(f"Processing request for benchmark: {data_source}")
-        silent_print(f"Extra info: {json.dumps(extra_info, indent=2)}")
-        
         # 调用计算函数
         score = compute_score(data_source, solution_str, ground_truth, extra_info)
-        
-        print(f"🌟 🌟 🌟 🌟 🌟 Computed score: {score}")
         
         return jsonify({
             'success': True,
@@ -184,88 +177,6 @@ def compute_score_endpoint():
             'success': False,
             'error': str(e),
             'traceback': traceback.format_exc()
-        }), 500
-
-@app.route('/batch_compute', methods=['POST'])
-@with_concurrency_limit('data_source')
-def batch_compute_endpoint():
-    """
-    批量计算多个workflow的分数
-    
-    请求格式:
-    {
-        "tasks": [
-            {
-                "task_id": "task_1",
-                "data_source": "gsm8k",
-                "solution_str": "<workflow code>",
-                "ground_truth": "default",
-                "extra_info": {...}
-            },
-            ...
-        ]
-    }
-    
-    响应格式:
-    {
-        "success": true,
-        "results": [
-            {
-                "task_id": "task_1",
-                "score": 0.85,
-                "success": true
-            },
-            ...
-        ]
-    }
-    """
-    try:
-        data = request.get_json()
-        if not data or 'tasks' not in data:
-            return jsonify({
-                'success': False,
-                'error': 'No tasks provided'
-            }), 400
-        
-        tasks = data['tasks']
-        results = []
-        
-        # 处理每个任务
-        for task in tasks:
-            task_id = task.get('task_id', 'unknown')
-            try:
-                score = compute_score(
-                    task['data_source'],
-                    task['solution_str'],
-                    task['ground_truth'],
-                    task['extra_info']
-                )
-                
-                results.append({
-                    'task_id': task_id,
-                    'score': float(score),
-                    'success': True
-                })
-                
-            except Exception as e:
-                logger.error(f"Error processing task {task_id}: {e}")
-                results.append({
-                    'task_id': task_id,
-                    'score': 0.0,
-                    'success': False,
-                    'error': str(e)
-                })
-        
-        return jsonify({
-            'success': True,
-            'results': results
-        })
-        
-    except Exception as e:
-        logger.error(f"Error processing batch request: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
         }), 500
 
 @app.route('/config', methods=['GET'])
@@ -336,12 +247,16 @@ def main():
     logger.info(f"Starting ScoreFlow Reward Server on {args.host}:{args.port}")
     logger.info(f"Debug mode: {args.debug}")
     
+    # 从配置文件读取flask_debug设置
+    flask_debug = service_config.get('flask_debug', False)
+    
     # 启动服务器
     app.run(
         host=args.host,
         port=args.port,
-        debug=False,  # 强制关闭Flask debug模式，避免开发服务器的调试输出
-        threaded=True
+        debug=flask_debug,  # 从配置文件控制Flask debug模式
+        threaded=True,
+        use_reloader=False  # 即使在debug模式下也禁用自动重载器，避免双进程问题
     )
 
 if __name__ == '__main__':
