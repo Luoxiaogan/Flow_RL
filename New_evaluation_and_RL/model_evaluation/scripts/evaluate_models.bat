@@ -1,4 +1,7 @@
 @echo off
+:: Set UTF-8 code page for proper Chinese character display
+chcp 65001 >nul
+
 :: Batch Model Evaluation Script (Windows)
 
 echo ==========================================
@@ -14,7 +17,7 @@ set "PYTHONPATH=%PYTHONPATH%;%PARENT_DIR%"
 echo 激活 conda 环境...
 call conda activate workflow
 if %ERRORLEVEL% neq 0 (
-    echo ⚠️  无法激活 conda 环境 'workflow'
+    echo [WARNING] 无法激活 conda 环境 'workflow'
     echo 请确保已安装 conda 并创建了 workflow 环境
     pause
     exit /b 1
@@ -24,7 +27,7 @@ if %ERRORLEVEL% neq 0 (
 echo 检查 Reward Server...
 curl -s http://localhost:8899/health >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-    echo ⚠️  Reward Server 未运行
+    echo [WARNING] Reward Server 未运行
     echo 请先启动 Reward Server:
     echo   ..\servers_and_proxy\start_scoreflow_reward.bat
     echo.
@@ -33,7 +36,7 @@ if %ERRORLEVEL% neq 0 (
         exit /b 1
     )
 ) else (
-    echo ✓ Reward Server 正常运行
+    echo [OK] Reward Server 正常运行
 )
 
 :: Initialize variables
@@ -65,7 +68,7 @@ goto :show_help
 
 :: Check if config file exists
 if not exist "%CONFIG_FILE%" (
-    echo ❌ 配置文件不存在: %CONFIG_FILE%
+    echo [ERROR] 配置文件不存在: %CONFIG_FILE%
     echo 请检查配置文件路径或创建配置文件
     exit /b 1
 )
@@ -102,10 +105,10 @@ set "EXIT_CODE=%ERRORLEVEL%"
 
 echo.
 if %EXIT_CODE% equ 0 (
-    echo ✓ 评估完成成功
+    echo [SUCCESS] 评估完成成功
     echo 结果已保存到输出目录
 ) else (
-    echo ❌ 评估过程中出现错误 (退出码: %EXIT_CODE%^)
+    echo [ERROR] 评估过程中出现错误 (退出码: %EXIT_CODE%^)
     echo 请查看日志了解详细信息
 )
 

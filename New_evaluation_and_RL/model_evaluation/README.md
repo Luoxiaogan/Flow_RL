@@ -310,6 +310,18 @@ evaluation_results/
    - Use smaller `max_samples` for testing  
    - Enable 4-bit quantization for local models
 
+5. **Windows Batch Script Encoding Issues**
+   ```batch
+   # Test encoding display
+   cd scripts
+   test_encoding.bat
+   
+   # If Chinese characters don't display correctly:
+   # - Ensure terminal supports UTF-8 (Windows Terminal recommended)
+   # - Scripts automatically set UTF-8 code page (chcp 65001)
+   # - Status messages use [OK], [WARNING], [ERROR] instead of symbols
+   ```
+
 ### Health Checks
 
 ```bash

@@ -37,7 +37,18 @@
       "Bash(sed:*)",
       "Bash(git pull:*)",
       "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/github_key\" git pull)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(dir:*)",
+      "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL/**)",
+      "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\metagpt_api_key_proxy/**)",
+      "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\metagpt_api_key_proxy/**)",
+      "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL/**)",
+      "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\core\\evaluators/**)",
+      "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\core\\evaluators/**)",
+      "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\core\\evaluators/**)",
+      "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\configs/**)",
+      "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\configs/**)",
+  "Read(/D:\\temp\\Flow_RL/**)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

@@ -220,7 +220,21 @@ class APIModelInterface(BaseModelInterface):
         
         # Determine URL based on API type
         if self.api_type == 'openai':
-            url = f"{endpoint}/v1/chat/completions"
+            # Check if this is a proxy server (common ports: 5019, 5010, 5000-5999)
+            # Proxy servers will add /v1 themselves based on their target_url config
+            import re
+            is_proxy = bool(re.search(r':50\d{2}', endpoint))  # Matches :50XX ports
+            
+            if is_proxy:
+                # For proxy servers, send only the API path without /v1
+                # The proxy will add /v1 if needed based on its target_url
+                url = f"{endpoint.rstrip('/')}/chat/completions"
+            else:
+                # For direct API endpoints, check if /v1 already exists
+                if endpoint.rstrip('/').endswith('/v1'):
+                    url = f"{endpoint.rstrip('/')}/chat/completions"
+                else:
+                    url = f"{endpoint.rstrip('/')}/v1/chat/completions"
             session_key = 'openai'
         elif self.api_type == 'azure':
             # Azure OpenAI has different URL structure
@@ -230,7 +244,15 @@ class APIModelInterface(BaseModelInterface):
             session_key = 'azure'
         else:
             # Custom API - assume OpenAI-compatible
-            url = f"{endpoint}/v1/chat/completions"
+            # Check if this is a proxy server
+            import re
+            is_proxy = bool(re.search(r':50\d{2}', endpoint))
+            
+            if is_proxy:
+                # For proxy servers, send only the API path
+                url = f"{endpoint.rstrip('/')}/chat/completions"
+            else:
+                url = f"{endpoint.rstrip('/')}/v1/chat/completions"
             session_key = f'custom_{endpoint.replace("://", "_").replace("/", "_")}'
         
         # Get session from pool

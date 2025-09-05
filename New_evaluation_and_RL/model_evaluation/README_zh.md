@@ -310,6 +310,18 @@ evaluation_results/
    - 使用更小的 `max_samples` 进行测试  
    - 为本地模型启用4位量化
 
+5. **Windows批处理脚本编码问题**
+   ```batch
+   # 测试编码显示
+   cd scripts
+   test_encoding.bat
+   
+   # 如果中文字符显示不正常：
+   # - 确保终端支持UTF-8 (推荐使用Windows Terminal)
+   # - 脚本会自动设置UTF-8代码页 (chcp 65001)
+   # - 状态信息使用 [OK]、[WARNING]、[ERROR] 而不是特殊符号
+   ```
+
 ### 健康检查
 
 ```bash

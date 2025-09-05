@@ -6,7 +6,7 @@
 # ==============================================================================
 test_data:
   # Path to test data JSONL file
-  path: "../generate_parquet_and_jsonl/test_data.jsonl"
+  path: "../../generate_parquet_and_jsonl/test_scoreflow_data/train.jsonl"
   
   # Maximum number of samples to evaluate (null for all)
   max_samples: null  # 快速测试可设置为 10-50
@@ -38,123 +38,124 @@ models:
   # -----------------------------------------------------------------------------
   # API MODELS / API模型示例
   # -----------------------------------------------------------------------------
-  
-  # Example 1: OpenAI GPT-4
-  - name: "GPT-4-Turbo"
+  - name: "glm-4.5-airx"
     type: "api"
     api_endpoints: 
-      - "https://api.openai.com"
+      - "http://localhost:5019"  # 修改为 http，不是 https
     api_keys:
-      - "sk-your-openai-api-key"
-    model: "gpt-4-turbo-preview"
+      - ""
+    model: "glm-4.5-airx"
     api_type: "openai"
-    max_retries: 3
-    timeout: 60
+    max_retries: 1
+    timeout: 600
+    max_concurrency: 15  # 并发请求数，根据API速率限制调整
     generation_params:
       max_new_tokens: 4096
-      temperature: 0.7
+      temperature: 1
       top_p: 0.9
 
-  # Example 2: Multiple API endpoints for load balancing
-  - name: "Qwen-API"
-    type: "api"
-    api_endpoints:
-      - "http://localhost:5000"
-      - "http://localhost:5001"
-      - "http://localhost:5002"
-    api_keys:
-      - "api-key-1"
-      - "api-key-2" 
-      - "api-key-3"
-    model: "qwen-plus"
-    api_type: "openai"  # Using OpenAI-compatible format
-    generation_params:
-      max_new_tokens: 4096
-      temperature: 0.8
+  # # Example 2: Multiple API endpoints for load balancing
+  # - name: "Qwen-API"
+  #   type: "api"
+  #   api_endpoints:
+  #     - "http://localhost:5000"
+  #     - "http://localhost:5001"
+  #     - "http://localhost:5002"
+  #   api_keys:
+  #     - "api-key-1"
+  #     - "api-key-2" 
+  #     - "api-key-3"
+  #   model: "qwen-plus"
+  #   api_type: "openai"  # Using OpenAI-compatible format
+  #   max_concurrency: 10  # 并发请求数限制
+  #   generation_params:
+  #     max_new_tokens: 4096
+  #     temperature: 0.8
 
-  # Example 3: Azure OpenAI
-  - name: "Azure-GPT-35"
-    type: "api"
-    api_endpoints:
-      - "https://your-resource.openai.azure.com"
-    api_keys:
-      - "your-azure-api-key"
-    model: "gpt-35-turbo"  # Your deployment name
-    api_type: "azure"
-    generation_params:
-      max_new_tokens: 2048
-      temperature: 0.7
+  # # Example 3: Azure OpenAI
+  # - name: "Azure-GPT-35"
+  #   type: "api"
+  #   api_endpoints:
+  #     - "https://your-resource.openai.azure.com"
+  #   api_keys:
+  #     - "your-azure-api-key"
+  #   model: "gpt-35-turbo"  # Your deployment name
+  #   api_type: "azure"
+  #   max_concurrency: 8  # Azure通常支持较高的并发
+  #   generation_params:
+  #     max_new_tokens: 2048
+  #     temperature: 0.7
 
-  # -----------------------------------------------------------------------------
-  # LOCAL MODELS / 本地模型示例
-  # -----------------------------------------------------------------------------
+  # # -----------------------------------------------------------------------------
+  # # LOCAL MODELS / 本地模型示例
+  # # -----------------------------------------------------------------------------
   
-  # Example 4: Local HuggingFace model
-  - name: "Qwen2.5-7B-Instruct-Local"
-    type: "local"
-    base_model_path: "/nas/models/Qwen/Qwen2.5-7B-Instruct"
-    device_map: "auto"
-    torch_dtype: "bfloat16"  # Options: float32, float16, bfloat16, auto
-    generation_params:
-      max_new_tokens: 4096
-      temperature: 0.7
-      top_p: 0.9
-      repetition_penalty: 1.1
+  # # Example 4: Local HuggingFace model
+  # - name: "Qwen2.5-7B-Instruct-Local"
+  #   type: "local"
+  #   base_model_path: "/nas/models/Qwen/Qwen2.5-7B-Instruct"
+  #   device_map: "auto"
+  #   torch_dtype: "bfloat16"  # Options: float32, float16, bfloat16, auto
+  #   generation_params:
+  #     max_new_tokens: 4096
+  #     temperature: 0.7
+  #     top_p: 0.9
+  #     repetition_penalty: 1.1
 
-  # Example 5: HuggingFace Hub model
-  - name: "Llama-3.1-8B"
-    type: "huggingface"
-    path: "meta-llama/Llama-3.1-8B-Instruct"
-    device_map: "auto"
-    generation_params:
-      max_new_tokens: 4096
-      temperature: 0.8
+  # # Example 5: HuggingFace Hub model
+  # - name: "Llama-3.1-8B"
+  #   type: "huggingface"
+  #   path: "meta-llama/Llama-3.1-8B-Instruct"
+  #   device_map: "auto"
+  #   generation_params:
+  #     max_new_tokens: 4096
+  #     temperature: 0.8
 
-  # Example 6: Local checkpoint from training
-  - name: "Fine-tuned-GSM8K-5000"
-    type: "checkpoint"
-    path: "/nas/output/sft/checkpoint-5000"
-    device_map: "auto"
-    torch_dtype: "auto"
-    generation_params:
-      temperature: 0.7
+  # # Example 6: Local checkpoint from training
+  # - name: "Fine-tuned-GSM8K-5000"
+  #   type: "checkpoint"
+  #   path: "/nas/output/sft/checkpoint-5000"
+  #   device_map: "auto"
+  #   torch_dtype: "auto"
+  #   generation_params:
+  #     temperature: 0.7
 
-  # -----------------------------------------------------------------------------
-  # LORA MODELS / LoRA模型示例
-  # -----------------------------------------------------------------------------
+  # # -----------------------------------------------------------------------------
+  # # LORA MODELS / LoRA模型示例
+  # # -----------------------------------------------------------------------------
   
-  # Example 7: Model with LoRA adapter
-  - name: "Qwen-with-Math-LoRA"
-    type: "local_with_lora"
-    base_model_path: "/nas/models/Qwen/Qwen2.5-7B-Instruct"
-    lora_path: "/nas/lora_adapters/math_lora"
-    device_map: "auto"
-    torch_dtype: "bfloat16"
-    generation_params:
-      max_new_tokens: 4096
-      temperature: 0.6  # Lower temperature for math
+  # # Example 7: Model with LoRA adapter
+  # - name: "Qwen-with-Math-LoRA"
+  #   type: "local_with_lora"
+  #   base_model_path: "/nas/models/Qwen/Qwen2.5-7B-Instruct"
+  #   lora_path: "/nas/lora_adapters/math_lora"
+  #   device_map: "auto"
+  #   torch_dtype: "bfloat16"
+  #   generation_params:
+  #     max_new_tokens: 4096
+  #     temperature: 0.6  # Lower temperature for math
 
-  # Example 8: Quantized model with LoRA
-  - name: "Llama-8bit-LoRA"
-    type: "local_with_lora"
-    base_model_path: "meta-llama/Llama-3.1-8B-Instruct"
-    lora_path: "./lora_weights/llama_adapter"
-    load_in_8bit: true  # 8-bit quantization
-    device_map: "auto"
-    generation_params:
-      max_new_tokens: 2048
-      temperature: 0.7
+  # # Example 8: Quantized model with LoRA
+  # - name: "Llama-8bit-LoRA"
+  #   type: "local_with_lora"
+  #   base_model_path: "meta-llama/Llama-3.1-8B-Instruct"
+  #   lora_path: "./lora_weights/llama_adapter"
+  #   load_in_8bit: true  # 8-bit quantization
+  #   device_map: "auto"
+  #   generation_params:
+  #     max_new_tokens: 2048
+  #     temperature: 0.7
 
-  # Example 9: 4-bit quantized model with LoRA
-  - name: "Qwen-4bit-LoRA"
-    type: "local_with_lora"
-    base_model_path: "/nas/models/Qwen/Qwen2.5-14B-Instruct"
-    lora_path: "./lora_weights/qwen_14b_adapter"
-    load_in_4bit: true  # 4-bit quantization for large models
-    device_map: "auto"
-    generation_params:
-      max_new_tokens: 4096
-      temperature: 0.7
+  # # Example 9: 4-bit quantized model with LoRA
+  # - name: "Qwen-4bit-LoRA"
+  #   type: "local_with_lora"
+  #   base_model_path: "/nas/models/Qwen/Qwen2.5-14B-Instruct"
+  #   lora_path: "./lora_weights/qwen_14b_adapter"
+  #   load_in_4bit: true  # 4-bit quantization for large models
+  #   device_map: "auto"
+  #   generation_params:
+  #     max_new_tokens: 4096
+  #     temperature: 0.7
 
 # ==============================================================================
 # INACTIVE MODELS (Commented out examples)

@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSONL 数据浏览器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            text-align: center;
+        }
+        
+        .upload-section {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+        
+        .upload-section.dragover {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .file-info {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            color: #2e7d32;
+            display: none;
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .stats-bar {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stat-label {
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .stat-value {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .pagination {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .page-btn {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .page-btn:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+        }
+        
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .page-input {
+            width: 60px;
+            padding: 8px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .data-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .sample-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .sample-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .sample-meta {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .meta-tag {
+            background: #f0f0f0;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .section {
+            margin: 25px 0;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .content-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 5px;
+            position: relative;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .content-text {
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .code-block {
+            background: #282c34;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            overflow-x: auto;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+        }
+        
+        .code-language {
+            color: #61dafb;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .copy-btn {
+            background: #61dafb;
+            color: #282c34;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #4fa8c5;
+        }
+        
+        .copy-btn.copied {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .code-content {
+            color: #abb2bf;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        /* Syntax highlighting colors */
+        .keyword { color: #c678dd; }
+        .string { color: #98c379; }
+        .comment { color: #5c6370; font-style: italic; }
+        .function { color: #61dafb; }
+        .number { color: #d19a66; }
+        
+        .expand-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .expanded {
+            max-height: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #c33;
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 JSONL 数据浏览器</h1>
+            <div class="upload-section" id="uploadSection">
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <p style="margin: 20px 0; color: #666; font-size: 18px;">
+                    拖拽 JSONL 文件到此处，或点击下方按钮选择文件
+                </p>
+                <input type="file" id="fileInput" class="file-input" accept=".jsonl">
+                <label for="fileInput" class="upload-btn">选择文件</label>
+                <div id="fileInfo" class="file-info"></div>
+            </div>
+        </div>
+        
+        <div id="contentSection" class="content-section">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-label">总样本数：</span>
+                    <span class="stat-value" id="totalSamples">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">当前显示：</span>
+                    <span class="stat-value" id="currentSample">0</span>
+                </div>
+                <div class="pagination">
+                    <button class="page-btn" id="prevBtn" onclick="previousPage()">上一页</button>
+                    <input type="number" class="page-input" id="pageInput" min="1" value="1" onchange="goToPage()">
+                    <span style="color: white; font-weight: 600;" id="pageInfo">/ 1</span>
+                    <button class="page-btn" id="nextBtn" onclick="nextPage()">下一页</button>
+                    <button class="page-btn" onclick="resetView()">重置</button>
+                </div>
+            </div>
+            
+            <div id="dataContainer"></div>
+        </div>
+    </div>
+    
+    <script>
+        let jsonlData = [];
+        let currentPage = 1;
+        let itemsPerPage = 1;
+        
+        // File upload handling
+        const fileInput = document.getElementById('fileInput');
+        const uploadSection = document.getElementById('uploadSection');
+        const fileInfo = document.getElementById('fileInfo');
+        const contentSection = document.getElementById('contentSection');
+        const dataContainer = document.getElementById('dataContainer');
+        
+        // Drag and drop handling
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.classList.add('dragover');
+        });
+        
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.classList.remove('dragover');
+        });
+        
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        function handleFile(file) {
+            if (!file.name.endsWith('.jsonl')) {
+                alert('请选择 .jsonl 文件！');
+                return;
+            }
+            
+            fileInfo.style.display = 'block';
+            fileInfo.innerHTML = `正在加载文件: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    parseJSONL(e.target.result);
+                    fileInfo.innerHTML = `✅ 成功加载: ${file.name}`;
+                    setTimeout(() => {
+                        uploadSection.style.display = 'none';
+                        contentSection.classList.add('active');
+                    }, 1000);
+                } catch (error) {
+                    fileInfo.innerHTML = `❌ 加载失败: ${error.message}`;
+                    fileInfo.style.background = '#fee';
+                    fileInfo.style.color = '#c33';
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        function parseJSONL(content) {
+            jsonlData = [];
+            const lines = content.trim().split('\n');
+            
+            lines.forEach((line, index) => {
+                if (line.trim()) {
+                    try {
+                        const data = JSON.parse(line);
+                        jsonlData.push(data);
+                    } catch (e) {
+                        console.error(`Error parsing line ${index + 1}:`, e);
+                    }
+                }
+            });
+            
+            if (jsonlData.length === 0) {
+                throw new Error('没有找到有效的JSON数据');
+            }
+            
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            const totalSamples = jsonlData.length;
+            const totalPages = Math.ceil(totalSamples / itemsPerPage);
+            
+            document.getElementById('totalSamples').textContent = totalSamples;
+            document.getElementById('currentSample').textContent = currentPage;
+            document.getElementById('pageInfo').textContent = `/ ${totalPages}`;
+            document.getElementById('pageInput').max = totalPages;
+            
+            // Update pagination buttons
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+            
+            displayCurrentPage();
+        }
+        
+        function displayCurrentPage() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, jsonlData.length);
+            
+            dataContainer.innerHTML = '';
+            
+            for (let i = startIndex; i < endIndex; i++) {
+                const item = jsonlData[i];
+                const card = createDataCard(item, i + 1);
+                dataContainer.appendChild(card);
+            }
+        }
+        
+        function createDataCard(data, index) {
+            const card = document.createElement('div');
+            card.className = 'data-card';
+            
+            // Create header
+            const header = document.createElement('div');
+            header.className = 'sample-header';
+            
+            const sampleNumber = document.createElement('div');
+            sampleNumber.className = 'sample-number';
+            sampleNumber.textContent = `样本 #${index}`;
+            
+            const meta = document.createElement('div');
+            meta.className = 'sample-meta';
+            
+            if (data.step !== undefined) {
+                const stepTag = document.createElement('span');
+                stepTag.className = 'meta-tag';
+                stepTag.textContent = `Step: ${data.step}`;
+                meta.appendChild(stepTag);
+            }
+            
+            if (data.sample_idx !== undefined) {
+                const idxTag = document.createElement('span');
+                idxTag.className = 'meta-tag';
+                idxTag.textContent = `Index: ${data.sample_idx}`;
+                meta.appendChild(idxTag);
+            }
+            
+            if (data.timestamp) {
+                const timeTag = document.createElement('span');
+                timeTag.className = 'meta-tag';
+                timeTag.textContent = new Date(data.timestamp).toLocaleString('zh-CN');
+                meta.appendChild(timeTag);
+            }
+            
+            header.appendChild(sampleNumber);
+            header.appendChild(meta);
+            card.appendChild(header);
+            
+            // Display input section
+            if (data.input) {
+                const inputSection = createSection('📥 输入 (Input)', data.input, 'input');
+                card.appendChild(inputSection);
+            }
+            
+            // Display output section with code extraction
+            if (data.output) {
+                const outputSection = createOutputSection(data.output);
+                card.appendChild(outputSection);
+            }
+            
+            // Display any other fields
+            Object.keys(data).forEach(key => {
+                if (!['input', 'output', 'step', 'sample_idx', 'timestamp'].includes(key)) {
+                    const section = createSection(`📋 ${key}`, JSON.stringify(data[key], null, 2), 'json');
+                    card.appendChild(section);
+                }
+            });
+            
+            return card;
+        }
+        
+        function createSection(title, content, type = 'text') {
+            const section = document.createElement('div');
+            section.className = 'section';
+            
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'section-title';
+            
+            const icon = document.createElement('span');
+            icon.className = 'section-icon';
+            icon.textContent = title.charAt(0);
+            
+            titleDiv.appendChild(icon);
+            titleDiv.appendChild(document.createTextNode(title.substring(2)));
+            
+            const contentBox = document.createElement('div');
+            contentBox.className = 'content-box';
+            contentBox.id = `content-${Math.random().toString(36).substr(2, 9)}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content-text';
+            
+            // Truncate long content
+            const maxLength = 500;
+            let displayContent = content;
+            let isExpanded = false;
+            
+            if (content.length > maxLength) {
+                displayContent = content.substring(0, maxLength) + '...';
+                
+                const expandBtn = document.createElement('button');
+                expandBtn.className = 'expand-btn';
+                expandBtn.textContent = '展开';
+                expandBtn.onclick = function() {
+                    if (isExpanded) {
+                        contentDiv.textContent = content.substring(0, maxLength) + '...';
+                        contentBox.classList.remove('expanded');
+                        expandBtn.textContent = '展开';
+                    } else {
+                        contentDiv.textContent = content;
+                        contentBox.classList.add('expanded');
+                        expandBtn.textContent = '收起';
+                    }
+                    isExpanded = !isExpanded;
+                };
+                contentBox.appendChild(expandBtn);
+            }
+            
+            contentDiv.textContent = displayContent;
+            contentBox.appendChild(contentDiv);
+            
+            section.appendChild(titleDiv);
+            section.appendChild(contentBox);
+            
+            return section;
+        }
+        
+        function createOutputSection(output) {
+            const section = document.createElement('div');
+            section.className = 'section';
+            
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'section-title';
+            
+            const icon = document.createElement('span');
+            icon.className = 'section-icon';
+            icon.textContent = '📤';
+            
+            titleDiv.appendChild(icon);
+            titleDiv.appendChild(document.createTextNode(' 输出 (Output)'));
+            section.appendChild(titleDiv);
+            
+            // Extract code blocks
+            const codeBlocks = extractCodeBlocks(output);
+            
+            if (codeBlocks.length > 0) {
+                // Display text before code blocks if any
+                if (codeBlocks[0].startIndex > 0) {
+                    const beforeText = output.substring(0, codeBlocks[0].startIndex);
+                    const textBox = createTextBox(beforeText);
+                    section.appendChild(textBox);
+                }
+                
+                // Display code blocks and text between them
+                codeBlocks.forEach((block, index) => {
+                    const codeElement = createCodeBlock(block);
+                    section.appendChild(codeElement);
+                    
+                    // Display text after this block and before next block
+                    if (index < codeBlocks.length - 1) {
+                        const nextBlock = codeBlocks[index + 1];
+                        const betweenText = output.substring(block.endIndex, nextBlock.startIndex);
+                        if (betweenText.trim()) {
+                            const textBox = createTextBox(betweenText);
+                            section.appendChild(textBox);
+                        }
+                    } else {
+                        // Text after last code block
+                        const afterText = output.substring(block.endIndex);
+                        if (afterText.trim()) {
+                            const textBox = createTextBox(afterText);
+                            section.appendChild(textBox);
+                        }
+                    }
+                });
+            } else {
+                // No code blocks, display as plain text
+                const contentBox = document.createElement('div');
+                contentBox.className = 'content-box';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'content-text';
+                contentDiv.textContent = output;
+                contentBox.appendChild(contentDiv);
+                
+                section.appendChild(contentBox);
+            }
+            
+            return section;
+        }
+        
+        function createTextBox(text) {
+            const contentBox = document.createElement('div');
+            contentBox.className = 'content-box';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content-text';
+            
+            // Handle long text
+            const maxLength = 300;
+            let displayText = text.trim();
+            let isExpanded = false;
+            
+            if (displayText.length > maxLength) {
+                const truncated = displayText.substring(0, maxLength) + '...';
+                contentDiv.textContent = truncated;
+                
+                const expandBtn = document.createElement('button');
+                expandBtn.className = 'expand-btn';
+                expandBtn.textContent = '展开';
+                expandBtn.onclick = function() {
+                    if (isExpanded) {
+                        contentDiv.textContent = truncated;
+                        contentBox.classList.remove('expanded');
+                        expandBtn.textContent = '展开';
+                    } else {
+                        contentDiv.textContent = displayText;
+                        contentBox.classList.add('expanded');
+                        expandBtn.textContent = '收起';
+                    }
+                    isExpanded = !isExpanded;
+                };
+                contentBox.appendChild(expandBtn);
+            } else {
+                contentDiv.textContent = displayText;
+            }
+            
+            contentBox.appendChild(contentDiv);
+            return contentBox;
+        }
+        
+        function extractCodeBlocks(text) {
+            const codeBlocks = [];
+            const regex = /```(\w+)?\n([\s\S]*?)```/g;
+            let match;
+            
+            while ((match = regex.exec(text)) !== null) {
+                codeBlocks.push({
+                    language: match[1] || 'python',
+                    code: match[2].trim(),
+                    startIndex: match.index,
+                    endIndex: match.index + match[0].length
+                });
+            }
+            
+            return codeBlocks;
+        }
+        
+        function createCodeBlock(block) {
+            const codeDiv = document.createElement('div');
+            codeDiv.className = 'code-block';
+            
+            const header = document.createElement('div');
+            header.className = 'code-header';
+            
+            const language = document.createElement('span');
+            language.className = 'code-language';
+            language.textContent = block.language;
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.textContent = '复制代码';
+            copyBtn.onclick = function() {
+                navigator.clipboard.writeText(block.code).then(() => {
+                    copyBtn.textContent = '✓ 已复制';
+                    copyBtn.classList.add('copied');
+                    setTimeout(() => {
+                        copyBtn.textContent = '复制代码';
+                        copyBtn.classList.remove('copied');
+                    }, 2000);
+                });
+            };
+            
+            header.appendChild(language);
+            header.appendChild(copyBtn);
+            
+            const codeContent = document.createElement('pre');
+            codeContent.className = 'code-content';
+            
+            // Simple syntax highlighting
+            const highlightedCode = highlightPython(block.code);
+            codeContent.innerHTML = highlightedCode;
+            
+            codeDiv.appendChild(header);
+            codeDiv.appendChild(codeContent);
+            
+            return codeDiv;
+        }
+        
+        function highlightPython(code) {
+            // Basic Python syntax highlighting
+            // First escape HTML entities
+            let escaped = code
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            
+            // Build highlighted code with placeholder system to avoid conflicts
+            let highlighted = escaped;
+            const replacements = [];
+            let placeholderIndex = 0;
+            
+            // Keywords - use placeholders to avoid nested replacements
+            const keywords = ['def', 'class', 'import', 'from', 'if', 'else', 'elif', 'for', 'while', 
+                            'return', 'yield', 'try', 'except', 'finally', 'with', 'as', 'pass', 
+                            'break', 'continue', 'async', 'await', 'lambda', 'and', 'or', 'not',
+                            'in', 'is', 'None', 'True', 'False', 'self'];
+            
+            // Comments first (highest priority)
+            highlighted = highlighted.replace(/(#.*$)/gm, (match) => {
+                const placeholder = `__HIGHLIGHT_${placeholderIndex++}__`;
+                replacements.push({ placeholder, html: `<span class="comment">${match}</span>` });
+                return placeholder;
+            });
+            
+            // Strings (second priority)
+            highlighted = highlighted.replace(/(["'])([^"']*?)\1/g, (match, quote, content) => {
+                const placeholder = `__HIGHLIGHT_${placeholderIndex++}__`;
+                replacements.push({ placeholder, html: `<span class="string">${match}</span>` });
+                return placeholder;
+            });
+            
+            // Triple-quoted strings
+            highlighted = highlighted.replace(/('''|""")[\s\S]*?\1/g, (match) => {
+                const placeholder = `__HIGHLIGHT_${placeholderIndex++}__`;
+                replacements.push({ placeholder, html: `<span class="string">${match}</span>` });
+                return placeholder;
+            });
+            
+            // Keywords (avoiding already replaced content)
+            keywords.forEach(keyword => {
+                const regex = new RegExp(`\\b${keyword}\\b(?!__)`, 'g');
+                highlighted = highlighted.replace(regex, (match) => {
+                    const placeholder = `__HIGHLIGHT_${placeholderIndex++}__`;
+                    replacements.push({ placeholder, html: `<span class="keyword">${match}</span>` });
+                    return placeholder;
+                });
+            });
+            
+            // Functions (avoiding placeholders)
+            highlighted = highlighted.replace(/\b(\w+)(?=\()/g, (match) => {
+                if (match.startsWith('__HIGHLIGHT_')) return match;
+                const placeholder = `__HIGHLIGHT_${placeholderIndex++}__`;
+                replacements.push({ placeholder, html: `<span class="function">${match}</span>` });
+                return placeholder;
+            });
+            
+            // Numbers (avoiding placeholders)
+            highlighted = highlighted.replace(/\b(\d+)\b/g, (match) => {
+                if (highlighted.indexOf(`__HIGHLIGHT_`) > -1 && match.length < 3) return match;
+                const placeholder = `__HIGHLIGHT_${placeholderIndex++}__`;
+                replacements.push({ placeholder, html: `<span class="number">${match}</span>` });
+                return placeholder;
+            });
+            
+            // Replace all placeholders with actual HTML
+            replacements.forEach(({ placeholder, html }) => {
+                highlighted = highlighted.replace(placeholder, html);
+            });
+            
+            return highlighted;
+        }
+        
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                document.getElementById('pageInput').value = currentPage;
+                updateDisplay();
+            }
+        }
+        
+        function nextPage() {
+            const totalPages = Math.ceil(jsonlData.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                document.getElementById('pageInput').value = currentPage;
+                updateDisplay();
+            }
+        }
+        
+        function goToPage() {
+            const pageInput = document.getElementById('pageInput');
+            const newPage = parseInt(pageInput.value);
+            const totalPages = Math.ceil(jsonlData.length / itemsPerPage);
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                updateDisplay();
+            } else {
+                pageInput.value = currentPage;
+            }
+        }
+        
+        function resetView() {
+            uploadSection.style.display = 'block';
+            contentSection.classList.remove('active');
+            jsonlData = [];
+            currentPage = 1;
+            fileInput.value = '';
+            fileInfo.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

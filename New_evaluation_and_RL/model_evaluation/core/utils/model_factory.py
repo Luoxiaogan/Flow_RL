@@ -6,8 +6,6 @@ from typing import Dict, Any
 from pathlib import Path
 
 from ..interfaces.model_interface import BaseModelInterface
-from ..interfaces.local_model_interface import LocalModelInterface
-from ..interfaces.api_model_interface import APIModelInterface
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +25,10 @@ class ModelFactory:
         Returns:
             Model interface instance
         """
+        # Lazy imports to avoid circular dependency
+        from ..interfaces.local_model_interface import LocalModelInterface
+        from ..interfaces.api_model_interface import APIModelInterface
+        
         model_type = model_config.get('type', 'unknown').lower()
         model_name = model_config.get('name', 'unnamed')
         

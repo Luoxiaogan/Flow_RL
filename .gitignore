@@ -69,6 +69,7 @@ my_llama3_h100_trl/my_llama3_h100_huggingface_accelerate/
 my_llama3_h100_trl/
 New_evaluation_and_RL/New_evaluation_and_RL/workspace/
 
+data_vis/data
 # Windows reserved names
 nul
 NUL

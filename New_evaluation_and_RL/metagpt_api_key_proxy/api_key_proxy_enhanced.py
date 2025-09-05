@@ -206,12 +206,20 @@ def proxy_request(path):
     # 准备转发请求的头部
     headers = {}
     for key, value in request.headers:
-        if key.lower() not in ['host', 'content-length']:
+        if key.lower() not in ['host', 'content-length', 'connection']:
             headers[key] = value
     
     # 添加目标API密钥
     if TARGET_API_KEY:
         headers['Authorization'] = f'Bearer {TARGET_API_KEY}'
+    
+    # 确保有正确的Content-Type（智谱API要求）
+    if request.method == 'POST' and request_body:
+        headers['Content-Type'] = 'application/json'
+    
+    # 添加User-Agent（某些API需要）
+    if 'User-Agent' not in headers:
+        headers['User-Agent'] = 'API-Proxy/1.0'
     
     # 决定最终的目标URL
     if TARGET_URL.endswith('/chat/completions'):
@@ -220,14 +228,15 @@ def proxy_request(path):
             print("\n📌 处理模式: 完整路径模式")
             print(f"   配置的target_url已包含/chat/completions")
             print(f"   忽略客户端路径 '{path}'，直接使用完整URL")
-    elif TARGET_URL.endswith('/v1'):
+    elif TARGET_URL.endswith('/v1') or TARGET_URL.endswith('/v4'):
+        # 支持OpenAI格式(/v1)和智谱格式(/v4)
         if path:
             final_url = f"{TARGET_URL}/{path}"
         else:
             final_url = f"{TARGET_URL}/chat/completions"
         if DEBUG_MODE:
             print("\n📌 处理模式: 基础URL模式")
-            print(f"   配置的target_url是基础URL")
+            print(f"   配置的target_url是基础URL (v1或v4)")
             print(f"   拼接路径 '{path}' 到基础URL")
     else:
         final_url = TARGET_URL
@@ -244,14 +253,15 @@ def proxy_request(path):
     
     try:
         # 发送请求到上游API
+        # 智谱API需要启用SSL验证
         response = requests.request(
             method=request.method,
             url=final_url,
             headers=headers,
             params=request.args,
             data=request_body,
-            timeout=60,
-            verify=False,
+            timeout=600,
+            verify=True,  # 智谱API需要SSL验证
             stream=True  # 使用流式响应
         )
         
@@ -351,8 +361,50 @@ def proxy_request(path):
             rate_limiter.release_concurrency()
             return result
         
+    except requests.exceptions.ConnectionError as e:
+        # 连接错误的详细处理
+        rate_limiter.release_concurrency()
+        
+        with stats_lock:
+            request_stats["failed"] += 1
+            request_stats["in_progress"] -= 1
+        
+        timestamp = datetime.now().strftime('%H:%M:%S')
+        print(f"\n❌ 连接错误 [{timestamp}]")
+        print(f"   目标URL: {final_url}")
+        print(f"   错误类型: {type(e).__name__}")
+        print(f"   错误详情: {str(e)}")
+        print(f"   请求头: Authorization=***{TARGET_API_KEY[-4:] if TARGET_API_KEY else 'None'}")
+        print(f"   可能原因:")
+        print(f"   1. API密钥无效或格式错误")
+        print(f"   2. URL路径不正确")
+        print(f"   3. 网络连接问题")
+        print(f"   4. API服务暂时不可用")
+        
+        if not DEBUG_MODE and pbar is not None:
+            pbar.set_postfix({
+                "成功": request_stats["success"],
+                "失败": request_stats["failed"],
+                "并发": rate_limiter.current_concurrency
+            })
+            pbar.update()
+        
+        error_response = {
+            "error": {
+                "message": f"连接错误: 无法连接到智谱API - {str(e)}",
+                "type": "ConnectionError",
+                "details": "请检查API密钥和网络连接"
+            }
+        }
+        
+        return Response(
+            json.dumps(error_response, ensure_ascii=False),
+            status=502,  # Bad Gateway
+            content_type='application/json'
+        )
+    
     except Exception as e:
-        # 发生异常时也要释放并发槽位
+        # 其他异常的处理
         rate_limiter.release_concurrency()
         
         with stats_lock:

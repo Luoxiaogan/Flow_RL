@@ -215,7 +215,7 @@ class UnifiedBatchEvaluator:
     
     async def _evaluate_single_model(self, model_config: Dict[str, Any]) -> Dict:
         """
-        Evaluate a single model (local or API) with resource management
+        Evaluate a single model (local or API) with resource management and concurrency
         
         Args:
             model_config: Model configuration
@@ -238,35 +238,70 @@ class UnifiedBatchEvaluator:
                 logger.info(f"[{model_name}] 生成解决方案...")
                 solutions = []
                 
-                # Process in batches for progress display
-                batch_size = self.eval_batch_size
-                total_batches = (len(self.test_samples) + batch_size - 1) // batch_size
+                # Get concurrency limit from config or use default
+                max_concurrency = model_config.get('max_concurrency', 10)
+                if model_config.get('type') == 'api':
+                    # For API models, respect the configured concurrency limit
+                    max_concurrency = min(max_concurrency, 20)  # Cap at 20 for API safety
+                else:
+                    # For local models, usually lower concurrency is better
+                    max_concurrency = min(max_concurrency, 4)
                 
-                for i in tqdm(range(0, len(self.test_samples), batch_size),
-                             desc=f"[{model_name}] 生成",
-                             total=total_batches):
-                    batch = self.test_samples[i:i + batch_size]
-                    
-                    # Generate for each sample in batch
-                    batch_solutions = []
-                    for sample in batch:
+                logger.info(f"[{model_name}] 使用并发数: {max_concurrency}")
+                
+                # Create semaphore for concurrency control
+                semaphore = asyncio.Semaphore(max_concurrency)
+                
+                async def generate_with_semaphore(sample, index):
+                    """Generate solution with semaphore control"""
+                    async with semaphore:
                         try:
                             # Get generation parameters
                             gen_params = model_config.get('generation_params', {})
                             
                             # Generate solution
                             solution = await model.generate_solution(sample, **gen_params)
-                            batch_solutions.append(solution)
+                            return index, solution
                             
                         except Exception as e:
-                            logger.warning(f"[{model_name}] 生成失败: {e}")
-                            batch_solutions.append("")  # Empty solution for failed generation
+                            logger.warning(f"[{model_name}] 样本 {index} 生成失败: {e}")
+                            return index, ""  # Empty solution for failed generation
+                
+                # Process in batches for progress display, but concurrent within batch
+                batch_size = self.eval_batch_size
+                total_batches = (len(self.test_samples) + batch_size - 1) // batch_size
+                
+                # Initialize progress bar
+                pbar = tqdm(total=len(self.test_samples), 
+                           desc=f"[{model_name}] 生成",
+                           unit="样本")
+                
+                for batch_idx in range(0, len(self.test_samples), batch_size):
+                    batch = self.test_samples[batch_idx:batch_idx + batch_size]
+                    
+                    # Create concurrent tasks for the batch
+                    tasks = [
+                        generate_with_semaphore(sample, batch_idx + i)
+                        for i, sample in enumerate(batch)
+                    ]
+                    
+                    # Execute all tasks concurrently
+                    batch_results = await asyncio.gather(*tasks)
+                    
+                    # Sort results by index to maintain order
+                    batch_results.sort(key=lambda x: x[0])
+                    batch_solutions = [result[1] for result in batch_results]
                     
                     solutions.extend(batch_solutions)
                     
-                    # Brief pause to avoid overwhelming API
-                    if model_config.get('type') == 'api':
-                        await asyncio.sleep(0.1)
+                    # Update progress bar
+                    pbar.update(len(batch))
+                    
+                    # Brief pause between batches for API models to respect rate limits
+                    if model_config.get('type') == 'api' and batch_idx + batch_size < len(self.test_samples):
+                        await asyncio.sleep(0.05)  # Reduced from 0.1 to 0.05 for better throughput
+                
+                pbar.close()
                 
                 # Evaluate solutions
                 logger.info(f"[{model_name}] 计算评估分数...")

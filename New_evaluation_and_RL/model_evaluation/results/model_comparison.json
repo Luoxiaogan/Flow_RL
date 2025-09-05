@@ -1,0 +1,120 @@
+{
+  "timestamp": "2025-09-05T10:20:18.245429",
+  "num_models": 1,
+  "models": [
+    {
+      "name": "glm-4.5-airx",
+      "path": "",
+      "overall_score": 0.0,
+      "success_rate": 0.8,
+      "total_samples": 30,
+      "benchmark_scores": {
+        "high_level_math": {
+          "num_samples": 5,
+          "num_successful": 3,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.6
+        },
+        "drop": {
+          "num_samples": 5,
+          "num_successful": 5,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "hotpotqa": {
+          "num_samples": 5,
+          "num_successful": 4,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.8
+        },
+        "gsm8k": {
+          "num_samples": 5,
+          "num_successful": 3,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.6
+        },
+        "humaneval": {
+          "num_samples": 5,
+          "num_successful": 5,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "mbpp": {
+          "num_samples": 5,
+          "num_successful": 4,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.8
+        }
+      }
+    }
+  ],
+  "benchmark_comparison": {
+    "high_level_math": [
+      {
+        "model": "glm-4.5-airx",
+        "score": 0.0,
+        "success_rate": 0.6
+      }
+    ],
+    "gsm8k": [
+      {
+        "model": "glm-4.5-airx",
+        "score": 0.0,
+        "success_rate": 0.6
+      }
+    ],
+    "mbpp": [
+      {
+        "model": "glm-4.5-airx",
+        "score": 0.0,
+        "success_rate": 0.8
+      }
+    ],
+    "drop": [
+      {
+        "model": "glm-4.5-airx",
+        "score": 0.0,
+        "success_rate": 1.0
+      }
+    ],
+    "humaneval": [
+      {
+        "model": "glm-4.5-airx",
+        "score": 0.0,
+        "success_rate": 1.0
+      }
+    ],
+    "hotpotqa": [
+      {
+        "model": "glm-4.5-airx",
+        "score": 0.0,
+        "success_rate": 0.8
+      }
+    ]
+  },
+  "rankings": {
+    "by_overall_score": [
+      "glm-4.5-airx"
+    ],
+    "best_model": "glm-4.5-airx",
+    "worst_model": "glm-4.5-airx"
+  }
+}

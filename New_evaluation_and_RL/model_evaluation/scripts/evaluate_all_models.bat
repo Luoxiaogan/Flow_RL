@@ -1,4 +1,7 @@
 @echo off
+:: Set UTF-8 code page for proper Chinese character display
+chcp 65001 >nul
+
 :: Unified Model Evaluation Script (Windows)
 :: 统一的模型评估脚本 - 支持本地模型和API模型
 
@@ -11,29 +14,11 @@ echo ==========================================
 for %%A in ("%~dp0..") do set "PARENT_DIR=%%~fA"
 set "PYTHONPATH=%PYTHONPATH%;%PARENT_DIR%"
 
-:: Activate conda environment
-echo 激活 conda 环境...
-call conda activate workflow
-if %ERRORLEVEL% neq 0 (
-    echo ⚠️  无法激活 conda 环境 'workflow'
-    echo 请确保已安装 conda 并创建了 workflow 环境
-    pause
-    exit /b 1
-)
-
-:: Check Python packages
-echo 检查依赖包...
-python -c "import torch; import transformers; import aiohttp" >nul 2>&1
-if %ERRORLEVEL% neq 0 (
-    echo ⚠️  缺少必要的Python包
-    echo 请安装: pip install torch transformers aiohttp peft bitsandbytes
-)
-
 :: Check if reward server is running
 echo 检查 Reward Server...
 curl -s http://localhost:8899/health >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-    echo ⚠️  Reward Server 未运行
+    echo [WARNING] Reward Server 未运行
     echo 请先启动 Reward Server:
     echo   ..\servers_and_proxy\start_scoreflow_reward.bat
     echo.
@@ -42,7 +27,7 @@ if %ERRORLEVEL% neq 0 (
         exit /b 1
     )
 ) else (
-    echo ✓ Reward Server 正常运行
+    echo [OK] Reward Server 正常运行
 )
 
 :: Initialize variables
@@ -80,7 +65,7 @@ goto :show_help
 
 :: Check if config file exists
 if not exist "%CONFIG_FILE%" (
-    echo ❌ 配置文件不存在: %CONFIG_FILE%
+    echo [ERROR] 配置文件不存在: %CONFIG_FILE%
     echo 请检查配置文件路径或创建配置文件
     exit /b 1
 )
@@ -98,14 +83,6 @@ if defined FILTER echo 模型过滤: %FILTER:~9%
 if defined LIMIT echo 模型限制: %LIMIT:~8%
 echo.
 
-:: Confirmation prompt (unless -y flag is set)
-if not defined YES_FLAG (
-    set /p CONFIRM="确认开始评估? [y/N]: "
-    if /i not "%CONFIRM%"=="y" (
-        echo 评估已取消
-        exit /b 0
-    )
-)
 
 :: Run evaluation
 echo.
@@ -119,10 +96,10 @@ set "EXIT_CODE=%ERRORLEVEL%"
 
 echo.
 if %EXIT_CODE% equ 0 (
-    echo ✓ 评估完成成功
+    echo [SUCCESS] 评估完成成功
     echo 结果已保存到输出目录
 ) else (
-    echo ❌ 评估过程中出现错误 (退出码: %EXIT_CODE%^)
+    echo [ERROR] 评估过程中出现错误 (退出码: %EXIT_CODE%^)
     echo 请查看日志了解详细信息
 )
 
