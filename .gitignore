@@ -90,3 +90,5 @@ llama_factory_qwen3_thinking_lora/local_save/rank_8/
 llama_factory_qwen3_thinking_lora/local_save/rank_16/
 llama_factory_qwen3_thinking_lora/local_save/*.zip
 llama_factory_qwen3_thinking_lora/local_save/*.jsonl
+rl_out/
+llama_factory_qwen3_thinking_lora/Merged_weight/
