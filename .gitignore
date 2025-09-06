@@ -92,3 +92,4 @@ llama_factory_qwen3_thinking_lora/local_save/*.zip
 llama_factory_qwen3_thinking_lora/local_save/*.jsonl
 rl_out/
 llama_factory_qwen3_thinking_lora/Merged_weight/
+New_evaluation_and_RL/RL_part/wandb_data_save/
