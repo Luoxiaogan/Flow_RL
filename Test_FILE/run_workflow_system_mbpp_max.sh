@@ -92,16 +92,16 @@ cd "$(dirname "$0")" || exit
 API_POOL='{
     "provider": "openai",
     "model": "qwen-turbo", 
-    "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
-    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    "api_key": "8cf060f9e1f444858609730176542253",
+    "base_url": "http://39.96.211.155:8000/proxy/api/openai/v1"
 }'
 
 # 执行LLM，用于【工作流内部的算子】，通常只配置一个高效、可靠的模型。
 EXEC_LLM='{
     "provider": "openai",
     "model": "qwen-turbo", 
-    "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
-    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    "api_key": "8cf060f9e1f444858609730176542253",
+    "base_url": "http://39.96.211.155:8000/proxy/api/openai/v1"
 }'
 
 # --- 路径配置 ---

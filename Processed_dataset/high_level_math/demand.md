@@ -1,0 +1,1 @@
+为该数据集Processed_dataset\high_level_math配置一个与gsm8k类似的一套handler和benchmark，参考ScoreFlow\scripts\gsm8k，ScoreFlow\benchmark\gsm8k.py；注意，请你在ScoreFlow\scripts\high_level_math和ScoreFlow\benchmark下放置为high_level_math编写的那些脚本；编写之前请你查看gsm8k那些目录相关的所有文件；gsm8k.jsonl与我数据集的格式一样；支持选择特定数据集jsonl文件
