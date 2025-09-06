@@ -1,6 +1,6 @@
 # Model Comparison Report
 
-**Generated**: 2025-09-06T17:15:56.056644
+**Generated**: 2025-09-06T21:39:59.858718
 **Number of Models**: 1
 
 ## Overall Rankings
@@ -11,7 +11,7 @@
 
 ## Benchmark Comparisons
 
-### drop
+### hotpotqa
 
 | Model | Mean Score | Success Rate |
 |-------|------------|---------------|
@@ -27,19 +27,7 @@
 
 | Model | Mean Score | Success Rate |
 |-------|------------|---------------|
-| qwen-turbo  | 0.533 | 100.0% |
-
-### hotpotqa
-
-| Model | Mean Score | Success Rate |
-|-------|------------|---------------|
-| qwen-turbo  | 0.533 | 100.0% |
-
-### mbpp
-
-| Model | Mean Score | Success Rate |
-|-------|------------|---------------|
-| qwen-turbo  | 0.633 | 100.0% |
+| qwen-turbo  | 0.500 | 100.0% |
 
 ### humaneval
 
@@ -47,10 +35,22 @@
 |-------|------------|---------------|
 | qwen-turbo  | 0.900 | 100.0% |
 
+### drop
+
+| Model | Mean Score | Success Rate |
+|-------|------------|---------------|
+| qwen-turbo  | 0.467 | 100.0% |
+
+### mbpp
+
+| Model | Mean Score | Success Rate |
+|-------|------------|---------------|
+| qwen-turbo  | 0.733 | 100.0% |
+
 ## Summary
 
 - **Best Model**: qwen-turbo 
 - **Worst Model**: qwen-turbo 
 
 ---
-*Generated at 2025-09-06 17:15:56*
+*Generated at 2025-09-06 21:39:59*

@@ -64,7 +64,8 @@
       "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\core\\interfaces/**)",
       "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\core\\evaluators/**)",
       "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\core\\evaluators/**)",
-      "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\core\\interfaces/**)"
+      "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\core\\interfaces/**)",
+      "Read(//d/**)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
