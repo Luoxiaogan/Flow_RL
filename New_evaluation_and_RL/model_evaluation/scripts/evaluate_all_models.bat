@@ -16,15 +16,12 @@ set "PYTHONPATH=%PYTHONPATH%;%PARENT_DIR%"
 
 :: Check if reward server is running
 echo 检查 Reward Server...
-curl -s http://localhost:8899/health >nul 2>&1
+curl -s http://localhost:7788/health >nul 2>&1
 if %ERRORLEVEL% neq 0 (
     echo [WARNING] Reward Server 未运行
     echo 请先启动 Reward Server:
     echo   ..\servers_and_proxy\start_scoreflow_reward.bat
-    echo.
-    set /p REPLY="是否继续? (可能会失败) [y/N]: "
-    if /i not "%REPLY%"=="y" (
-        exit /b 1
+
     )
 ) else (
     echo [OK] Reward Server 正常运行

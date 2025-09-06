@@ -1,56 +1,32 @@
 # Model Comparison Report
 
-**Generated**: 2025-09-05T10:20:18.245429
+**Generated**: 2025-09-06T17:03:24.490343
 **Number of Models**: 1
 
 ## Overall Rankings
 
 | Rank | Model | Overall Score | Success Rate |
 |------|-------|---------------|---------------|
-| 1 | glm-4.5-airx | 0.00% | 80.00% |
+| 1 | qwen-turbo  | 50.00% | 100.00% |
 
 ## Benchmark Comparisons
-
-### high_level_math
-
-| Model | Mean Score | Success Rate |
-|-------|------------|---------------|
-| glm-4.5-airx | 0.000 | 60.0% |
-
-### gsm8k
-
-| Model | Mean Score | Success Rate |
-|-------|------------|---------------|
-| glm-4.5-airx | 0.000 | 60.0% |
-
-### mbpp
-
-| Model | Mean Score | Success Rate |
-|-------|------------|---------------|
-| glm-4.5-airx | 0.000 | 80.0% |
 
 ### drop
 
 | Model | Mean Score | Success Rate |
 |-------|------------|---------------|
-| glm-4.5-airx | 0.000 | 100.0% |
+| qwen-turbo  | 0.333 | 100.0% |
 
-### humaneval
-
-| Model | Mean Score | Success Rate |
-|-------|------------|---------------|
-| glm-4.5-airx | 0.000 | 100.0% |
-
-### hotpotqa
+### gsm8k
 
 | Model | Mean Score | Success Rate |
 |-------|------------|---------------|
-| glm-4.5-airx | 0.000 | 80.0% |
+| qwen-turbo  | 0.667 | 100.0% |
 
 ## Summary
 
-- **Best Model**: glm-4.5-airx
-- **Worst Model**: glm-4.5-airx
+- **Best Model**: qwen-turbo 
+- **Worst Model**: qwen-turbo 
 
 ---
-*Generated at 2025-09-05 10:20:18*
+*Generated at 2025-09-06 17:03:24*

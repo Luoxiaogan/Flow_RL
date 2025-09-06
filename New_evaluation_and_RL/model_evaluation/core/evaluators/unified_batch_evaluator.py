@@ -261,6 +261,7 @@ class UnifiedBatchEvaluator:
                             
                             # Generate solution
                             solution = await model.generate_solution(sample, **gen_params)
+
                             return index, solution
                             
                         except Exception as e:

@@ -1,0 +1,79 @@
+2025-09-06 14:30:26,539 - __main__ - INFO - 开始统一模型评估
+2025-09-06 14:30:26,540 - __main__ - INFO - 配置文件: ..\configs\models_config.yaml
+2025-09-06 14:30:26,540 - __main__ - INFO - 测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data\train.jsonl
+2025-09-06 14:30:26,541 - __main__ - INFO - 输出目录: ..\results
+2025-09-06 14:30:26,541 - __main__ - INFO - 模型数量: 1
+2025-09-06 14:30:26,543 - core.utils.report_generator - INFO - 报告输出目录: ..\results
+2025-09-06 14:30:26,543 - core.evaluators.unified_batch_evaluator - INFO - UnifiedBatchEvaluator 初始化完成
+2025-09-06 14:30:26,545 - core.evaluators.unified_batch_evaluator - INFO -   测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data\train.jsonl
+2025-09-06 14:30:26,545 - core.evaluators.unified_batch_evaluator - INFO -   输出目录: ..\results
+2025-09-06 14:30:26,545 - core.evaluators.unified_batch_evaluator - INFO -   批次大小: 8
+2025-09-06 14:30:26,545 - core.evaluators.unified_batch_evaluator - INFO -   最大样本: 100
+2025-09-06 14:30:26,546 - core.evaluators.unified_batch_evaluator - INFO - 开始评估 1 个模型
+2025-09-06 14:30:26,546 - core.evaluators.unified_batch_evaluator - INFO - 验证模型配置...
+2025-09-06 14:30:26,554 - core.utils.config_validator - INFO - Configuration passed schema validation
+2025-09-06 14:30:26,555 - core.evaluators.unified_batch_evaluator - INFO - 检查 Reward Server...
+2025-09-06 14:30:26,555 - core.utils.reward_server_checker - INFO - 检查 Reward Server: http://localhost:7788/health
+2025-09-06 14:30:26,829 - core.utils.reward_server_checker - INFO - ✓ Reward Server 正常运行: {'service': 'scoreflow_reward_server', 'status': 'healthy', 'version': '1.0.0'}
+2025-09-06 14:30:26,830 - core.evaluators.unified_batch_evaluator - INFO - 加载测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data\train.jsonl
+2025-09-06 14:30:26,831 - core.evaluators.unified_batch_evaluator - INFO - 限制评估样本数: 100
+2025-09-06 14:30:26,831 - core.evaluators.unified_batch_evaluator - INFO - 加载了 2 个测试样本
+2025-09-06 14:30:26,831 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-06 14:30:26,831 - core.evaluators.unified_batch_evaluator - INFO - 评估模型 1/1: glm-4.5-airx
+2025-09-06 14:30:26,831 - core.evaluators.unified_batch_evaluator - INFO - 模型类型: api
+2025-09-06 14:30:26,832 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-06 14:30:26,832 - core.utils.model_factory - INFO - 创建模型接口: glm-4.5-airx (类型: api)
+2025-09-06 14:30:26,832 - core.interfaces.api_model_interface - INFO - [glm-4.5-airx] 初始化API模型
+2025-09-06 14:30:26,832 - core.interfaces.api_model_interface - INFO -   模型: glm-4.5-airx
+2025-09-06 14:30:26,832 - core.interfaces.api_model_interface - INFO -   API类型: openai
+2025-09-06 14:30:26,832 - core.interfaces.api_model_interface - INFO -   端点数量: 1
+2025-09-06 14:30:26,833 - core.utils.api_connection_pool - INFO - Created new API session: openai
+2025-09-06 14:30:29,906 - core.interfaces.api_model_interface - INFO - ✓ [glm-4.5-airx] API连接成功
+2025-09-06 14:30:29,906 - core.evaluators.unified_batch_evaluator - INFO - [glm-4.5-airx] 生成解决方案...
+2025-09-06 14:30:29,906 - core.evaluators.unified_batch_evaluator - INFO - [glm-4.5-airx] 使用并发数: 15
+2025-09-06 14:31:27,155 - core.evaluators.unified_batch_evaluator - INFO - [glm-4.5-airx] 计算评估分数...
+2025-09-06 14:31:27,156 - core.utils.score_collector - INFO - [glm-4.5-airx] 开始批量评估 2 个样本 (并发数: 8)
+2025-09-06 14:31:27,423 - core.utils.score_collector - INFO - [glm-4.5-airx] 评估统计:
+2025-09-06 14:31:27,423 - core.utils.score_collector - INFO -   总数: 2
+2025-09-06 14:31:27,425 - core.utils.score_collector - INFO -   成功: 2 (100.0%)
+2025-09-06 14:31:27,425 - core.utils.score_collector - INFO -   失败: 0 (0.0%)
+2025-09-06 14:31:27,425 - core.utils.score_collector - INFO -   平均分数: 0.000
+2025-09-06 14:31:27,426 - core.evaluators.unified_batch_evaluator - INFO - [glm-4.5-airx] 生成评估报告...
+2025-09-06 14:31:27,427 - core.utils.report_generator - INFO - 生成模型评估报告: glm-4.5-airx
+2025-09-06 14:31:27,431 - core.interfaces.api_model_interface - INFO - [glm-4.5-airx] API统计:
+2025-09-06 14:31:27,431 - core.interfaces.api_model_interface - INFO -   总请求: 3
+2025-09-06 14:31:27,431 - core.interfaces.api_model_interface - INFO -   成功: 3
+2025-09-06 14:31:27,432 - core.interfaces.api_model_interface - INFO -   失败: 0
+2025-09-06 14:31:27,432 - core.interfaces.api_model_interface - INFO -   成功率: 100.0%
+2025-09-06 14:31:27,433 - core.evaluators.unified_batch_evaluator - INFO - ✓ 模型 glm-4.5-airx 评估完成
+2025-09-06 14:31:27,433 - core.evaluators.unified_batch_evaluator - INFO -   总体分数: 0.00%
+2025-09-06 14:31:27,433 - core.evaluators.unified_batch_evaluator - INFO -   成功率: 100.00%
+2025-09-06 14:31:27,436 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-06 14:31:27,436 - core.evaluators.unified_batch_evaluator - INFO - 生成对比报告...
+2025-09-06 14:31:27,436 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-06 14:31:27,437 - core.utils.report_generator - INFO - 生成 1 个模型的对比报告
+2025-09-06 14:31:27,438 - core.utils.report_generator - INFO - 对比报告 JSON 已保存: ..\results\model_comparison.json
+2025-09-06 14:31:27,441 - core.utils.report_generator - INFO - 对比报告 Markdown 已保存: ..\results\model_comparison.md
+2025-09-06 14:31:28,379 - core.utils.report_generator - INFO - 对比图表已生成: ..\results\charts
+2025-09-06 14:31:28,385 - core.utils.report_generator - INFO - 详细结果 CSV 已保存: ..\results\detailed_results.csv
+2025-09-06 14:31:28,385 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-06 14:31:28,386 - core.evaluators.unified_batch_evaluator - INFO - 评估总结
+2025-09-06 14:31:28,386 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-06 14:31:28,386 - core.evaluators.unified_batch_evaluator - INFO - 总耗时: 61.8 秒
+2025-09-06 14:31:28,386 - core.evaluators.unified_batch_evaluator - INFO - 成功评估: 1 个模型
+2025-09-06 14:31:28,386 - core.evaluators.unified_batch_evaluator - INFO - 失败: 0 个模型
+2025-09-06 14:31:28,387 - core.evaluators.unified_batch_evaluator - INFO - 
+成功的模型:
+2025-09-06 14:31:28,387 - core.evaluators.unified_batch_evaluator - INFO -   ✓ glm-4.5-airx: 0.00%
+2025-09-06 14:31:28,387 - core.evaluators.unified_batch_evaluator - INFO - 
+报告已保存至: ..\results
+2025-09-06 14:31:28,387 - core.evaluators.unified_batch_evaluator - INFO -   - 模型报告: ..\results/model_*.json
+2025-09-06 14:31:28,387 - core.evaluators.unified_batch_evaluator - INFO -   - 对比报告: ..\results/model_comparison.json
+2025-09-06 14:31:28,387 - core.evaluators.unified_batch_evaluator - INFO -   - 图表: ..\results/charts/
+2025-09-06 14:31:28,388 - core.evaluators.unified_batch_evaluator - INFO - 清理资源...
+2025-09-06 14:31:28,388 - core.utils.api_connection_pool - INFO - Closed API session: openai
+2025-09-06 14:31:28,388 - core.utils.api_connection_pool - INFO - All API sessions cleaned up
+2025-09-06 14:31:28,388 - core.evaluators.unified_batch_evaluator - INFO - 资源清理完成

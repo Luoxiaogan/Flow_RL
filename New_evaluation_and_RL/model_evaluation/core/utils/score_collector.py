@@ -118,13 +118,14 @@ class ScoreCollector:
         
         # Prepare all request data
         all_requests = []
+        print("🤣:",solutions)
         for sample, solution in zip(test_samples, solutions):
             if not solution:
                 all_requests.append(None)
                 continue
             
             data_source = sample.get('data_source', 'unknown')
-            
+            print("🤣v:",solution)
             request_data = {
                 'data_source': data_source,
                 'solution_str': solution,

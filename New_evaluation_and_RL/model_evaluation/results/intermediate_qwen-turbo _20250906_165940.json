@@ -1,6 +1,6 @@
 {
   "model": {
-    "name": "glm-4.5-airx",
+    "name": "qwen-turbo ",
     "type": "api",
     "api_endpoints": [
       "http://localhost:5059"
@@ -8,7 +8,7 @@
     "api_keys": [
       ""
     ],
-    "model": "glm-4.5-airx",
+    "model": "qwen-turbo",
     "api_type": "openai",
     "max_retries": 1,
     "timeout": 600,
@@ -19,7 +19,7 @@
       "top_p": 0.9
     }
   },
-  "timestamp": "2025-09-06T14:31:27.427178",
+  "timestamp": "2025-09-06T16:59:40.011531",
   "total_samples": 2,
   "evaluation_results": {
     "total": 2,

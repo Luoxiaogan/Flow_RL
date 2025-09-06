@@ -194,9 +194,8 @@ class ModelEvaluator:
                     skip_special_tokens=True
                 )
                 
-                # Extract code from response
-                solution_str = self._extract_code(generated)
-                batch_solutions.append(solution_str)
+                # Return complete response - reward_server will extract code
+                batch_solutions.append(generated)
                 
             except Exception as e:
                 logger.warning(f"[{self.model_name}] 生成失败: {e}")
@@ -204,41 +203,6 @@ class ModelEvaluator:
         
         return batch_solutions
     
-    def _extract_code(self, text: str) -> str:
-        """
-        Extract workflow code from generated text
-        """
-        # Look for code blocks
-        code_patterns = [
-            r'<code>(.*?)</code>',  # <code>...</code>
-            r'```python\n(.*?)```',  # ```python...```
-            r'```\n(.*?)```',        # ```...```
-        ]
-        
-        for pattern in code_patterns:
-            match = re.search(pattern, text, re.DOTALL)
-            if match:
-                code = match.group(1).strip()
-                if 'class Workflow' in code:
-                    return f"<code>\n{code}\n</code>"
-        
-        # If no code block found, try to extract workflow class directly
-        if 'class Workflow' in text:
-            start = text.find('class Workflow')
-            end = len(text)
-            
-            # Look for common end markers
-            for marker in ['</code>', '```', '\n\n\n', 'Note:', 'Example:']:
-                pos = text.find(marker, start)
-                if pos > start:
-                    end = min(end, pos)
-            
-            code = text[start:end].strip()
-            return f"<code>\n{code}\n</code>"
-        
-        # Return empty if no workflow found
-        logger.debug(f"[{self.model_name}] 未能从生成的文本中提取 workflow 代码")
-        return ""
     
     def clear_cache(self):
         """

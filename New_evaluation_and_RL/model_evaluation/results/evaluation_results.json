@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-09-05T10:20:19.342261",
+  "timestamp": "2025-09-06T17:03:25.440048",
   "config_file": "..\\configs\\models_config.yaml",
   "num_models": 1,
   "successful_models": [
-    "glm-4.5-airx"
+    "qwen-turbo "
   ],
   "failed_models": [],
-  "total_time": 272.207391,
+  "total_time": 43.648464,
   "output_dir": "..\\results",
   "summary": {
-    "best_model": "glm-4.5-airx",
-    "worst_model": "glm-4.5-airx"
+    "best_model": "qwen-turbo ",
+    "worst_model": "qwen-turbo "
   }
 }

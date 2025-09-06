@@ -1,6 +1,6 @@
 {
   "model": {
-    "name": "glm-4.5-airx",
+    "name": "qwen-turbo ",
     "type": "api",
     "api_endpoints": [
       "http://localhost:5059"
@@ -8,7 +8,7 @@
     "api_keys": [
       ""
     ],
-    "model": "glm-4.5-airx",
+    "model": "qwen-turbo",
     "api_type": "openai",
     "max_retries": 1,
     "timeout": 600,
@@ -19,37 +19,37 @@
       "top_p": 0.9
     }
   },
-  "timestamp": "2025-09-06T14:31:27.427178",
+  "timestamp": "2025-09-06T17:03:24.479061",
   "total_samples": 2,
   "evaluation_results": {
     "total": 2,
     "successful": 2,
     "failed": 0,
-    "mean_score": 0.0,
-    "max_score": 0.0,
-    "min_score": 0.0,
-    "std_score": 0.0
+    "mean_score": 0.5,
+    "max_score": 0.6666666666666666,
+    "min_score": 0.3333333333333333,
+    "std_score": 0.23570226039551584
   },
   "benchmark_scores": {
     "gsm8k": {
       "num_samples": 1,
       "num_successful": 1,
-      "mean_score": 0.0,
-      "max_score": 0.0,
-      "min_score": 0.0,
+      "mean_score": 0.6666666666666666,
+      "max_score": 0.6666666666666666,
+      "min_score": 0.6666666666666666,
       "std_score": 0.0,
       "success_rate": 1.0
     },
     "drop": {
       "num_samples": 1,
       "num_successful": 1,
-      "mean_score": 0.0,
-      "max_score": 0.0,
-      "min_score": 0.0,
+      "mean_score": 0.3333333333333333,
+      "max_score": 0.3333333333333333,
+      "min_score": 0.3333333333333333,
       "std_score": 0.0,
       "success_rate": 1.0
     }
   },
-  "overall_score": 0.0,
+  "overall_score": 0.5,
   "success_rate": 1.0
 }

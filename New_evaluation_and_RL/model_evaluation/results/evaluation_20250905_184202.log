@@ -1,0 +1,162 @@
+2025-09-05 18:42:02,611 - __main__ - INFO - 开始统一模型评估
+2025-09-05 18:42:02,611 - __main__ - INFO - 配置文件: ..\configs\models_config.yaml
+2025-09-05 18:42:02,611 - __main__ - INFO - 测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data\train.jsonl
+2025-09-05 18:42:02,611 - __main__ - INFO - 输出目录: ..\results
+2025-09-05 18:42:02,611 - __main__ - INFO - 模型数量: 1
+2025-09-05 18:42:02,612 - core.utils.report_generator - INFO - 报告输出目录: ..\results
+2025-09-05 18:42:02,613 - core.evaluators.unified_batch_evaluator - INFO - UnifiedBatchEvaluator 初始化完成
+2025-09-05 18:42:02,614 - core.evaluators.unified_batch_evaluator - INFO -   测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data\train.jsonl
+2025-09-05 18:42:02,614 - core.evaluators.unified_batch_evaluator - INFO -   输出目录: ..\results
+2025-09-05 18:42:02,614 - core.evaluators.unified_batch_evaluator - INFO -   批次大小: 8
+2025-09-05 18:42:02,614 - core.evaluators.unified_batch_evaluator - INFO -   最大样本: 100
+2025-09-05 18:42:02,614 - core.evaluators.unified_batch_evaluator - INFO - 开始评估 1 个模型
+2025-09-05 18:42:02,614 - core.evaluators.unified_batch_evaluator - INFO - 验证模型配置...
+2025-09-05 18:42:02,622 - core.utils.config_validator - INFO - Configuration passed schema validation
+2025-09-05 18:42:02,623 - core.evaluators.unified_batch_evaluator - INFO - 检查 Reward Server...
+2025-09-05 18:42:02,623 - core.utils.reward_server_checker - INFO - 检查 Reward Server: http://localhost:7788/health
+2025-09-05 18:42:02,896 - core.utils.reward_server_checker - INFO - ✓ Reward Server 正常运行: {'service': 'scoreflow_reward_server', 'status': 'healthy', 'version': '1.0.0'}
+2025-09-05 18:42:02,896 - core.evaluators.unified_batch_evaluator - INFO - 加载测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data\train.jsonl
+2025-09-05 18:42:02,906 - core.evaluators.unified_batch_evaluator - INFO - 限制评估样本数: 100
+2025-09-05 18:42:02,907 - core.evaluators.unified_batch_evaluator - INFO - 加载了 60 个测试样本
+2025-09-05 18:42:02,907 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-05 18:42:02,907 - core.evaluators.unified_batch_evaluator - INFO - 评估模型 1/1: glm-4.5-airx
+2025-09-05 18:42:02,908 - core.evaluators.unified_batch_evaluator - INFO - 模型类型: api
+2025-09-05 18:42:02,908 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-05 18:42:02,908 - core.utils.model_factory - INFO - 创建模型接口: glm-4.5-airx (类型: api)
+2025-09-05 18:42:02,908 - core.interfaces.api_model_interface - INFO - [glm-4.5-airx] 初始化API模型
+2025-09-05 18:42:02,908 - core.interfaces.api_model_interface - INFO -   模型: glm-4.5-airx
+2025-09-05 18:42:02,908 - core.interfaces.api_model_interface - INFO -   API类型: openai
+2025-09-05 18:42:02,908 - core.interfaces.api_model_interface - INFO -   端点数量: 1
+2025-09-05 18:42:02,909 - core.utils.api_connection_pool - INFO - Created new API session: openai
+2025-09-05 18:42:03,772 - core.interfaces.api_model_interface - INFO - ✓ [glm-4.5-airx] API连接成功
+2025-09-05 18:42:03,772 - core.evaluators.unified_batch_evaluator - INFO - [glm-4.5-airx] 生成解决方案...
+2025-09-05 18:42:03,772 - core.evaluators.unified_batch_evaluator - INFO - [glm-4.5-airx] 使用并发数: 15
+2025-09-05 18:48:11,588 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): API error 502: {"error": {"message": "连接错误: 无法连接到智谱API - ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))", "type": "ConnectionError", "details": "请检查API密钥和网络连接"}}
+2025-09-05 18:48:11,589 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 22 生成失败: [glm-4.5-airx] API请求失败: API error 502: {"error": {"message": "连接错误: 无法连接到智谱API - ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))", "type": "ConnectionError", "details": "请检查API密钥和网络连接"}}
+2025-09-05 18:48:11,650 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,650 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 26 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,650 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,650 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 25 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,652 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,652 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 28 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,652 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,652 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 30 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,652 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,654 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 29 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,654 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,654 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 31 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,654 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,654 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 27 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,654 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,654 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 24 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,711 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 37 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 36 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 35 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 34 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 33 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 38 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 39 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,712 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 32 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,774 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,774 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 47 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,774 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,774 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 46 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,774 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,774 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 45 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,774 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,774 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 44 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,774 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,774 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 43 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,776 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,776 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 41 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,776 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,776 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 42 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,776 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,776 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 40 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,835 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,835 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 53 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,835 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 52 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 51 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 50 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 49 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 55 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 54 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,838 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 48 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 57 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 58 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 59 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.interfaces.api_model_interface - WARNING - [glm-4.5-airx] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.evaluators.unified_batch_evaluator - WARNING - [glm-4.5-airx] 样本 56 生成失败: [glm-4.5-airx] API请求失败: Cannot connect to host localhost:5059 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.evaluators.unified_batch_evaluator - INFO - [glm-4.5-airx] 计算评估分数...
+2025-09-05 18:48:11,899 - core.utils.score_collector - INFO - [glm-4.5-airx] 开始批量评估 60 个样本 (并发数: 8)
+2025-09-05 18:48:11,899 - core.utils.score_collector - ERROR - 请求失败: Cannot connect to host localhost:7788 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.utils.score_collector - ERROR - 请求失败: Cannot connect to host localhost:7788 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.utils.score_collector - ERROR - 请求失败: Cannot connect to host localhost:7788 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.utils.score_collector - ERROR - 请求失败: Cannot connect to host localhost:7788 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.utils.score_collector - ERROR - 请求失败: Cannot connect to host localhost:7788 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.utils.score_collector - ERROR - 请求失败: Cannot connect to host localhost:7788 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.utils.score_collector - ERROR - 请求失败: Cannot connect to host localhost:7788 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.utils.score_collector - ERROR - 请求失败: Cannot connect to host localhost:7788 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.utils.score_collector - ERROR - 请求失败: Cannot connect to host localhost:7788 ssl:default [getaddrinfo failed]
+2025-09-05 18:48:11,899 - core.utils.score_collector - INFO - [glm-4.5-airx] 评估统计:
+2025-09-05 18:48:11,899 - core.utils.score_collector - INFO -   总数: 60
+2025-09-05 18:48:11,899 - core.utils.score_collector - INFO -   成功: 0 (0.0%)
+2025-09-05 18:48:11,899 - core.utils.score_collector - INFO -   失败: 60 (100.0%)
+2025-09-05 18:48:11,899 - core.utils.score_collector - INFO -   平均分数: 0.000
+2025-09-05 18:48:11,899 - core.evaluators.unified_batch_evaluator - INFO - [glm-4.5-airx] 生成评估报告...
+2025-09-05 18:48:11,899 - core.utils.report_generator - INFO - 生成模型评估报告: glm-4.5-airx
+2025-09-05 18:48:11,899 - core.interfaces.api_model_interface - INFO - [glm-4.5-airx] API统计:
+2025-09-05 18:48:11,899 - core.interfaces.api_model_interface - INFO -   总请求: 61
+2025-09-05 18:48:11,899 - core.interfaces.api_model_interface - INFO -   成功: 24
+2025-09-05 18:48:11,899 - core.interfaces.api_model_interface - INFO -   失败: 37
+2025-09-05 18:48:11,899 - core.interfaces.api_model_interface - INFO -   成功率: 39.3%
+2025-09-05 18:48:11,899 - core.evaluators.unified_batch_evaluator - INFO - ✓ 模型 glm-4.5-airx 评估完成
+2025-09-05 18:48:11,899 - core.evaluators.unified_batch_evaluator - INFO -   总体分数: 0.00%
+2025-09-05 18:48:11,915 - core.evaluators.unified_batch_evaluator - INFO -   成功率: 0.00%
+2025-09-05 18:48:11,915 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-05 18:48:11,915 - core.evaluators.unified_batch_evaluator - INFO - 生成对比报告...
+2025-09-05 18:48:11,915 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-05 18:48:11,915 - core.utils.report_generator - INFO - 生成 1 个模型的对比报告
+2025-09-05 18:48:11,915 - core.utils.report_generator - INFO - 对比报告 JSON 已保存: ..\results\model_comparison.json
+2025-09-05 18:48:11,919 - core.utils.report_generator - INFO - 对比报告 Markdown 已保存: ..\results\model_comparison.md
+2025-09-05 18:48:14,115 - core.utils.report_generator - INFO - 对比图表已生成: ..\results\charts
+2025-09-05 18:48:14,120 - core.utils.report_generator - INFO - 详细结果 CSV 已保存: ..\results\detailed_results.csv
+2025-09-05 18:48:14,120 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-05 18:48:14,120 - core.evaluators.unified_batch_evaluator - INFO - 评估总结
+2025-09-05 18:48:14,120 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-05 18:48:14,121 - core.evaluators.unified_batch_evaluator - INFO - 总耗时: 371.5 秒
+2025-09-05 18:48:14,121 - core.evaluators.unified_batch_evaluator - INFO - 成功评估: 1 个模型
+2025-09-05 18:48:14,121 - core.evaluators.unified_batch_evaluator - INFO - 失败: 0 个模型
+2025-09-05 18:48:14,121 - core.evaluators.unified_batch_evaluator - INFO - 
+成功的模型:
+2025-09-05 18:48:14,121 - core.evaluators.unified_batch_evaluator - INFO -   ✓ glm-4.5-airx: 0.00%
+2025-09-05 18:48:14,121 - core.evaluators.unified_batch_evaluator - INFO - 
+报告已保存至: ..\results
+2025-09-05 18:48:14,121 - core.evaluators.unified_batch_evaluator - INFO -   - 模型报告: ..\results/model_*.json
+2025-09-05 18:48:14,121 - core.evaluators.unified_batch_evaluator - INFO -   - 对比报告: ..\results/model_comparison.json
+2025-09-05 18:48:14,121 - core.evaluators.unified_batch_evaluator - INFO -   - 图表: ..\results/charts/
+2025-09-05 18:48:14,121 - core.evaluators.unified_batch_evaluator - INFO - 清理资源...
+2025-09-05 18:48:14,122 - core.utils.api_connection_pool - INFO - Closed API session: openai
+2025-09-05 18:48:14,122 - core.utils.api_connection_pool - INFO - All API sessions cleaned up
+2025-09-05 18:48:14,122 - core.evaluators.unified_batch_evaluator - INFO - 资源清理完成

@@ -1,0 +1,91 @@
+{
+  "model": {
+    "name": "glm-4.5-airx",
+    "type": "api",
+    "api_endpoints": [
+      "http://localhost:5059"
+    ],
+    "api_keys": [
+      ""
+    ],
+    "model": "glm-4.5-airx",
+    "api_type": "openai",
+    "max_retries": 1,
+    "timeout": 600,
+    "max_concurrency": 15,
+    "generation_params": {
+      "max_new_tokens": 4096,
+      "temperature": 1,
+      "top_p": 0.9
+    }
+  },
+  "timestamp": "2025-09-05T18:48:11.899229",
+  "total_samples": 60,
+  "evaluation_results": {
+    "total": 60,
+    "successful": 0,
+    "failed": 60,
+    "mean_score": 0.0,
+    "max_score": 0.0,
+    "min_score": 0.0,
+    "std_score": 0.0
+  },
+  "benchmark_scores": {
+    "gsm8k": {
+      "num_samples": 10,
+      "num_successful": 0,
+      "mean_score": 0.0,
+      "max_score": 0.0,
+      "min_score": 0.0,
+      "std_score": 0.0,
+      "success_rate": 0.0
+    },
+    "drop": {
+      "num_samples": 10,
+      "num_successful": 0,
+      "mean_score": 0.0,
+      "max_score": 0.0,
+      "min_score": 0.0,
+      "std_score": 0.0,
+      "success_rate": 0.0
+    },
+    "mbpp": {
+      "num_samples": 10,
+      "num_successful": 0,
+      "mean_score": 0.0,
+      "max_score": 0.0,
+      "min_score": 0.0,
+      "std_score": 0.0,
+      "success_rate": 0.0
+    },
+    "hotpotqa": {
+      "num_samples": 10,
+      "num_successful": 0,
+      "mean_score": 0.0,
+      "max_score": 0.0,
+      "min_score": 0.0,
+      "std_score": 0.0,
+      "success_rate": 0.0
+    },
+    "high_level_math": {
+      "num_samples": 10,
+      "num_successful": 0,
+      "mean_score": 0.0,
+      "max_score": 0.0,
+      "min_score": 0.0,
+      "std_score": 0.0,
+      "success_rate": 0.0
+    },
+    "humaneval": {
+      "num_samples": 10,
+      "num_successful": 0,
+      "mean_score": 0.0,
+      "max_score": 0.0,
+      "min_score": 0.0,
+      "std_score": 0.0,
+      "success_rate": 0.0
+    }
+  },
+  "overall_score": 0.0,
+  "success_rate": 0.0
+}

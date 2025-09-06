@@ -211,6 +211,8 @@ class BatchModelEvaluator:
                 if line.strip():
                     try:
                         sample = json.loads(line)
+                        sample['ground_truth'] = sample['reward_model']['ground_truth']
+                        del sample['reward_model']
                         test_samples.append(sample)
                     except json.JSONDecodeError as e:
                         logger.warning(f"跳过无效 JSON 行 {line_num}: {e}")

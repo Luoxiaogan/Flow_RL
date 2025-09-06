@@ -602,4 +602,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-    # python generate_verl_training_data.py --num-train-entries 0 --num-test-entries 10 --output-dir data/test_new --benchmarks all --test-cases-per-entry 10
+    # python generate_verl_training_data.py --num-train-entries 10 --num-test-entries 0 --output-dir test_scoreflow_data --benchmarks all --test-cases-per-entry 3
