@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-09-06T17:15:56.056644",
+  "timestamp": "2025-09-06T21:39:59.858718",
   "num_models": 1,
   "models": [
     {
@@ -12,28 +12,28 @@
         "gsm8k": {
           "num_samples": 10,
           "num_successful": 10,
-          "mean_score": 0.5333333333333333,
+          "mean_score": 0.5,
           "max_score": 1.0,
           "min_score": 0.0,
-          "std_score": 0.47661356865616034,
+          "std_score": 0.5270462766947299,
           "success_rate": 1.0
         },
         "drop": {
           "num_samples": 10,
           "num_successful": 10,
-          "mean_score": 0.5333333333333333,
+          "mean_score": 0.4666666666666667,
           "max_score": 1.0,
           "min_score": 0.0,
-          "std_score": 0.39126259692575577,
+          "std_score": 0.4216370213557839,
           "success_rate": 1.0
         },
         "mbpp": {
           "num_samples": 10,
           "num_successful": 10,
-          "mean_score": 0.6333333333333333,
+          "mean_score": 0.7333333333333333,
           "max_score": 1.0,
-          "min_score": 0.0,
-          "std_score": 0.29186501192363773,
+          "min_score": 0.3333333333333333,
+          "std_score": 0.21081851067789195,
           "success_rate": 1.0
         },
         "hotpotqa": {
@@ -42,7 +42,7 @@
           "mean_score": 0.5333333333333333,
           "max_score": 1.0,
           "min_score": 0.0,
-          "std_score": 0.4766135686561604,
+          "std_score": 0.4499657051403686,
           "success_rate": 1.0
         },
         "high_level_math": {
@@ -67,7 +67,7 @@
     }
   ],
   "benchmark_comparison": {
-    "drop": [
+    "hotpotqa": [
       {
         "model": "qwen-turbo ",
         "score": 0.5333333333333333,
@@ -84,21 +84,7 @@
     "gsm8k": [
       {
         "model": "qwen-turbo ",
-        "score": 0.5333333333333333,
-        "success_rate": 1.0
-      }
-    ],
-    "hotpotqa": [
-      {
-        "model": "qwen-turbo ",
-        "score": 0.5333333333333333,
-        "success_rate": 1.0
-      }
-    ],
-    "mbpp": [
-      {
-        "model": "qwen-turbo ",
-        "score": 0.6333333333333333,
+        "score": 0.5,
         "success_rate": 1.0
       }
     ],
@@ -106,6 +92,20 @@
       {
         "model": "qwen-turbo ",
         "score": 0.9,
+        "success_rate": 1.0
+      }
+    ],
+    "drop": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.4666666666666667,
+        "success_rate": 1.0
+      }
+    ],
+    "mbpp": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.7333333333333333,
         "success_rate": 1.0
       }
     ]
