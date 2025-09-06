@@ -91,8 +91,9 @@ llama_factory_qwen3_thinking_lora/local_save/rank_8/
 llama_factory_qwen3_thinking_lora/local_save/rank_16/
 llama_factory_qwen3_thinking_lora/local_save/*.zip
 llama_factory_qwen3_thinking_lora/local_save/*.jsonl
-New_evaluation_and_RL/config.yaml
-ScoreFlow\benchmark_mapping.jsonl
 rl_out/
 llama_factory_qwen3_thinking_lora/Merged_weight/
 New_evaluation_and_RL/RL_part/wandb_data_save/
+New_evaluation_and_RL/config.yaml
+ScoreFlow\benchmark_mapping.jsonl
+New_evaluation_and_RL/model_evaluation/results
