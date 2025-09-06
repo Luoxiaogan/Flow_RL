@@ -158,13 +158,13 @@ class Ensemble(Operator):
     核心算子：决策。
     根据指令，从多个候选项中选择或融合。
     """
-    async def __call__(self, instruction: str = "", contexts: List[str] = []) -> str:
+    async def __call__(self, instruction: str = "", contexts_list: List[str] = []) -> str:
         # 检查SILENT模式环境变量
         if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
             print("=" * 60)
             print("\n🚀 执行 operator: Ensemble")
         formatted_contexts = ""
-        for i, context in enumerate(contexts):
+        for i, context in enumerate(contexts_list):
             formatted_contexts += f"<option index='{i+1}'>\n{context}\n</option>\n\n"
 
         prompt = f"""You are an expert at evaluating, comparing, and synthesizing information from multiple sources. Your task is to follow the given strategic instruction to process a list of options.
