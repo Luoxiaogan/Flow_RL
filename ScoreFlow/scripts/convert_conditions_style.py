@@ -7,6 +7,7 @@ New style: Modular OPERATOR_PROMPT_PART_1, OPERATOR_PROMPT_PART_2, USER_PROMPT_L
 
 import re
 import sys
+import shutil
 from pathlib import Path
 
 
@@ -311,9 +312,39 @@ def convert_python_end(old_python_end):
     return new_python_end
 
 
-def convert_file(file_path):
+def create_backup(file_path):
+    """Create a backup of the file before conversion."""
+    path = Path(file_path)
+    if not path.exists():
+        return None
+    
+    # Find an available backup name (.bak, .bak2, .bak3, etc.)
+    backup_path = path.with_suffix('.py.bak')
+    counter = 2
+    while backup_path.exists():
+        backup_path = path.with_suffix(f'.py.bak{counter}')
+        counter += 1
+    
+    # Create the backup
+    try:
+        shutil.copy2(file_path, backup_path)
+        print(f"  Created backup: {backup_path}")
+        return backup_path
+    except Exception as e:
+        print(f"  ERROR: Failed to create backup: {e}")
+        return None
+
+
+def convert_file(file_path, auto_backup=True):
     """Convert a single conditions.py file from old style to new style."""
     print(f"\nConverting file: {file_path}")
+    
+    # Create backup if requested
+    if auto_backup:
+        backup_path = create_backup(file_path)
+        if backup_path is None:
+            print(f"  ERROR: Cannot create backup, skipping conversion")
+            return False
     
     # Read the original file
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -382,32 +413,44 @@ def main():
         "aime2024/conditions.py",
     ]
     
+    # Configuration
+    AUTO_BACKUP = True  # Automatically create backups before conversion
+    
     print("=" * 60)
     print("Conditions File Style Converter")
     print("From old style (single START_PROMPT) to new style (modular)")
+    print(f"Auto-backup: {'ENABLED' if AUTO_BACKUP else 'DISABLED'}")
     print("=" * 60)
+    
+    successful_conversions = []
+    failed_conversions = []
     
     for file_path in files_to_convert:
         path = Path(file_path)
         if not path.exists():
             print(f"\nERROR: File does not exist: {file_path}")
+            failed_conversions.append(file_path)
             continue
         
-        # Check if backup exists
-        backup_path = path.with_suffix('.py.bak')
-        if not backup_path.exists():
-            print(f"\nWARNING: Backup file not found: {backup_path}")
-            print(f"   Please create backup first")
-            continue
-        
-        # Convert the file
-        success = convert_file(file_path)
+        # Convert the file (with automatic backup if enabled)
+        success = convert_file(file_path, auto_backup=AUTO_BACKUP)
         if success:
-            print(f"  Backup file location: {backup_path}")
+            successful_conversions.append(file_path)
+        else:
+            failed_conversions.append(file_path)
     
+    # Print summary
     print("\n" + "=" * 60)
-    print("Conversion complete!")
-    print("Please check the converted files. To restore, use the .bak backup files")
+    print("Conversion Summary:")
+    print(f"  Successful: {len(successful_conversions)} files")
+    if successful_conversions:
+        for f in successful_conversions:
+            print(f"    [OK] {f}")
+    print(f"  Failed: {len(failed_conversions)} files")
+    if failed_conversions:
+        for f in failed_conversions:
+            print(f"    [FAIL] {f}")
+    print("\nTo restore a file, use its .bak backup file")
     print("=" * 60)
 
 
