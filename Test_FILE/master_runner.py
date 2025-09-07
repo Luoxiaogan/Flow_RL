@@ -91,6 +91,8 @@ def main():
     parser.add_argument('--max-concurrent-executions', type=int, default=5, help='并行执行工作流的最大并发数')
     parser.add_argument('--parallelism', type=int, default=2, help='每个数据组合生成的工作流并行度')
     parser.add_argument('--max-concurrent-groups', type=int, default=5, help='生成阶段最大并发组数')
+    parser.add_argument('--operators', type=str, default='generate,revise,summarize,ensemble,programmer,decompose', 
+                        help='要使用的operators，用逗号分隔')
     
     args = parser.parse_args()
 
@@ -136,7 +138,8 @@ def main():
             # 新增参数传递
             '--id-start-index', str(start_index),
             '--parallelism', str(args.parallelism),
-            '--max-concurrent-groups', str(args.max_concurrent_groups)
+            '--max-concurrent-groups', str(args.max_concurrent_groups),
+            '--operators', args.operators
         ]
         
         if args.training_data_output:

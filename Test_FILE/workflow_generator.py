@@ -42,6 +42,8 @@ def parse_arguments():
     parser.add_argument('--id-start-index', type=int, default=0, help='生成工作流ID的起始索引')
     parser.add_argument('--parallelism', type=int, default=2, help='每个数据组合生成的工作流并行度')
     parser.add_argument('--max-concurrent-groups', type=int, default=5, help='最大并发组数')
+    parser.add_argument('--operators', type=str, default='generate,revise,summarize,ensemble,programmer,decompose',
+                        help='要使用的operators，用逗号分隔')
     
     return parser.parse_args()
 
@@ -131,7 +133,7 @@ async def call_openai_compatible_api(api_config: Dict, messages: List[Dict]) -> 
 
 class WorkflowGenerator:
     def __init__(self, api_configs: List[Dict], workspace_path: str, handler: BenchmarkHandler,
-                 training_data_output: str = None, max_concurrent_groups: int = 5):
+                 training_data_output: str = None, max_concurrent_groups: int = 5, operators: str = None):
         if not api_configs:
             raise ValueError("生成API配置不能为空。")
         self.api_configs = api_configs
@@ -140,41 +142,122 @@ class WorkflowGenerator:
         self.benchmark_name = handler.benchmark_name
         self.training_data_output = training_data_output
         self.max_concurrent_groups = max_concurrent_groups
+        # 解析operators参数
+        if operators:
+            self.selected_operators = [op.strip() for op in operators.split(',')]
+        else:
+            self.selected_operators = ['generate', 'revise', 'summarize', 'ensemble']
 
         # 创建工作流保存目录
         self.workflows_output_dir = os.path.join(self.workspace_path, "generated_workflows", self.benchmark_name)
         os.makedirs(self.workflows_output_dir, exist_ok=True)
 
-    def _load_prompt_templates(self) -> Tuple[str, str, str, List[str]]:
+    def _load_prompt_templates(self):
         """从 benchmark 的 conditions 模块加载 Prompt 模板。"""
         try:
             conditions_module = importlib.import_module(f"ScoreFlow.scripts.{self.benchmark_name}.conditions")
-            return (
-                getattr(conditions_module, "START_PROMPT", ""), 
-                # getattr(conditions_module, "END_PROMPT", ""),
-                getattr(conditions_module, "SYSTEM_PROMPT", "You are a helpful AI assistant."),
-                # getattr(conditions_module, "META_PROMPTS", [])
-                getattr(conditions_module, "TASK_PROMPT", [])
-            )
+            common_module = importlib.import_module(f"ScoreFlow.scripts.common.conditions")
+            
+            # 加载基础模板
+            self.system_prompt = getattr(common_module, "SYSTEM_PROMPT", "You are a helpful AI assistant.")
+            self.task_prompt = getattr(conditions_module, "TASK_PROMPT", "")
+            self.operator_prompt_simple_start = getattr(common_module, "OPERATOR_PROMPT_SIMPLE_START", "")
+            self.operator_prompt_part_2 = getattr(common_module, "OPERATOR_PROMPT_PART_2", "")
+            self.user_prompt_long = getattr(common_module, "USER_PROMPT_LONG", "")
+            self.user_prompt_short = getattr(common_module, "USER_PROMPT_SHORT", "")
+
+            # 加载operator描述
+            self.operator_descriptions = {
+                'generate': getattr(common_module, "generate", ""),
+                'revise': getattr(common_module, "revise", ""),
+                'summarize': getattr(common_module, "summarize", ""),
+                'ensemble': getattr(common_module, "ensemble", ""),
+                'programmer': getattr(common_module, "programm", ""),  # 注意：conditions.py中是'programm'
+                'decompose': getattr(common_module, "decompose", "")
+            }
+            
+            # 加载operator初始化代码
+            self.operator_inits = {
+                'generate': getattr(common_module, "generate_init", ""),
+                'revise': getattr(common_module, "revise_init", ""),
+                'summarize': getattr(common_module, "summarize_init", ""),
+                'ensemble': getattr(common_module, "ensemble_init", ""),
+                'programmer': getattr(common_module, "programm_init", ""),  # 注意：conditions.py中是'programm_init'
+                'decompose': getattr(common_module, "decompose_init", "")
+            }
+            
         except (ModuleNotFoundError, AttributeError) as e:
             logging.error(f"无法为 benchmark '{self.benchmark_name}' 加载脚本模板: {e}")
             raise e
-
-    def _construct_generation_prompt(self, data_indices: List[int], existing_workflow: str = None) -> Tuple[List[Dict], str]:
-        """使用 Handler 构建生成请求的 Prompt。"""
-        start_prompt, system_prompt, task_prompt = self._load_prompt_templates()
+    
+    def _build_dynamic_operator_prompt(self) -> str:
+        """根据选中的operators动态构建operator文档prompt"""
+        # 首先加载模板（如果还没加载）
+        if not hasattr(self, 'operator_prompt_simple_start'):
+            self._load_prompt_templates()
         
+        # 构建operator文档部分
+        operator_docs = self.operator_prompt_simple_start
+        
+        # 添加选中的operator描述
+        for op in self.selected_operators:
+            if op in self.operator_descriptions:
+                operator_docs += "\n\n" + self.operator_descriptions[op]
+        
+        return operator_docs
+    
+    def _build_dynamic_init_code(self) -> str:
+        """根据选中的operators动态构建初始化代码"""
+        # 首先加载模板（如果还没加载）
+        if not hasattr(self, 'operator_inits'):
+            self._load_prompt_templates()
+        
+        # 构建初始化代码
+        init_lines = []
+        for op in self.selected_operators:
+            if op in self.operator_inits:
+                init_lines.append(self.operator_inits[op])
+        
+        # 使用正确的缩进（8个空格）连接
+        return "\n        ".join(init_lines)
+
+    def _construct_generation_prompt(self, data_indices: List[int], existing_workflow: str = None) -> Tuple[List[Dict], str, str]:
+        """使用 Handler 构建生成请求的 Prompt，返回完整版和简化版。"""
+        # 确保模板已加载
+        if not hasattr(self, 'system_prompt'):
+            self._load_prompt_templates()
+
         # 1. 使用 handler 获取问题文本
         problem_text = self.handler.get_prompt_text(data_indices)
         
-        # 2. 构建 Prompt
-        # selected_meta_prompt = random.choice(meta_prompts) if meta_prompts else ""
-        # final_end_prompt = f"\n**CRITICAL INSTRUCTION FOR THIS SPECIFIC TASK:**\n{selected_meta_prompt}\n\n" + end_prompt
+        # 2. 动态构建operator相关的prompt
+        dynamic_operator_prompt = self._build_dynamic_operator_prompt()
+        dynamic_init_code = "       "+self._build_dynamic_init_code()#8个空格
+
+        print("🤡 🤡 🤡 🤡 🤡 使用的operators:🤡 🤡 🤡 🤡 🤡 \n", dynamic_init_code)
         
-        # 3. 构建核心的、用于SFT的instruction
-        #这个instruction是干净的，不包含任何随机或临时的指令。
-        #它由两部分组成：规格说明书模板(start_prompt) + 问题实例(problem_text)
-        sft_instruction = task_prompt + start_prompt + problem_text + "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:"
+        # 3. 替换USER_PROMPT_LONG和USER_PROMPT_SHORT中的占位符
+        user_prompt_with_operators = self.user_prompt_long.replace('{operators_init}', dynamic_init_code)
+        user_prompt_short_with_operators = self.user_prompt_short.replace('{operators_init}', dynamic_init_code)
+        
+        # 4. 构建完整版的SFT instruction
+        sft_instruction = (
+            self.task_prompt + 
+            "\n Problem Examples:\n" + problem_text + "\n\n" + 
+            dynamic_operator_prompt + "\n\n" +  # 使用动态构建的operator文档
+            self.operator_prompt_part_2 + "\n\n" + 
+            user_prompt_with_operators +  # 使用替换后的模板
+            "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow code and thinking based on all the specifications above:"
+        )
+        
+        # 5. 构建简化版的SFT instruction（不包含OPERATOR_PROMPT_PART_2）
+        sft_instruction_simple = (
+            self.task_prompt + 
+            "\n Problem Examples:\n" + problem_text + "\n\n" + 
+            dynamic_operator_prompt + "\n\n" +  # 使用动态构建的operator文档，但不包含PART_2
+            user_prompt_short_with_operators +  # 使用简化版模板
+            "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow code and thinking based on all the specifications above:"
+        )
 
         # 4. 构建给API的、可能包含额外引导的user_prompt
         api_user_prompt_parts = [sft_instruction]
@@ -197,44 +280,63 @@ class WorkflowGenerator:
         api_user_prompt = "".join(api_user_prompt_parts)
 
         messages = [
-            {'role': 'system', 'content': system_prompt},
+            {'role': 'system', 'content': self.system_prompt},  # 使用self.system_prompt
             {'role': 'user', 'content': api_user_prompt}
         ]
         
-        return messages, sft_instruction
+        return messages, sft_instruction, sft_instruction_simple
 
     async def _generate_one_workflow(self, workflow_id: str, data_indices: List[int], api_config: Dict, existing_workflow: str = None):
         """生成单个工作流并保存文件。"""
         try:
-            # 1. 构建 Prompt
-            messages, sft_instruction = self._construct_generation_prompt(data_indices, existing_workflow)
+            # 1. 构建 Prompt（现在返回两个版本的instruction）
+            messages, sft_instruction, sft_instruction_simple = self._construct_generation_prompt(data_indices, existing_workflow)
             
             # 2. 调用 API
             logging.info(f"向 {api_config.get('provider', 'api')} 发送生成请求 (ID: {workflow_id}, Indices: {data_indices})")
             response_content = await call_openai_compatible_api(api_config, messages)
             
-            # 3. 提取代码
-            # 优先提取 <graph> 标签内的内容，否则剥离 ```python ```
-            # if "<graph>" in response_content:
-            #     code = response_content.split('<graph>')[1].split('</graph>')[0].strip()
-            # else:
-            #     code = response_content.strip().strip('```python').strip('```').strip()
-
             # 3. 准备SFT训练数据和执行器代码
             assistant_content_for_sft = response_content.strip()
             # 从完整响应中提取用于执行器的代码
             code_for_executor = ""
-            if '<code>' in assistant_content_for_sft and '</code>' in assistant_content_for_sft:
-                # 优先使用新的 <code> 标签提取
-                code_for_executor = assistant_content_for_sft.split('<code>', 1)[1].split('</code>', 1)[0].strip()
-            elif '<graph>' in assistant_content_for_sft and '</graph>' in assistant_content_for_sft:
+
+            # 首先处理 <think> 标签（如果存在）
+            content_for_extraction = assistant_content_for_sft
+            if '<think>' in content_for_extraction and '</think>' in content_for_extraction:
+                # 移除 <think>...</think> 部分，只保留之后的内容
+                think_end_index = content_for_extraction.find('</think>')
+                if think_end_index != -1:
+                    # 获取 </think> 标签之后的内容
+                    content_for_extraction = content_for_extraction[think_end_index + len('</think>'):].strip()
+                    logging.debug(f"工作流 {workflow_id} 包含 <think> 标签，已移除思考过程部分")
+
+            # 现在从清理后的内容中提取代码
+            if '```python' in content_for_extraction and '```' in content_for_extraction:
+                # 提取 ```python``` 代码块
+                parts = content_for_extraction.split('```python', 1)
+                if len(parts) > 1:
+                    code_part = parts[1].split('```', 1)[0]
+                    code_for_executor = code_part.strip()
+            elif '<code>' in content_for_extraction and '</code>' in content_for_extraction:
+                # 备用方案：如果使用了 <code> 标签
+                logging.warning(f"工作流 {workflow_id} 使用了 <code> 标签而非 markdown 代码块。")
+                code_for_executor = content_for_extraction.split('<code>', 1)[1].split('</code>', 1)[0].strip()
+            elif '<graph>' in content_for_extraction and '</graph>' in content_for_extraction:
                 # 向后兼容，如果模型输出了旧的 <graph> 标签
                 logging.warning(f"工作流 {workflow_id} 使用了旧的 <graph> 标签。")
-                code_for_executor = assistant_content_for_sft.split('<graph>', 1)[1].split('</graph>', 1)[0].strip()
+                code_for_executor = content_for_extraction.split('<graph>', 1)[1].split('</graph>', 1)[0].strip()
             else:
-                # 最后的备用方案，如果模型完全没有按要求输出标签
-                logging.warning(f"在 {workflow_id} 的响应中未能找到 <code> 或 <graph> 标签，将尝试剥离 markdown。")
-                code_for_executor = assistant_content_for_sft.strip().strip('```python').strip('```').strip()
+                # 最后的备用方案：直接查找 class Workflow 定义
+                if 'class Workflow' in content_for_extraction:
+                    # 尝试提取从 class Workflow 开始的所有内容
+                    class_start = content_for_extraction.find('class Workflow')
+                    if class_start != -1:
+                        code_for_executor = content_for_extraction[class_start:].strip()
+                        logging.warning(f"工作流 {workflow_id} 使用备用方案提取 class Workflow 定义")
+                else:
+                    logging.warning(f"在 {workflow_id} 的响应中未能找到标准的代码标记。")
+                    code_for_executor = content_for_extraction.strip()
             
             # 4. 保存结果
             if code_for_executor:
@@ -243,19 +345,33 @@ class WorkflowGenerator:
                 logging.info(f"成功生成并保存工作流: {workflow_id}")
                 # 保存训练数据时，使用完整的 <think>...<code>...</code> 内容
                 if self.training_data_output:
-                    system_prompt = messages[0]['content']
-                    # _, _, system_prompt, _ = self._load_prompt_templates()
+                    # 保存完整版训练数据
                     training_record = {
                         "workflow_id": workflow_id,  # 添加工作流ID以便后续匹配
                         "benchmark": self.benchmark_name,
                         "data_indices": data_indices,
                         "messages": [
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": sft_instruction}, # <-- 使用干净、一致的SFT instruction
+                            {"role": "system", "content": self.system_prompt},  # 使用self.system_prompt
+                            {"role": "user", "content": sft_instruction}, # <-- 使用完整版SFT instruction
                             {"role": "assistant", "content": assistant_content_for_sft} 
                         ]
                     }
                     self._save_single_training_record(training_record)
+                    
+                    # 保存简化版训练数据
+                    training_record_simple = {
+                        "workflow_id": workflow_id,  # 添加工作流ID以便后续匹配
+                        "benchmark": self.benchmark_name,
+                        "data_indices": data_indices,
+                        "messages": [
+                            {"role": "system", "content": self.system_prompt},  # 使用self.system_prompt
+                            {"role": "user", "content": sft_instruction_simple}, # <-- 使用简化版SFT instruction
+                            {"role": "assistant", "content": assistant_content_for_sft} 
+                        ]
+                    }
+                    # 保存到_simple.jsonl文件
+                    simple_output_path = self.training_data_output.replace('.jsonl', '_simple.jsonl')
+                    self._save_single_training_record(training_record_simple, simple_output_path)
                 return code_for_executor  # 返回干净的代码供后续步骤（如生成多样性工作流）使用
             else:
                 raise ValueError("API响应中未能提取有效代码。")
@@ -283,19 +399,23 @@ class WorkflowGenerator:
         with open(meta_path, 'w', encoding='utf-8') as f:
             json.dump(meta_data, f, indent=4)
 
-    def _save_single_training_record(self, record: Dict):
+    def _save_single_training_record(self, record: Dict, output_path: str = None):
         """立即保存单条训练数据到文件（线程安全）。"""
-        if not self.training_data_output:
+        # 如果没有指定output_path，使用默认的training_data_output
+        if output_path is None:
+            output_path = self.training_data_output
+            
+        if not output_path:
             return
         
-        output_dir = os.path.dirname(self.training_data_output)
+        output_dir = os.path.dirname(output_path)
         if output_dir:
             os.makedirs(output_dir, exist_ok=True)
             
         # 使用追加模式，每次写入一条记录
-        with open(self.training_data_output, 'a', encoding='utf-8') as f:
+        with open(output_path, 'a', encoding='utf-8') as f:
             f.write(json.dumps(record, ensure_ascii=False) + '\n')
-        logging.debug(f"训练数据已保存: {record['workflow_id']}")
+        logging.debug(f"训练数据已保存到 {output_path}: {record['workflow_id']}")
 
     ### 修改点 2: 修改 run 方法的签名，接收 start_index 和 parallelism ###
     async def run(self, data_indices_list: List[List[int]], start_index: int, parallelism: int = 2):
@@ -378,7 +498,8 @@ async def main():
             workspace_path=args.workspace_path,
             handler=handler,
             training_data_output=args.training_data_output,
-            max_concurrent_groups=args.max_concurrent_groups
+            max_concurrent_groups=args.max_concurrent_groups,
+            operators=args.operators  # 传递operators参数
         )
         
         ### 修改点 4: 将从命令行解析出的 id_start_index 和 parallelism 传递给 run 方法 ###
