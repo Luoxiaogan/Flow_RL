@@ -3,7 +3,7 @@ from typing import List, Dict, Any
 # 导入基类
 from ScoreFlow.scripts.base_handler import BenchmarkHandler
 
-class Gsm8k_reasoning_v2Handler(BenchmarkHandler):
+class Gsm8k_reasoningHandler(BenchmarkHandler):
     """
     GSM8K 数据集的具体处理器。
     
