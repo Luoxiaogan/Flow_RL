@@ -55,13 +55,6 @@ cd "$(dirname "$0")" || exit
 
 # ALIBABA代理
 
-# API_POOL='[
-#     {
-#     "provider": "openai",
-#     "model": "qwen-turbo", 
-#     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-#     "base_url": "http://localhost:5001"
-# }
 # ]'
 # EXEC_LLM='{
 #     "provider": "openai",
@@ -74,12 +67,12 @@ API_POOL='[
     {
         "provider": "openai",
         "model": "qwen-max-latest",
-        "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-        "base_url": "https://idealab.alibaba-inc.com/api/openai/v1",
+        "api_key": "dummy",
+        "base_url": "http://localhost:5059",
         "stream": false,
         "stream_options": {"include_usage": true},
         "enable_thinking": true,
-        "thinking_budget": 2000
+        "thinking_budget": 5000
     }
 ]'
 
@@ -96,22 +89,29 @@ API_POOL='[
 #     }
 # ]'
 
+# API_POOL='{
+#     "provider": "openai",
+#     "model": "qwen-turbo", 
+#     "api_key": "dummy",
+#     "base_url": "http://localhost:5059"
+# }'
+
 # 执行LLM，用于【工作流内部的算子】，通常只配置一个高效、可靠的模型。
 EXEC_LLM='{
     "provider": "openai",
     "model": "qwen-turbo", 
-    "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-    "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
+    "api_key": "dummy",
+    "base_url": "http://localhost:5059"
 }'
 
 # --- 路径配置 ---
 # 总的工作空间，所有生成物和结果都将保存在这里
-WORKSPACE_PATH="./workspace_mbpp_COT_qwen_max"
+WORKSPACE_PATH="./workspace_MBPP"
 
 # --- 系统配置 ---
 LOG_LEVEL="INFO"
 # 修改变量名以匹配Python参数，提高一致性
-MAX_CONCURRENT_TASKS=10  # 生成器内部的最大并发任务数
+MAX_CONCURRENT_TASKS=15  # 生成器内部的最大并发任务数
 WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 
 # ============================ 任务配置 =======================================
@@ -125,11 +125,11 @@ MIN_SAMPLE_SIZE=1     # 每个工作流最少使用的问题样本数
 MAX_SAMPLE_SIZE=1     # 每个工作流最多使用的问题样本数
 MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
 PARALLELISM=1  # 每个数据组合生成的工作流并行度（默认2个不同版本）
-MAX_CONCURRENT_GROUPS=5  # 生成阶段最大并发组数（组间并行，组内串行）
+MAX_CONCURRENT_GROUPS=12  # 生成阶段最大并发组数（组间并行，组内串行）
 BATCH_SIZE=$MAX_CONCURRENT_GROUPS          # 每批次生成的工作流数量 = 最大并发组数
 # 数据集文件的路径 (推荐使用相对路径)
 # 假设数据存放在项目根目录下的 'data' 文件夹中
-DATASET_PATH="../Processed_dataset/mbpp/train.jsonl"
+DATASET_PATH="/nas/ganluo/Flow_RL/Processed_dataset/mbpp/train.jsonl"
 # 训练数据输出文件
 TRAINING_DATA_OUTPUT="${WORKSPACE_PATH}/training_data_${BENCHMARK}.jsonl"
 

@@ -1,0 +1,9 @@
+{
+    "id": "humaneval_0_0",
+    "benchmark": "humaneval",
+    "data_indices": [
+        0
+    ],
+    "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/train_select_1000.jsonl",
+    "generation_timestamp": 1757182032.2877803
+}
