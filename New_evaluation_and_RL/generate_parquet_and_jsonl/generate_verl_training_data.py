@@ -160,7 +160,7 @@ class VerlTrainingDataGenerator:
             logging.error(f"Failed to load handler for {benchmark_name}: {e}")
             raise
     
-    def _load_prompt_templates(self, benchmark_name: str) -> Tuple[str, str, str, List[str]]:
+    def _load_prompt_templates(self, benchmark_name: str) -> Tuple[str, str, str, str, str, str]:
         """Load prompt templates from conditions.py"""
         try:
             # Check benchmark mapping first
@@ -190,32 +190,36 @@ class VerlTrainingDataGenerator:
                 if handler_dir.startswith(scoreflow_root):
                     # Remove scoreflow_root prefix and leading slash
                     relative_path = handler_dir[len(scoreflow_root):].lstrip('/')
-                    conditions_path = relative_path.replace('/', '.') + '.conditions_simp'
+                    conditions_path = relative_path.replace('/', '.') + '.conditions'
                 else:
                     # Fallback: extract ScoreFlow part from absolute path
                     if handler_dir.startswith('/'):
                         scoreflow_index = handler_dir.find('ScoreFlow')
                         if scoreflow_index != -1:
                             relative_path = handler_dir[scoreflow_index:]
-                            conditions_path = relative_path.replace('/', '.') + '.conditions_simp'
+                            conditions_path = relative_path.replace('/', '.') + '.conditions'
                         else:
                             raise ValueError(f"Cannot find ScoreFlow in handler_dir: {handler_dir}")
                     else:
-                        conditions_path = handler_dir.replace('/', '.') + '.conditions_simp'
+                        conditions_path = handler_dir.replace('/', '.') + '.conditions'
             else:
                 # Fallback to default naming rules
                 if benchmark_name.startswith("high_level_math"):
-                    conditions_path = "ScoreFlow.scripts.high_level_math.conditions_simp"
+                    conditions_path = "ScoreFlow.scripts.high_level_math.conditions"
                 else:
-                    conditions_path = f"ScoreFlow.scripts.{benchmark_name}.conditions_simp"
+                    conditions_path = f"ScoreFlow.scripts.{benchmark_name}.conditions"
             
             # Import conditions module
             conditions_module = importlib.import_module(conditions_path)
             
+            # Load all required prompt components
             return (
-                getattr(conditions_module, "START_PROMPT", ""), 
                 getattr(conditions_module, "SYSTEM_PROMPT", "You are a helpful AI assistant."),
-                getattr(conditions_module, "TASK_PROMPT", [])
+                getattr(conditions_module, "TASK_PROMPT", ""),
+                getattr(conditions_module, "OPERATOR_PROMPT_PART_1", ""),
+                getattr(conditions_module, "OPERATOR_PROMPT_PART_2", ""),
+                getattr(conditions_module, "USER_PROMPT_LONG", ""),
+                getattr(conditions_module, "START_PROMPT", "")  # Keep for backward compatibility
             )
         except Exception as e:
             logging.error(f"Failed to load prompt templates for {benchmark_name}: {e}")
@@ -224,18 +228,33 @@ class VerlTrainingDataGenerator:
     def _construct_prompt(self, handler: BenchmarkHandler, data_indices: List[int], 
                          benchmark_name: str) -> Tuple[List[Dict], str]:
         """Construct prompt messages in HuggingFace chat format"""
-        start_prompt, system_prompt, task_prompt = self._load_prompt_templates(benchmark_name)
+        # Load all prompt components
+        system_prompt, task_prompt, operator_prompt_part_1, operator_prompt_part_2, user_prompt_long, start_prompt = self._load_prompt_templates(benchmark_name)
         
         # 1. 使用 handler 获取问题文本
         problem_text = handler.get_prompt_text(data_indices)
         
-        # Build instruction (clean version for SFT)
-        instruction = task_prompt + start_prompt + problem_text + "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:"
+        # Build instruction following the new template structure:
+        # sft_instruction = task_prompt + "\n Problem Examples:\n" + problem_text + "\n\n" + 
+        #                  operator_prompt_part_1 + "\n\n" + operator_prompt_part_2 + "\n\n" + 
+        #                  user_prompt_long + "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow code and thinking based on all the specifications above:"
+        sft_instruction = (
+            task_prompt + 
+            "\n Problem Examples:\n" + 
+            problem_text + 
+            "\n\n" + 
+            operator_prompt_part_1 + 
+            "\n\n" + 
+            operator_prompt_part_2 + 
+            "\n\n" + 
+            user_prompt_long + 
+            "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow code and thinking based on all the specifications above:"
+        )
         
         # Build messages in chat format
         messages = [
             {'role': 'system', 'content': system_prompt},
-            {'role': 'user', 'content': instruction}
+            {'role': 'user', 'content': sft_instruction}
         ]
         
         return messages, problem_text
@@ -602,4 +621,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-    # python generate_verl_training_data.py --num-train-entries 10 --num-test-entries 0 --output-dir test_scoreflow_data --benchmarks all --test-cases-per-entry 3
+    # python generate_verl_training_data.py --num-train-entries 3 --num-test-entries 0 --output-dir test_scoreflow_data --benchmarks all --test-cases-per-entry 3
