@@ -114,8 +114,9 @@ class BenchmarkHandler(abc.ABC):
         """
         try:
             conditions_module = importlib.import_module(f"ScoreFlow.scripts.{self.benchmark_name}.conditions")
-            python_start = getattr(conditions_module, "PYTHON_START", "")
-            python_end = getattr(conditions_module, "PYTHON_END", "")
+            common_module = importlib.import_module(f"ScoreFlow.scripts.common.conditions")
+            python_start = getattr(common_module, "PYTHON_START", "")
+            python_end = getattr(common_module, "PYTHON_END", "")
         except (ModuleNotFoundError, AttributeError) as e:
             raise ImportError(f"无法为 benchmark '{self.benchmark_name}' 加载代码模板: {e}")
 

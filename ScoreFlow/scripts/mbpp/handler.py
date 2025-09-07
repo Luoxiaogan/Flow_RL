@@ -1,6 +1,7 @@
 ## 2. MbppHandler (handler.py)
 
 from typing import List, Dict, Any
+import re
 import ast
 import traceback
 import asyncio
@@ -57,6 +58,7 @@ class MbppHandler(BenchmarkHandler):
 **TASK:**
 {task_description}
 
+**TEST CASES:(for you to know the function name and expected input types)**
 {test_cases_text.strip()}
 ---"""
                 formatted_problems.append(formatted_problem)
@@ -227,88 +229,116 @@ class MbppHandler(BenchmarkHandler):
         
         return code
     
+    def _validate_and_fix_indentation(self, code: str) -> str:
+        """
+        验证并修复代码缩进问题。
+        
+        这个方法检查代码的缩进是否一致，
+        如果发现混合使用tab和空格，会统一转换为4个空格。
+        """
+        lines = code.split('\n')
+        fixed_lines = []
+        
+        for line in lines:
+            # 将tab转换为4个空格
+            fixed_line = line.replace('\t', '    ')
+            fixed_lines.append(fixed_line)
+        
+        # 重新组合代码
+        fixed_code = '\n'.join(fixed_lines)
+        
+        # 验证语法
+        try:
+            ast.parse(fixed_code)
+            return fixed_code
+        except SyntaxError as e:
+            # 如果还有语法错误，返回原始代码并记录警告
+            print(f"Warning: Code has syntax errors after indentation fix: {e}")
+            return code
+    
     def _extract_code_from_response(self, response: str) -> str:
         """
         从模型响应中提取Python代码。
-        处理各种可能的格式：markdown代码块、纯代码等。
+        
+        提取优先级：
+        1. ```python 代码块（markdown格式）
+        2. ``` 通用代码块
+        3. 包含 def 的原始代码
+        4. Final Answer 后的内容
+        5. 原始响应
+        
+        注意：保持代码缩进的完整性
         """
-        # 移除前导/尾随空白
-        response = response.strip()
+        # 不使用strip()来避免破坏缩进，只移除末尾的换行
+        response = response.rstrip('\n')
         
-        # 尝试提取markdown代码块
-        if "```python" in response:
-            # 找到第一个python代码块
-            parts = response.split("```python")
-            if len(parts) > 1:
-                code_part = parts[1].split("```")[0]
-                return code_part.strip()
-        elif "```" in response:
-            # 通用代码块
-            parts = response.split("```")
-            if len(parts) >= 2:
-                # 取第一个代码块
-                code_part = parts[1]
-                # 如果代码块以语言标识符开头，移除它
-                lines = code_part.split('\n')
-                if lines and lines[0].strip().lower() in ['python', 'py']:
-                    code_part = '\n'.join(lines[1:])
-                return code_part.strip()
+        # 方法1：提取markdown python代码块
+        # 同时处理 ```python 和 ```python\n 的情况
+        python_block_pattern = r'```python\s*\n(.*?)```'
+        matches = re.findall(python_block_pattern, response, re.DOTALL)
+        if matches:
+            # 返回第一个匹配的代码块
+            # 注意：不使用strip()，保留缩进
+            code = matches[0]
+            # 只移除末尾多余的空行
+            while code.endswith('\n\n'):
+                code = code[:-1]
+            return code
         
-        # 如果响应看起来像是Python代码（包含def关键字），直接返回
-        if "def " in response:
-            return response
+        # 方法2：提取通用markdown代码块
+        generic_block_pattern = r'```\s*\n(.*?)```'
+        matches = re.findall(generic_block_pattern, response, re.DOTALL)
+        if matches:
+            code = matches[0]
+            # 检查是否第一行是语言标识符
+            lines = code.split('\n')
+            if lines and lines[0].strip().lower() in ['python', 'py']:
+                # 移除语言标识符行，但保留其他行的缩进
+                code = '\n'.join(lines[1:])
+            # 只移除末尾多余的空行
+            while code.endswith('\n\n'):
+                code = code[:-1]
+            return code
         
-        # 尝试提取"Final Answer:"后的内容
+        # 方法3：查找Final Answer标记
         if "final answer:" in response.lower():
-            parts = response.lower().split("final answer:")
+            # 找到最后一个Final Answer
+            parts = response.split("Final Answer:")
+            if len(parts) == 1:
+                # 尝试小写分割
+                parts = response.split("final answer:")
+            
             if len(parts) > 1:
-                code = parts[-1].strip()
-                # 递归调用以处理可能的代码块格式
-                return self._extract_code_from_response(code)
+                potential_code = parts[-1]
+                # 递归调用以处理Final Answer后可能的代码块
+                extracted = self._extract_code_from_response(potential_code)
+                if extracted != potential_code:  # 如果成功提取了代码块
+                    return extracted
+                # 否则清理并返回Final Answer后的内容
+                return potential_code.lstrip()
         
-        # 默认返回整个响应
+        # 方法4：检查是否包含函数定义
+        if re.search(r'^\s*def\s+\w+\s*\(', response, re.MULTILINE):
+            # 看起来像Python代码，找到第一个import或def开始的位置
+            lines = response.split('\n')
+            start_idx = 0
+            for i, line in enumerate(lines):
+                if line.strip().startswith('import ') or \
+                line.strip().startswith('from ') or \
+                line.strip().startswith('def '):
+                    start_idx = i
+                    break
+            
+            # 返回从第一个代码行开始的内容
+            code = '\n'.join(lines[start_idx:])
+            # 只移除末尾多余的空行
+            while code.endswith('\n\n'):
+                code = code[:-1]
+            return code
+        
+        # 方法5：返回原始响应（最后的备选）
         return response
-        """
-        从模型响应中提取Python代码。
-        处理各种可能的格式：markdown代码块、纯代码等。
-        """
-        # 移除前导/尾随空白
-        response = response.strip()
-        
-        # 尝试提取markdown代码块
-        if "```python" in response:
-            # 找到第一个python代码块
-            parts = response.split("```python")
-            if len(parts) > 1:
-                code_part = parts[1].split("```")[0]
-                return code_part.strip()
-        elif "```" in response:
-            # 通用代码块
-            parts = response.split("```")
-            if len(parts) >= 2:
-                # 取第一个代码块
-                code_part = parts[1]
-                # 如果代码块以语言标识符开头，移除它
-                lines = code_part.split('\n')
-                if lines and lines[0].strip().lower() in ['python', 'py']:
-                    code_part = '\n'.join(lines[1:])
-                return code_part.strip()
-        
-        # 如果响应看起来像是Python代码（包含def关键字），直接返回
-        if "def " in response:
-            return response
-        
-        # 尝试提取"Final Answer:"后的内容
-        if "final answer:" in response.lower():
-            parts = response.lower().split("final answer:")
-            if len(parts) > 1:
-                code = parts[-1].strip()
-                # 递归调用以处理可能的代码块格式
-                return self._extract_code_from_response(code)
-        
-        # 默认返回整个响应
-        return response
-    
+
     async def judge(self, model_output: Any, ground_truth_data: Dict[str, Any]) -> bool:
         """
         评判模型生成的代码是否正确。
@@ -321,7 +351,9 @@ class MbppHandler(BenchmarkHandler):
         try:
             # 提取代码
             generated_code = self._extract_code_from_response(str(model_output))
-            
+
+            generated_code = self._validate_and_fix_indentation(generated_code)
+
             # 获取测试用例
             test_cases = ground_truth_data.get('test_list', [])
             test_setup = ground_truth_data.get('test_setup_code', '')

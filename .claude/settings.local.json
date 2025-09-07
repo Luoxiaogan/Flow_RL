@@ -65,7 +65,10 @@
       "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\core\\evaluators/**)",
       "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\core\\evaluators/**)",
       "Read(/D:\\temp\\Flow_RL\\New_evaluation_and_RL\\model_evaluation\\core\\interfaces/**)",
-      "Read(//d/**)"
+      "Read(//d/**)",
+      "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/github_key\" git fetch origin new_luogan)",
+      "Bash(git merge:*)",
+      "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/github_key\" git push origin new_luogan)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

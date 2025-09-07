@@ -44,18 +44,62 @@ class Operator:
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("每个子类必须实现 __call__ 方法。")
 
+    # async def _fill_node(self, op_class, prompt, mode=None, **extra_kwargs):
+    #     """通用的LLM调用和Pydantic模型填充方法。"""
+    #     fill_kwargs = {"context": prompt, "llm": self.llm}
+    #     if mode:
+    #         fill_kwargs["mode"] = mode
+    #     fill_kwargs.update(extra_kwargs)
+    #     try:
+    #         node = await ActionNode.from_pydantic(op_class).fill(**fill_kwargs)
+    #         return node.instruct_content.model_dump()
+    #     except Exception as e:
+    #         logger.error(f"在 _fill_node 中调用LLM或Pydantic填充时失败: {e}", exc_info=True)
+    #         # 返回空字典，由调用方处理后续逻辑
+    #         return {}
+
     async def _fill_node(self, op_class, prompt, mode=None, **extra_kwargs):
-        """通用的LLM调用和Pydantic模型填充方法。"""
+        """通用的LLM调用和Pydantic模型填充方法，增强了JSON数组的处理"""
         fill_kwargs = {"context": prompt, "llm": self.llm}
         if mode:
             fill_kwargs["mode"] = mode
         fill_kwargs.update(extra_kwargs)
+        
         try:
-            node = await ActionNode.from_pydantic(op_class).fill(**fill_kwargs)
-            return node.instruct_content.model_dump()
+            # 对于Decompose操作，使用特殊的解析模式
+            if op_class == DecomposeOp and mode == "xml_fill":
+                # 直接获取LLM响应
+                raw_response = await self.llm.aask(prompt)
+                
+                # 手动解析XML并处理JSON
+                import re
+                import json
+                
+                result = {}
+                
+                # 提取think标签
+                think_match = re.search(r'<think>(.*?)</think>', raw_response, re.DOTALL)
+                if think_match:
+                    result['think'] = think_match.group(1).strip()
+                
+                # 提取并解析subproblems标签
+                subproblems_match = re.search(r'<subproblems>(.*?)</subproblems>', raw_response, re.DOTALL)
+                if subproblems_match:
+                    json_str = subproblems_match.group(1).strip()
+                    try:
+                        result['subproblems'] = json.loads(json_str)
+                    except json.JSONDecodeError:
+                        # 如果JSON解析失败，保持为字符串
+                        result['subproblems'] = json_str
+                
+                return result
+            else:
+                # 对于其他操作，使用标准流程
+                node = await ActionNode.from_pydantic(op_class).fill(**fill_kwargs)
+                return node.instruct_content.model_dump()
+                
         except Exception as e:
             logger.error(f"在 _fill_node 中调用LLM或Pydantic填充时失败: {e}", exc_info=True)
-            # 返回空字典，由调用方处理后续逻辑
             return {}
 
 
