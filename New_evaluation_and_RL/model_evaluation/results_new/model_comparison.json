@@ -1,0 +1,264 @@
+{
+  "timestamp": "2025-09-08T00:29:41.398148",
+  "num_models": 1,
+  "models": [
+    {
+      "name": "qwen-turbo ",
+      "path": "",
+      "overall_score": 0.32575757575757575,
+      "success_rate": 0.9777777777777777,
+      "total_samples": 45,
+      "benchmark_scores": {
+        "humaneval": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.6666666666666666,
+          "max_score": 1.0,
+          "min_score": 0.3333333333333333,
+          "std_score": 0.33333333333333337,
+          "success_rate": 1.0
+        },
+        "simpleqa": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "high_level_math": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "math500": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "hotpotqa": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.7777777777777778,
+          "max_score": 1.0,
+          "min_score": 0.3333333333333333,
+          "std_score": 0.3849001794597505,
+          "success_rate": 1.0
+        },
+        "mbppplus": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.1111111111111111,
+          "max_score": 0.3333333333333333,
+          "min_score": 0.0,
+          "std_score": 0.19245008972987526,
+          "success_rate": 1.0
+        },
+        "limr": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "mgsmde": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 1.0,
+          "max_score": 1.0,
+          "min_score": 1.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "mgsmbn": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.8888888888888888,
+          "max_score": 1.0,
+          "min_score": 0.6666666666666666,
+          "std_score": 0.1924500897298753,
+          "success_rate": 1.0
+        },
+        "humanevalplus": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "aime2024": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "aime2025": {
+          "num_samples": 3,
+          "num_successful": 2,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.6666666666666666
+        },
+        "mbpp": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.3333333333333333,
+          "max_score": 0.6666666666666666,
+          "min_score": 0.0,
+          "std_score": 0.3333333333333333,
+          "success_rate": 1.0
+        },
+        "gsm8k": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.6666666666666666,
+          "max_score": 1.0,
+          "min_score": 0.0,
+          "std_score": 0.5773502691896258,
+          "success_rate": 1.0
+        },
+        "drop": {
+          "num_samples": 3,
+          "num_successful": 3,
+          "mean_score": 0.3333333333333333,
+          "max_score": 1.0,
+          "min_score": 0.0,
+          "std_score": 0.5773502691896258,
+          "success_rate": 1.0
+        }
+      }
+    }
+  ],
+  "benchmark_comparison": {
+    "hotpotqa": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.7777777777777778,
+        "success_rate": 1.0
+      }
+    ],
+    "mgsmbn": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.8888888888888888,
+        "success_rate": 1.0
+      }
+    ],
+    "limr": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.0,
+        "success_rate": 1.0
+      }
+    ],
+    "humanevalplus": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.0,
+        "success_rate": 1.0
+      }
+    ],
+    "math500": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.0,
+        "success_rate": 1.0
+      }
+    ],
+    "mgsmde": [
+      {
+        "model": "qwen-turbo ",
+        "score": 1.0,
+        "success_rate": 1.0
+      }
+    ],
+    "gsm8k": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.6666666666666666,
+        "success_rate": 1.0
+      }
+    ],
+    "high_level_math": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.0,
+        "success_rate": 1.0
+      }
+    ],
+    "humaneval": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.6666666666666666,
+        "success_rate": 1.0
+      }
+    ],
+    "mbppplus": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.1111111111111111,
+        "success_rate": 1.0
+      }
+    ],
+    "drop": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.3333333333333333,
+        "success_rate": 1.0
+      }
+    ],
+    "aime2024": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.0,
+        "success_rate": 1.0
+      }
+    ],
+    "simpleqa": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.0,
+        "success_rate": 1.0
+      }
+    ],
+    "mbpp": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.3333333333333333,
+        "success_rate": 1.0
+      }
+    ],
+    "aime2025": [
+      {
+        "model": "qwen-turbo ",
+        "score": 0.0,
+        "success_rate": 0.6666666666666666
+      }
+    ]
+  },
+  "rankings": {
+    "by_overall_score": [
+      "qwen-turbo "
+    ],
+    "best_model": "qwen-turbo ",
+    "worst_model": "qwen-turbo "
+  }
+}

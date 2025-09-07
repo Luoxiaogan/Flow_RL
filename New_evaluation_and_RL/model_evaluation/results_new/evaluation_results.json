@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-09-08T00:29:42.574973",
+  "config_file": "..\\configs\\models_config.yaml",
+  "num_models": 1,
+  "successful_models": [
+    "qwen-turbo "
+  ],
+  "failed_models": [],
+  "total_time": 414.019244,
+  "output_dir": "..\\results_new",
+  "summary": {
+    "best_model": "qwen-turbo ",
+    "worst_model": "qwen-turbo "
+  }
+}
