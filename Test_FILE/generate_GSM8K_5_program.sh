@@ -117,12 +117,12 @@ EXEC_LLM='{
 
 # --- 路径配置 ---
 # 总的工作空间，所有生成物和结果都将保存在这里
-WORKSPACE_PATH="./workspace_GSM8K"
+WORKSPACE_PATH="./workspace_GSM8K_5_operator_program"
 
 # --- 系统配置 ---
 LOG_LEVEL="INFO"
 # 修改变量名以匹配Python参数，提高一致性
-MAX_CONCURRENT_TASKS=15  # 生成器内部的最大并发任务数
+MAX_CONCURRENT_TASKS=30  # 生成器内部的最大并发任务数
 WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 
 # ============================ 任务配置 =======================================
@@ -131,18 +131,18 @@ WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
 # ------------------------- 任务 1: HotPotQA (多跳问答) -------------------------
 #
 BENCHMARK="gsm8k"
-TOTAL_PROBLEMS=1      # Testing with just 1 problem
+TOTAL_PROBLEMS=400      # Testing with just 1 problem
 MIN_SAMPLE_SIZE=1     # 每个工作流最少使用的问题样本数
-MAX_SAMPLE_SIZE=1     # 每个工作流最多使用的问题样本数
-MAX_CONCURRENT_EXECUTIONS=5  # 并行执行工作流的最大并发数
+MAX_SAMPLE_SIZE=2     # 每个工作流最多使用的问题样本数
+MAX_CONCURRENT_EXECUTIONS=30  # 并行执行工作流的最大并发数
 PARALLELISM=1  # 每个数据组合生成的工作流并行度（默认2个不同版本）
-MAX_CONCURRENT_GROUPS=12  # 生成阶段最大并发组数（组间并行，组内串行）
+MAX_CONCURRENT_GROUPS=30  # 生成阶段最大并发组数（组间并行，组内串行）
 BATCH_SIZE=$MAX_CONCURRENT_GROUPS          # 每批次生成的工作流数量 = 最大并发组数
 # 选择要使用的operators（用逗号分隔，可选：generate,revise,summarize,ensemble,programmer,decompose）
 OPERATORS="generate,revise,summarize,ensemble,programmer,decompose"  # 示例：使用4个operators
 # 数据集文件的路径 (推荐使用相对路径)
 # 假设数据存放在项目根目录下的 'data' 文件夹中
-DATASET_PATH="/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/gsm8k/1000_train.jsonl"
+DATASET_PATH="../Processed_dataset/gsm8k/train_random_500.jsonl"
 # 训练数据输出文件
 TRAINING_DATA_OUTPUT="${WORKSPACE_PATH}/training_data_${BENCHMARK}.jsonl"
 

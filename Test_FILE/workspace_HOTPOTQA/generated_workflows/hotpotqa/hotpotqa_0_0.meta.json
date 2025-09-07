@@ -1,9 +1,0 @@
-{
-    "id": "hotpotqa_0_0",
-    "benchmark": "hotpotqa",
-    "data_indices": [
-        0
-    ],
-    "dataset_path": "/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/hotpotqa/train_select_1000.jsonl",
-    "generation_timestamp": 1757257166.043705
-}

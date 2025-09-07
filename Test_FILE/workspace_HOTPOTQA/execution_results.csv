@@ -1,2 +1,0 @@
-ID,Benchmark,Data_Indices,Status,Error_Type,Ground_Truth,Model_Output
-hotpotqa_0_0,hotpotqa,0,verified_incorrect,,"{""answer"": ""Coffea""}","{""output"": ""unknown""}"

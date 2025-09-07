@@ -1,6 +1,7 @@
 ## 2. HumanEvalHandler (handler.py)
 
 from typing import List, Dict, Any
+import re
 import ast
 import traceback
 import asyncio
@@ -195,64 +196,145 @@ Function name: {entry_point}
         
         return code
     
+    def _validate_and_fix_indentation(self, code: str) -> str:
+        """
+        验证并修复代码缩进问题。
+        
+        这个方法检查代码的缩进是否一致，
+        如果发现混合使用tab和空格，会统一转换为4个空格。
+        """
+        lines = code.split('\n')
+        fixed_lines = []
+        
+        for line in lines:
+            # 将tab转换为4个空格
+            fixed_line = line.replace('\t', '    ')
+            fixed_lines.append(fixed_line)
+        
+        # 重新组合代码
+        fixed_code = '\n'.join(fixed_lines)
+        
+        # 验证语法
+        try:
+            ast.parse(fixed_code)
+            return fixed_code
+        except SyntaxError as e:
+            # 如果还有语法错误，返回原始代码并记录警告
+            print(f"Warning: Code has syntax errors after indentation fix: {e}")
+            return code
+    
     def _extract_code_from_response(self, response: str) -> str:
         """
         从模型响应中提取Python代码。
-        (从MbppHandler复用)
+        
+        提取优先级：
+        1. ```python 代码块（markdown格式）
+        2. ``` 通用代码块
+        3. 包含 def 的原始代码
+        4. Final Answer 后的内容
+        5. 原始响应
+        
+        注意：保持代码缩进的完整性
         """
-        response = response.strip()
+        # 不使用strip()来避免破坏缩进，只移除末尾的换行
+        response = response.rstrip('\n')
         
-        if "```python" in response:
-            parts = response.split("```python")
-            if len(parts) > 1:
-                code_part = parts[1].split("```")[0]
-                return code_part.strip()
-        elif "```" in response:
-            parts = response.split("```")
-            if len(parts) >= 2:
-                code_part = parts[1]
-                lines = code_part.split('\n')
-                if lines and lines[0].strip().lower() in ['python', 'py']:
-                    code_part = '\n'.join(lines[1:])
-                return code_part.strip()
+        # 方法1：提取markdown python代码块
+        # 同时处理 ```python 和 ```python\n 的情况
+        python_block_pattern = r'```python\s*\n(.*?)```'
+        matches = re.findall(python_block_pattern, response, re.DOTALL)
+        if matches:
+            # 返回第一个匹配的代码块
+            # 注意：不使用strip()，保留缩进
+            code = matches[0]
+            # 只移除末尾多余的空行
+            while code.endswith('\n\n'):
+                code = code[:-1]
+            return code
         
-        if "def " in response:
-            return response
+        # 方法2：提取通用markdown代码块
+        generic_block_pattern = r'```\s*\n(.*?)```'
+        matches = re.findall(generic_block_pattern, response, re.DOTALL)
+        if matches:
+            code = matches[0]
+            # 检查是否第一行是语言标识符
+            lines = code.split('\n')
+            if lines and lines[0].strip().lower() in ['python', 'py']:
+                # 移除语言标识符行，但保留其他行的缩进
+                code = '\n'.join(lines[1:])
+            # 只移除末尾多余的空行
+            while code.endswith('\n\n'):
+                code = code[:-1]
+            return code
         
+        # 方法3：查找Final Answer标记
         if "final answer:" in response.lower():
-            parts = response.lower().split("final answer:")
+            # 找到最后一个Final Answer
+            parts = response.split("Final Answer:")
+            if len(parts) == 1:
+                # 尝试小写分割
+                parts = response.split("final answer:")
+            
             if len(parts) > 1:
-                code = parts[-1].strip()
-                return self._extract_code_from_response(code)
+                potential_code = parts[-1]
+                # 递归调用以处理Final Answer后可能的代码块
+                extracted = self._extract_code_from_response(potential_code)
+                if extracted != potential_code:  # 如果成功提取了代码块
+                    return extracted
+                # 否则清理并返回Final Answer后的内容
+                return potential_code.lstrip()
         
+        # 方法4：检查是否包含函数定义
+        if re.search(r'^\s*def\s+\w+\s*\(', response, re.MULTILINE):
+            # 看起来像Python代码，找到第一个import或def开始的位置
+            lines = response.split('\n')
+            start_idx = 0
+            for i, line in enumerate(lines):
+                if line.strip().startswith('import ') or \
+                line.strip().startswith('from ') or \
+                line.strip().startswith('def '):
+                    start_idx = i
+                    break
+            
+            # 返回从第一个代码行开始的内容
+            code = '\n'.join(lines[start_idx:])
+            # 只移除末尾多余的空行
+            while code.endswith('\n\n'):
+                code = code[:-1]
+            return code
+        
+        # 方法5：返回原始响应（最后的备选）
         return response
     
     async def judge(self, model_output: Any, ground_truth_data: Dict[str, Any]) -> bool:
         """
         评判模型生成的代码是否正确。
-        通过运行HumanEval格式的测试用例来验证代码的正确性。
+        通过运行测试用例来验证代码的正确性。
         
         :param model_output: 工作流执行后返回的代码
         :param ground_truth_data: 包含测试用例的完整数据
         :return: True 如果所有测试通过，否则为 False
         """
         try:
-            # 提取生成的代码
+            # 提取代码
             generated_code = self._extract_code_from_response(str(model_output))
+
+            generated_code = self._validate_and_fix_indentation(generated_code)
+
+            # 获取测试用例
+            test_cases = ground_truth_data.get('test_list', [])
+            test_setup = ground_truth_data.get('test_setup_code', '')
             
-            # 获取测试代码和函数名
-            test_code = ground_truth_data.get('test', '')
-            entry_point = ground_truth_data.get('entry_point', '')
-            
-            if not test_code or not entry_point:
-                print("Warning: No test code or entry point found, falling back to LLM judge")
+            if not test_cases:
+                # 如果没有测试用例，回退到LLM判断
+                print("Warning: No test cases found, falling back to LLM judge")
                 return await self.llm_judge(model_output, ground_truth_data)
             
             # 执行代码并运行测试
             passed, message = self._execute_code_with_tests(
                 generated_code, 
-                test_code,
-                entry_point
+                test_cases, 
+                test_setup
             )
             
             print(f"Code execution result: {message}")
@@ -260,4 +342,5 @@ Function name: {entry_point}
             
         except Exception as e:
             print(f"Error in HumanEval judge: {e}")
+            # 如果执行失败，认为答案错误
             return False
