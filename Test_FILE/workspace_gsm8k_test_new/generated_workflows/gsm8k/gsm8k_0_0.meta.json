@@ -1,9 +1,0 @@
-{
-    "id": "gsm8k_0_0",
-    "benchmark": "gsm8k",
-    "data_indices": [
-        0
-    ],
-    "dataset_path": "/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/train.jsonl",
-    "generation_timestamp": 1757181675.8546255
-}

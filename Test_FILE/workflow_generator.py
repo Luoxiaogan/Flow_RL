@@ -150,11 +150,11 @@ class WorkflowGenerator:
         try:
             conditions_module = importlib.import_module(f"ScoreFlow.scripts.{self.benchmark_name}.conditions")
             return (
+                getattr(conditions_module, "START_PROMPT", ""), 
+                # getattr(conditions_module, "END_PROMPT", ""),
                 getattr(conditions_module, "SYSTEM_PROMPT", "You are a helpful AI assistant."),
-                getattr(conditions_module, "TASK_PROMPT", ""), 
-                getattr(conditions_module, "OPERATOR_PROMPT_PART_1", ""), 
-                getattr(conditions_module, "OPERATOR_PROMPT_PART_2", ""), 
-                getattr(conditions_module, "USER_PROMPT_LONG", ""), 
+                # getattr(conditions_module, "META_PROMPTS", [])
+                getattr(conditions_module, "TASK_PROMPT", [])
             )
         except (ModuleNotFoundError, AttributeError) as e:
             logging.error(f"无法为 benchmark '{self.benchmark_name}' 加载脚本模板: {e}")
@@ -162,8 +162,8 @@ class WorkflowGenerator:
 
     def _construct_generation_prompt(self, data_indices: List[int], existing_workflow: str = None) -> Tuple[List[Dict], str]:
         """使用 Handler 构建生成请求的 Prompt。"""
-        system_prompt, task_prompt, operator_prompt_part_1, operator_prompt_part_2, user_prompt_long = self._load_prompt_templates()
-
+        start_prompt, system_prompt, task_prompt = self._load_prompt_templates()
+        
         # 1. 使用 handler 获取问题文本
         problem_text = self.handler.get_prompt_text(data_indices)
         
@@ -174,7 +174,7 @@ class WorkflowGenerator:
         # 3. 构建核心的、用于SFT的instruction
         #这个instruction是干净的，不包含任何随机或临时的指令。
         #它由两部分组成：规格说明书模板(start_prompt) + 问题实例(problem_text)
-        sft_instruction = task_prompt + "\n\n#### Problem Expamples\n" + problem_text + "\n\n" + operator_prompt_part_1+ "\n\n" + operator_prompt_part_2 + "\n\n" + user_prompt_long + "\n\n### Your Response\nNow, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:"
+        sft_instruction = task_prompt + start_prompt + problem_text + "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow graph and thinking based on all the specifications above:"
 
         # 4. 构建给API的、可能包含额外引导的user_prompt
         api_user_prompt_parts = [sft_instruction]
@@ -224,40 +224,17 @@ class WorkflowGenerator:
             assistant_content_for_sft = response_content.strip()
             # 从完整响应中提取用于执行器的代码
             code_for_executor = ""
-
-            # 提取 ```python``` 代码块
-            if "```python" in assistant_content_for_sft:
-                parts = assistant_content_for_sft.split("```python")
-                if len(parts) > 1:
-                    code_for_executor = parts[1].split("```")[0].strip()
-            elif "```" in assistant_content_for_sft:
-                # 通用代码块（如果没有指定python）
-                parts = assistant_content_for_sft.split("```")
-                if len(parts) >= 2:
-                    code_part = parts[1]
-                    # 如果代码块以语言标识符开头，移除它
-                    lines = code_part.split('\n')
-                    if lines and lines[0].strip().lower() in ['python', 'py']:
-                        code_part = '\n'.join(lines[1:])
-                    code_for_executor = code_part.strip()
+            if '<code>' in assistant_content_for_sft and '</code>' in assistant_content_for_sft:
+                # 优先使用新的 <code> 标签提取
+                code_for_executor = assistant_content_for_sft.split('<code>', 1)[1].split('</code>', 1)[0].strip()
+            elif '<graph>' in assistant_content_for_sft and '</graph>' in assistant_content_for_sft:
+                # 向后兼容，如果模型输出了旧的 <graph> 标签
+                logging.warning(f"工作流 {workflow_id} 使用了旧的 <graph> 标签。")
+                code_for_executor = assistant_content_for_sft.split('<graph>', 1)[1].split('</graph>', 1)[0].strip()
             else:
-                # 备用方案
-                logging.warning(f"在 {workflow_id} 的响应中未能找到代码块标记")
-                code_for_executor = assistant_content_for_sft.strip()
-            # assistant_content_for_sft = response_content.strip()
-            # # 从完整响应中提取用于执行器的代码
-            # code_for_executor = ""
-            # if '<code>' in assistant_content_for_sft and '</code>' in assistant_content_for_sft:
-            #     # 优先使用新的 <code> 标签提取
-            #     code_for_executor = assistant_content_for_sft.split('<code>', 1)[1].split('</code>', 1)[0].strip()
-            # elif '<graph>' in assistant_content_for_sft and '</graph>' in assistant_content_for_sft:
-            #     # 向后兼容，如果模型输出了旧的 <graph> 标签
-            #     logging.warning(f"工作流 {workflow_id} 使用了旧的 <graph> 标签。")
-            #     code_for_executor = assistant_content_for_sft.split('<graph>', 1)[1].split('</graph>', 1)[0].strip()
-            # else:
-            #     # 最后的备用方案，如果模型完全没有按要求输出标签
-            #     logging.warning(f"在 {workflow_id} 的响应中未能找到 <code> 或 <graph> 标签，将尝试剥离 markdown。")
-            #     code_for_executor = assistant_content_for_sft.strip().strip('```python').strip('```').strip()
+                # 最后的备用方案，如果模型完全没有按要求输出标签
+                logging.warning(f"在 {workflow_id} 的响应中未能找到 <code> 或 <graph> 标签，将尝试剥离 markdown。")
+                code_for_executor = assistant_content_for_sft.strip().strip('```python').strip('```').strip()
             
             # 4. 保存结果
             if code_for_executor:

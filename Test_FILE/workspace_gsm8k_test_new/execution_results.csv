@@ -1,2 +1,0 @@
-ID,Benchmark,Data_Indices,Status,Error_Type,Ground_Truth,Model_Output
-gsm8k_0_0,gsm8k,0,verified_correct,,"{""answer"": ""Natalia sold 48/2 = <<48/2=24>>24 clips in May.\nNatalia sold 48+24 = <<48+24=72>>72 clips altogether in April and May.\n#### 72""}","{""output"": ""Natalia sold 48 clips in April and 24 clips in May, for a total of **72 clips**.""}"
