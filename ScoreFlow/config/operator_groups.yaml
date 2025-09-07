@@ -1,0 +1,89 @@
+# Operator组配置文件
+# 每个组定义了一套operator组合，可以用于不同的benchmark场景
+
+operator_groups:
+  default:
+    name: "默认通用组"
+    description: "包含4个核心operator的标准组合，适用于大多数任务"
+    module: "common.operator"  # 默认模块路径
+    operators:
+      - Generate
+      - Revise
+      - Summarize
+      - Ensemble
+    
+  extended:
+    name: "扩展通用组"
+    description: "包含所有通用operator，提供更多功能选择"
+    module: "common.operator"
+    operators:
+      - Generate
+      - Revise
+      - Summarize
+      - Ensemble
+      - CodeGenerate
+      - Decompose
+      - FormatAnswer
+    
+  math_specialized:
+    name: "MATH数学专用组"
+    description: "针对MATH benchmark的专用operator组，包含编程求解等高级功能"
+    module: "MATH.operator"
+    special_init: true  # 需要特殊初始化参数(self.gid等)
+    operators:
+      - Custom
+      - Review
+      - Programmer
+      - ScEnsemble
+    
+  code_focused:
+    name: "代码生成组"
+    description: "专注于代码生成任务，适合编程类benchmark"
+    module: "common.operator"
+    operators:
+      - Generate
+      - CodeGenerate
+      - Revise
+      - Ensemble
+    
+  reasoning_heavy:
+    name: "推理增强组"
+    description: "适合复杂推理任务，包含问题分解和多步推理"
+    module: "common.operator"
+    operators:
+      - Generate
+      - Decompose
+      - Revise
+      - Summarize
+      - Ensemble
+      - FormatAnswer
+  
+  hybrid_math:
+    name: "混合数学组"
+    description: "结合通用和数学专用operator，灵活处理各类数学问题"
+    module: "mixed"  # 特殊标记，表示混合使用多个模块
+    operators:
+      - Generate      # from common.operator
+      - Decompose     # from common.operator
+      - Programmer    # from MATH.operator
+      - Review        # from MATH.operator
+      - Ensemble      # from common.operator
+  
+  minimal:
+    name: "最小组合"
+    description: "仅包含最基础的生成和修订功能"
+    module: "common.operator"
+    operators:
+      - Generate
+      - Revise
+  
+  analysis_focused:
+    name: "分析专注组"
+    description: "适合需要深度分析和总结的任务"
+    module: "common.operator"
+    operators:
+      - Generate
+      - Decompose
+      - Summarize
+      - Revise
+      - FormatAnswer
