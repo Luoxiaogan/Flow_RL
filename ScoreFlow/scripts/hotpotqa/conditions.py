@@ -36,6 +36,12 @@ Document 2: [Title]
 
 **QUESTION:**
 [question requiring multi-hop reasoning]
+
+**ANSWER:(in the testing of the workflow, this will not be provided to the workflow)**
+[answer]
+
+**SUPPORTING FACTS:(in the testing of the workflow, this will not be provided to the workflow)**
+[supporting_facts]
 ---
 ```
 Multiple problems follow the same structure if provided.

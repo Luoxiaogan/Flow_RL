@@ -1,93 +1,12 @@
 #!/bin/bash
+# 清除代理设置
+unset http_proxy https_proxy all_proxy HTTP_PROXY HTTPS_PROXY ALL_PROXY
 
-# ==============================================================================
-#           大规模工作流生成与执行系统 - 调度脚本 (V3 - 修复后版本)
-# ==============================================================================
-#
-# 该脚本通过 master_runner.py 统一调度工作流的生成与执行。
-# 它配置并调用 master_runner.py，后者再依次调用:
-# 1. workflow_generator.py: 批量生成工作流代码 (.py) 和元数据 (.meta.json)。
-# 2. workflow_executor.py: 逐个执行和验证已生成的工作流。
-#
-# --- 使用方法 ---
-# 1. (首次) 设置环境变量: 为了安全，API密钥应通过环境变量提供。
-#    在终端运行: export YOUR_API_KEY="sk-xxxxxxxx"
-# 2. 修改配置: 在下面的 "通用配置" 和 "任务配置" 部分设置参数。
-# 3. 选择任务: 确保您只想运行的任务配置块是未被注释的。
-# 4. 运行脚本: bash run_workflow_system.sh
-#
-# ==============================================================================
+# 设置NO_PROXY来排除本地服务
+export NO_PROXY="localhost,127.0.0.1,0.0.0.0,*.local"
+export no_proxy="localhost,127.0.0.1,0.0.0.0,*.local"
 
-# 导航到脚本所在的目录，以确保所有相对路径都能正确解析
 cd "$(dirname "$0")" || exit
-
-# ============================ 安全配置 (重要!) ================================
-# 请确保您已经设置了包含 API 密钥的环境变量。
-# 例如: export YOUR_API_KEY="sk-xxxxxxxxxxxxxxxxxxxx"
-# if [ -z "$YOUR_API_KEY" ]; then
-#     echo "错误: 环境变量 YOUR_API_KEY 未设置。"
-#     echo "请运行 'export YOUR_API_KEY=\"你的密钥\"' 后再试。"
-#     exit 1
-# fi
-
-# ============================ 通用配置 =======================================
-# 这些参数在不同任务间通常是共享的
-
-# --- API 与模型配置 (JSON格式) ---
-# API池，用于【生成阶段】，可以配置多个备用模型。
-# 注意: 我们使用 "$YOUR_API_KEY" 从环境变量中读取密钥。
-# API_POOL='[
-#     {
-#     "provider": "openai",
-#     "model": "qwen-turbo", 
-#     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-#     "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
-# }
-# ]'
-
-# # 执行LLM，用于【工作流内部的算子】，通常只配置一个高效、可靠的模型。
-# EXEC_LLM='{
-#     "provider": "openai",
-#     "model": "qwen-turbo", 
-#     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-#     "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
-# }'
-
-# ALIBABA代理
-
-# ]'
-# EXEC_LLM='{
-#     "provider": "openai",
-#     "model": "qwen-turbo", 
-#     "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-#     "base_url": "http://localhost:5001"
-# }'
-
-# API_POOL='[
-#     {
-#         "provider": "openai",
-#         "model": "qwen-max-latest",
-#         "api_key": "dummy",
-#         "base_url": "http://localhost:5059",
-#         "stream": false,
-#         "stream_options": {"include_usage": true},
-#         "enable_thinking": true,
-#         "thinking_budget": 5000
-#     }
-# ]'
-
-# API_POOL='[
-#     {
-#         "provider": "openai",
-#         "model": "qwen-max-latest",
-#         "api_key": "956c41bd0f31beaf68b871d4987af4bb",
-#         "base_url": "https://idealab.alibaba-inc.com/api/openai/v1",
-#         "stream": false,
-#         "stream_options": {"include_usage": true},
-#         "enable_thinking": true,
-#         "thinking_budget": 2000
-#     }
-# ]'
 
 # API_POOL='{
 #     "provider": "openai",
@@ -103,8 +22,8 @@ API_POOL='[
         "api_key": "dummy",
         "base_url": "http://localhost:5059",
         "enable_thinking": true,
-        "thinking_budget": 5000,
-        "max_tokens": 8192
+        "thinking_budget": 10000,
+        "max_tokens": 10000
     }
 ]'
 
@@ -114,12 +33,12 @@ EXEC_LLM='{
     "model": "qwen-turbo", 
     "api_key": "dummy",
     "base_url": "http://localhost:5059",
-    "max_tokens": 8192
+    "max_tokens": 10000
 }'
 
 # --- 路径配置 ---
 # 总的工作空间，所有生成物和结果都将保存在这里
-WORKSPACE_PATH="./workspace_HUMANEVAL_6_operator_QWEN3_new"
+WORKSPACE_PATH="./workspace_HUMANEVAL+++++_444_operator_QWEN3_new"
 
 # --- 系统配置 ---
 LOG_LEVEL="INFO"
@@ -132,19 +51,19 @@ WORKFLOW_TIMEOUT=600     # 单个工作流的执行超时时间（秒）
 
 # ------------------------- 任务 1: HotPotQA (多跳问答) -------------------------
 #
-BENCHMARK="humaneval"
-TOTAL_PROBLEMS=164      # Testing with just 1 problem
-MIN_SAMPLE_SIZE=1     # 每个工作流最少使用的问题样本数
+BENCHMARK="humanevalplus"
+TOTAL_PROBLEMS=131     # Testing with just 1 problem
+MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
 MAX_SAMPLE_SIZE=2     # 每个工作流最多使用的问题样本数
 MAX_CONCURRENT_EXECUTIONS=30  # 并行执行工作流的最大并发数
 PARALLELISM=1  # 每个数据组合生成的工作流并行度（默认2个不同版本）
 MAX_CONCURRENT_GROUPS=30  # 生成阶段最大并发组数（组间并行，组内串行）
 BATCH_SIZE=$MAX_CONCURRENT_GROUPS          # 每批次生成的工作流数量 = 最大并发组数
 # 选择要使用的operators（用逗号分隔，可选：generate,revise,summarize,ensemble,programmer,decompose）
-OPERATORS="generate,revise,summarize,ensemble,programmer,decompose"
+OPERATORS="generate,revise,summarize,ensemble"
 # 数据集文件的路径 (推荐使用相对路径)
 # 假设数据存放在项目根目录下的 'data' 文件夹中
-DATASET_PATH="../Processed_dataset/human_eval/test.jsonl"
+DATASET_PATH="../Processed_dataset/humanevalplus/humanevalplus_train.jsonl"
 # 训练数据输出文件
 TRAINING_DATA_OUTPUT="${WORKSPACE_PATH}/training_data_${BENCHMARK}.jsonl"
 

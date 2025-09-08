@@ -1,3 +1,4 @@
+# ScoreFlow/scripts/mbpp/conditions.py
 TASK_PROMPT = '''### Problem Domain Overview
 
 This domain tests code generation from natural language descriptions. Each problem provides a task description and assert statements that the solution must satisfy.
@@ -59,10 +60,13 @@ def function_name(args):
 **TASK:**
 [Natural language description of the programming task]
 
-**TEST CASES:(for you to know the function name and expected input types from arguments)**
+**TEST CASES:(for you to know the function name and expected input types, testing of the workflow, this WILL be provided to the workflow, since it is essential for understanding the function name)**
 assert function_name(args) == expected_output
 assert function_name(args) == expected_output
 assert function_name(args) == expected_output
+
+**REFERENCE ANSWER(code):(in the testing of the workflow, this will not be provided to the workflow)**
+[reference solution code]
 ---
 ```
 Multiple problems follow the same structure if provided.

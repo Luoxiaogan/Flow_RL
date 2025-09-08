@@ -42,7 +42,9 @@ class HumanevalHandler(BenchmarkHandler):
                 # 提取prompt（包含函数签名和docstring）和entry point
                 prompt = problem.get('prompt', problem.get('question', ''))
                 entry_point = problem.get('entry_point', '')
-                
+                answer = problem.get('answer', '')
+                test = problem.get('test', '')
+
                 # 组合问题
                 formatted_problem = f"""---
 **FUNCTION SIGNATURE AND SPECIFICATION:**
@@ -50,6 +52,12 @@ class HumanevalHandler(BenchmarkHandler):
 
 **ENTRY POINT:**
 Function name: {entry_point}
+
+**TEST CASES:(in the testing of the workflow, this will not be provided to the workflow)**
+{test}
+
+**REFERENCE ANSWER(code):(in the testing of the workflow, this will not be provided to the workflow)**
+{answer}
 ---"""
                 formatted_problems.append(formatted_problem)
             

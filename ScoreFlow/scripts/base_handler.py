@@ -233,7 +233,7 @@ Reply with EXACTLY one word: CORRECT or INCORRECT"""
         except Exception as e:
             print(f"LLM judge failed: {e}")
             # 如果LLM判断失败，回退到字符串比较
-            return str(model_output).lower() == str(ground_truth).lower()
+            return str(model_output).lower() == str(ground_truth_context).lower()
 
     async def judge(self, model_output: Any, ground_truth_data: Dict[str, Any]) -> bool:
         """

@@ -19,6 +19,9 @@ class Gsm8kHandler(BenchmarkHandler):
         ---
         **QUESTION:**
         [question text]
+
+        **ANSWER:**
+        [answer text]
         ---
         """
         try:
@@ -28,11 +31,15 @@ class Gsm8kHandler(BenchmarkHandler):
             for problem in problems:
                 # 只提取 question 字段
                 question = problem.get('question', '[Question not found]')
+                answer = problem.get('answer', '[Answer not found]')
                 
                 # 使用Markdown格式，与DROP Handler保持一致
                 formatted_problem = f"""---
 **QUESTION:**
 {question}
+
+**ANSWER:(in the testing of the workflow, this will not be provided to the workflow)**
+{answer}
 ---"""
                 formatted_problems.append(formatted_problem)
             

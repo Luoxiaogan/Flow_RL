@@ -99,11 +99,12 @@ cd "$(dirname "$0")" || exit
 API_POOL='[
     {
         "provider": "openai",
-        "model": "qwen-max-latest",
+        "model": "qwen3-max-preview",
         "api_key": "dummy",
         "base_url": "http://localhost:5059",
         "enable_thinking": true,
-        "thinking_budget": 5000
+        "thinking_budget": 5000,
+        "max_tokens": 10000
     }
 ]'
 
@@ -112,12 +113,13 @@ EXEC_LLM='{
     "provider": "openai",
     "model": "qwen-turbo", 
     "api_key": "dummy",
-    "base_url": "http://localhost:5059"
+    "base_url": "http://localhost:5059",
+    "max_tokens": 10000
 }'
 
 # --- 路径配置 ---
 # 总的工作空间，所有生成物和结果都将保存在这里
-WORKSPACE_PATH="./workspace_HUMANEVAL_4_operator"
+WORKSPACE_PATH="./workspace_HUMANEVAL_4_operator_QWEN3"
 
 # --- 系统配置 ---
 LOG_LEVEL="INFO"
@@ -132,8 +134,8 @@ WORKFLOW_TIMEOUT=600     # 单个工作流的执行超时时间（秒）
 #
 BENCHMARK="humaneval"
 TOTAL_PROBLEMS=164      # Testing with just 1 problem
-MIN_SAMPLE_SIZE=1     # 每个工作流最少使用的问题样本数
-MAX_SAMPLE_SIZE=1     # 每个工作流最多使用的问题样本数
+MIN_SAMPLE_SIZE=2     # 每个工作流最少使用的问题样本数
+MAX_SAMPLE_SIZE=2     # 每个工作流最多使用的问题样本数
 MAX_CONCURRENT_EXECUTIONS=30  # 并行执行工作流的最大并发数
 PARALLELISM=1  # 每个数据组合生成的工作流并行度（默认2个不同版本）
 MAX_CONCURRENT_GROUPS=30  # 生成阶段最大并发组数（组间并行，组内串行）

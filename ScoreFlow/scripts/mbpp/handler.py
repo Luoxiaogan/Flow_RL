@@ -1,4 +1,5 @@
 ## 2. MbppHandler (handler.py)
+# ScoreFlow/scripts/mbpp/handler.py
 
 from typing import List, Dict, Any
 import re
@@ -44,7 +45,8 @@ class MbppHandler(BenchmarkHandler):
                 # 提取任务描述和测试用例
                 task_description = problem.get('text', problem.get('question', ''))
                 test_cases = problem.get('test_list', [])
-                
+                answer = problem.get('answer', '')
+
                 # 格式化测试用例
                 test_cases_text = "**TEST CASES:**\n"
                 if test_cases:
@@ -58,8 +60,11 @@ class MbppHandler(BenchmarkHandler):
 **TASK:**
 {task_description}
 
-**TEST CASES:(for you to know the function name and expected input types)**
+**TEST CASES:(for you to know the function name and expected input types, testing of the workflow, this WILL be provided to the workflow, since it is essential for understanding the function name)**
 {test_cases_text.strip()}
+
+**REFERENCE ANSWER(code):(in the testing of the workflow, this will not be provided to the workflow)**
+{answer}
 ---"""
                 formatted_problems.append(formatted_problem)
             

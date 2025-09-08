@@ -555,7 +555,12 @@ class Workflow:
         - Use detailed, comprehensive instructions
         - Dynamic instruction construction is powerful
         """
+        # --- ALL IMPORTS MUST GO HERE INSIDE THE METHOD ---
         import asyncio
+        # Add your required imports here, examples:
+        # import re
+        # import json
+
         # --- YOUR WORKFLOW LOGIC HERE ---
 ```
 Feel free to add any additional explanations before or after the code.
@@ -579,17 +584,21 @@ Feel free to add any additional explanations before or after the code.
 Your workflow should feel like a living system that adapts and responds, not a rigid pipeline. Think of it as choreographing a dance between operators, where each movement flows naturally from the last while building toward a crescendo of insight.
 
 **Critical Rules:**
-1. Generality: The workflow must be generic enough to handle ANY problem instance from the described domain, not just the provided examples.
-2. Instructions: Use comprehensive, detailed instructions (100-500+ words OK)
-3. Parameters: `instruction` (str) + `context` (str) for most; `contexts` (List[str]) for Ensemble
-4. Control Flow: Branch on operator results, not direct problem_text parsing
-5. Complexity: Typically 3-8 operator calls, parallelize when possible
+1. Generality: The workflow must be generic enough to handle ANY problem instance from the described domain
+2. Imports: ALL imports (re, json, math, etc.) MUST be placed INSIDE the run_workflow method, NOT at class level
+3. Instructions: Use comprehensive, detailed instructions (100-500+ words OK)
+4. Parameters: `instruction` (str) + `context` (str) for most; `contexts_list` (List[str]) for Ensemble
+5. Control Flow: Branch on operator results, not direct problem_text parsing
+6. Complexity: Typically 3-8 operator calls, parallelize when possible
 
 **Performance Considerations:**
 - Parallel operations (`asyncio.gather`) are computationally efficient but use more API calls
 - Deep iteration loops may increase latency - balance depth with practicality
 - Context accumulation should be strategic - avoid redundant information buildup
-- Consider early termination conditions for iterative patterns'''
+- Consider early termination conditions for iterative patterns
+
+**IMPORTANT IMPORT RULE:**
+Do NOT import modules at the file or class level. ALL imports (except those already in the template) must be placed INSIDE the `run_workflow` method. This includes commonly used modules like `re`, `json`, etc.'''
 
 USER_PROMPT_SHORT ='''### Your Task: Complete the `run_workflow` Method
 
@@ -627,7 +636,12 @@ class Workflow:
         - Use detailed, comprehensive instructions
         - Dynamic instruction construction is powerful
         """
+        # --- IMPORTANT: ADD ALL YOUR IMPORTS HERE, NOT AT CLASS LEVEL ---
         import asyncio
+        # Add any additional imports you need here, for example:
+        # import re
+        # import json
+        
         # --- YOUR WORKFLOW LOGIC HERE ---
 ```
 Feel free to add any additional explanations before or after the code.
@@ -643,6 +657,9 @@ decompose_init = '''self.decompose = operator.Decompose(self.llm, self.problem_t
 
 
 PYTHON_START = '''import asyncio
+import re
+import json
+import math
 from typing import Literal, List, Dict, Any, Union
 import ScoreFlow.scripts.common.operator as operator
 from metagpt.provider.llm_provider_registry import create_llm_instance as create

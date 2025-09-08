@@ -33,6 +33,8 @@ class HotpotqaHandler(BenchmarkHandler):
             for problem in problems:
                 # 提取问题
                 question = problem['question']
+                answer = problem.get('answer', 'N/A')  # 答案可选
+                supporting_facts = problem.get('supporting_facts', [])
                 
                 # 提取并格式化上下文文档
                 context = problem['context']
@@ -71,6 +73,12 @@ class HotpotqaHandler(BenchmarkHandler):
 
 **QUESTION:**
 {question}
+
+**ANSWER:(in the testing of the workflow, this will not be provided to the workflow)**
+{answer}
+
+**SUPPORTING FACTS:(in the testing of the workflow, this will not be provided to the workflow)**
+{supporting_facts}
 ---"""
                 formatted_problems.append(formatted_problem)
             

@@ -30,6 +30,12 @@ This domain tests code generation capability by requiring implementation of Pyth
 
 **ENTRY POINT:**
 Function name: [exact function name to implement]
+
+**TEST CASES:(in the testing of the workflow, this will not be provided to the workflow)**
+[test cases for the function]
+
+**REFERENCE ANSWER(code):(in the testing of the workflow, this will not be provided to the workflow)**
+[reference solution code]
 ---
 ```
 Multiple problems follow the same structure if provided.
