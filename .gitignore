@@ -97,3 +97,14 @@ New_evaluation_and_RL/RL_part/wandb_data_save/
 New_evaluation_and_RL/config.yaml
 ScoreFlow\benchmark_mapping.jsonl
 New_evaluation_and_RL/model_evaluation/results
+
+
+Test_FILE/workspace_DROP_6_operator_QWEN3/
+Test_FILE/workspace_GSM8K_6_operator_QWEN3/
+Test_FILE/workspace_HUMANEVAL_4_operator_QWEN3/
+Test_FILE/workspace_HUMANEVAL+++++_6_operator_QWEN3_new/
+Test_FILE/workspace_HUMANEVAL+++++_444_operator_QWEN3_new/
+Test_FILE/workspace_MBPP_6_operator_QWEN3/
+Test_FILE/workspace_MBPP+++++_6_operator_QWEN3_new/
+Test_FILE/workspace_MBPP+++++_444_operator_QWEN3_new/
+Test_FILE/*.zip
