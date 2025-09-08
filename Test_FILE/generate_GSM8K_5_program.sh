@@ -99,7 +99,7 @@ cd "$(dirname "$0")" || exit
 API_POOL='[
     {
         "provider": "openai",
-        "model": "qwen3-max-preview",
+        "model": "qwen-max-latest",
         "api_key": "dummy",
         "base_url": "http://localhost:5059",
         "enable_thinking": true,
@@ -123,7 +123,7 @@ WORKSPACE_PATH="./workspace_GSM8K_5_operator_program"
 LOG_LEVEL="INFO"
 # 修改变量名以匹配Python参数，提高一致性
 MAX_CONCURRENT_TASKS=30  # 生成器内部的最大并发任务数
-WORKFLOW_TIMEOUT=180     # 单个工作流的执行超时时间（秒）
+WORKFLOW_TIMEOUT=600     # 单个工作流的执行超时时间（秒）
 
 # ============================ 任务配置 =======================================
 # 说明: 一次只取消注释一个任务块来运行。
