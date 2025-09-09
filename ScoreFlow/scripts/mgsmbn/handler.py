@@ -29,11 +29,15 @@ class MgsmbnHandler(BenchmarkHandler):
             for problem in problems:
                 # Extract the question field (in Bengali)
                 question = problem.get('question', '[Question not found]')
+                answer = problem.get('answer', '[Answer not found]')
                 
                 # Use Markdown format, consistent with GSM8K handler
                 formatted_problem = f"""---
 **QUESTION:**
 {question}
+---
+**ANSWER:**
+{answer}
 ---"""
                 formatted_problems.append(formatted_problem)
             

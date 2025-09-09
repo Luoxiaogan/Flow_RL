@@ -108,3 +108,7 @@ Test_FILE/workspace_MBPP_6_operator_QWEN3/
 Test_FILE/workspace_MBPP+++++_6_operator_QWEN3_new/
 Test_FILE/workspace_MBPP+++++_444_operator_QWEN3_new/
 Test_FILE/*.zip
+
+data_qwen-max-latest/
+data_qwen_3_max_preview/
+*.zip
