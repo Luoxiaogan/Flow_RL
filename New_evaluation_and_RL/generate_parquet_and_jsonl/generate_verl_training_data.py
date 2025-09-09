@@ -82,14 +82,7 @@ class VerlTrainingDataGenerator:
             mapping_file_path = PROJECT_ROOT / "ScoreFlow" / "benchmark_mapping.jsonl"
         else:
             mapping_file_path = Path(mapping_file_path)
-        
-        # 首先尝试加载benchmark_mapping_all.jsonl（包含operators配置）
-        mapping_all_path = mapping_file_path.parent / "benchmark_mapping_all.jsonl"
-        if mapping_all_path.exists():
-            mapping_file_path = mapping_all_path
-            logging.info(f"Using benchmark_mapping_all.jsonl with operators configuration")
-        elif not mapping_file_path.exists():
-            raise FileNotFoundError(f"Benchmark mapping file not found: {mapping_file_path}")
+    
         
         mapping = {}
         with open(mapping_file_path, 'r', encoding='utf-8') as f:

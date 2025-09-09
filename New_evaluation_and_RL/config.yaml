@@ -136,7 +136,7 @@ logging:
 paths:
   # 必需的外部组件（相对于project_root的路径）
   scoreflow_handlers: "."  # ScoreFlow根目录 (即project_root本身)
-  benchmark_mapping: "ScoreFlow/benchmark_mapping.jsonl"  # 相对于project_root
+  benchmark_mapping: "ScoreFlow/benchmark_mapping_test.jsonl"  # 相对于project_root
   processed_dataset: "Processed_dataset"  # 数据集根目录 (相对于project_root)
   metagpt_config: "metagpt_root/config/config2.yaml"  # MetaGPT配置文件 (相对于project_root)
   

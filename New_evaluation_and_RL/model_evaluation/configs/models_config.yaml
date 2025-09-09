@@ -6,10 +6,10 @@
 # ==============================================================================
 test_data:
   # Path to test data JSONL file
-  path: "../../generate_parquet_and_jsonl/test_scoreflow_data_new/train.jsonl"
+  path: "../../generate_parquet_and_jsonl/test_scoreflow_data_all/train.jsonl"
   
   # Maximum number of samples to evaluate (null for all)
-  max_samples: 10  # 快速测试可设置为 10-50
+  max_samples: 10000  # 快速测试可设置为 10-50
 
 # ==============================================================================
 # REWARD SERVER CONFIGURATION / Reward服务器配置

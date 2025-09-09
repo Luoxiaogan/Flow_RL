@@ -1,0 +1,34 @@
+2025-09-09 22:59:26,578 - __main__ - INFO - 开始统一模型评估
+2025-09-09 22:59:26,584 - __main__ - INFO - 配置文件: ..\configs\models_config.yaml
+2025-09-09 22:59:26,584 - __main__ - INFO - 测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\train.jsonl
+2025-09-09 22:59:26,584 - __main__ - INFO - 输出目录: ..\results_all
+2025-09-09 22:59:26,584 - __main__ - INFO - 模型数量: 1
+2025-09-09 22:59:26,589 - core.utils.report_generator - INFO - 报告输出目录: ..\results_all
+2025-09-09 22:59:26,589 - core.evaluators.unified_batch_evaluator - INFO - UnifiedBatchEvaluator 初始化完成
+2025-09-09 22:59:26,589 - core.evaluators.unified_batch_evaluator - INFO -   测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\train.jsonl
+2025-09-09 22:59:26,589 - core.evaluators.unified_batch_evaluator - INFO -   输出目录: ..\results_all
+2025-09-09 22:59:26,589 - core.evaluators.unified_batch_evaluator - INFO -   批次大小: 8
+2025-09-09 22:59:26,589 - core.evaluators.unified_batch_evaluator - INFO -   最大样本: 10000
+2025-09-09 22:59:26,589 - core.evaluators.unified_batch_evaluator - INFO - 开始评估 1 个模型
+2025-09-09 22:59:26,589 - core.evaluators.unified_batch_evaluator - INFO - 验证模型配置...
+2025-09-09 22:59:26,601 - core.utils.config_validator - INFO - Configuration passed schema validation
+2025-09-09 22:59:26,603 - core.evaluators.unified_batch_evaluator - INFO - 检查 Reward Server...
+2025-09-09 22:59:26,604 - core.utils.reward_server_checker - INFO - 检查 Reward Server: http://localhost:7788/health
+2025-09-09 22:59:26,906 - core.utils.reward_server_checker - INFO - ✓ Reward Server 正常运行: {'service': 'scoreflow_reward_server', 'status': 'healthy', 'version': '1.0.0'}
+2025-09-09 22:59:26,906 - core.evaluators.unified_batch_evaluator - INFO - 加载测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\train.jsonl
+2025-09-09 22:59:26,969 - core.evaluators.unified_batch_evaluator - INFO - 限制评估样本数: 10000
+2025-09-09 22:59:26,969 - core.evaluators.unified_batch_evaluator - INFO - 加载了 562 个测试样本
+2025-09-09 22:59:26,969 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-09 22:59:26,969 - core.evaluators.unified_batch_evaluator - INFO - 评估模型 1/1: qwen-turbo 
+2025-09-09 22:59:26,969 - core.evaluators.unified_batch_evaluator - INFO - 模型类型: api
+2025-09-09 22:59:26,969 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-09 22:59:26,969 - core.utils.model_factory - INFO - 创建模型接口: qwen-turbo  (类型: api)
+2025-09-09 22:59:26,969 - core.interfaces.api_model_interface - INFO - [qwen-turbo ] 初始化API模型
+2025-09-09 22:59:26,969 - core.interfaces.api_model_interface - INFO -   模型: qwen-turbo
+2025-09-09 22:59:26,969 - core.interfaces.api_model_interface - INFO -   API类型: openai
+2025-09-09 22:59:26,969 - core.interfaces.api_model_interface - INFO -   端点数量: 1
+2025-09-09 22:59:26,969 - core.utils.api_connection_pool - INFO - Created new API session: openai
+2025-09-09 22:59:29,683 - core.interfaces.api_model_interface - INFO - ✓ [qwen-turbo ] API连接成功
+2025-09-09 22:59:29,684 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo ] 生成解决方案...
+2025-09-09 22:59:29,684 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo ] 使用并发数: 15
