@@ -83,7 +83,12 @@ class VerlTrainingDataGenerator:
         else:
             mapping_file_path = Path(mapping_file_path)
         
-        if not mapping_file_path.exists():
+        # 首先尝试加载benchmark_mapping_all.jsonl（包含operators配置）
+        mapping_all_path = mapping_file_path.parent / "benchmark_mapping_all.jsonl"
+        if mapping_all_path.exists():
+            mapping_file_path = mapping_all_path
+            logging.info(f"Using benchmark_mapping_all.jsonl with operators configuration")
+        elif not mapping_file_path.exists():
             raise FileNotFoundError(f"Benchmark mapping file not found: {mapping_file_path}")
         
         mapping = {}
@@ -160,8 +165,8 @@ class VerlTrainingDataGenerator:
             logging.error(f"Failed to load handler for {benchmark_name}: {e}")
             raise
     
-    def _load_prompt_templates(self, benchmark_name: str) -> Tuple[str, str, str, str, str, str]:
-        """Load prompt templates from conditions.py"""
+    def _load_prompt_templates(self, benchmark_name: str) -> Dict[str, Any]:
+        """Load prompt templates from conditions.py and related modules"""
         try:
             # Check benchmark mapping first
             benchmark_info = self.benchmark_mapping.get(benchmark_name)
@@ -212,48 +217,141 @@ class VerlTrainingDataGenerator:
             # Import conditions module
             conditions_module = importlib.import_module(conditions_path)
             
+            # Also load common conditions for shared components
+            common_conditions = importlib.import_module("ScoreFlow.scripts.common.conditions")
+            
+            # Since we can't always load the operator module (due to metagpt dependency),
+            # we'll use a predefined list that matches what's in common.operator
+            # This list corresponds to the operators defined in ScoreFlow
+            available_operators = ['ScGenerate', 'ScRevise', 'ScEnsemble', 'ScSummarize', 'ScProgrammer', 'ScDecompose']
+            
+            # Load operator descriptions and init codes
+            operator_descriptions = {}
+            operator_inits = {}
+            
+            # Map operator class names to keys used in conditions
+            operator_key_map = {
+                'ScGenerate': 'generate',
+                'ScRevise': 'revise',
+                'ScSummarize': 'summarize',
+                'ScEnsemble': 'ensemble',
+                'ScProgrammer': 'programmer',
+                'ScDecompose': 'decompose'
+            }
+            
+            for op_class in available_operators:
+                if op_class in operator_key_map:
+                    key = operator_key_map[op_class]
+                    # Get description from common conditions (directly using the key name)
+                    # Note: in conditions.py, 'programmer' description is stored as 'programm'
+                    desc_key = key if key != 'programmer' else 'programm'
+                    operator_descriptions[key] = getattr(common_conditions, desc_key, "")
+                    
+                    # Get init code from common conditions
+                    init_key = f"{key}_init" if key != 'programmer' else "programm_init"  # Special case
+                    operator_inits[key] = getattr(common_conditions, init_key, "")
+            
             # Load all required prompt components
-            return (
-                getattr(conditions_module, "SYSTEM_PROMPT", "You are a helpful AI assistant."),
-                getattr(conditions_module, "TASK_PROMPT", ""),
-                getattr(conditions_module, "OPERATOR_PROMPT_PART_1", ""),
-                getattr(conditions_module, "OPERATOR_PROMPT_PART_2", ""),
-                getattr(conditions_module, "USER_PROMPT_LONG", ""),
-                getattr(conditions_module, "START_PROMPT", "")  # Keep for backward compatibility
-            )
+            return {
+                'system_prompt': getattr(conditions_module, "SYSTEM_PROMPT", "You are a helpful AI assistant."),
+                'task_prompt': getattr(conditions_module, "TASK_PROMPT", ""),
+                'operator_prompt_part_1': getattr(conditions_module, "OPERATOR_PROMPT_PART_1", ""),
+                'operator_prompt_part_2': getattr(conditions_module, "OPERATOR_PROMPT_PART_2", ""),
+                'user_prompt_long': getattr(conditions_module, "USER_PROMPT_LONG", ""),
+                'user_prompt_short': getattr(common_conditions, "USER_PROMPT_SHORT", ""),
+                'operator_prompt_simple_start': getattr(common_conditions, "OPERATOR_PROMPT_SIMPLE_START", ""),
+                'available_operators': available_operators,
+                'operator_descriptions': operator_descriptions,
+                'operator_inits': operator_inits
+            }
         except Exception as e:
             logging.error(f"Failed to load prompt templates for {benchmark_name}: {e}")
             raise
     
     def _construct_prompt(self, handler: BenchmarkHandler, data_indices: List[int], 
                          benchmark_name: str) -> Tuple[List[Dict], str]:
-        """Construct prompt messages in HuggingFace chat format"""
+        """Construct prompt messages in HuggingFace chat format (simplified version)
+        
+        Args:
+            handler: Benchmark handler instance
+            data_indices: Indices of problems to include
+            benchmark_name: Name of the benchmark
+        """
         # Load all prompt components
-        system_prompt, task_prompt, operator_prompt_part_1, operator_prompt_part_2, user_prompt_long, start_prompt = self._load_prompt_templates(benchmark_name)
+        templates = self._load_prompt_templates(benchmark_name)
         
         # 1. 使用 handler 获取问题文本
         problem_text = handler.get_prompt_text(data_indices)
         
-        # Build instruction following the new template structure:
-        # sft_instruction = task_prompt + "\n Problem Examples:\n" + problem_text + "\n\n" + 
-        #                  operator_prompt_part_1 + "\n\n" + operator_prompt_part_2 + "\n\n" + 
-        #                  user_prompt_long + "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow code and thinking based on all the specifications above:"
+        # 2. 根据benchmark配置选择operators组
+        import random
+        benchmark_info = self.benchmark_mapping.get(benchmark_name, {})
+        operators_groups = benchmark_info.get('operators_groups', [])
+        
+        if operators_groups:
+            # 根据比例随机选择一个operators组
+            rand_value = random.random()
+            cumulative_prop = 0
+            selected_operators = None
+            
+            for group in operators_groups:
+                cumulative_prop += group['proportion']
+                if rand_value < cumulative_prop:
+                    selected_operators = group['operators']
+                    break
+            
+            # 如果没选中（不应该发生），使用第一组
+            if selected_operators is None:
+                selected_operators = operators_groups[0]['operators']
+        else:
+            # 如果没有配置，使用默认的随机选择逻辑
+            available_ops = ['generate', 'revise', 'summarize', 'ensemble', 'programmer', 'decompose']
+            # Filter to only operators that have descriptions
+            available_ops = [op for op in available_ops if op in templates['operator_descriptions']]
+            
+            # 随机选择3到5个operators
+            num_operators = random.randint(3, min(5, len(available_ops)))
+            selected_operators = random.sample(available_ops, num_operators)
+        
+        # 确保选中的operators都有对应的描述
+        selected_operators = [op for op in selected_operators if op in templates['operator_descriptions']]
+        
+        # 3. 动态构建operator文档
+        dynamic_operator_prompt = templates.get('operator_prompt_simple_start', '')
+        for op in selected_operators:
+            if op in templates['operator_descriptions']:
+                dynamic_operator_prompt += "\n\n" + templates['operator_descriptions'][op]
+        
+        # 4. 构建动态初始化代码
+        init_lines = []
+        for op in selected_operators:
+            if op in templates['operator_inits']:
+                init_lines.append(templates['operator_inits'][op])
+        
+        # 如果没有初始化代码，添加默认的空缩进
+        if init_lines:
+            dynamic_init_code = "\n        ".join(init_lines)  # 8 spaces indent
+        else:
+            # 如果没有任何init代码，保留适当的缩进
+            dynamic_init_code = "# Operators initialization"
+            logging.warning(f"No operator init codes found for {selected_operators}. Available: {list(templates.get('operator_inits', {}).keys())}")
+        
+        # 5. 使用简化版 USER_PROMPT_SHORT
+        user_prompt = templates.get('user_prompt_short', '')
+        user_prompt_with_operators = user_prompt.replace('{operators_init}', dynamic_init_code)
+        
+        # 6. 构建简化版的SFT instruction（不包含OPERATOR_PROMPT_PART_2）
         sft_instruction = (
-            task_prompt + 
-            "\n Problem Examples:\n" + 
-            problem_text + 
-            "\n\n" + 
-            operator_prompt_part_1 + 
-            "\n\n" + 
-            operator_prompt_part_2 + 
-            "\n\n" + 
-            user_prompt_long + 
+            templates['task_prompt'] + 
+            "\n Problem Examples:\n" + problem_text + "\n\n" + 
+            dynamic_operator_prompt + "\n\n" +  # 使用动态构建的operator文档，不包含PART_2
+            user_prompt_with_operators +  # 使用简化版模板
             "\n\n### 6. Your Response\nNow, provide the complete and optimized Python workflow code and thinking based on all the specifications above:"
         )
         
         # Build messages in chat format
         messages = [
-            {'role': 'system', 'content': system_prompt},
+            {'role': 'system', 'content': templates['system_prompt']},
             {'role': 'user', 'content': sft_instruction}
         ]
         
@@ -347,7 +445,7 @@ class VerlTrainingDataGenerator:
                     # Use single index for prompt generation (can be extended to multiple)
                     data_indices = [idx]
                     # 从数据集中随机选择一个问题作为主问题
-                    # Construct prompt
+                    # Construct prompt (using simplified version)
                     messages, problem_text = self._construct_prompt(handler, data_indices, benchmark_name)
                     
                     # Get answer from original data

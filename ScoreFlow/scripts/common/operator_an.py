@@ -90,3 +90,35 @@ class DecomposeOp(BaseModel):
         ...,
         description="List of subproblems, each with 'id', 'description', and 'dependencies'."
     )
+
+class VerifierOp(BaseModel):
+    """
+    Verifier算子的结构化输出。
+    基于IMO Guard Agent设计，用于严格验证解答的逻辑正确性。
+    """
+    verdict: str = Field(
+        ...,
+        description="Overall verdict about the solution validity (e.g., 'correct', 'invalid due to critical error', 'contains justification gaps')."
+    )
+    findings: List[Dict[str, str]] = Field(
+        ...,
+        description="List of specific findings, each with 'location' (quoted text), 'issue_type' ('Critical Error' or 'Justification Gap'), and 'description'."
+    )
+    verification_log: str = Field(
+        ...,
+        description="Detailed step-by-step verification process explaining the reasoning behind each finding."
+    )
+
+class RefinerOp(BaseModel):
+    """
+    Refiner算子的结构化输出。
+    基于IMO系统的改进机制，用于根据验证反馈优化解答质量。
+    """
+    analysis: str = Field(
+        ...,
+        description="Analysis of the verification feedback and identification of improvement strategies."
+    )
+    refined_solution: str = Field(
+        ...,
+        description="The improved solution that addresses all identified issues from the verification process."
+    )

@@ -18,7 +18,9 @@ from .operator_an import (
     ReviseOp,
     CodeGenerateOp,
     DecomposeOp,
-    FormatAnswerOp
+    FormatAnswerOp,
+    VerifierOp,
+    RefinerOp
 )
 
 logger = logging.getLogger(__name__)
@@ -465,3 +467,172 @@ Your response MUST be valid XML with 'think' and 'subproblems' fields.
         
         response = await self._fill_node(DecomposeOp, prompt, mode="xml_fill")
         return response["subproblems"]
+
+
+class Verifier(Operator):
+    """
+    核心算子：验证。
+    基于IMO Guard Agent的设计理念，严格验证解答的逻辑正确性和严谨性。
+    作为验证者而非解决者，专注于发现和报告问题。
+    """
+    async def __call__(self, instruction: str = "", context: str = "") -> Dict[str, Any]:
+        """
+        对提供的解答进行严格的逐步验证。
+        
+        Args:
+            instruction: 验证的具体指令或关注点
+            context: 需要验证的解答文本
+            
+        Returns:
+            包含verdict、findings和verification_log的字典
+        """
+        # 检查SILENT模式环境变量
+        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+            print("=" * 60)
+            print("\n🚀 执行 operator: Verifier")
+        
+        prompt = f"""You are an expert mathematician and a meticulous verifier for rigorous mathematical solutions. Your primary task is to verify the provided solution with the same standards as an International Mathematical Olympiad (IMO) grader. A solution is correct only if every step is rigorously justified.
+
+**Core Instructions:**
+- Your sole task is to find and report ALL issues in the provided solution. You are a **verifier**, NOT a solver.
+- Perform a **step-by-step** check of the entire solution.
+- Do NOT attempt to correct errors or fill gaps you find.
+
+**Error Classification:**
+When you identify an issue, classify it as one of the following:
+
+1. **Critical Error**: Any error that breaks the logical chain of proof, including:
+   - Logical fallacies (e.g., invalid inference steps)
+   - Factual errors (e.g., calculation mistakes)
+   - **Procedure**: Explain the error and state it invalidates the reasoning. Do not check dependent steps, but scan for independent parts.
+
+2. **Justification Gap**: Steps where conclusion may be correct but argument lacks rigor:
+   - Incomplete reasoning
+   - Hand-wavy explanations
+   - Missing logical connections
+   - **Procedure**: Explain the gap, assume the step is true for argument's sake, then continue verification.
+
+**Verification Task:**
+{instruction if instruction else "Verify the mathematical rigor and logical correctness of the provided solution."}
+
+**Original Problem:**
+{self.problem_text}
+
+**Solution to Verify:**
+---
+{context if context else "No solution provided for verification."}
+---
+
+Your response MUST be in valid XML format with three fields:
+- **verdict**: Overall validity assessment (e.g., "correct", "invalid due to critical error", "contains justification gaps")
+- **findings**: JSON array where each finding has "location" (quoted text), "issue_type", and "description"
+- **verification_log**: Detailed step-by-step verification explaining your reasoning
+
+**EXAMPLE FORMAT:**
+<verdict>The solution is invalid due to a Critical Error.</verdict>
+<findings>
+[
+  {{"location": "From A > B and C > D, it follows that A-C > B-D", "issue_type": "Critical Error", "description": "This is a logical fallacy. Subtracting inequalities in this manner is not mathematically valid."}},
+  {{"location": "By interchanging the limit and integral", "issue_type": "Justification Gap", "description": "The solution does not provide justification for this interchange, such as proving uniform convergence."}}
+]
+</findings>
+<verification_log>
+Step 1: The solution begins with... [detailed analysis]
+Step 2: Here the author claims... [detailed analysis of each logical step]
+...
+</verification_log>"""
+        
+        response = await self._fill_node(VerifierOp, prompt, mode="xml_fill")
+        return {
+            "verdict": response.get("verdict", ""),
+            "findings": response.get("findings", []),
+            "verification_log": response.get("verification_log", "")
+        }
+
+
+class Refiner(Operator):
+    """
+    核心算子：改进。
+    基于IMO系统的改进机制，根据验证反馈优化和完善解答质量。
+    专注于解决验证中发现的问题并提高解答的严谨性。
+    """
+    async def __call__(self, instruction: str = "", context: str = "", verification_feedback: str = "") -> Dict[str, str]:
+        """
+        基于验证反馈改进解答质量。
+        
+        Args:
+            instruction: 改进的具体指令或目标
+            context: 原始解答文本
+            verification_feedback: 验证过程的反馈信息
+            
+        Returns:
+            包含analysis和refined_solution的字典
+        """
+        # 检查SILENT模式环境变量
+        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+            print("=" * 60)
+            print("\n🚀 执行 operator: Refiner")
+        
+        prompt = f"""You are an expert mathematician specializing in refining and improving mathematical solutions. Your task is to provide a refined solution that addresses ALL issues identified in the verification feedback while maintaining mathematical rigor.
+
+**Core Refinement Principles:**
+- **Rigor is Paramount**: Every step must be logically sound and clearly justified
+- **Address All Issues**: Fix critical errors and fill justification gaps identified by the verifier
+- **Maintain Clarity**: Ensure the solution is complete, coherent, and easy to follow
+- **Preserve Correctness**: If unsure about a complete solution, provide only rigorously provable partial results
+
+**Refinement Instructions:**
+{instruction if instruction else "Improve the solution by addressing all verification feedback and enhancing mathematical rigor."}
+
+**Original Problem:**
+{self.problem_text}
+
+**Original Solution to Improve:**
+---
+{context if context else "No original solution provided."}
+---
+
+**Verification Feedback to Address:**
+---
+{verification_feedback if verification_feedback else "No verification feedback provided."}
+---
+
+Your response MUST be in valid XML format with two fields:
+- **analysis**: Your step-by-step analysis of the feedback and improvement strategy
+- **refined_solution**: The complete improved solution addressing all identified issues
+
+**Requirements for Refined Solution:**
+1. Use proper mathematical notation (TeX format where appropriate: $x$, $\\frac{{a}}{{b}}$)
+2. Provide clear justification for every logical step
+3. Address each critical error and justification gap mentioned in the feedback
+4. Structure the solution with clear logical flow
+5. If a complete solution cannot be rigorously proven, clearly state what has been established
+
+**EXAMPLE FORMAT:**
+<analysis>
+The verification feedback identified two main issues: 
+1. A critical error in step 3 where inequalities were incorrectly combined
+2. A justification gap in the limit interchange
+I will address these by... [detailed improvement plan]
+</analysis>
+<refined_solution>
+**Solution:**
+
+Let me provide a rigorous solution to this problem.
+
+**Step 1**: [Clear statement and justification]
+Since we are given that... we can conclude that... because [rigorous reasoning].
+
+**Step 2**: [Next logical step with justification]
+From Step 1, we have established... Now, to proceed further... [detailed justification].
+
+[Continue with complete, rigorous solution...]
+
+**Final Answer**: [Clear, concise answer]
+</refined_solution>"""
+        
+        response = await self._fill_node(RefinerOp, prompt, mode="xml_fill")
+        return {
+            "analysis": response.get("analysis", ""),
+            "refined_solution": response.get("refined_solution", "")
+        }
