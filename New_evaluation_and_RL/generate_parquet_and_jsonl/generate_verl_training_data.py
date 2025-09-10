@@ -262,13 +262,15 @@ class VerlTrainingDataGenerator:
             raise
     
     def _construct_prompt(self, handler: BenchmarkHandler, data_indices: List[int], 
-                         benchmark_name: str) -> Tuple[List[Dict], str]:
+                         benchmark_name: str, entry_index: int = 0, total_entries: int = 1) -> Tuple[List[Dict], str]:
         """Construct prompt messages in HuggingFace chat format (simplified version)
         
         Args:
             handler: Benchmark handler instance
             data_indices: Indices of problems to include
             benchmark_name: Name of the benchmark
+            entry_index: Current entry index (0-based) in the generation batch
+            total_entries: Total number of entries being generated
         """
         # Load all prompt components
         templates = self._load_prompt_templates(benchmark_name)
@@ -276,26 +278,27 @@ class VerlTrainingDataGenerator:
         # 1. 使用 handler 获取问题文本
         problem_text = handler.get_prompt_text(data_indices)
         
-        # 2. 根据benchmark配置选择operators组
+        # 2. 根据benchmark配置选择operators组 - 按比例分配而非随机选择
         import random
         benchmark_info = self.benchmark_mapping.get(benchmark_name, {})
         operators_groups = benchmark_info.get('operators_groups', [])
         
         if operators_groups:
-            # 根据比例随机选择一个operators组
-            rand_value = random.random()
-            cumulative_prop = 0
+            # 按比例分配operators组，而不是随机选择
             selected_operators = None
+            cumulative_entries = 0
             
             for group in operators_groups:
-                cumulative_prop += group['proportion']
-                if rand_value < cumulative_prop:
+                # 计算当前组应该处理的条目数
+                group_entries = int(total_entries * group['proportion'])
+                if cumulative_entries <= entry_index < cumulative_entries + group_entries:
                     selected_operators = group['operators']
                     break
+                cumulative_entries += group_entries
             
-            # 如果没选中（不应该发生），使用第一组
+            # 如果没选中（可能由于舍入误差），使用最后一组处理剩余条目
             if selected_operators is None:
-                selected_operators = operators_groups[0]['operators']
+                selected_operators = operators_groups[-1]['operators']
         else:
             # 如果没有配置，使用默认的随机选择逻辑
             available_ops = ['generate', 'revise', 'summarize', 'ensemble', 'programmer', 'decompose']
@@ -433,13 +436,16 @@ class VerlTrainingDataGenerator:
             verl_data = []
             indices_used = random.sample(range(total_size), entries_to_generate)
             
-            for idx in indices_used:
+            for entry_idx, idx in enumerate(indices_used):
                 try:
                     # Use single index for prompt generation (can be extended to multiple)
                     data_indices = [idx]
                     # 从数据集中随机选择一个问题作为主问题
-                    # Construct prompt (using simplified version)
-                    messages, problem_text = self._construct_prompt(handler, data_indices, benchmark_name)
+                    # Construct prompt (using simplified version) - 按比例分配operator组
+                    messages, problem_text = self._construct_prompt(
+                        handler, data_indices, benchmark_name, 
+                        entry_index=entry_idx, total_entries=entries_to_generate
+                    )
                     
                     # Get answer from original data
                     original_answer = data[idx].get('answer', '')
