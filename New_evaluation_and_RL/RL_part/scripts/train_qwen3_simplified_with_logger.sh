@@ -12,8 +12,8 @@ export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:128,expandable_segments:True"
 time_stamp=$(date +%Y%m%d_%H%M%S)
 
 python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
-  data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0901_test_RL/train.parquet"]' \
-  data.val_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0901_test_RL/test.parquet"]' \
+  data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train.parquet"]' \
+  data.val_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_cleared.parquet"]' \
   data.train_batch_size=8 \
   data.max_prompt_length=4600 \
   data.max_response_length=4096 \
