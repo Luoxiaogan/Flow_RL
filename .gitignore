@@ -112,3 +112,5 @@ Test_FILE/*.zip
 data_qwen-max-latest/
 data_qwen_3_max_preview/
 *.zip
+
+Test_FILE/workspace*/
