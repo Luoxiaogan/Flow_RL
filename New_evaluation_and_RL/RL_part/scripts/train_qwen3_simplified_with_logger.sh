@@ -1,17 +1,9 @@
 export USE_SGLANG=1
 export NCCL_DEBUG=INFO
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
-
-export USE_SGLANG=1
-export NCCL_DEBUG=INFO
-export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
-
 export RAY_DISABLE_MEMORY_MONITOR=1
 export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:128,expandable_segments:True"
-
 time_stamp=$(date +%Y%m%d_%H%M%S)
-
-# max_prompt_length=6000 对于最大4000的数据。没有问题
 
 python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train.parquet"]' \
@@ -27,9 +19,9 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.model.trust_remote_code=true \
   ++actor_rollout_ref.model.enable_gradient_checkpointing=true \
   ++actor_rollout_ref.actor.ppo_mini_batch_size=8 \
-  ++actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=2 \
+  ++actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=1 \
   ++actor_rollout_ref.actor.use_dynamic_bsz=false \
-  ++actor_rollout_ref.actor.ppo_max_token_len_per_gpu=20000 \
+  ++actor_rollout_ref.actor.ppo_max_token_len_per_gpu=15000 \
   ++actor_rollout_ref.actor.grad_clip=1.0 \
   ++actor_rollout_ref.actor.use_kl_loss=true \
   ++actor_rollout_ref.actor.kl_loss_coef=0.001 \
@@ -41,7 +33,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.actor.optim.num_cycles=0.5 \
   ++actor_rollout_ref.actor.checkpoint.save_contents='["model","extra"]' \
   ++actor_rollout_ref.actor.checkpoint.load_contents='["model","extra"]' \
-  ++actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=2 \
+  ++actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=1 \
   ++actor_rollout_ref.ref.fsdp_config.param_offload=false \
   ++actor_rollout_ref.rollout.name=sglang \
   ++actor_rollout_ref.rollout.n=8 \
@@ -50,12 +42,13 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.rollout.top_p=0.95 \
   ++actor_rollout_ref.rollout.prompt_length=3330 \
   ++actor_rollout_ref.rollout.response_length=4096 \
-  ++actor_rollout_ref.rollout.gpu_memory_utilization=0.6 \
+  ++actor_rollout_ref.rollout.gpu_memory_utilization=0.4 \
   ++actor_rollout_ref.rollout.dtype=bfloat16 \
-  ++actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=2 \
+  ++actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=1 \
   ++actor_rollout_ref.rollout.tensor_model_parallel_size=2 \
-  ++actor_rollout_ref.rollout.max_num_seqs=80 \
+  ++actor_rollout_ref.rollout.max_num_seqs=40 \
   ++actor_rollout_ref.rollout.engine_kwargs.sglang.trust_remote_code=true \
+  ++actor_rollout_ref.rollout.engine_kwargs.sglang.mem_fraction_static=0.7 \
   ++actor_rollout_ref.rollout.val_kwargs.response_length=4096 \
   algorithm.adv_estimator=grpo \
   algorithm.use_kl_in_reward=false \
