@@ -15,13 +15,13 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train.parquet"]' \
   data.val_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_cleared.parquet"]' \
   data.train_batch_size=8 \
-  data.max_prompt_length=4600 \
+  data.max_prompt_length=6000 \
   data.max_response_length=4096 \
   data.filter_overlong_prompts=true \
   data.filter_overlong_prompts_workers=4 \
   data.dataloader_num_workers=4 \
   data.shuffle=true \
-  ++actor_rollout_ref.model.path=/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/Merged_weight/Qwen3-8B/rank_8_epoch_2 \
+  ++actor_rollout_ref.model.path=/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/Merged_weight/Qwen3-8B/new_0910 \
   ++actor_rollout_ref.model.trust_remote_code=true \
   ++actor_rollout_ref.model.enable_gradient_checkpointing=true \
   ++actor_rollout_ref.actor.ppo_mini_batch_size=8 \
@@ -54,7 +54,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.rollout.tensor_model_parallel_size=2 \
   ++actor_rollout_ref.rollout.max_num_seqs=80 \
   ++actor_rollout_ref.rollout.engine_kwargs.sglang.trust_remote_code=true \
-  ++actor_rollout_ref.rollout.val_kwargs.response_length=3069 \
+  ++actor_rollout_ref.rollout.val_kwargs.response_length=4096 \
   algorithm.adv_estimator=grpo \
   algorithm.use_kl_in_reward=false \
   +critic.enable=false \
@@ -68,6 +68,6 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   trainer.test_freq=5 \
   trainer.critic_warmup=0 \
   trainer.project_name=qwen3_rl_sfter_sft \
-  trainer.experiment_name=qwen3_8b_with_thinking \
+  trainer.experiment_name=qwen3_8b_0911 \
   trainer.logger='["console","wandb"]' \
-  trainer.default_local_dir=/nas/ganluo/Flow_RL/rl_out/checkpoints
+  trainer.default_local_dir=/nas/ganluo/Flow_RL/rl_out_0911/checkpoints
