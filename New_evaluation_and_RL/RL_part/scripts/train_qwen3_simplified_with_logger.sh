@@ -17,7 +17,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train.parquet"]' \
   data.val_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_cleared.parquet"]' \
   data.train_batch_size=8 \
-  data.max_prompt_length=6000 \
+  data.max_prompt_length=3330 \
   data.max_response_length=4096 \
   data.filter_overlong_prompts=true \
   data.filter_overlong_prompts_workers=4 \
@@ -48,9 +48,9 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.rollout.temperature=0.7 \
   ++actor_rollout_ref.rollout.top_k=50 \
   ++actor_rollout_ref.rollout.top_p=0.95 \
-  ++actor_rollout_ref.rollout.prompt_length=4600 \
+  ++actor_rollout_ref.rollout.prompt_length=3330 \
   ++actor_rollout_ref.rollout.response_length=4096 \
-  ++actor_rollout_ref.rollout.gpu_memory_utilization=0.5 \
+  ++actor_rollout_ref.rollout.gpu_memory_utilization=0.6 \
   ++actor_rollout_ref.rollout.dtype=bfloat16 \
   ++actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=2 \
   ++actor_rollout_ref.rollout.tensor_model_parallel_size=2 \
