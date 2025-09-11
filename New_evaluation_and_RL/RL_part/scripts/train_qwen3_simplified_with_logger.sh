@@ -11,6 +11,8 @@ export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:128,expandable_segments:True"
 
 time_stamp=$(date +%Y%m%d_%H%M%S)
 
+# max_prompt_length=6000 对于最大4000的数据。没有问题
+
 python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train.parquet"]' \
   data.val_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_cleared.parquet"]' \
