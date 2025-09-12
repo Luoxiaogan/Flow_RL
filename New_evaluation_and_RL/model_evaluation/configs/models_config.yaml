@@ -6,7 +6,7 @@
 # ================================
 test_data:
   # Path to test data JSONL file
-  path: "../../generate_parquet_and_jsonl/test_scoreflow_data_all/train.jsonl"
+  path: "../../generate_parquet_and_jsonl/test_scoreflow_data_all/test.jsonl"
   
   # Maximum number of samples to evaluate (null for all)
   max_samples: 10000  # 快速测试可设置为 10-50
