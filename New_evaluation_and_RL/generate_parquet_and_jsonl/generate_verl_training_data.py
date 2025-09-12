@@ -46,27 +46,36 @@ from ScoreFlow.scripts.base_handler import BenchmarkHandler
 class VerlTrainingDataGenerator:
     """Generate VERL training data from benchmarks"""
     
-    def __init__(self, output_dir: str = None):
+    def __init__(self, output_dir: str = None, benchmark_mapping_file: str = None):
         """
         Initialize the generator
         
         Args:
             output_dir: Directory to save generated parquet files
+            benchmark_mapping_file: Path to benchmark mapping JSONL file
         """
         self.output_dir = Path(output_dir) if output_dir else CURRENT_DIR / "data"
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
         # Load benchmark mapping
-        self.benchmark_mapping = self._load_benchmark_mapping()
+        self.benchmark_mapping = self._load_benchmark_mapping(benchmark_mapping_file)
         
         logging.info(f"VerlTrainingDataGenerator initialized with output dir: {self.output_dir}")
         logging.info(f"Available benchmarks: {list(self.benchmark_mapping.keys())}")
     
-    def _load_benchmark_mapping(self) -> Dict[str, Dict]:
-        """Load benchmark mapping from jsonl file"""
-        # Try to get mapping file path from config, fallback to default
-        mapping_file_path = None
-        if CONFIG_FILE.exists():
+    def _load_benchmark_mapping(self, benchmark_mapping_file: str = None) -> Dict[str, Dict]:
+        """Load benchmark mapping from jsonl file
+        
+        Args:
+            benchmark_mapping_file: Path to benchmark mapping file (optional)
+        """
+        # Priority: command line arg > config file > default
+        if benchmark_mapping_file:
+            # Use command line provided path
+            mapping_file_path = Path(benchmark_mapping_file)
+            logging.info(f"Using benchmark mapping from command line: {mapping_file_path}")
+        elif CONFIG_FILE.exists():
+            # Try to get from config file
             with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
                 config = yaml.safe_load(f)
             # Get project_root from config
@@ -75,13 +84,12 @@ class VerlTrainingDataGenerator:
             
             # Get benchmark_mapping relative path and build full path
             benchmark_mapping_rel = config.get('paths', {}).get('benchmark_mapping', 'ScoreFlow/benchmark_mapping.jsonl')
-            mapping_file_path = str(project_root_path / benchmark_mapping_rel)
-        
-        if not mapping_file_path:
+            mapping_file_path = project_root_path / benchmark_mapping_rel
+            logging.info(f"Using benchmark mapping from config: {mapping_file_path}")
+        else:
             # Fallback to default path
             mapping_file_path = PROJECT_ROOT / "ScoreFlow" / "benchmark_mapping.jsonl"
-        else:
-            mapping_file_path = Path(mapping_file_path)
+            logging.info(f"Using default benchmark mapping: {mapping_file_path}")
     
         
         mapping = {}
@@ -614,6 +622,10 @@ def parse_arguments():
                        choices=['train', 'test', 'both'],
                        help='Which dataset type to generate')
     
+    # Benchmark mapping file
+    parser.add_argument('--benchmark-mapping', type=str,
+                       help='Path to benchmark mapping JSONL file (overrides config file)')
+    
     # Entry count/proportion options
     parser.add_argument('--num-train-entries', type=int,
                        help='Number of train entries to generate per benchmark')
@@ -651,8 +663,11 @@ def main():
         format='%(asctime)s - %(levelname)s - %(message)s'
     )
     
-    # Initialize generator
-    generator = VerlTrainingDataGenerator(output_dir=args.output_dir)
+    # Initialize generator with benchmark mapping file if provided
+    generator = VerlTrainingDataGenerator(
+        output_dir=args.output_dir,
+        benchmark_mapping_file=args.benchmark_mapping
+    )
     
     # Get benchmarks to process
     if args.benchmarks:
@@ -718,4 +733,7 @@ def main():
 if __name__ == "__main__":
     main()
 
+    # Example commands:
     # python generate_verl_training_data.py --num-train-entries 20 --num-test-entries 0 --output-dir test_scoreflow_data --benchmarks all --test-cases-per-entry 50
+    # python generate_verl_training_data.py --benchmarks gsm8k mbpp --benchmark-mapping /path/to/custom_mapping.jsonl --output-dir custom_data
+    # python generate_verl_training_data.py --benchmarks all --benchmark-mapping ScoreFlow/benchmark_mapping_lessenv.jsonl --num-train-entries 100
