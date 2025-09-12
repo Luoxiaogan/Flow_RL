@@ -28,6 +28,8 @@ def main():
     tokenizer_path = sys.argv[1] if len(sys.argv) > 1 else "/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/Merged_weight/Qwen3-8B/new_0910"
     parquet_path = "/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train.parquet"
     
+    filter_length = 3330
+    
     print(f"Tokenizer路径: {tokenizer_path}")
     print(f"Parquet路径: {parquet_path}")
     print("-" * 50)
@@ -101,12 +103,28 @@ def main():
     
     # 长度分布
     print("\n📈 长度分布:")
-    buckets = [1000, 2000, 3000, 4000, 5000, 6000, 8000, 10000]
+    buckets = [1000, 2000, 3000,3100,3200,3300,3400,3500,3600,3700,3800,3900, 4000, 5000, 6000, 8000, 10000]
     for bucket in buckets:
         count = sum(1 for l in token_lengths if l <= bucket)
         percentage = count / len(token_lengths) * 100
         bar = "█" * int(percentage / 2)  # 简单的进度条
         print(f"  <= {bucket:5d}: {count:6d} ({percentage:5.1f}%) {bar}")
+    
+    print("\n" + "="*50)
+    print(f"🔍 开始过滤：仅保留 prompt token 长度 ≤ {filter_length} 的样本")
+    
+    # 构造一个布尔 mask
+    keep_mask = [l <= filter_length for l in token_lengths]
+    filtered_df = df[keep_mask].copy().reset_index(drop=True)
+    
+    # 写出
+    out_path = parquet_path.replace(".parquet", f"_le{filter_length}.parquet")
+    filtered_df.to_parquet(out_path, index=False)
+    
+    print(f"  过滤前样本数: {len(df)}")
+    print(f"  过滤后样本数: {len(filtered_df)}")
+    print(f"  已写出文件: {out_path}")
+    print("="*50)
 
 
 if __name__ == "__main__":
