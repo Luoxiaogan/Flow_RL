@@ -28,6 +28,7 @@ class ModelFactory:
         # Lazy imports to avoid circular dependency
         from ..interfaces.local_model_interface import LocalModelInterface
         from ..interfaces.api_model_interface import APIModelInterface
+        from ..interfaces.jsonl_model_interface import JSONLModelInterface
         
         model_type = model_config.get('type', 'unknown').lower()
         model_name = model_config.get('name', 'unnamed')
@@ -36,6 +37,9 @@ class ModelFactory:
         
         if model_type == 'api':
             return APIModelInterface(model_config)
+            
+        elif model_type == 'jsonl':
+            return JSONLModelInterface(model_config)
             
         elif model_type in ['local', 'huggingface', 'hf']:
             # Convert simplified config to LocalModelInterface format
@@ -118,6 +122,19 @@ class ModelFactory:
             
             if not Path(lora_path).exists():
                 logger.warning(f"LoRA adapter path does not exist: {lora_path}")
+        
+        elif model_type == 'jsonl':
+            if 'jsonl_path' not in model_config:
+                raise ValueError(f"JSONL model {model_config['name']} must have 'jsonl_path'")
+            
+            # Check if path(s) exist
+            jsonl_paths = model_config['jsonl_path']
+            if isinstance(jsonl_paths, str):
+                jsonl_paths = [jsonl_paths]
+            
+            for path in jsonl_paths:
+                if not Path(path).exists():
+                    logger.warning(f"JSONL file does not exist: {path}")
         
         else:
             raise ValueError(f"Unknown model type: {model_type}")

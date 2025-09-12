@@ -12,8 +12,8 @@ export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:128,expandable_segments:True"
 time_stamp=$(date +%Y%m%d_%H%M%S)
 
 python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
-  data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train.parquet"]' \
-  data.val_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_cleared.parquet"]' \
+  data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_lessop/train.parquet"]' \
+  data.val_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_lessop/test_cleared.parquet"]' \
   data.train_batch_size=8 \
   data.max_prompt_length=4600 \
   data.max_response_length=4096 \
@@ -62,7 +62,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   reward_model.reward_manager=prime \
   +custom_reward_function.path=/nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py \
   ++custom_reward_function.name=compute_score \
-  ++trainer.validation_data_dir=/nas/ganluo/Flow_RL/New_evaluation_and_RL/val_logs/main_exp/$time_stamp \
+  ++trainer.validation_data_dir=/nas/ganluo/Flow_RL/New_evaluation_and_RL/val_logs/lessop/$time_stamp \
   trainer.total_epochs=15 \
   trainer.save_freq=100 \
   trainer.test_freq=5 \
