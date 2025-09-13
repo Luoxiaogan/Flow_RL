@@ -26,7 +26,7 @@ def format_prompt(messages):
 def main():
     # 硬编码路径
     tokenizer_path = sys.argv[1] if len(sys.argv) > 1 else "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/qwen3_8b_short"
-    jsonl_or_parquet_path = "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train_sampled_10_to_5.jsonl"
+    jsonl_or_parquet_path = "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_only_one.jsonl"
     
     filter_length = 3330
     _filter = True

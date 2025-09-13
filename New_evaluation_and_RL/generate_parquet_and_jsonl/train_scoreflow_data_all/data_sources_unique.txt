@@ -1,0 +1,18 @@
+# Unique data_source values
+# From file: /Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_cleared.jsonl
+# Total unique values: 14
+
+workflow_aime2024	20
+workflow_aime2025	20
+workflow_drop	20
+workflow_gsm8k	20
+workflow_hotpotqa	20
+workflow_humaneval	20
+workflow_humanevalplus	20
+workflow_limr	20
+workflow_math500	20
+workflow_mbpp	20
+workflow_mbppplus	20
+workflow_mgsmbn	20
+workflow_mgsmde	20
+workflow_simpleqa	20

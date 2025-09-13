@@ -7,7 +7,7 @@ time_stamp=$(date +%Y%m%d_%H%M%S)
 
 python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train_sampled_10_to_5_le3330.parquet"]' \
-  data.val_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_cleared_le3330.parquet"]' \
+  data.val_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_only_one_le3330.parquet"]' \
   data.train_batch_size=16 \
   data.max_prompt_length=3330 \
   data.max_response_length=8192 \
@@ -56,12 +56,12 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   reward_model.reward_manager=prime \
   +custom_reward_function.path=/nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py \
   ++custom_reward_function.name=compute_score \
-  ++trainer.validation_data_dir=/nas/ganluo/Flow_RL/New_evaluation_and_RL/val_logs/0912_001_$time_stamp \
+  ++trainer.validation_data_dir=/nas/ganluo/Flow_RL/New_evaluation_and_RL/val_logs/0913_001_$time_stamp \
   trainer.total_epochs=5 \
   trainer.save_freq=100 \
   trainer.test_freq=5 \
   trainer.critic_warmup=0 \
-  trainer.project_name=qwen3_rl_sfter_sft \
-  trainer.experiment_name=qwen3_8b_0912 \
+  trainer.project_name=qwen3_rl_0913 \
+  trainer.experiment_name=qwen3_8b_0913 \
   trainer.logger='["console","wandb"]' \
-  trainer.default_local_dir=/nas/ganluo/Flow_RL/rl_out_0912/checkpoints
+  trainer.default_local_dir=/nas/ganluo/Flow_RL/rl_out_0913/checkpoints
