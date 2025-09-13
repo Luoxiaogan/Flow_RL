@@ -6,7 +6,7 @@ export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:128,expandable_segments:True"
 time_stamp=$(date +%Y%m%d_%H%M%S)
 
 python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
-  data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train_le3330.parquet"]' \
+  data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train_sampled_10_to_5_le3330.parquet"]' \
   data.val_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_cleared_le3330.parquet"]' \
   data.train_batch_size=16 \
   data.max_prompt_length=3330 \
@@ -18,8 +18,8 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.model.path=/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/Merged_weight/Qwen3-8B/new_0910 \
   ++actor_rollout_ref.model.trust_remote_code=true \
   ++actor_rollout_ref.model.enable_gradient_checkpointing=true \
-  ++actor_rollout_ref.actor.ppo_mini_batch_size=8 \
-  ++actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=1 \
+  ++actor_rollout_ref.actor.ppo_mini_batch_size=16 \
+  ++actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=2 \
   ++actor_rollout_ref.actor.use_dynamic_bsz=false \
   ++actor_rollout_ref.actor.ppo_max_token_len_per_gpu=20000 \
   ++actor_rollout_ref.actor.grad_clip=1.0 \
