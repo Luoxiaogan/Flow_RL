@@ -19,7 +19,7 @@ class HumanevalHandler(BenchmarkHandler):
     处理代码生成任务，需要生成Python函数并通过包装在check函数中的测试用例验证。
     """
     
-    def get_prompt_text(self, indices: List[int]) -> str:
+    def get_prompt_text_workflow_generation(self, indices: List[int]) -> str:
         """
         从 HumanEval 数据中提取函数签名和文档字符串，并格式化为清晰的文本用于生成工作流。
         
@@ -64,6 +64,44 @@ Function name: {entry_point}
             return "\n\n".join(formatted_problems)
         except (KeyError, IndexError) as e:
             raise ValueError(f"从HumanEval数据中提取问题时出错: {e}")
+        
+    def get_prompt_text(self, indices: List[int]) -> str:
+        """
+        从 HumanEval 数据中提取函数签名和文档字符串，并格式化为清晰的文本用于生成工作流。
+        
+        格式:
+        ---
+        **FUNCTION SIGNATURE AND SPECIFICATION:**
+        [prompt with docstring]
+        
+        **ENTRY POINT:**
+        Function name: [entry_point]
+        ---
+        
+        (如果提供多个索引，则重复此结构)
+        """
+        try:
+            problems = [self._get_problem_by_index(i) for i in indices]
+            formatted_problems = []
+            
+            for problem in problems:
+                # 提取prompt（包含函数签名和docstring）和entry point
+                prompt = problem.get('prompt', problem.get('question', ''))
+                entry_point = problem.get('entry_point', '')
+
+                # 组合问题
+                formatted_problem = f"""---
+**FUNCTION SIGNATURE AND SPECIFICATION:**
+{prompt}
+
+**ENTRY POINT:**
+Function name: {entry_point}
+---"""
+                formatted_problems.append(formatted_problem)
+            
+            return "\n\n".join(formatted_problems)
+        except (KeyError, IndexError) as e:
+            raise ValueError(f"从HumanEval数据中, 提取问题时出错: {e}")
 
     def get_verification_data(self, index: int) -> Dict[str, Any]:
         """
@@ -122,7 +160,7 @@ Function name: {entry_point}
             # 预处理代码，添加缺失的import
             code = self._preprocess_code_with_imports(code)
             
-            print(f"[HumanEval]🚀: 生成的code是:\n{code}")
+            # print(f"[HumanEval]🚀: 生成的code是:\n{code}")
             
             # Step 1: 执行生成的函数代码
             exec(code, exec_globals)
@@ -326,29 +364,50 @@ Function name: {entry_point}
         try:
             # 提取代码
             generated_code = self._extract_code_from_response(str(model_output))
-
             generated_code = self._validate_and_fix_indentation(generated_code)
 
-            # 获取测试用例
-            test_cases = ground_truth_data.get('test_list', [])
-            test_setup = ground_truth_data.get('test_setup_code', '')
+            # 适配两种数据格式
+            # 1. 新格式：使用实际数据中的'test'字段
+            test_code = ground_truth_data.get('test', '')
             
-            if not test_cases:
-                # 如果没有测试用例，回退到LLM判断
-                print("Warning: No test cases found, falling back to LLM judge")
+            # 2. 旧格式兼容：检查是否有test_list字段
+            if not test_code:
+                test_cases = ground_truth_data.get('test_list', [])
+                test_setup = ground_truth_data.get('test_setup_code', '')
+                if test_cases:
+                    # 将旧格式转换为test_code
+                    test_code = test_setup + '\n' + '\n'.join(test_cases)
+            
+            # 获取函数入口点
+            entry_point = ground_truth_data.get('entry_point', '')
+            
+            if not test_code:
+                # 如果没有测试代码，回退到LLM判断
+                print("[Human_Eval] Warning: No test code found (neither 'test' nor 'test_list'), falling back to LLM judge")
                 return await self.llm_judge(model_output, ground_truth_data)
+            
+            if not entry_point:
+                # 尝试从prompt或question中提取函数名
+                prompt = ground_truth_data.get('prompt', ground_truth_data.get('question', ''))
+                import re
+                match = re.search(r'def\s+(\w+)\s*\(', prompt)
+                if match:
+                    entry_point = match.group(1)
+                else:
+                    print("Warning: No entry_point found, falling back to LLM judge")
+                    return await self.llm_judge(model_output, ground_truth_data)
             
             # 执行代码并运行测试
             passed, message = self._execute_code_with_tests(
                 generated_code, 
-                test_cases, 
-                test_setup
+                test_code,
+                entry_point
             )
             
-            print(f"Code execution result: {message}")
+            # print(f"Code execution result: {message}")
             return passed
             
         except Exception as e:
-            print(f"Error in HumanEval judge: {e}")
+            # print(f"Error in HumanEval judge: {e}")
             # 如果执行失败，认为答案错误
             return False

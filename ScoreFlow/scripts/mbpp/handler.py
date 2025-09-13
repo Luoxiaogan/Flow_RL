@@ -20,7 +20,7 @@ class MbppHandler(BenchmarkHandler):
     处理代码生成任务，需要生成Python函数并通过测试用例验证。
     """
     
-    def get_prompt_text(self, indices: List[int]) -> str:
+    def get_prompt_text_workflow_generation(self, indices: List[int]) -> str:
         """
         从 MBPP 数据中提取编程任务描述，并格式化为清晰的文本用于生成工作流。
         
@@ -65,6 +65,55 @@ class MbppHandler(BenchmarkHandler):
 
 **REFERENCE ANSWER(code):(in the testing of the workflow, this will not be provided to the workflow)**
 {answer}
+---"""
+                formatted_problems.append(formatted_problem)
+            
+            return "\n\n".join(formatted_problems)
+        except (KeyError, IndexError) as e:
+            raise ValueError(f"从MBPP数据中提取问题时出错: {e}")
+
+    def get_prompt_text(self, indices: List[int]) -> str:
+        """
+        从 MBPP 数据中提取编程任务描述，并格式化为清晰的文本用于生成工作流。
+        
+        格式:
+        ---
+        **TASK:**
+        [task description]
+        
+        **TEST CASES:**
+        [test case 1]
+        [test case 2]
+        ...
+        ---
+        
+        (如果提供多个索引，则重复此结构)
+        """
+        try:
+            problems = [self._get_problem_by_index(i) for i in indices]
+            formatted_problems = []
+            
+            for problem in problems:
+                # 提取任务描述和测试用例
+                task_description = problem.get('text', problem.get('question', ''))
+                test_cases = problem.get('test_list', [])
+                answer = problem.get('answer', '')
+
+                # 格式化测试用例
+                test_cases_text = "**TEST CASES:**\n"
+                if test_cases:
+                    for test_case in test_cases:
+                        test_cases_text += f"{test_case}\n"
+                else:
+                    test_cases_text += "No test cases provided.\n"
+                
+                # 组合任务描述和测试用例
+                formatted_problem = f"""---
+**TASK:**
+{task_description}
+
+**TEST CASES:(for you to know the function name and expected input types, testing of the workflow, this WILL be provided to the workflow, since it is essential for understanding the function name)**
+{test_cases_text.strip()}
 ---"""
                 formatted_problems.append(formatted_problem)
             
@@ -365,7 +414,7 @@ class MbppHandler(BenchmarkHandler):
             
             if not test_cases:
                 # 如果没有测试用例，回退到LLM判断
-                print("Warning: No test cases found, falling back to LLM judge")
+                print("[MBPP] Warning: No test cases found, falling back to LLM judge")
                 return await self.llm_judge(model_output, ground_truth_data)
             
             # 执行代码并运行测试

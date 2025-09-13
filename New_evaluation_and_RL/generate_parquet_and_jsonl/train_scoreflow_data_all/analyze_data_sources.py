@@ -11,19 +11,19 @@
 import json
 import sys
 from pathlib import Path
-from collections import Counter
+from collections import Counter, defaultdict
 from typing import Dict, List
 
 
-def analyze_data_sources(jsonl_path: str) -> Dict[str, int]:
+def analyze_data_sources(jsonl_path: str):
     """
-    分析JSONL文件中的data_source字段
+    分析JSONL文件中的data_source字段及其对应的data_path
     
     Args:
         jsonl_path: JSONL文件路径
         
     Returns:
-        Dict[str, int]: 每个data_source的计数
+        Tuple: (source_counter, source_to_paths_mapping, line_count, error_count, missing_field_count)
     """
     
     if not Path(jsonl_path).exists():
@@ -31,6 +31,7 @@ def analyze_data_sources(jsonl_path: str) -> Dict[str, int]:
         sys.exit(1)
     
     data_sources = []
+    source_to_paths = defaultdict(Counter)  # 记录每个data_source对应的data_path及其出现次数
     line_count = 0
     error_count = 0
     missing_field_count = 0
@@ -38,7 +39,7 @@ def analyze_data_sources(jsonl_path: str) -> Dict[str, int]:
     print(f"正在分析文件: {jsonl_path}")
     print("-" * 60)
     
-    # 读取文件并收集data_source
+    # 读取文件并收集data_source和data_path
     with open(jsonl_path, 'r', encoding='utf-8') as f:
         for line_num, line in enumerate(f, 1):
             line_count += 1
@@ -46,7 +47,14 @@ def analyze_data_sources(jsonl_path: str) -> Dict[str, int]:
                 data = json.loads(line.strip())
                 
                 if 'data_source' in data:
-                    data_sources.append(data['data_source'])
+                    data_source = data['data_source']
+                    data_sources.append(data_source)
+                    
+                    # 尝试获取对应的data_path
+                    if 'extra_info' in data and 'data_path' in data['extra_info']:
+                        data_path = data['extra_info']['data_path']
+                        source_to_paths[data_source][data_path] += 1
+                    
                 else:
                     missing_field_count += 1
                     print(f"⚠️  第{line_num}行缺少data_source字段")
@@ -61,15 +69,16 @@ def analyze_data_sources(jsonl_path: str) -> Dict[str, int]:
     # 统计data_source分布
     source_counter = Counter(data_sources)
     
-    return source_counter, line_count, error_count, missing_field_count
+    return source_counter, source_to_paths, line_count, error_count, missing_field_count
 
 
-def display_results(source_counter: Counter, total_lines: int, error_count: int, missing_count: int):
+def display_results(source_counter: Counter, source_to_paths: Dict, total_lines: int, error_count: int, missing_count: int):
     """
     显示分析结果
     
     Args:
         source_counter: data_source计数器
+        source_to_paths: data_source到data_path的映射
         total_lines: 总行数
         error_count: 错误行数
         missing_count: 缺少字段的行数
@@ -136,6 +145,31 @@ def display_results(source_counter: Counter, total_lines: int, error_count: int,
             print(f"  其他类型: {len(non_workflow_sources)} 种")
             for nws in non_workflow_sources:
                 print(f"    - {nws}: {source_counter[nws]} 条")
+        
+        # 显示data_source到data_path的映射关系
+        print(f"\n🔗 Data Source → Data Path 映射关系:")
+        print("-" * 60)
+        
+        for source in sorted(source_to_paths.keys()):
+            paths = source_to_paths[source]
+            num_paths = len(paths)
+            
+            print(f"\n  📁 {source}:")
+            if num_paths == 1:
+                # 一对一映射
+                path, count = list(paths.items())[0]
+                print(f"    → {path}")
+                print(f"      (唯一路径，出现 {count} 次)")
+            else:
+                # 一对多映射
+                print(f"    对应 {num_paths} 个不同的路径:")
+                for path, count in sorted(paths.items(), key=lambda x: x[1], reverse=True):
+                    # 提取关键信息
+                    path_obj = Path(path)
+                    dataset_name = path_obj.parts[-2] if len(path_obj.parts) >= 2 else "unknown"
+                    file_name = path_obj.name
+                    print(f"    → [{dataset_name}/{file_name}] {count} 次")
+                    print(f"      完整路径: {path}")
     
     else:
         print("  未找到任何有效的data_source")
@@ -158,10 +192,10 @@ def main():
     print("=" * 60)
     
     # 执行分析
-    source_counter, total_lines, error_count, missing_count = analyze_data_sources(jsonl_path)
+    source_counter, source_to_paths, total_lines, error_count, missing_count = analyze_data_sources(jsonl_path)
     
     # 显示结果
-    display_results(source_counter, total_lines, error_count, missing_count)
+    display_results(source_counter, source_to_paths, total_lines, error_count, missing_count)
     
     # 导出唯一值列表
     if source_counter:
@@ -172,11 +206,27 @@ def main():
         # 可选：保存到文件
         output_file = Path(jsonl_path).parent / "data_sources_unique.txt"
         with open(output_file, 'w', encoding='utf-8') as f:
-            f.write("# Unique data_source values\n")
+            f.write("# Unique data_source values and their data_path mappings\n")
             f.write(f"# From file: {jsonl_path}\n")
             f.write(f"# Total unique values: {len(unique_sources)}\n\n")
+            
+            f.write("# Format: data_source\tcount\tdata_path(s)\n")
+            f.write("-" * 80 + "\n")
+            
             for source in unique_sources:
-                f.write(f"{source}\t{source_counter[source]}\n")
+                count = source_counter[source]
+                paths = source_to_paths[source]
+                
+                if len(paths) == 1:
+                    # 单一路径
+                    path = list(paths.keys())[0]
+                    f.write(f"{source}\t{count}\t{path}\n")
+                else:
+                    # 多个路径
+                    f.write(f"{source}\t{count}\tMULTIPLE:\n")
+                    for path, path_count in sorted(paths.items()):
+                        f.write(f"\t\t\t→ {path} ({path_count}次)\n")
+        
         print(f"\n  已保存到: {output_file}")
     
     print("=" * 60)

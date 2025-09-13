@@ -19,7 +19,7 @@ class HumanevalplusHandler(BenchmarkHandler):
     处理增强版代码生成任务，包含比原始HumanEval多80倍的测试用例。
     """
     
-    def get_prompt_text(self, indices: List[int]) -> str:
+    def get_prompt_text_workflow_generation(self, indices: List[int]) -> str:
         """
         从HumanEval+数据中提取函数签名和规范，格式化为清晰的文本。
         
@@ -71,6 +71,49 @@ Function name: {entry_point}
             return "\n\n".join(formatted_problems)
         except Exception as e:
             raise ValueError(f"Error extracting problem from HumanEval+ data: {e}")
+        
+    def get_prompt_text(self, indices: List[int]) -> str:
+        """
+        从HumanEval+数据中提取函数签名和规范，格式化为清晰的文本。
+        
+        关键理解：测试用例嵌入在test字段的check函数中，
+        我们需要解析这个函数来提取示例测试。
+        """
+        try:
+            problems = [self._get_problem_by_index(i) for i in indices]
+            formatted_problems = []
+            
+            for problem in problems:
+                # print("\n\n. problem:\n\n", problem)
+                # 提取核心组件
+                prompt = problem.get('prompt', '')
+                # print(f"\n\n🤡 🤡 🤡 🤡 🤡 🤡 prompt: {prompt}...")  # 调试输出
+                entry_point = problem.get('entry_point', '')
+                # print(f"🤡 🤡 🤡 🤡 🤡 🤡 entry_point: {entry_point}")  # 调试输出
+                canonical_solution = problem.get('canonical_solution', '')
+                # print(f"🤡 🤡 🤡 🤡 🤡 🤡 canonical_solution: {canonical_solution}...")  # 调试输出
+                test_code = problem.get('test', '')
+                # print(f"\n\n🤡 🤡 🤡 🤡 🤡 🤡 test_code: {test_code[:1000]}...")  # 调试输出
+                
+                # 从test代码中提取示例测试用例
+                test_examples = self._extract_test_examples_from_code(test_code)
+                # print(f"\n\n🤡 🤡 🤡 🤡 🤡 🤡 test_examples: {test_examples}...")  # 调试输出
+                
+                # 构建格式化的问题
+                formatted_problem = f"""---
+**FUNCTION SIGNATURE AND SPECIFICATION:**
+{prompt}
+
+**ENTRY POINT:**
+Function name: {entry_point}
+
+**NOTE**: The actual evaluation uses 80x more test cases including edge cases.
+---"""
+                formatted_problems.append(formatted_problem)
+            
+            return "\n\n".join(formatted_problems)
+        except Exception as e:
+            raise ValueError(f" Error extracting problem from HumanEval+ data: {e}")
 
     def _extract_test_examples_from_code(self, test_code: str) -> str:
         """
@@ -125,10 +168,10 @@ Function name: {entry_point}
         data = self._get_problem_by_index(index)
         
         # 调试信息
-        print(f"[DEBUG] Loading problem at index {index}")
-        print(f"[DEBUG] task_id: {data.get('task_id', 'NOT FOUND')}")
-        print(f"[DEBUG] entry_point: {data.get('entry_point', 'NOT FOUND')}")
-        print(f"[DEBUG] Has test: {'test' in data and bool(data['test'])}")
+        # print(f"[DEBUG] Loading problem at index {index}")
+        # print(f"[DEBUG] task_id: {data.get('task_id', 'NOT FOUND')}")
+        # print(f"[DEBUG] entry_point: {data.get('entry_point', 'NOT FOUND')}")
+        # print(f"[DEBUG] Has test: {'test' in data and bool(data['test'])}")
         
         return data
     
