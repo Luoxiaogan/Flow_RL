@@ -57,13 +57,46 @@ class SimpleqaHandler(BenchmarkHandler):
                 formatted_problem = f"""---
 **QUESTION:**
 {question}
+"""
+                formatted_problems.append(formatted_problem)
+            
+            return "\n\n".join(formatted_problems)
+        except (KeyError, IndexError) as e:
+            raise ValueError(f"Error extracting problem from SimpleQA data: {e}")
 
-**TOPIC:**
-{topic}
-
-**ANSWER TYPE:**
-{answer_type}
-{urls_text}---"""
+    def get_prompt_text_workflow_generation(self, indices: List[int]) -> str:
+        """
+        Extract questions from SimpleQA data and format them for workflow generation.
+        
+        Format:
+        ---
+        **QUESTION:**
+        [question text]
+        ---
+        """
+        try:
+            problems = [self._get_problem_by_index(i) for i in indices]
+            formatted_problems = []
+            
+            for problem in problems:
+                # Extract question and metadata
+                question = problem.get('question', '')
+                topic = problem.get('topic', 'General')
+                answer_type = problem.get('answer_type', 'Not specified')
+                urls = problem.get('urls', [])
+                
+                # Format reference URLs
+                urls_text = ""
+                if urls and isinstance(urls, list):
+                    urls_text = "\n**REFERENCE URLs:**\n"
+                    for url in urls[:3]:  # Limit to first 3 URLs
+                        urls_text += f"- {url}\n"
+                
+                # Combine all information
+                formatted_problem = f"""---
+**QUESTION:**
+{question}
+"""
                 formatted_problems.append(formatted_problem)
             
             return "\n\n".join(formatted_problems)

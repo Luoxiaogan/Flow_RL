@@ -35,7 +35,34 @@ class MgsmbnHandler(BenchmarkHandler):
                 formatted_problem = f"""---
 **QUESTION:**
 {question}
----
+"""
+                formatted_problems.append(formatted_problem)
+            
+            # Separate multiple questions with double newlines
+            return "\n\n".join(formatted_problems)
+        except (KeyError, IndexError) as e:
+            raise ValueError(f"Error extracting questions from MGSM Bengali data: {e}")
+
+    def get_prompt_text_workflow_generation(self, indices: List[int]) -> str:
+        """
+        Extract problems from MGSM Bengali data and format them with Markdown separators
+        for workflow generation.
+        
+        Format:
+        """
+        try:
+            problems = [self._get_problem_by_index(i) for i in indices]
+            formatted_problems = []
+            
+            for problem in problems:
+                # Extract the question field (in Bengali)
+                question = problem.get('question', '[Question not found]')
+                answer = problem.get('answer', '[Answer not found]')
+
+                # Use Markdown format, consistent with GSM8K handler
+                formatted_problem = f"""---
+**QUESTION:**
+{question}
 **ANSWER:**
 {answer}
 ---"""

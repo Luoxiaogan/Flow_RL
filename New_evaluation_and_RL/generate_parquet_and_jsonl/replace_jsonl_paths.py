@@ -44,13 +44,13 @@ Examples:
     
     parser.add_argument(
         '--old-path',
-        default='D:/temp/Flow_RL',
+        default='/nas/ganluo/Flow_RL',
         help='Old path to replace (default: D:/temp/Flow_RL)'
     )
     
     parser.add_argument(
         '--new-path',
-        default='/nas/ganluo/Flow_RL',
+        default='D:/temp/Flow_RL',
         help='New path to replace with (default: /nas/ganluo/Flow_RL)'
     )
     
