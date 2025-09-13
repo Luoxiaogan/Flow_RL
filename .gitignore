@@ -30,7 +30,7 @@ set_up.bash
 Test_FILE/verl_support/core-ray::WorkerDict-144415-1753628193
 Test_FILE/verl_support/core-ray::WorkerDict-158030-1753628193
 Test_FILE/verl_support/core-ray::WorkerDict-158032-1753628193
-*.parquet
+# *.parquet
 .claude
 Test_FILE/verl_support/checkpoints/
 metagpt_root/

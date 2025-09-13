@@ -19,7 +19,7 @@ class MbppplusHandler(BenchmarkHandler):
     每个问题包括基础测试用例和扩展测试，用于验证解决方案的正确性和鲁棒性。
     """
     
-    def get_prompt_text(self, indices: List[int]) -> str:
+    def get_prompt_text_workflow_generation(self, indices: List[int]) -> str:
         """
         从MBPP+数据中提取编程任务描述，格式化为清晰的工作流生成文本。
         
@@ -82,6 +82,58 @@ class MbppplusHandler(BenchmarkHandler):
             
         except Exception as e:
             raise ValueError(f"Error extracting problem from MBPP+ data: {e}")
+        
+    def get_prompt_text(self, indices: List[int]) -> str:
+        """
+        从MBPP+数据中提取编程任务描述，格式化为清晰的工作流生成文本。
+        
+        关键处理：
+        - 从prompt字段提取任务描述
+        - 从code字段提取函数签名和参考实现
+        - 从test_list提取基础测试用例
+        - 提供清晰的格式化输出
+        """
+        try:
+            problems = [self._get_problem_by_index(i) for i in indices]
+            formatted_problems = []
+            
+            for problem in problems:
+                # 提取核心组件
+                task_description = problem.get('prompt', '')
+                # print(f"😈 😈 😈 😈 😈 task_description={task_description}")
+                reference_code = problem.get('code', '')
+                # print(f"😈 😈 😈 😈 😈 reference_code={reference_code}")
+                test_cases = problem.get('test_list', [])
+                
+                # 从参考代码中提取函数签名
+                function_signature = self._extract_function_signature(reference_code)
+                # print(f"😈 😈 😈 😈 😈 function_signature={function_signature}")
+                
+                # 格式化基础测试用例
+                test_cases_text = ""
+                if test_cases:
+                    for i, test in enumerate(test_cases[:5], 1):  # 显示前5个测试用例
+                        test_cases_text += f"{test}\n"
+                else:
+                    test_cases_text = "# No basic test cases provided\n"
+                # print(f"😈 😈 😈 😈 😈 test_cases_text={test_cases_text}")
+                
+                # 构建格式化的问题
+                formatted_problem = f"""---
+**TASK DESCRIPTION:**
+{task_description}
+
+**FUNCTION SIGNATURE:**
+```python
+{function_signature}
+```
+---"""
+                formatted_problems.append(formatted_problem)
+            
+            return "\n\n".join(formatted_problems)
+            
+        except Exception as e:
+            raise ValueError(f"Error extracting problem from MBPP+ data: {e}")
     
     def _extract_function_signature(self, code: str) -> str:
         """
@@ -120,12 +172,12 @@ class MbppplusHandler(BenchmarkHandler):
         data = self._get_problem_by_index(index)
         
         # 调试信息
-        print(f"[DEBUG] Loading MBPP+ problem at index {index}")
-        print(f"[DEBUG] task_id: {data.get('task_id', 'NOT FOUND')}")
-        func_name = self._extract_function_name(data.get('code', ''))
-        print(f"[DEBUG] function_name: {func_name}")
-        print(f"[DEBUG] Has test_list: {bool(data.get('test_list'))}")
-        print(f"[DEBUG] Has extended test: {bool(data.get('test'))}")
+        # print(f"[DEBUG] Loading MBPP+ problem at index {index}")
+        # print(f"[DEBUG] task_id: {data.get('task_id', 'NOT FOUND')}")
+        # func_name = self._extract_function_name(data.get('code', ''))
+        # print(f"[DEBUG] function_name: {func_name}")
+        # print(f"[DEBUG] Has test_list: {bool(data.get('test_list'))}")
+        # print(f"[DEBUG] Has extended test: {bool(data.get('test'))}")
         
         return data
     
