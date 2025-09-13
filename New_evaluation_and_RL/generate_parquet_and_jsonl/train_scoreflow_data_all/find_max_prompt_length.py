@@ -25,13 +25,14 @@ def format_prompt(messages):
 
 def main():
     # 硬编码路径
-    tokenizer_path = sys.argv[1] if len(sys.argv) > 1 else "/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/Merged_weight/Qwen3-8B/new_0910"
-    parquet_path = "/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_cleared.parquet"
+    tokenizer_path = sys.argv[1] if len(sys.argv) > 1 else "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/qwen3_8b_short"
+    jsonl_or_parquet_path = "/Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_cleared.jsonl"
     
     filter_length = 3330
+    _filter = True
     
     print(f"Tokenizer路径: {tokenizer_path}")
-    print(f"Parquet路径: {parquet_path}")
+    print(f"路径: {jsonl_or_parquet_path}")
     print("-" * 50)
     
     # 加载tokenizer
@@ -42,7 +43,14 @@ def main():
     )
     
     # 读取parquet
-    print("读取parquet文件...")
+    print("读取文件...") 
+    parquet_path = jsonl_or_parquet_path
+    if jsonl_or_parquet_path.endswith(".jsonl"):
+        # 如果是jsonl，先转换为parquet
+        df = pd.read_json(jsonl_or_parquet_path, lines=True)
+        parquet_path = jsonl_or_parquet_path.replace(".jsonl", ".parquet")
+        df.to_parquet(parquet_path, index=False)
+        print(f"已将JSONL转换为Parquet: {parquet_path}")      
     df = pd.read_parquet(parquet_path)
     print(f"数据集大小: {len(df)} 条")
     
@@ -109,22 +117,24 @@ def main():
         percentage = count / len(token_lengths) * 100
         bar = "█" * int(percentage / 2)  # 简单的进度条
         print(f"  <= {bucket:5d}: {count:6d} ({percentage:5.1f}%) {bar}")
-    
-    print("\n" + "="*50)
-    print(f"🔍 开始过滤：仅保留 prompt token 长度 ≤ {filter_length} 的样本")
-    
-    # 构造一个布尔 mask
-    keep_mask = [l <= filter_length for l in token_lengths]
-    filtered_df = df[keep_mask].copy().reset_index(drop=True)
-    
-    # 写出
-    out_path = parquet_path.replace(".parquet", f"_le{filter_length}.parquet")
-    filtered_df.to_parquet(out_path, index=False)
-    
-    print(f"  过滤前样本数: {len(df)}")
-    print(f"  过滤后样本数: {len(filtered_df)}")
-    print(f"  已写出文件: {out_path}")
-    print("="*50)
+
+    if _filter:
+        # 过滤样本
+        print("\n" + "="*50)
+        print(f"🔍 开始过滤：仅保留 prompt token 长度 ≤ {filter_length} 的样本")
+        
+        # 构造一个布尔 mask
+        keep_mask = [l <= filter_length for l in token_lengths]
+        filtered_df = df[keep_mask].copy().reset_index(drop=True)
+        
+        # 写出
+        out_path = parquet_path.replace(".parquet", f"_le{filter_length}.parquet")
+        filtered_df.to_parquet(out_path, index=False)
+        
+        print(f"  过滤前样本数: {len(df)}")
+        print(f"  过滤后样本数: {len(filtered_df)}")
+        print(f"  已写出文件: {out_path}")
+        print("="*50)
 
 
 if __name__ == "__main__":
