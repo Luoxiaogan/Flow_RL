@@ -391,7 +391,7 @@ def proxy_request(path):
         
         error_response = {
             "error": {
-                "message": f"连接错误: 无法连接到智谱API - {str(e)}",
+                "message": f"连接错误: - {str(e)}",
                 "type": "ConnectionError",
                 "details": "请检查API密钥和网络连接"
             }

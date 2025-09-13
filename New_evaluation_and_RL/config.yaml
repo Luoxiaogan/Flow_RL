@@ -19,8 +19,8 @@ services:
     enabled: true
     host: "localhost"
     port: 5059
-    target_url: "http://39.96.211.155:8000/proxy/api/openai/v1" # ali内网
-    target_api_key: "8cf060f9e1f444858609730176542253"  # ali内网
+    target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1" # ali内网
+    target_api_key: "sk-0040331ac2d442b6b813304a807d88cd"  # ali内网
     # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1" # ali-lg
     # target_api_key: "sk-0040331ac2d442b6b813304a807d88cd"  # ali-lg
     # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"  # ali-qzh

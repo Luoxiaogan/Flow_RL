@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-09-13T18:59:42.991007",
+  "config_file": "..\\configs\\hierarchical_evaluation_config.yaml",
+  "num_models": 1,
+  "successful_models": [
+    "QwenMax-API"
+  ],
+  "failed_models": [],
+  "total_time": 199.388353,
+  "output_dir": "hierarchical_reports",
+  "summary": {
+    "best_model": "QwenMax-API",
+    "worst_model": "QwenMax-API"
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "timestamp": "2025-09-13T18:59:41.577064",
+  "num_models": 1,
+  "models": [
+    {
+      "name": "QwenMax-API",
+      "path": "",
+      "overall_score": 0.0,
+      "success_rate": 0.0,
+      "total_samples": 100,
+      "benchmark_scores": {
+        "gsm8k": {
+          "num_samples": 10,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "simpleqa": {
+          "num_samples": 3,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "mbppplus": {
+          "num_samples": 10,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "humanevalplus": {
+          "num_samples": 8,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "aime2025": {
+          "num_samples": 8,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "mgsmbn": {
+          "num_samples": 7,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "math500": {
+          "num_samples": 5,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "humaneval": {
+          "num_samples": 9,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "aime2024": {
+          "num_samples": 5,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "mbpp": {
+          "num_samples": 10,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "drop": {
+          "num_samples": 6,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "limr": {
+          "num_samples": 7,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "mgsmde": {
+          "num_samples": 8,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "hotpotqa": {
+          "num_samples": 4,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        }
+      }
+    }
+  ],
+  "benchmark_comparison": {
+    "drop": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "humanevalplus": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "aime2024": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "gsm8k": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "mgsmbn": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "mgsmde": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "mbppplus": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "humaneval": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "aime2025": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "limr": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "math500": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "mbpp": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "simpleqa": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "hotpotqa": [
+      {
+        "model": "QwenMax-API",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ]
+  },
+  "rankings": {
+    "by_overall_score": [
+      "QwenMax-API"
+    ],
+    "best_model": "QwenMax-API",
+    "worst_model": "QwenMax-API"
+  }
+}
