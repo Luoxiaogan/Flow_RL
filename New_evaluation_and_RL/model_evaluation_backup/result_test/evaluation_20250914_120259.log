@@ -1,0 +1,26 @@
+2025-09-14 12:02:59,754 - __main__ - INFO - 开始统一模型评估
+2025-09-14 12:02:59,755 - __main__ - INFO - 配置文件: ..\configs\models_config.yaml
+2025-09-14 12:02:59,755 - __main__ - INFO - 测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 12:02:59,755 - __main__ - INFO - 输出目录: ..\result_test
+2025-09-14 12:02:59,756 - __main__ - INFO - 模型数量: 3
+2025-09-14 12:02:59,758 - core.utils.report_generator - INFO - 报告输出目录: ..\result_test
+2025-09-14 12:02:59,759 - core.evaluators.unified_batch_evaluator - INFO - UnifiedBatchEvaluator 初始化完成
+2025-09-14 12:02:59,760 - core.evaluators.unified_batch_evaluator - INFO -   测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 12:02:59,760 - core.evaluators.unified_batch_evaluator - INFO -   输出目录: ..\result_test
+2025-09-14 12:02:59,760 - core.evaluators.unified_batch_evaluator - INFO -   批次大小: 8
+2025-09-14 12:02:59,760 - core.evaluators.unified_batch_evaluator - INFO -   最大样本: 5
+2025-09-14 12:02:59,761 - core.evaluators.unified_batch_evaluator - INFO - 开始评估 3 个模型
+2025-09-14 12:02:59,761 - core.evaluators.unified_batch_evaluator - INFO - 验证模型配置...
+2025-09-14 12:02:59,769 - core.utils.config_validator - WARNING - Configuration validation found 1 error(s)
+2025-09-14 12:02:59,769 - core.utils.config_validator - WARNING -   - Schema validation error: 'jsonl' is not one of ['api', 'local', 'huggingface', 'hf', 'checkpoint', 'local_with_lora'] at models.1.type
+2025-09-14 12:02:59,770 - core.evaluators.unified_batch_evaluator - WARNING - 配置验证发现 1 个警告
+2025-09-14 12:02:59,770 - core.evaluators.unified_batch_evaluator - WARNING -   - Schema validation error: 'jsonl' is not one of ['api', 'local', 'huggingface', 'hf', 'checkpoint', 'local_with_lora'] at models.1.type
+2025-09-14 12:02:59,772 - core.utils.model_factory - WARNING - JSONL file does not exist: ../val_logs/20241212_150000/100.jsonl
+2025-09-14 12:02:59,772 - core.utils.model_factory - WARNING - JSONL file does not exist: ../val_logs/20241212_150000/500.jsonl
+2025-09-14 12:02:59,772 - core.evaluators.unified_batch_evaluator - INFO - 检查 Reward Server...
+2025-09-14 12:02:59,772 - core.utils.reward_server_checker - INFO - 检查 Reward Server: http://localhost:7788/health
+2025-09-14 12:03:02,078 - core.utils.reward_server_checker - ERROR - 无法连接到 Reward Server: Cannot connect to host localhost:7788 ssl:default [远程计算机拒绝网络连接。]
+2025-09-14 12:03:02,078 - core.utils.reward_server_checker - ERROR - 请确保 Reward Server 在 http://localhost:7788 上运行
+2025-09-14 12:03:02,079 - core.utils.reward_server_checker - ERROR - 启动命令: bash New_evaluation_and_RL/servers_and_proxy/start_scoreflow_reward.sh
+2025-09-14 12:03:02,079 - core.evaluators.unified_batch_evaluator - ERROR - Reward Server 未运行
+2025-09-14 12:03:02,080 - __main__ - ERROR - 评估过程出错: Reward Server not available

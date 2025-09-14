@@ -18,6 +18,7 @@ from typing import List, Dict, Optional
 from pathlib import Path
 from datetime import datetime
 import time
+import traceback
 
 print("-"*60)
 # 设置NO_PROXY来排除localhost（防止被系统代理拦截）
@@ -105,22 +106,33 @@ from metagpt.provider.llm_provider_registry import create_llm_instance
 from metagpt.configs.llm_config import LLMConfig, LLMType
 
 # SILENT模式控制 - 从config.yaml读取
-if CONFIG_FILE.exists():
-    with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
-        _config_for_silent = yaml.safe_load(f)
-        # 从scoreflow_reward服务配置中读取silent设置
-        scoreflow_config = _config_for_silent.get('services', {}).get('scoreflow_reward', {})
-        SILENT = scoreflow_config.get('silent', False)
-        print(f"🔇 静默模式: {'开启' if SILENT else '关闭'} (从config.yaml读取)")
-        
-        # 设置环境变量，让operator模块知道SILENT模式状态
-        if SILENT:
-            os.environ['SCOREFLOW_SILENT'] = 'true'
-        else:
-            os.environ['SCOREFLOW_SILENT'] = 'false'
+# 使用环境变量避免重复读取和打印
+_INIT_FLAG_KEY = 'SCOREFLOW_UTILS_INITIALIZED'
+
+if not os.environ.get(_INIT_FLAG_KEY):
+    # 只在第一次导入时执行
+    if CONFIG_FILE.exists():
+        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+            _config_for_silent = yaml.safe_load(f)
+            # 从scoreflow_reward服务配置中读取silent设置
+            scoreflow_config = _config_for_silent.get('services', {}).get('scoreflow_reward', {})
+            SILENT = scoreflow_config.get('silent', False)
+            print(f"🔇 静默模式: {'开启' if SILENT else '关闭'} (从config.yaml读取)")
+
+            # 设置环境变量，让operator模块知道SILENT模式状态
+            if SILENT:
+                os.environ['SCOREFLOW_SILENT'] = 'true'
+            else:
+                os.environ['SCOREFLOW_SILENT'] = 'false'
+    else:
+        SILENT = False  # 默认关闭静默模式
+        print(f"🔇 静默模式: 关闭 (默认值)")
+
+    # 标记已初始化
+    os.environ[_INIT_FLAG_KEY] = '1'
 else:
-    SILENT = False  # 默认关闭静默模式
-    print(f"🔇 静默模式: 关闭 (默认值)")
+    # 从环境变量读取SILENT状态
+    SILENT = os.environ.get('SCOREFLOW_SILENT', 'false').lower() == 'true'
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -137,34 +149,69 @@ loguru_logger.disable("metagpt")
 
 class WorkflowExecutionManager:
     """管理单个workflow的执行和日志记录 - 并行执行+安全汇总模式"""
-    
-    def __init__(self, workspace_path: Path, data_source: str, test_cases: List[int]):
+
+    def __init__(self, workspace_path: Path, data_source: str, test_cases: List[int], debug_enabled: bool = False):
         """初始化执行管理器"""
         # 创建workflow专属目录
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         random_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
         self.workflow_id = f"workflow_{timestamp}_{random_id}"
-        
+
         # 创建目录结构
         self.workflow_dir = workspace_path / data_source / self.workflow_id
         self.workflow_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # 基本信息
         self.test_cases = test_cases
         self.data_source = data_source
-        
+
         # 并行执行+安全汇总：线程安全的结果收集器
         self.results_collector = []
         self.results_lock = asyncio.Lock()
 
+        # Debug增强功能
+        self.debug_enabled = debug_enabled
+        if self.debug_enabled:
+            # 执行时间线记录
+            self.execution_timeline = []
+            # MetaGPT执行轨迹目录
+            self.metagpt_traces_dir = self.workflow_dir / "metagpt_traces"
+            self.metagpt_traces_dir.mkdir(exist_ok=True)
+            # 性能指标收集
+            self.performance_metrics = {
+                "start_time": datetime.now().isoformat(),
+                "test_cases_count": len(test_cases),
+                "execution_details": [],
+                "resource_usage": {}
+            }
+            # 错误分析数据
+            self.error_analysis_data = []
+
     def __enter__(self):
         """简化的上下文管理器入口 - 不再需要全局日志重定向"""
+        if self.debug_enabled:
+            self._record_timeline_event("workflow_start", -1, {
+                "workflow_id": self.workflow_id,
+                "data_source": self.data_source,
+                "test_cases": self.test_cases
+            })
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """简化的上下文管理器出口 - 主要用于清理和汇总"""
         if exc_type:
             logger.info(f"⚠️ 执行过程中发生异常: {exc_type.__name__}: {exc_val}")
+            if self.debug_enabled:
+                self._record_timeline_event("workflow_error", -1, {
+                    "error_type": exc_type.__name__,
+                    "error_message": str(exc_val)
+                })
+
+        # 在退出时保存所有debug信息
+        if self.debug_enabled:
+            self._save_execution_timeline()
+            self._save_error_analysis()
+            self._save_performance_metrics()
 
     def save_workflow_code(self, workflow_code: str):
         """保存workflow代码"""
@@ -345,24 +392,197 @@ TEXT AFTER CODE BLOCKS: Not found in this output
         if len(cleaned) > 500:
             cleaned = cleaned[:497] + "..."
         return cleaned
+
+    def _record_timeline_event(self, event_type: str, test_case: int, details: Dict):
+        """记录执行时间线事件"""
+        if self.debug_enabled:
+            event = {
+                "timestamp": datetime.now().isoformat(),
+                "relative_time": time.time() if not hasattr(self, '_start_time') else time.time() - self._start_time,
+                "event_type": event_type,
+                "test_case": test_case,
+                "details": details
+            }
+            self.execution_timeline.append(event)
+
+            # 同时写入实时日志文件
+            timeline_log = self.workflow_dir / "execution_timeline.jsonl"
+            with open(timeline_log, 'a', encoding='utf-8') as f:
+                f.write(json.dumps(event, ensure_ascii=False) + '\n')
+
+    async def _save_metagpt_trace(self, test_case_index: int, trace_data: Dict):
+        """保存MetaGPT执行轨迹"""
+        if self.debug_enabled:
+            trace_file = self.metagpt_traces_dir / f"test_case_{test_case_index}_trace.json"
+            async with self.results_lock:  # 使用锁避免并发写入问题
+                with open(trace_file, 'w', encoding='utf-8') as f:
+                    json.dump(trace_data, f, ensure_ascii=False, indent=2)
+
+    def _save_execution_timeline(self):
+        """保存完整的执行时间线"""
+        if self.debug_enabled and self.execution_timeline:
+            timeline_file = self.workflow_dir / "execution_timeline_complete.json"
+            timeline_data = {
+                "workflow_id": self.workflow_id,
+                "data_source": self.data_source,
+                "total_events": len(self.execution_timeline),
+                "timeline": self.execution_timeline
+            }
+            with open(timeline_file, 'w', encoding='utf-8') as f:
+                json.dump(timeline_data, f, ensure_ascii=False, indent=2)
+
+    def _save_error_analysis(self):
+        """分析并保存错误信息"""
+        if self.debug_enabled and self.error_analysis_data:
+            # 分析错误类型和频率
+            error_types = {}
+            error_patterns = []
+
+            for error_info in self.error_analysis_data:
+                error_type = error_info.get('error_type', 'Unknown')
+                error_types[error_type] = error_types.get(error_type, 0) + 1
+
+                # 提取错误模式
+                error_msg = error_info.get('error_message', '')
+                if 'timeout' in error_msg.lower():
+                    error_patterns.append('Timeout Issues')
+                elif 'connection' in error_msg.lower():
+                    error_patterns.append('Connection Issues')
+                elif 'import' in error_msg.lower():
+                    error_patterns.append('Import Issues')
+                elif 'attribute' in error_msg.lower():
+                    error_patterns.append('Attribute Issues')
+
+            # 生成分析报告
+            analysis = {
+                "workflow_id": self.workflow_id,
+                "total_errors": len(self.error_analysis_data),
+                "error_types": error_types,
+                "error_patterns": list(set(error_patterns)),
+                "error_details": self.error_analysis_data,
+                "recommendations": self._generate_error_recommendations(error_types, error_patterns),
+                "timestamp": datetime.now().isoformat()
+            }
+
+            analysis_file = self.workflow_dir / "error_analysis.json"
+            with open(analysis_file, 'w', encoding='utf-8') as f:
+                json.dump(analysis, f, ensure_ascii=False, indent=2)
+
+    def _generate_error_recommendations(self, error_types: Dict, error_patterns: List) -> List[str]:
+        """根据错误分析生成优化建议"""
+        recommendations = []
+
+        if 'TimeoutError' in error_types or 'Timeout Issues' in error_patterns:
+            recommendations.append("考虑增加执行超时时间或优化workflow代码性能")
+
+        if 'ConnectionError' in error_types or 'Connection Issues' in error_patterns:
+            recommendations.append("检查API代理服务连接状态和网络配置")
+
+        if 'ImportError' in error_types or 'Import Issues' in error_patterns:
+            recommendations.append("验证所需模块是否已正确安装和配置")
+
+        if 'AttributeError' in error_types or 'Attribute Issues' in error_patterns:
+            recommendations.append("检查workflow代码中的对象属性访问是否正确")
+
+        if len(self.error_analysis_data) > len(self.test_cases) * 0.5:
+            recommendations.append("错误率较高，建议检查workflow代码的基本逻辑")
+
+        return recommendations if recommendations else ["暂无特定优化建议"]
+
+    def _save_performance_metrics(self):
+        """收集和保存性能指标"""
+        if self.debug_enabled:
+            # 计算执行统计
+            all_durations = [r.get('duration', 0.0) for r in self.results_collector]
+            successful_durations = [r.get('duration', 0.0) for r in self.results_collector if r.get('success', False)]
+
+            metrics = {
+                "workflow_id": self.workflow_id,
+                "execution_stats": {
+                    "total_test_cases": len(self.test_cases),
+                    "completed_cases": len(self.results_collector),
+                    "average_duration": sum(all_durations) / len(all_durations) if all_durations else 0,
+                    "min_duration": min(all_durations) if all_durations else 0,
+                    "max_duration": max(all_durations) if all_durations else 0,
+                    "successful_avg_duration": sum(successful_durations) / len(successful_durations) if successful_durations else 0
+                },
+                "resource_usage": self.performance_metrics.get('resource_usage', {}),
+                "bottlenecks": self._identify_bottlenecks(all_durations),
+                "optimization_suggestions": self._generate_performance_suggestions(all_durations),
+                "timestamp": datetime.now().isoformat()
+            }
+
+            metrics_file = self.workflow_dir / "performance_metrics.json"
+            with open(metrics_file, 'w', encoding='utf-8') as f:
+                json.dump(metrics, f, ensure_ascii=False, indent=2)
+
+    def _identify_bottlenecks(self, durations: List[float]) -> List[Dict]:
+        """识别性能瓶颈"""
+        if not durations:
+            return []
+
+        bottlenecks = []
+        avg_duration = sum(durations) / len(durations)
+
+        # 找出执行时间异常长的test cases
+        for i, duration in enumerate(durations):
+            if duration > avg_duration * 2:  # 超过平均时间2倍
+                bottlenecks.append({
+                    "test_case_index": self.test_cases[i] if i < len(self.test_cases) else i,
+                    "duration": duration,
+                    "ratio_to_average": duration / avg_duration if avg_duration > 0 else 0
+                })
+
+        return bottlenecks
+
+    def _generate_performance_suggestions(self, durations: List[float]) -> List[str]:
+        """生成性能优化建议"""
+        suggestions = []
+
+        if not durations:
+            return ["无执行数据，无法生成性能建议"]
+
+        avg_duration = sum(durations) / len(durations)
+
+        if avg_duration > 60:  # 平均执行时间超过60秒
+            suggestions.append("平均执行时间较长，考虑优化workflow逻辑或增加并发度")
+
+        if max(durations) > avg_duration * 3:  # 存在极端异常值
+            suggestions.append("存在执行时间异常长的测试用例，需要特别关注")
+
+        variance = sum((d - avg_duration) ** 2 for d in durations) / len(durations)
+        if variance > avg_duration ** 2:  # 方差过大
+            suggestions.append("执行时间波动较大，可能存在不稳定因素")
+
+        return suggestions if suggestions else ["性能表现良好，暂无优化建议"]
     
     async def execute_all_test_cases_parallel_safe(self, calculator, workflow_code: str, dataset_path: str) -> float:
         """
         并行执行+安全汇总模式：并行执行所有test cases，安全汇总结果
-        
+
         Args:
             calculator: ScoreFlowRewardCalculator实例
             workflow_code: 要执行的workflow代码
             dataset_path: 数据集路径
-            
+
         Returns:
             平均分数 (0.0-1.0)
         """
         total_start_time = time.time()
-        
+        if self.debug_enabled:
+            self._start_time = total_start_time
+            self._record_timeline_event("execution_start", -1, {
+                "total_test_cases": len(self.test_cases),
+                "dataset_path": str(dataset_path)
+            })
+
         # 1. 并行执行所有test cases，每个使用独立日志文件
         tasks = []
         for test_case_index in self.test_cases:
+            if self.debug_enabled:
+                self._record_timeline_event("test_case_queued", test_case_index, {
+                    "queue_position": len(tasks)
+                })
             task = self._execute_without_logging(
                 calculator, workflow_code, test_case_index, dataset_path
             )
@@ -421,13 +641,19 @@ TEXT AFTER CODE BLOCKS: Not found in this output
         
         return final_score
     
-    async def _execute_without_logging(self, calculator, workflow_code: str, 
+    async def _execute_without_logging(self, calculator, workflow_code: str,
                                      test_case_index: int, dataset_path: str) -> dict:
         """无日志执行 - 使用上下文局部重定向"""
         start_time = time.time()
-        
+
+        if self.debug_enabled:
+            self._record_timeline_event("test_case_start", test_case_index, {
+                "start_time": datetime.now().isoformat()
+            })
+
         try:
             calculator._current_workflow_dir = self.workflow_dir
+            calculator._current_test_case = test_case_index  # 传递当前test case给calculator
             
             # 临时禁用MetaGPT的流式日志输出
             import metagpt.logs as metagpt_logs
@@ -440,20 +666,54 @@ TEXT AFTER CODE BLOCKS: Not found in this output
                 )
                 success = True
                 error_msg = ""
+
+                if self.debug_enabled:
+                    self._record_timeline_event("test_case_success", test_case_index, {
+                        "score": score
+                    })
             finally:
                 # 恢复MetaGPT的日志函数
                 metagpt_logs._llm_stream_log = original_llm_stream_log
-            
+
             if hasattr(calculator, '_current_workflow_dir'):
                 delattr(calculator, '_current_workflow_dir')
+            if hasattr(calculator, '_current_test_case'):
+                delattr(calculator, '_current_test_case')
                 
         except Exception as e:
             success = False
             error_msg = self._sanitize_error(str(e))
             score = 0.0
+
+            if self.debug_enabled:
+                # 记录错误详情
+                self.error_analysis_data.append({
+                    "test_case": test_case_index,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e),
+                    "timestamp": datetime.now().isoformat()
+                })
+
+                self._record_timeline_event("test_case_error", test_case_index, {
+                    "error_type": type(e).__name__,
+                    "error_message": error_msg
+                })
         
         duration = time.time() - start_time
-        
+
+        if self.debug_enabled:
+            self._record_timeline_event("test_case_complete", test_case_index, {
+                "duration": duration,
+                "success": success
+            })
+
+            # 记录性能数据
+            self.performance_metrics["execution_details"].append({
+                "test_case": test_case_index,
+                "duration": duration,
+                "success": success
+            })
+
         result_record = {
             "test_case": test_case_index,
             "success": success,
@@ -462,7 +722,7 @@ TEXT AFTER CODE BLOCKS: Not found in this output
             "error": error_msg,
             "timestamp": datetime.now().isoformat()
         }
-        
+
         return result_record
         
     def _finalize_and_save_summary(self, total_duration: float) -> float:
@@ -807,8 +1067,8 @@ class ScoreFlowRewardCalculator:
             logger.info(f"Failed to load handler for {benchmark_name}: {e}")
             return None
     
-    async def execute_workflow_metagpt(self, workflow_code: str, benchmark_name: str, 
-                                       test_case_index: int, dataset_path: str, 
+    async def execute_workflow_metagpt(self, workflow_code: str, benchmark_name: str,
+                                       test_case_index: int, dataset_path: str,
                                        workflow_dir: Path = None) -> tuple:
         """
         使用MetaGPT框架执行工作流
@@ -828,21 +1088,47 @@ class ScoreFlowRewardCalculator:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             random_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
             workflow_id = f"exec_{benchmark_name}_{test_case_index}_{timestamp}_{random_id}"
+
+            # 如果提供了workflow_dir并且有当前test case信息，保存debug信息
+            debug_info = {}
+            if workflow_dir and hasattr(self, '_current_test_case'):
+                debug_info = {
+                    "workflow_id": workflow_id,
+                    "benchmark_name": benchmark_name,
+                    "test_case_index": test_case_index,
+                    "execution_start": datetime.now().isoformat()
+                }
             
             # 获取Handler并构建脚本
             handler = self._load_benchmark_handler(benchmark_name, dataset_path)
             if not handler:
                 raise ValueError(f"Failed to load handler for {benchmark_name}")
+
+            # 保存handler信息用于debug
+            if workflow_dir and hasattr(self, '_current_test_case'):
+                handler_info = {
+                    "handler_class": handler.__class__.__name__,
+                    "handler_module": handler.__class__.__module__,
+                    "dataset_path": str(dataset_path)
+                }
+                debug_info["handler_info"] = handler_info
             
             # 使用handler构建可执行脚本
             script_parts = handler.build_executable_script(workflow_code, timeout=self.timeout)
-            
+
             # 拼接完整脚本
             full_script_code = (
                 script_parts["python_start"] + "\n" +
                 script_parts["workflow_code"] + "\n" +
                 script_parts["python_end"]
             )
+
+            # 保存构建的脚本用于debug
+            if workflow_dir and hasattr(self, '_current_test_case'):
+                script_file = workflow_dir / "metagpt_traces" / f"test_case_{test_case_index}_script.py"
+                if script_file.parent.exists():
+                    with open(script_file, 'w', encoding='utf-8') as f:
+                        f.write(full_script_code)
             
             # 4. 准备执行环境
             execution_namespace = {}
@@ -890,7 +1176,15 @@ class ScoreFlowRewardCalculator:
             
             # 7. 格式化问题文本
             problem_text = handler.get_prompt_text([test_case_index])
-            
+
+            # 保存问题文本用于debug
+            if workflow_dir and hasattr(self, '_current_test_case'):
+                problem_file = workflow_dir / "metagpt_traces" / f"test_case_{test_case_index}_problem.txt"
+                if problem_file.parent.exists():
+                    with open(problem_file, 'w', encoding='utf-8') as f:
+                        f.write(problem_text)
+                debug_info["problem_text_length"] = len(problem_text)
+
             # 8. 实例化并执行工作流
             workflow_instance = WorkflowClass(config=metagpt_config, problem=problem_text)
             
@@ -927,16 +1221,55 @@ class ScoreFlowRewardCalculator:
                 # 恢复MetaGPT的日志函数
                 if SILENT:
                     metagpt_logs._llm_stream_log = original_llm_stream_log
+
+            # 保存执行结果用于debug
+            if workflow_dir and hasattr(self, '_current_test_case'):
+                debug_info["execution_end"] = datetime.now().isoformat()
+                debug_info["execution_result"] = str(execution_result)[:1000]  # 限制长度
+                debug_info["success"] = True
+
+                trace_file = workflow_dir / "metagpt_traces" / f"test_case_{test_case_index}_trace.json"
+                if trace_file.parent.exists():
+                    with open(trace_file, 'w', encoding='utf-8') as f:
+                        json.dump(debug_info, f, ensure_ascii=False, indent=2)
+
             # logger.info(f"MetaGPT workflow {workflow_id} executed successfully")
             return str(execution_result)
             
         except asyncio.TimeoutError:
             logger.info(f"MetaGPT workflow execution timed out for {benchmark_name}")
+
+            # 保存超时信息用于debug
+            if workflow_dir and hasattr(self, '_current_test_case'):
+                debug_info["execution_end"] = datetime.now().isoformat()
+                debug_info["success"] = False
+                debug_info["error"] = "TimeoutError"
+                debug_info["error_message"] = "Workflow execution timed out"
+
+                trace_file = workflow_dir / "metagpt_traces" / f"test_case_{test_case_index}_trace.json"
+                if trace_file.parent.exists():
+                    with open(trace_file, 'w', encoding='utf-8') as f:
+                        json.dump(debug_info, f, ensure_ascii=False, indent=2)
+
             return "Error: Workflow execution timed out"
 
         except Exception as e:
             error_msg = f"MetaGPT workflow execution failed for {benchmark_name}: {e}"
             logger.info(error_msg)
+
+            # 保存错误信息用于debug
+            if workflow_dir and hasattr(self, '_current_test_case'):
+                debug_info["execution_end"] = datetime.now().isoformat()
+                debug_info["success"] = False
+                debug_info["error"] = type(e).__name__
+                debug_info["error_message"] = str(e)
+                debug_info["error_traceback"] = traceback.format_exc()
+
+                trace_file = workflow_dir / "metagpt_traces" / f"test_case_{test_case_index}_trace.json"
+                if trace_file.parent.exists():
+                    with open(trace_file, 'w', encoding='utf-8') as f:
+                        json.dump(debug_info, f, ensure_ascii=False, indent=2)
+
             return f"Error: {str(e)}"
     
     async def compute_score_for_testcase(self, workflow_code: str, benchmark_name: str, 
@@ -961,12 +1294,32 @@ class ScoreFlowRewardCalculator:
                 workflow_code, benchmark_name, test_case_index, dataset_path, workflow_dir
             )
             
+            # 保存judge前的信息用于debug
+            judge_debug = {}
+            if workflow_dir and hasattr(self, '_current_test_case'):
+                judge_debug = {
+                    "test_case_index": test_case_index,
+                    "result_preview": str(result)[:500],
+                    "verification_data_preview": str(verification_data)[:500],
+                    "judge_start": datetime.now().isoformat()
+                }
+
             # 检查judge是否是协程函数
             import inspect
             if inspect.iscoroutinefunction(handler.judge):
                 is_correct = await handler.judge(result, verification_data)
             else:
                 is_correct = handler.judge(result, verification_data)
+
+            # 保存judge结果用于debug
+            if workflow_dir and hasattr(self, '_current_test_case'):
+                judge_debug["judge_end"] = datetime.now().isoformat()
+                judge_debug["judge_result"] = is_correct
+
+                judge_file = workflow_dir / "metagpt_traces" / f"test_case_{test_case_index}_judge.json"
+                if judge_file.parent.exists():
+                    with open(judge_file, 'w', encoding='utf-8') as f:
+                        json.dump(judge_debug, f, ensure_ascii=False, indent=2)
             
             # 输出判断结果
             if is_correct:
@@ -1151,11 +1504,19 @@ async def _compute_score_async(data_source: str, solution_str: str, ground_truth
 
         logger.info(f"Computing reward for benchmark: {benchmark_name} with {len(test_cases)} test cases")
         
+        # 从配置中读取debug设置
+        debug_enabled = False
+        if CONFIG_FILE.exists():
+            with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+                _config = yaml.safe_load(f)
+                debug_enabled = _config.get('services', {}).get('scoreflow_reward', {}).get('debug', False)
+
         # 创建WorkflowExecutionManager并使用All-Reduce模式
         manager = WorkflowExecutionManager(
             calculator.workspace_path,
             data_source,
-            test_cases
+            test_cases,
+            debug_enabled=debug_enabled
         )
         
         # 保存workflow代码、元数据和原始输出

@@ -1,0 +1,62 @@
+2025-09-04 00:18:02,223 - __main__ - INFO - 开始统一模型评估
+2025-09-04 00:18:02,224 - __main__ - INFO - 配置文件: ..\configs\models_config.yaml
+2025-09-04 00:18:02,224 - __main__ - INFO - 测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data\train.jsonl
+2025-09-04 00:18:02,224 - __main__ - INFO - 输出目录: evaluation_reports
+2025-09-04 00:18:02,224 - __main__ - INFO - 模型数量: 1
+2025-09-04 00:18:16,037 - core.utils.report_generator - INFO - 报告输出目录: evaluation_reports
+2025-09-04 00:18:16,038 - core.evaluators.unified_batch_evaluator - INFO - UnifiedBatchEvaluator 初始化完成
+2025-09-04 00:18:16,038 - core.evaluators.unified_batch_evaluator - INFO -   测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data\train.jsonl
+2025-09-04 00:18:16,038 - core.evaluators.unified_batch_evaluator - INFO -   输出目录: evaluation_reports
+2025-09-04 00:18:16,039 - core.evaluators.unified_batch_evaluator - INFO -   批次大小: 8
+2025-09-04 00:18:16,039 - core.evaluators.unified_batch_evaluator - INFO -   最大样本: 全部
+2025-09-04 00:18:16,039 - core.evaluators.unified_batch_evaluator - INFO - 开始评估 1 个模型
+2025-09-04 00:18:16,039 - core.evaluators.unified_batch_evaluator - INFO - 验证模型配置...
+2025-09-04 00:18:16,050 - core.utils.config_validator - INFO - Configuration passed schema validation
+2025-09-04 00:18:16,050 - core.evaluators.unified_batch_evaluator - INFO - 检查 Reward Server...
+2025-09-04 00:18:16,050 - core.utils.reward_server_checker - INFO - 检查 Reward Server: http://localhost:8899/health
+2025-09-04 00:18:16,318 - core.utils.reward_server_checker - INFO - ✓ Reward Server 正常运行: {'service': 'scoreflow_reward_server', 'status': 'healthy', 'version': '1.0.0'}
+2025-09-04 00:18:16,319 - core.evaluators.unified_batch_evaluator - INFO - 加载测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data\train.jsonl
+2025-09-04 00:18:16,331 - core.evaluators.unified_batch_evaluator - INFO - 加载了 30 个测试样本
+2025-09-04 00:18:16,331 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-04 00:18:16,331 - core.evaluators.unified_batch_evaluator - INFO - 评估模型 1/1: Qwen-Plus
+2025-09-04 00:18:16,331 - core.evaluators.unified_batch_evaluator - INFO - 模型类型: api
+2025-09-04 00:18:16,331 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-04 00:18:16,331 - core.utils.model_factory - INFO - 创建模型接口: Qwen-Plus (类型: api)
+2025-09-04 00:18:16,332 - core.interfaces.api_model_interface - INFO - [Qwen-Plus] 初始化API模型
+2025-09-04 00:18:16,332 - core.interfaces.api_model_interface - INFO -   模型: qwen-plus
+2025-09-04 00:18:16,332 - core.interfaces.api_model_interface - INFO -   API类型: openai
+2025-09-04 00:18:16,332 - core.interfaces.api_model_interface - INFO -   端点数量: 1
+2025-09-04 00:18:16,332 - core.utils.api_connection_pool - INFO - Created new API session: openai
+2025-09-04 00:18:16,856 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] API请求失败 (尝试 1/1): API error 404: {"timestamp":"2025-09-03T16:18:13.544+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:16,856 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] 连接测试失败: [Qwen-Plus] API请求失败: API error 404: {"timestamp":"2025-09-03T16:18:13.544+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:16,856 - core.interfaces.api_model_interface - WARNING - ⚠ [Qwen-Plus] API连接测试失败，但仍可继续
+2025-09-04 00:18:16,856 - core.evaluators.unified_batch_evaluator - INFO - [Qwen-Plus] 生成解决方案...
+2025-09-04 00:18:17,050 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] API请求失败 (尝试 1/1): API error 404: {"timestamp":"2025-09-03T16:18:13.770+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:17,051 - core.evaluators.unified_batch_evaluator - WARNING - [Qwen-Plus] 生成失败: [Qwen-Plus] API请求失败: API error 404: {"timestamp":"2025-09-03T16:18:13.770+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:17,460 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] API请求失败 (尝试 1/1): API error 404: {"timestamp":"2025-09-03T16:18:14.167+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:17,460 - core.evaluators.unified_batch_evaluator - WARNING - [Qwen-Plus] 生成失败: [Qwen-Plus] API请求失败: API error 404: {"timestamp":"2025-09-03T16:18:14.167+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:17,691 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] API请求失败 (尝试 1/1): API error 404: {"timestamp":"2025-09-03T16:18:14.428+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:17,692 - core.evaluators.unified_batch_evaluator - WARNING - [Qwen-Plus] 生成失败: [Qwen-Plus] API请求失败: API error 404: {"timestamp":"2025-09-03T16:18:14.428+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:18,079 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] API请求失败 (尝试 1/1): API error 404: {"timestamp":"2025-09-03T16:18:14.814+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:18,079 - core.evaluators.unified_batch_evaluator - WARNING - [Qwen-Plus] 生成失败: [Qwen-Plus] API请求失败: API error 404: {"timestamp":"2025-09-03T16:18:14.814+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:18,312 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] API请求失败 (尝试 1/1): API error 404: {"timestamp":"2025-09-03T16:18:15.049+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:18,313 - core.evaluators.unified_batch_evaluator - WARNING - [Qwen-Plus] 生成失败: [Qwen-Plus] API请求失败: API error 404: {"timestamp":"2025-09-03T16:18:15.049+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:18,719 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] API请求失败 (尝试 1/1): API error 404: {"timestamp":"2025-09-03T16:18:15.456+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:18,719 - core.evaluators.unified_batch_evaluator - WARNING - [Qwen-Plus] 生成失败: [Qwen-Plus] API请求失败: API error 404: {"timestamp":"2025-09-03T16:18:15.456+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:18,936 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] API请求失败 (尝试 1/1): API error 404: {"timestamp":"2025-09-03T16:18:15.672+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:18,936 - core.evaluators.unified_batch_evaluator - WARNING - [Qwen-Plus] 生成失败: [Qwen-Plus] API请求失败: API error 404: {"timestamp":"2025-09-03T16:18:15.672+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:19,327 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] API请求失败 (尝试 1/1): API error 404: {"timestamp":"2025-09-03T16:18:16.062+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:19,328 - core.evaluators.unified_batch_evaluator - WARNING - [Qwen-Plus] 生成失败: [Qwen-Plus] API请求失败: API error 404: {"timestamp":"2025-09-03T16:18:16.062+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:19,544 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] API请求失败 (尝试 1/1): API error 404: {"timestamp":"2025-09-03T16:18:16.281+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:19,545 - core.evaluators.unified_batch_evaluator - WARNING - [Qwen-Plus] 生成失败: [Qwen-Plus] API请求失败: API error 404: {"timestamp":"2025-09-03T16:18:16.281+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:19,926 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] API请求失败 (尝试 1/1): API error 404: {"timestamp":"2025-09-03T16:18:16.661+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:19,926 - core.evaluators.unified_batch_evaluator - WARNING - [Qwen-Plus] 生成失败: [Qwen-Plus] API请求失败: API error 404: {"timestamp":"2025-09-03T16:18:16.661+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:20,160 - core.interfaces.api_model_interface - WARNING - [Qwen-Plus] API请求失败 (尝试 1/1): API error 404: {"timestamp":"2025-09-03T16:18:16.896+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:20,160 - core.evaluators.unified_batch_evaluator - WARNING - [Qwen-Plus] 生成失败: [Qwen-Plus] API请求失败: API error 404: {"timestamp":"2025-09-03T16:18:16.896+00:00","status":404,"error":"Not Found","path":"/api/openai/v1/v1/chat/completions"}
+2025-09-04 00:18:20,512 - core.utils.resource_manager - WARNING - Exiting context with exception: CancelledError: 
+2025-09-04 00:18:20,512 - core.interfaces.api_model_interface - INFO - [Qwen-Plus] API统计:
+2025-09-04 00:18:20,512 - core.interfaces.api_model_interface - INFO -   总请求: 13
+2025-09-04 00:18:20,512 - core.interfaces.api_model_interface - INFO -   成功: 0
+2025-09-04 00:18:20,512 - core.interfaces.api_model_interface - INFO -   失败: 12
+2025-09-04 00:18:20,513 - core.interfaces.api_model_interface - INFO -   成功率: 0.0%

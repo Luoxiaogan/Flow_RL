@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-09-14T12:10:35.279635",
+  "config_file": "..\\configs\\models_config.yaml",
+  "num_models": 3,
+  "successful_models": [
+    "RL-Training-Step-100",
+    "RL-Training-Step-500",
+    "qwen-turbo "
+  ],
+  "failed_models": [],
+  "total_time": 133.545237,
+  "output_dir": "..\\result_test",
+  "summary": {
+    "best_model": "RL-Training-Step-100",
+    "worst_model": "qwen-turbo "
+  }
+}

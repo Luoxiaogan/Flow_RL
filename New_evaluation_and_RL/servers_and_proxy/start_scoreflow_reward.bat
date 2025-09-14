@@ -76,6 +76,10 @@ if "%ENABLED%"=="" set ENABLED=True
 for /f "tokens=*" %%i in ('python -c "import yaml; config=yaml.safe_load(open(r'%CONFIG_FILE%', encoding='utf-8')); print(config['services']['scoreflow_reward']['timeout'])" 2^>nul') do set TIMEOUT=%%i
 if "%TIMEOUT%"=="" set TIMEOUT=300
 
+REM 从配置文件读取debug设置（覆盖命令行参数）
+for /f "tokens=*" %%i in ('python -c "import yaml; config=yaml.safe_load(open(r'%CONFIG_FILE%', encoding='utf-8')); print(config['services']['scoreflow_reward'].get('debug', False))" 2^>nul') do set CONFIG_DEBUG=%%i
+if "%CONFIG_DEBUG%"=="True" set "DEBUG_MODE=true"
+
 REM 提取MetaGPT相关配置并设置环境变量
 echo [INFO] 配置MetaGPT环境变量...
 

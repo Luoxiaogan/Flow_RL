@@ -1,0 +1,104 @@
+{
+  "timestamp": "2025-09-14T13:04:21.873221",
+  "num_models": 1,
+  "models": [
+    {
+      "name": "qwen-turbo",
+      "path": "",
+      "overall_score": 0.68,
+      "success_rate": 0.2,
+      "total_samples": 5,
+      "benchmark_scores": {
+        "gsm8k": {
+          "num_samples": 1,
+          "num_successful": 1,
+          "mean_score": 0.68,
+          "max_score": 0.68,
+          "min_score": 0.68,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "simpleqa": {
+          "num_samples": 1,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "mbppplus": {
+          "num_samples": 1,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "humanevalplus": {
+          "num_samples": 1,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "aime2025": {
+          "num_samples": 1,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        }
+      }
+    }
+  ],
+  "benchmark_comparison": {
+    "simpleqa": [
+      {
+        "model": "qwen-turbo",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "mbppplus": [
+      {
+        "model": "qwen-turbo",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "gsm8k": [
+      {
+        "model": "qwen-turbo",
+        "score": 0.68,
+        "success_rate": 1.0
+      }
+    ],
+    "aime2025": [
+      {
+        "model": "qwen-turbo",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "humanevalplus": [
+      {
+        "model": "qwen-turbo",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ]
+  },
+  "rankings": {
+    "by_overall_score": [
+      "qwen-turbo"
+    ],
+    "best_model": "qwen-turbo",
+    "worst_model": "qwen-turbo"
+  }
+}

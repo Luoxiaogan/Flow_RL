@@ -37,21 +37,47 @@ from scoreflow_reward_utils import compute_score, get_calculator
 
 # 导入并发控制模块
 from concurrency_limiter import init_limiter, get_limiter, with_concurrency_limit
+import os
 
-if CONFIG_FILE.exists():
-    with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
-        _config_for_debug = yaml.safe_load(f)
-        # 从scoreflow_reward服务配置中读取debug和silent设置
-        scoreflow_config = _config_for_debug.get('services', {}).get('scoreflow_reward', {})
-        DEBUG = int(scoreflow_config.get('debug', False))
-        SILENT = scoreflow_config.get('silent', False)
-        print(f"[SERVER] 📝 Debug日志模式: {'开启' if DEBUG else '关闭'} (从config.yaml读取)")
-        print(f"[SERVER] 🔇 静默模式: {'开启' if SILENT else '关闭'} (从config.yaml读取)")
+# 使用环境变量避免重复读取和打印
+_SERVER_INIT_FLAG_KEY = 'SCOREFLOW_SERVER_INITIALIZED'
+
+if not os.environ.get(_SERVER_INIT_FLAG_KEY):
+    # 只在第一次启动时执行
+    if CONFIG_FILE.exists():
+        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+            _config_for_debug = yaml.safe_load(f)
+            # 从scoreflow_reward服务配置中读取debug和silent设置
+            scoreflow_config = _config_for_debug.get('services', {}).get('scoreflow_reward', {})
+            # 处理布尔值和整数值的情况
+            debug_value = scoreflow_config.get('debug', False)
+            if isinstance(debug_value, bool):
+                DEBUG = 1 if debug_value else 0
+            else:
+                DEBUG = int(debug_value)
+            SILENT = scoreflow_config.get('silent', False)
+            print(f"[SERVER] 📝 Debug日志模式: {'开启' if DEBUG else '关闭'} (从config.yaml读取, debug={debug_value})")
+            print(f"[SERVER] 🔇 静默模式: {'开启' if SILENT else '关闭'} (从config.yaml读取)")
+
+            # 保存到环境变量
+            os.environ['SCOREFLOW_DEBUG'] = str(DEBUG)
+            os.environ['SCOREFLOW_SERVER_SILENT'] = str(SILENT)
+    else:
+        DEBUG = 0  # 默认关闭debug
+        SILENT = False  # 默认关闭静默模式
+        print(f"[SERVER] 📝 Debug日志模式: 关闭 (默认值)")
+        print(f"[SERVER] 🔇 静默模式: 关闭 (默认值)")
+
+        # 保存到环境变量
+        os.environ['SCOREFLOW_DEBUG'] = '0'
+        os.environ['SCOREFLOW_SERVER_SILENT'] = 'false'
+
+    # 标记已初始化
+    os.environ[_SERVER_INIT_FLAG_KEY] = '1'
 else:
-    DEBUG = 0  # 默认关闭debug
-    SILENT = False  # 默认关闭静默模式
-    print(f"[SERVER] 📝 Debug日志模式: 关闭 (默认值)")
-    print(f"[SERVER] 🔇 静默模式: 关闭 (默认值)")
+    # 从环境变量读取配置
+    DEBUG = int(os.environ.get('SCOREFLOW_DEBUG', '0'))
+    SILENT = os.environ.get('SCOREFLOW_SERVER_SILENT', 'false').lower() == 'true'
 
 def silent_print(*args, **kwargs):
     """

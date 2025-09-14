@@ -1,0 +1,185 @@
+2025-09-14 12:08:21,719 - __main__ - INFO - 开始统一模型评估
+2025-09-14 12:08:21,720 - __main__ - INFO - 配置文件: ..\configs\models_config.yaml
+2025-09-14 12:08:21,720 - __main__ - INFO - 测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 12:08:21,720 - __main__ - INFO - 输出目录: ..\result_test
+2025-09-14 12:08:21,721 - __main__ - INFO - 模型数量: 3
+2025-09-14 12:08:21,722 - core.utils.report_generator - INFO - 报告输出目录: ..\result_test
+2025-09-14 12:08:21,722 - core.evaluators.unified_batch_evaluator - INFO - UnifiedBatchEvaluator 初始化完成
+2025-09-14 12:08:21,723 - core.evaluators.unified_batch_evaluator - INFO -   测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 12:08:21,723 - core.evaluators.unified_batch_evaluator - INFO -   输出目录: ..\result_test
+2025-09-14 12:08:21,723 - core.evaluators.unified_batch_evaluator - INFO -   批次大小: 8
+2025-09-14 12:08:21,724 - core.evaluators.unified_batch_evaluator - INFO -   最大样本: 5
+2025-09-14 12:08:21,724 - core.evaluators.unified_batch_evaluator - INFO - 开始评估 3 个模型
+2025-09-14 12:08:21,724 - core.evaluators.unified_batch_evaluator - INFO - 验证模型配置...
+2025-09-14 12:08:21,732 - core.utils.config_validator - WARNING - Configuration validation found 1 error(s)
+2025-09-14 12:08:21,732 - core.utils.config_validator - WARNING -   - Schema validation error: 'jsonl' is not one of ['api', 'local', 'huggingface', 'hf', 'checkpoint', 'local_with_lora'] at models.1.type
+2025-09-14 12:08:21,732 - core.evaluators.unified_batch_evaluator - WARNING - 配置验证发现 1 个警告
+2025-09-14 12:08:21,733 - core.evaluators.unified_batch_evaluator - WARNING -   - Schema validation error: 'jsonl' is not one of ['api', 'local', 'huggingface', 'hf', 'checkpoint', 'local_with_lora'] at models.1.type
+2025-09-14 12:08:21,733 - core.utils.model_factory - WARNING - JSONL file does not exist: ../val_logs/20241212_150000/100.jsonl
+2025-09-14 12:08:21,734 - core.utils.model_factory - WARNING - JSONL file does not exist: ../val_logs/20241212_150000/500.jsonl
+2025-09-14 12:08:21,734 - core.evaluators.unified_batch_evaluator - INFO - 检查 Reward Server...
+2025-09-14 12:08:21,734 - core.utils.reward_server_checker - INFO - 检查 Reward Server: http://localhost:7788/health
+2025-09-14 12:08:22,002 - core.utils.reward_server_checker - INFO - ✓ Reward Server 正常运行: {'service': 'scoreflow_reward_server', 'status': 'healthy', 'version': '1.0.0'}
+2025-09-14 12:08:22,002 - core.evaluators.unified_batch_evaluator - INFO - 加载测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 12:08:22,042 - core.evaluators.unified_batch_evaluator - INFO - 限制评估样本数: 5
+2025-09-14 12:08:22,043 - core.evaluators.unified_batch_evaluator - INFO - 加载了 5 个测试样本
+2025-09-14 12:08:22,043 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-14 12:08:22,044 - core.evaluators.unified_batch_evaluator - INFO - 评估模型 1/3: RL-Training-Step-100
+2025-09-14 12:08:22,044 - core.evaluators.unified_batch_evaluator - INFO - 模型类型: jsonl
+2025-09-14 12:08:22,044 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-14 12:08:22,045 - core.utils.model_factory - INFO - 创建模型接口: RL-Training-Step-100 (类型: jsonl)
+2025-09-14 12:08:22,047 - core.interfaces.jsonl_model_interface - INFO - 初始化 JSONL 模型接口: RL-Training-Step-100
+2025-09-14 12:08:22,047 - core.interfaces.jsonl_model_interface - INFO -   JSONL 文件: ['../val_logs/20241212_150000/100.jsonl']
+2025-09-14 12:08:22,047 - core.interfaces.jsonl_model_interface - INFO -   匹配模式: 精确匹配
+2025-09-14 12:08:22,047 - core.interfaces.jsonl_model_interface - INFO - 加载 JSONL 数据: RL-Training-Step-100
+2025-09-14 12:08:22,047 - core.interfaces.jsonl_model_interface - WARNING - JSONL 文件不存在: ../val_logs/20241212_150000/100.jsonl
+2025-09-14 12:08:22,047 - core.interfaces.jsonl_model_interface - WARNING - 警告: 没有加载到任何数据 (模型: RL-Training-Step-100)
+2025-09-14 12:08:22,048 - core.evaluators.unified_batch_evaluator - INFO - [RL-Training-Step-100] 生成解决方案...
+2025-09-14 12:08:22,048 - core.evaluators.unified_batch_evaluator - INFO - [RL-Training-Step-100] 使用并发数: 4
+2025-09-14 12:08:22,061 - core.interfaces.jsonl_model_interface - WARNING - 精确匹配失败，输入未找到: ### Problem Domain Overview
+
+This domain tests multi-step mathematical reasoning through word proble...
+2025-09-14 12:08:22,061 - core.interfaces.jsonl_model_interface - WARNING - 精确匹配失败，输入未找到: ### Problem Domain Overview
+
+SimpleQA (World Knowledge Question Answering) tests problem-solving cap...
+2025-09-14 12:08:22,061 - core.interfaces.jsonl_model_interface - WARNING - 精确匹配失败，输入未找到: ### Problem Domain Overview
+
+This domain evaluates fundamental programming skills through practical ...
+2025-09-14 12:08:22,061 - core.interfaces.jsonl_model_interface - WARNING - 精确匹配失败，输入未找到: ### Problem Domain Overview
+
+This domain evaluates code generation from function signatures and docs...
+2025-09-14 12:08:22,061 - core.interfaces.jsonl_model_interface - WARNING - 精确匹配失败，输入未找到: ### Problem Domain Overview
+
+AIME 2025 tests problem-solving capabilities in the specified domain.
+
+...
+2025-09-14 12:08:22,062 - core.evaluators.unified_batch_evaluator - INFO - [RL-Training-Step-100] 计算评估分数...
+2025-09-14 12:08:22,062 - core.utils.score_collector - INFO - [RL-Training-Step-100] 开始批量评估 5 个样本 (并发数: 8)
+2025-09-14 12:08:22,339 - core.utils.score_collector - INFO - [RL-Training-Step-100] 评估统计:
+2025-09-14 12:08:22,339 - core.utils.score_collector - INFO -   总数: 5
+2025-09-14 12:08:22,339 - core.utils.score_collector - INFO -   成功: 5 (100.0%)
+2025-09-14 12:08:22,339 - core.utils.score_collector - INFO -   失败: 0 (0.0%)
+2025-09-14 12:08:22,339 - core.utils.score_collector - INFO -   平均分数: 0.000
+2025-09-14 12:08:22,340 - core.evaluators.unified_batch_evaluator - INFO - [RL-Training-Step-100] 生成评估报告...
+2025-09-14 12:08:22,340 - core.utils.report_generator - INFO - 生成模型评估报告: RL-Training-Step-100
+2025-09-14 12:08:22,343 - core.interfaces.jsonl_model_interface - INFO - 清理 JSONL 模型资源: RL-Training-Step-100
+2025-09-14 12:08:22,343 - core.evaluators.unified_batch_evaluator - INFO - ✓ 模型 RL-Training-Step-100 评估完成
+2025-09-14 12:08:22,343 - core.evaluators.unified_batch_evaluator - INFO -   总体分数: 0.00%
+2025-09-14 12:08:22,343 - core.evaluators.unified_batch_evaluator - INFO -   成功率: 100.00%
+2025-09-14 12:08:22,345 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-14 12:08:22,346 - core.evaluators.unified_batch_evaluator - INFO - 评估模型 2/3: RL-Training-Step-500
+2025-09-14 12:08:22,346 - core.evaluators.unified_batch_evaluator - INFO - 模型类型: jsonl
+2025-09-14 12:08:22,346 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-14 12:08:22,346 - core.utils.model_factory - INFO - 创建模型接口: RL-Training-Step-500 (类型: jsonl)
+2025-09-14 12:08:22,347 - core.interfaces.jsonl_model_interface - INFO - 初始化 JSONL 模型接口: RL-Training-Step-500
+2025-09-14 12:08:22,347 - core.interfaces.jsonl_model_interface - INFO -   JSONL 文件: ['../val_logs/20241212_150000/500.jsonl']
+2025-09-14 12:08:22,347 - core.interfaces.jsonl_model_interface - INFO -   匹配模式: 精确匹配
+2025-09-14 12:08:22,347 - core.interfaces.jsonl_model_interface - INFO - 加载 JSONL 数据: RL-Training-Step-500
+2025-09-14 12:08:22,347 - core.interfaces.jsonl_model_interface - WARNING - JSONL 文件不存在: ../val_logs/20241212_150000/500.jsonl
+2025-09-14 12:08:22,347 - core.interfaces.jsonl_model_interface - WARNING - 警告: 没有加载到任何数据 (模型: RL-Training-Step-500)
+2025-09-14 12:08:22,348 - core.evaluators.unified_batch_evaluator - INFO - [RL-Training-Step-500] 生成解决方案...
+2025-09-14 12:08:22,348 - core.evaluators.unified_batch_evaluator - INFO - [RL-Training-Step-500] 使用并发数: 4
+2025-09-14 12:08:22,349 - core.interfaces.jsonl_model_interface - WARNING - 精确匹配失败，输入未找到: ### Problem Domain Overview
+
+This domain tests multi-step mathematical reasoning through word proble...
+2025-09-14 12:08:22,349 - core.interfaces.jsonl_model_interface - WARNING - 精确匹配失败，输入未找到: ### Problem Domain Overview
+
+SimpleQA (World Knowledge Question Answering) tests problem-solving cap...
+2025-09-14 12:08:22,349 - core.interfaces.jsonl_model_interface - WARNING - 精确匹配失败，输入未找到: ### Problem Domain Overview
+
+This domain evaluates fundamental programming skills through practical ...
+2025-09-14 12:08:22,349 - core.interfaces.jsonl_model_interface - WARNING - 精确匹配失败，输入未找到: ### Problem Domain Overview
+
+This domain evaluates code generation from function signatures and docs...
+2025-09-14 12:08:22,349 - core.interfaces.jsonl_model_interface - WARNING - 精确匹配失败，输入未找到: ### Problem Domain Overview
+
+AIME 2025 tests problem-solving capabilities in the specified domain.
+
+...
+2025-09-14 12:08:22,351 - core.evaluators.unified_batch_evaluator - INFO - [RL-Training-Step-500] 计算评估分数...
+2025-09-14 12:08:22,351 - core.utils.score_collector - INFO - [RL-Training-Step-500] 开始批量评估 5 个样本 (并发数: 8)
+2025-09-14 12:08:22,640 - core.utils.score_collector - INFO - [RL-Training-Step-500] 评估统计:
+2025-09-14 12:08:22,641 - core.utils.score_collector - INFO -   总数: 5
+2025-09-14 12:08:22,641 - core.utils.score_collector - INFO -   成功: 5 (100.0%)
+2025-09-14 12:08:22,641 - core.utils.score_collector - INFO -   失败: 0 (0.0%)
+2025-09-14 12:08:22,641 - core.utils.score_collector - INFO -   平均分数: 0.000
+2025-09-14 12:08:22,642 - core.evaluators.unified_batch_evaluator - INFO - [RL-Training-Step-500] 生成评估报告...
+2025-09-14 12:08:22,642 - core.utils.report_generator - INFO - 生成模型评估报告: RL-Training-Step-500
+2025-09-14 12:08:22,646 - core.interfaces.jsonl_model_interface - INFO - 清理 JSONL 模型资源: RL-Training-Step-500
+2025-09-14 12:08:22,648 - core.evaluators.unified_batch_evaluator - INFO - ✓ 模型 RL-Training-Step-500 评估完成
+2025-09-14 12:08:22,648 - core.evaluators.unified_batch_evaluator - INFO -   总体分数: 0.00%
+2025-09-14 12:08:22,648 - core.evaluators.unified_batch_evaluator - INFO -   成功率: 100.00%
+2025-09-14 12:08:22,651 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-14 12:08:22,651 - core.evaluators.unified_batch_evaluator - INFO - 评估模型 3/3: qwen-turbo 
+2025-09-14 12:08:22,656 - core.evaluators.unified_batch_evaluator - INFO - 模型类型: api
+2025-09-14 12:08:22,656 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-14 12:08:22,657 - core.utils.model_factory - INFO - 创建模型接口: qwen-turbo  (类型: api)
+2025-09-14 12:08:22,657 - core.interfaces.api_model_interface - INFO - [qwen-turbo ] 初始化API模型
+2025-09-14 12:08:22,657 - core.interfaces.api_model_interface - INFO -   模型: qwen-turbo
+2025-09-14 12:08:22,657 - core.interfaces.api_model_interface - INFO -   API类型: openai
+2025-09-14 12:08:22,657 - core.interfaces.api_model_interface - INFO -   端点数量: 1
+2025-09-14 12:08:22,658 - core.utils.api_connection_pool - INFO - Created new API session: openai
+2025-09-14 12:08:24,930 - core.interfaces.api_model_interface - INFO - ✓ [qwen-turbo ] API连接成功
+2025-09-14 12:08:24,931 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo ] 生成解决方案...
+2025-09-14 12:08:24,931 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo ] 使用并发数: 15
+2025-09-14 12:08:25,803 - core.interfaces.api_model_interface - WARNING - [qwen-turbo ] API请求失败 (尝试 1/1): API error 502: {"error": {"message": "连接错误: - HTTPSConnectionPool(host='dashscope.aliyuncs.com', port=443): Max retries exceeded with url: /compatible-mode/v1/chat/completions (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))", "type": "ConnectionError", "details": "请检查API密钥和网络连接"}}
+2025-09-14 12:08:25,803 - core.evaluators.unified_batch_evaluator - WARNING - [qwen-turbo ] 样本 2 生成失败: [qwen-turbo ] API请求失败: API error 502: {"error": {"message": "连接错误: - HTTPSConnectionPool(host='dashscope.aliyuncs.com', port=443): Max retries exceeded with url: /compatible-mode/v1/chat/completions (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))", "type": "ConnectionError", "details": "请检查API密钥和网络连接"}}
+2025-09-14 12:08:39,252 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo ] 计算评估分数...
+2025-09-14 12:08:39,252 - core.utils.score_collector - INFO - [qwen-turbo ] 开始批量评估 5 个样本 (并发数: 8)
+2025-09-14 12:10:34,189 - core.utils.score_collector - ERROR - 请求失败: [WinError 64] 指定的网络名不再可用。
+2025-09-14 12:10:34,190 - core.utils.score_collector - ERROR - 请求失败: [WinError 64] 指定的网络名不再可用。
+2025-09-14 12:10:34,191 - core.utils.score_collector - ERROR - 请求失败: [WinError 64] 指定的网络名不再可用。
+2025-09-14 12:10:34,193 - core.utils.score_collector - ERROR - 请求失败: [WinError 64] 指定的网络名不再可用。
+2025-09-14 12:10:34,193 - core.utils.score_collector - INFO - [qwen-turbo ] 评估统计:
+2025-09-14 12:10:34,194 - core.utils.score_collector - INFO -   总数: 5
+2025-09-14 12:10:34,194 - core.utils.score_collector - INFO -   成功: 0 (0.0%)
+2025-09-14 12:10:34,194 - core.utils.score_collector - INFO -   失败: 5 (100.0%)
+2025-09-14 12:10:34,194 - core.utils.score_collector - INFO -   平均分数: 0.000
+2025-09-14 12:10:34,195 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo ] 生成评估报告...
+2025-09-14 12:10:34,195 - core.utils.report_generator - INFO - 生成模型评估报告: qwen-turbo 
+2025-09-14 12:10:34,199 - core.interfaces.api_model_interface - INFO - [qwen-turbo ] API统计:
+2025-09-14 12:10:34,200 - core.interfaces.api_model_interface - INFO -   总请求: 6
+2025-09-14 12:10:34,201 - core.interfaces.api_model_interface - INFO -   成功: 5
+2025-09-14 12:10:34,201 - core.interfaces.api_model_interface - INFO -   失败: 1
+2025-09-14 12:10:34,202 - core.interfaces.api_model_interface - INFO -   成功率: 83.3%
+2025-09-14 12:10:34,202 - core.evaluators.unified_batch_evaluator - INFO - ✓ 模型 qwen-turbo  评估完成
+2025-09-14 12:10:34,202 - core.evaluators.unified_batch_evaluator - INFO -   总体分数: 0.00%
+2025-09-14 12:10:34,203 - core.evaluators.unified_batch_evaluator - INFO -   成功率: 0.00%
+2025-09-14 12:10:34,204 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-14 12:10:34,206 - core.evaluators.unified_batch_evaluator - INFO - 生成对比报告...
+2025-09-14 12:10:34,207 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-14 12:10:34,207 - core.utils.report_generator - INFO - 生成 3 个模型的对比报告
+2025-09-14 12:10:34,210 - core.utils.report_generator - INFO - 对比报告 JSON 已保存: ..\result_test\model_comparison.json
+2025-09-14 12:10:34,212 - core.utils.report_generator - INFO - 对比报告 Markdown 已保存: ..\result_test\model_comparison.md
+2025-09-14 12:10:35,261 - core.utils.report_generator - INFO - 对比图表已生成: ..\result_test\charts
+2025-09-14 12:10:35,268 - core.utils.report_generator - INFO - 详细结果 CSV 已保存: ..\result_test\detailed_results.csv
+2025-09-14 12:10:35,270 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-14 12:10:35,270 - core.evaluators.unified_batch_evaluator - INFO - 评估总结
+2025-09-14 12:10:35,270 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-14 12:10:35,271 - core.evaluators.unified_batch_evaluator - INFO - 总耗时: 133.5 秒
+2025-09-14 12:10:35,271 - core.evaluators.unified_batch_evaluator - INFO - 成功评估: 3 个模型
+2025-09-14 12:10:35,272 - core.evaluators.unified_batch_evaluator - INFO - 失败: 0 个模型
+2025-09-14 12:10:35,273 - core.evaluators.unified_batch_evaluator - INFO - 
+成功的模型:
+2025-09-14 12:10:35,273 - core.evaluators.unified_batch_evaluator - INFO -   ✓ RL-Training-Step-100: 0.00%
+2025-09-14 12:10:35,274 - core.evaluators.unified_batch_evaluator - INFO -   ✓ RL-Training-Step-500: 0.00%
+2025-09-14 12:10:35,274 - core.evaluators.unified_batch_evaluator - INFO -   ✓ qwen-turbo : 0.00%
+2025-09-14 12:10:35,274 - core.evaluators.unified_batch_evaluator - INFO - 
+Top 3 模型:
+2025-09-14 12:10:35,275 - core.evaluators.unified_batch_evaluator - INFO -   1. RL-Training-Step-100: 0.00%
+2025-09-14 12:10:35,275 - core.evaluators.unified_batch_evaluator - INFO -   2. RL-Training-Step-500: 0.00%
+2025-09-14 12:10:35,275 - core.evaluators.unified_batch_evaluator - INFO -   3. qwen-turbo : 0.00%
+2025-09-14 12:10:35,275 - core.evaluators.unified_batch_evaluator - INFO - 
+报告已保存至: ..\result_test
+2025-09-14 12:10:35,276 - core.evaluators.unified_batch_evaluator - INFO -   - 模型报告: ..\result_test/model_*.json
+2025-09-14 12:10:35,276 - core.evaluators.unified_batch_evaluator - INFO -   - 对比报告: ..\result_test/model_comparison.json
+2025-09-14 12:10:35,276 - core.evaluators.unified_batch_evaluator - INFO -   - 图表: ..\result_test/charts/
+2025-09-14 12:10:35,276 - core.evaluators.unified_batch_evaluator - INFO - 清理资源...
+2025-09-14 12:10:35,277 - core.utils.api_connection_pool - INFO - Closed API session: openai
+2025-09-14 12:10:35,278 - core.utils.api_connection_pool - INFO - All API sessions cleaned up
+2025-09-14 12:10:35,278 - core.evaluators.unified_batch_evaluator - INFO - 资源清理完成

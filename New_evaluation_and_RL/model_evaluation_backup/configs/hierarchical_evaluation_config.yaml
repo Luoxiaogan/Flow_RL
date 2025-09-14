@@ -22,8 +22,8 @@ evaluation:
   output_dir: "./hierarchical_reports"  # 输出目录
   
   # 分层评估模式
-  hierarchical_mode: true  # 启用分层评估
-  incremental_reporting: true  # 启用增量报告
+  hierarchical_mode: false  # 启用分层评估
+  incremental_reporting: false  # 启用增量报告
   save_sample_scores: true  # 保存每个样本的详细分数
   save_intermediate: true  # 保存中间结果
   
@@ -66,23 +66,23 @@ models:
       temperature: 0.7
       top_p: 0.9
 
-models:
-  # 示例1：API模型
-  - name: "QwenMax-API"
-    type: "api"
-    api_endpoints: 
-      - "http://localhost:5059"
-    api_keys:
-      - ""
-    model: "qwen-max"
-    api_type: "openai"
-    max_retries: 3
-    timeout: 600
-    max_concurrency: 40  # API并发限制
-    generation_params:
-      max_new_tokens: 8192
-      temperature: 0.7
-      top_p: 0.9
+# models:
+#   # 示例1：API模型
+#   - name: "QwenMax-API"
+#     type: "api"
+#     api_endpoints: 
+#       - "http://localhost:5059"
+#     api_keys:
+#       - ""
+#     model: "qwen-max"
+#     api_type: "openai"
+#     max_retries: 3
+#     timeout: 600
+#     max_concurrency: 40  # API并发限制
+#     generation_params:
+#       max_new_tokens: 8192
+#       temperature: 0.7
+#       top_p: 0.9
   
   # # 示例2：本地HuggingFace模型
   # - name: "Qwen2.5-7B-Instruct"
@@ -118,7 +118,7 @@ report:
   csv_include_solutions: false  # 是否在CSV中包含完整解决方案
   
   # 实时监控
-  enable_dashboard: true  # 启用HTML仪表板
+  enable_dashboard: false  # 启用HTML仪表板
   dashboard_refresh_interval: 10  # 仪表板刷新间隔（秒）
   
   # 报告格式
@@ -132,7 +132,7 @@ report:
 # ================================
 advanced:
   # 错误处理
-  continue_on_error: true  # 单个样本失败时继续
+  continue_on_error: false  # 单个样本失败时继续
   retry_failed_samples: false  # 是否重试失败的样本
   
   # 资源管理

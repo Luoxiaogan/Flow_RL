@@ -1,0 +1,2 @@
+model,type,overall_score,success_rate,total_samples
+qwen-turbo ,summary,0.5207547169811321,0.37722419928825623,562
