@@ -466,7 +466,8 @@ Your response MUST be valid XML with 'think' and 'subproblems' fields.
 </subproblems>"""
         
         response = await self._fill_node(DecomposeOp, prompt, mode="xml_fill")
-        return response["subproblems"]
+        response = DecomposeOp(**response) 
+        return [sub.dict() for sub in response.subproblems]
 
 
 class Verifier(Operator):
