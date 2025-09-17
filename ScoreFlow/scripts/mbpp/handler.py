@@ -136,10 +136,9 @@ class MbppHandler(BenchmarkHandler):
         """
         # 创建一个执行环境，包含必要的内置函数
         # 注意：assert 是关键字，会在 exec 中自动可用，不需要也不能显式传递
+
         import builtins
-        
-        # 预导入常用的标准库模块，以防生成的代码忘记import
-        # 这些是MBPP中常用的模块
+        import typing          # 新增
         import math
         import re
         import collections
@@ -151,31 +150,60 @@ class MbppHandler(BenchmarkHandler):
         import heapq
         import bisect
         import copy
-        
+        import json
+        import sys
+        import os            # MBPP 里偶尔用到 os.path / os.listdir
+        import operator      # MBPP 有些题用 operator.add 之类
+
         exec_globals = {
             '__builtins__': builtins,
-            # 预先提供常用模块，以防代码忘记import
-            'math': math,
-            're': re,
+
+            # 常用整模块
+            'math'       : math,
+            're'         : re,
             'collections': collections,
-            'itertools': itertools,
-            'functools': functools,
-            'string': string,
-            'datetime': datetime,
-            'random': random,
-            'heapq': heapq,
-            'bisect': bisect,
-            'copy': copy,
-            # 也支持from X import Y的常用情况
-            'Counter': collections.Counter,
-            'defaultdict': collections.defaultdict,
-            'deque': collections.deque,
-            'OrderedDict': collections.OrderedDict,
-            'chain': itertools.chain,
-            'combinations': itertools.combinations,
-            'permutations': itertools.permutations,
-            'product': itertools.product,
-            'reduce': functools.reduce,
+            'itertools'  : itertools,
+            'functools'  : functools,
+            'string'     : string,
+            'datetime'   : datetime,
+            'random'     : random,
+            'heapq'      : heapq,
+            'bisect'     : bisect,
+            'copy'       : copy,
+            'json'       : json,
+            'sys'        : sys,
+            'os'         : os,
+            'operator'   : operator,
+
+            # collections / itertools / functools 高频直接名字
+            'Counter'      : collections.Counter,
+            'defaultdict'  : collections.defaultdict,
+            'deque'        : collections.deque,
+            'OrderedDict'  : collections.OrderedDict,
+            'namedtuple'   : collections.namedtuple,
+            'chain'        : itertools.chain,
+            'combinations' : itertools.combinations,
+            'permutations' : itertools.permutations,
+            'product'      : itertools.product,
+            'cycle'        : itertools.cycle,
+            'groupby'      : itertools.groupby,
+            'reduce'       : functools.reduce,
+            'lru_cache'    : functools.lru_cache,
+            'partial'      : functools.partial,
+
+            # typing 裸写
+            'List'  : typing.List,
+            'Tuple' : typing.Tuple,
+            'Dict'  : typing.Dict,
+            'Set'   : typing.Set,
+            'Optional': typing.Optional,
+            'Union'   : typing.Union,
+            'Any'     : typing.Any,
+            'Callable': typing.Callable,
+            'Iterable': typing.Iterable,
+            'Iterator': typing.Iterator,
+            'Sequence': typing.Sequence,
+            'Mapping' : typing.Mapping,
         }
         
         try:

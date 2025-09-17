@@ -186,8 +186,9 @@ class MbppplusHandler(BenchmarkHandler):
         准备执行环境，预导入常用模块。
         """
         import builtins
+        import typing          # 新增
         import math
-        import re as regex_module
+        import re
         import collections
         import itertools
         import functools
@@ -197,36 +198,60 @@ class MbppplusHandler(BenchmarkHandler):
         import heapq
         import bisect
         import copy
-        import numpy as np
-        from typing import List, Dict, Tuple, Any, Optional, Set
-        
+        import json
+        import sys
+        import os            # MBPP 里偶尔用到 os.path / os.listdir
+        import operator      # MBPP 有些题用 operator.add 之类
+
         return {
             '__builtins__': builtins,
-            'math': math,
-            're': regex_module,
+
+            # 常用整模块
+            'math'       : math,
+            're'         : re,
             'collections': collections,
-            'itertools': itertools,
-            'functools': functools,
-            'string': string,
-            'datetime': datetime,
-            'random': random,
-            'heapq': heapq,
-            'bisect': bisect,
-            'copy': copy,
-            'np': np,
-            'numpy': np,
-            # 添加collections的常用类
-            'Counter': collections.Counter,
-            'defaultdict': collections.defaultdict,
-            'deque': collections.deque,
-            'OrderedDict': collections.OrderedDict,
-            # 添加类型提示
-            'List': List,
-            'Dict': Dict,
-            'Tuple': Tuple,
-            'Set': Set,
-            'Any': Any,
-            'Optional': Optional,
+            'itertools'  : itertools,
+            'functools'  : functools,
+            'string'     : string,
+            'datetime'   : datetime,
+            'random'     : random,
+            'heapq'      : heapq,
+            'bisect'     : bisect,
+            'copy'       : copy,
+            'json'       : json,
+            'sys'        : sys,
+            'os'         : os,
+            'operator'   : operator,
+
+            # collections / itertools / functools 高频直接名字
+            'Counter'      : collections.Counter,
+            'defaultdict'  : collections.defaultdict,
+            'deque'        : collections.deque,
+            'OrderedDict'  : collections.OrderedDict,
+            'namedtuple'   : collections.namedtuple,
+            'chain'        : itertools.chain,
+            'combinations' : itertools.combinations,
+            'permutations' : itertools.permutations,
+            'product'      : itertools.product,
+            'cycle'        : itertools.cycle,
+            'groupby'      : itertools.groupby,
+            'reduce'       : functools.reduce,
+            'lru_cache'    : functools.lru_cache,
+            'partial'      : functools.partial,
+
+            # typing 裸写
+            'List'  : typing.List,
+            'Tuple' : typing.Tuple,
+            'Dict'  : typing.Dict,
+            'Set'   : typing.Set,
+            'Optional': typing.Optional,
+            'Union'   : typing.Union,
+            'Any'     : typing.Any,
+            'Callable': typing.Callable,
+            'Iterable': typing.Iterable,
+            'Iterator': typing.Iterator,
+            'Sequence': typing.Sequence,
+            'Mapping' : typing.Mapping,
         }
     
     def _execute_basic_tests(self, code: str, test_cases: List[str]) -> tuple[bool, str]:

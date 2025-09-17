@@ -348,30 +348,49 @@ Function name: {entry_point}
         import numpy as np
         from typing import List, Dict, Tuple, Any, Optional
         
+        import typing
+        
         exec_globals = {
+            # 基础内建
             '__builtins__': builtins,
-            'math': math,
-            're': re,
+
+            # 常用标准库（整模块）
+            'math'      : math,
+            're'        : re,
             'collections': collections,
-            'itertools': itertools,
-            'functools': functools,
-            'string': string,
-            'datetime': datetime,
-            'random': random,
-            'heapq': heapq,
-            'bisect': bisect,
-            'copy': copy,
-            'np': np,
-            'numpy': np,
-            'Counter': collections.Counter,
-            'defaultdict': collections.defaultdict,
-            'deque': collections.deque,
-            'OrderedDict': collections.OrderedDict,
-            'List': List,
-            'Dict': Dict,
-            'Tuple': Tuple,
-            'Any': Any,
-            'Optional': Optional,
+            'itertools' : itertools,
+            'functools' : functools,
+            'string'    : string,
+            'datetime'  : datetime,
+            'random'    : random,
+            'heapq'     : heapq,
+            'bisect'    : bisect,
+            'copy'      : copy,
+            'json'      : __import__('json'),
+            'sys'       : __import__('sys'),
+
+            # collections 高频类（裸写可用）
+            'Counter'      : collections.Counter,
+            'defaultdict'  : collections.defaultdict,
+            'deque'        : collections.deque,
+            'OrderedDict'  : collections.OrderedDict,
+            'namedtuple'   : collections.namedtuple,
+            'ChainMap'     : collections.ChainMap,
+
+            # typing 裸写常用
+            'List'       : typing.List,
+            'Tuple'      : typing.Tuple,
+            'Dict'       : typing.Dict,
+            'Set'        : typing.Set,
+            'FrozenSet'  : typing.FrozenSet,
+            'Optional'   : typing.Optional,
+            'Union'      : typing.Union,
+            'Any'        : typing.Any,
+            'Callable'   : typing.Callable,
+            'Iterable'   : typing.Iterable,
+            'Iterator'   : typing.Iterator,
+            'Sequence'   : typing.Sequence,
+            'Mapping'    : typing.Mapping,
         }
         
         try:
