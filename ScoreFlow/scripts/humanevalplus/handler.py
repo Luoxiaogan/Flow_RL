@@ -378,7 +378,7 @@ Function name: {entry_point}
             # 预处理代码
             code = self._preprocess_code_with_imports(code)
             
-            print(f"[HumanEval+] Executing code:\n{code[:200]}...")
+            # print(f"[HumanEval+] Executing code:\n{code[:200]}...")
             
             # 执行生成的代码
             exec(code, exec_globals)
@@ -415,7 +415,7 @@ Function name: {entry_point}
         评判模型输出是否正确解决HumanEval+问题。
         """
         if not model_output or not ground_truth_data:
-            print("[HumanEval+] Missing model output or ground truth data")
+            # print("[HumanEval+] Missing model output or ground truth data")
             return False
         
         # 提取代码
@@ -427,17 +427,17 @@ Function name: {entry_point}
         test_code = ground_truth_data.get('test', '')
         
         if not entry_point:
-            print(f"[HumanEval+] Missing entry_point in ground truth data")
+            # print(f"[HumanEval+] Missing entry_point in ground truth data")
             return False
         
         if not test_code:
-            print(f"[HumanEval+] Missing test code in ground truth data")
+            # print(f"[HumanEval+] Missing test code in ground truth data")
             return False
         
         # 执行验证
         passed, error_msg = self._execute_code_with_tests(generated_code, test_code, entry_point)
         
-        if not passed:
-            print(f"[HumanEval+] Tests failed: {error_msg[:300]}...")
+        # if not passed:
+        #     print(f"[HumanEval+] Tests failed: {error_msg[:300]}...")
             
         return passed

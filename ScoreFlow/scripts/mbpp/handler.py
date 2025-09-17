@@ -182,7 +182,7 @@ class MbppHandler(BenchmarkHandler):
             # 预处理代码，自动添加可能缺失的import
             code = self._preprocess_code_with_imports(code)
 
-            print(f"[MBPP]🚀: 生成的code是:\n{code}")
+            # print(f"[MBPP]🚀: 生成的code是:\n{code}")
             
             # 首先执行测试前置代码（如果有）
             if test_setup:
@@ -196,7 +196,7 @@ class MbppHandler(BenchmarkHandler):
             failed_tests = []
             
             for i, test_case in enumerate(test_cases):
-                print(f"[MBPP]🚀: 测试用例:\n{test_case}")
+                # print(f"[MBPP]🚀: 测试用例:\n{test_case}")
                 try:
                     # 捕获stdout用于调试
                     with contextlib.redirect_stdout(StringIO()):
@@ -204,10 +204,10 @@ class MbppHandler(BenchmarkHandler):
                     passed_tests += 1
                 except AssertionError as e:
                     failed_tests.append(f"Test {i+1} failed: {test_case}")
-                    print(f"[MBPP]🚀: 测试用例失败:\n{test_case}")
+                    # print(f"[MBPP]🚀: 测试用例失败:\n{test_case}")
                 except Exception as e:
                     failed_tests.append(f"Test {i+1} error: {test_case} - {str(e)}")
-                    print(f"[MBPP]🚀: 测试用例错误:\n{test_case} - {str(e)}")
+                    # print(f"[MBPP]🚀: 测试用例错误:\n{test_case} - {str(e)}")
 
             if failed_tests:
                 return False, f"Passed {passed_tests}/{len(test_cases)} tests. Failed: {'; '.join(failed_tests)}"
