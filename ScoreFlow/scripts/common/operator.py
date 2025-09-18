@@ -404,7 +404,32 @@ Your response MUST be a valid XML format with two fields: 'think' and 'code'.
 def solve():
     total = sum(range(1, 11))
     return total
-</code>"""
+</code>
+
+for example, when you meet:
+**TASK DESCRIPTION:(THE PROBLEM YOU SHOULD SOLVE BY WRITING THE PYTHON CODE USING THE FUNCTION SIGNATURE BELOW)**
+Write a python function to set the left most unset bit.
+
+**FUNCTION SIGNATURE(THE OUTPUT SOLUTION OF PYTHON CODE SHOULD IN THIS FUNCTION NAME):**
+```python
+def set_left_most_unset_bit(n):
+```
+
+**BASIC TEST CASES:**
+```python
+assert set_left_most_unset_bit(10) == 14
+assert set_left_most_unset_bit(12) == 14
+assert set_left_most_unset_bit(15) == 15
+```
+
+and you can write:
+def solve():
+    def set_left_most_unset_bit(n):
+        pass
+    assert set_left_most_unset_bit(10) == 14
+    assert set_left_most_unset_bit(12) == 14
+    assert set_left_most_unset_bit(15) == 15
+    return 1"""
         
         response = await self._fill_node(CodeGenerateOp, prompt, mode="xml_fill")
         return response

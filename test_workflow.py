@@ -21,16 +21,16 @@ os.chdir('/nas/ganluo/Flow_RL/Test_FILE')
 # ========================================
 
 # Workflow文件路径
-WORKFLOW_PATH = "/nas/ganluo/Flow_RL/New_evaluation_and_RL/workspace/humaneval/workflow_20250917_070750_0ks9b1/workflow.py"
+WORKFLOW_PATH = "/nas/ganluo/Flow_RL/New_evaluation_and_RL/workspace/mbppplus/workflow_20250917_233651_ia533t/workflow.py"
 
 # Benchmark名称（可以从workflow路径自动推断）
-BENCHMARK = "humaneval"  # gsm8k, mbpp, drop, etc.
+BENCHMARK = "mbppplus"  # gsm8k, mbpp, drop, etc.
 
 # 数据集路径
-DATASET_PATH = "/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl"
+DATASET_PATH = "/nas/ganluo/Flow_RL/Processed_dataset/mbppplus/mbppplus_train.jsonl"
 
 # 测试数据的索引
-TEST_INDEX = 19
+TEST_INDEX = 12
 
 # LLM配置
 LLM_CONFIG = {
@@ -133,12 +133,16 @@ async def test_workflow():
     print(f"📖 获取索引 {TEST_INDEX} 的数据...")
     verification_data = handler.get_verification_data(TEST_INDEX)
     problem_text = handler.get_prompt_text([TEST_INDEX])
+    problem_text_all = handler.get_prompt_text_workflow_generation([TEST_INDEX])
     
     print("\n🔍 问题预览:")
     print("-" * 40)
-    # 只显示前500个字符
-    # preview = problem_text[:500] + "..." if len(problem_text) > 500 else problem_text
     print(problem_text)
+    print("-" * 40)
+    
+    print("\n🔍 问题预览(workflow_generation):")
+    print("-" * 40)
+    print(problem_text_all)
     print("-" * 40)
     
     # 4. 加载workflow代码
@@ -225,15 +229,15 @@ async def test_workflow():
         # 9. 验证结果
         print("\n🎯 验证结果...")
         
-        # 获取标准答案
-        if 'answer' in verification_data:
-            ground_truth = verification_data['answer']
-        elif 'all_answers' in verification_data:
-            ground_truth = verification_data['all_answers']
-        else:
-            ground_truth = "未找到标准答案"
+        # # 获取标准答案
+        # if 'answer' in verification_data:
+        #     ground_truth = verification_data['answer']
+        # elif 'all_answers' in verification_data:
+        #     ground_truth = verification_data['all_answers']
+        # else:
+        #     ground_truth = "未找到标准答案"
         
-        print(f"📌 标准答案: {ground_truth}")
+        # print(f"📌 标准答案: {ground_truth}")
         
         # 使用handler的judge方法
         import inspect

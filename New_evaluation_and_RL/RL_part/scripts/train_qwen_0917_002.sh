@@ -36,7 +36,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=1 \
   ++actor_rollout_ref.ref.fsdp_config.param_offload=false \
   ++actor_rollout_ref.rollout.name=sglang \
-  ++actor_rollout_ref.rollout.n=4 \
+  ++actor_rollout_ref.rollout.n=5 \
   ++actor_rollout_ref.rollout.temperature=0.7 \
   ++actor_rollout_ref.rollout.top_k=50 \
   ++actor_rollout_ref.rollout.top_p=0.95 \
@@ -64,4 +64,4 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   trainer.project_name=qwen3_rl_0917_old_ckpt \
   trainer.experiment_name=qwen3_8b_0917_old_ckpt \
   trainer.logger='["console","wandb"]' \
-  trainer.default_local_dir=/nas/ganluo/Flow_RL/rl_out_0917_old_ckpt/checkpoints
+  trainer.default_local_dir=/nas/ganluo/Flow_RL/rl_out_0917_old_ckpt_002/checkpoints

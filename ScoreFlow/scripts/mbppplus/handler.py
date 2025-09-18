@@ -120,12 +120,17 @@ class MbppplusHandler(BenchmarkHandler):
                 
                 # 构建格式化的问题
                 formatted_problem = f"""---
-**TASK DESCRIPTION:**
+**TASK DESCRIPTION:(THE PROBLEM YOU SHOULD SOLVE BY WRITING THE PYTHON CODE USING THE FUNCTION SIGNATURE BELOW)**
 {task_description}
 
-**FUNCTION SIGNATURE:**
+**FUNCTION SIGNATURE(THE OUTPUT SOLUTION OF PYTHON CODE SHOULD IN THIS FUNCTION NAME):**
 ```python
 {function_signature}
+```
+
+**BASIC TEST CASES:**
+```python
+{test_cases_text.strip()}
 ```
 ---"""
                 formatted_problems.append(formatted_problem)
@@ -388,7 +393,7 @@ class MbppplusHandler(BenchmarkHandler):
         4. 只有所有测试都通过才返回True
         """
         if not model_output or not ground_truth_data:
-            # print("[MBPP+] Missing model output or ground truth data")
+            print("[MBPP+] Missing model output or ground truth data")
             return False
         
         # 转换输出为字符串并提取代码
@@ -396,7 +401,7 @@ class MbppplusHandler(BenchmarkHandler):
         generated_code = self._extract_code_from_response(output_str)
         
         if not generated_code:
-            # print("[MBPP+] No code found in model output")
+            print("[MBPP+] No code found in model output")
             return False
         
         # 获取测试组件
@@ -409,7 +414,7 @@ class MbppplusHandler(BenchmarkHandler):
             print(f"[MBPP+] Running {len(test_cases)} basic test cases...")
             passed, error_msg = self._execute_basic_tests(generated_code, test_cases)
             if not passed:
-                # print(f"[MBPP+] Basic tests failed: {error_msg}")
+                print(f"[MBPP+] Basic tests failed: {error_msg}")
                 return False
             print("[MBPP+] Basic tests passed ✓")
         
@@ -442,7 +447,7 @@ class MbppplusHandler(BenchmarkHandler):
             )
             
             if not passed:
-                # print(f"[MBPP+] Extended tests failed: {error_msg}")
+                print(f"[MBPP+] Extended tests failed: {error_msg}")
                 return False
             print("[MBPP+] Extended tests passed ✓")
         
