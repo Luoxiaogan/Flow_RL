@@ -20,6 +20,7 @@ VERL接口规范:
 import os
 import sys
 import json
+import time
 import logging
 import requests
 import yaml
@@ -140,37 +141,53 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
             "extra_info": extra_info
         }
         
-        # 发送HTTP请求到reward_server（使用配置的超时时间）
-        response = requests.post(
-            api_url,
-            json=request_data,
-            headers={
-                "Content-Type": "application/json",
-                "User-Agent": "VERL-ScoreFlow-Client/1.0"
-            },
-            timeout=client_timeout  # 使用配置文件中的超时时间
-        )
-        
-        # 检查HTTP响应
-        if response.status_code == 200:
-            result = response.json()
-            if result.get('success', False):
-                score = result.get('score', 0.0)
-                
-                # 确保分数在合法范围内
-                score = max(0.0, min(1.0, float(score)))
-                
-                logger.info(f"✅ Reward计算成功 - 分数: {score:.3f}")
-                logger.info(f"📈 成功率: {score * 100:.1f}%")
-                return score
+        # 添加503重试逻辑
+        max_retries = 3
+        for retry in range(max_retries):
+            # 发送HTTP请求到reward_server（使用配置的超时时间）
+            response = requests.post(
+                api_url,
+                json=request_data,
+                headers={
+                    "Content-Type": "application/json",
+                    "User-Agent": "VERL-ScoreFlow-Client/1.0"
+                },
+                timeout=client_timeout  # 使用配置文件中的超时时间
+            )
+
+            # 检查是否是503错误
+            if response.status_code == 503:
+                if retry < max_retries - 1:
+                    logger.info(f"⏳ 服务器返回503，等待10秒后重试 ({retry+1}/{max_retries})...")
+                    time.sleep(10)
+                    continue
+                else:
+                    logger.info(f"❌ 服务器503错误，已重试{max_retries}次")
+                    return 0.0
+
+            # 检查HTTP响应
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('success', False):
+                    score = result.get('score', 0.0)
+
+                    # 确保分数在合法范围内
+                    score = max(0.0, min(1.0, float(score)))
+
+                    logger.info(f"✅ Reward计算成功 - 分数: {score:.3f}")
+                    logger.info(f"📈 成功率: {score * 100:.1f}%")
+                    return score
+                else:
+                    error_msg = result.get('error', 'Unknown error')
+                    logger.error(f"❌ ScoreFlow计算失败: {error_msg}")
+                    return 0.0
             else:
-                error_msg = result.get('error', 'Unknown error')
-                logger.error(f"❌ ScoreFlow计算失败: {error_msg}")
+                logger.error(f"❌ HTTP请求失败: {response.status_code}")
+                logger.error(f"响应内容: {response.text[:200]}...")
                 return 0.0
-        else:
-            logger.error(f"❌ HTTP请求失败: {response.status_code}")
-            logger.error(f"响应内容: {response.text[:200]}...")
-            return 0.0
+
+            # 如果执行到这里说明已经处理完成，跳出循环
+            break
             
     except requests.exceptions.ConnectionError as e:
         logger.error(f"🔌 无法连接到ScoreFlow reward_server: {e}")
