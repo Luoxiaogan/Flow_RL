@@ -129,34 +129,45 @@ def prepare_restart():
     # 1. 设置关闭标志，拒绝新请求
     shutdown_in_progress = True
 
-    # 2. 等待并发限制器中的活跃请求（最多5秒）
+    # 2. 请求所有executor返回部分结果
+    from scoreflow_reward_utils import request_shutdown
+    request_shutdown()
+    logger.info("✅ 已通知所有执行器返回部分结果")
+
+    # 3. 等待executor返回部分结果（最多20秒）
     limiter = get_limiter()
     if limiter:
         wait_start = time.time()
-        while time.time() - wait_start < 5:
+        max_wait = 20  # 最多等待20秒
+        while time.time() - wait_start < max_wait:
+            elapsed = int(time.time() - wait_start)
             status = limiter.get_status()
             active_count = status['concurrency']['active_requests']
             if active_count == 0:
-                logger.info("✓ 所有活跃请求已完成")
+                logger.info("✓ 所有请求已处理完成")
                 break
-            logger.info(f"等待 {active_count} 个活跃请求完成...")
-            time.sleep(0.5)
+            logger.info(f"等待 {active_count} 个请求返回结果... ({elapsed}/{max_wait}秒)")
+            time.sleep(1)  # 每秒检查一次
 
         # 获取最终状态
         final_status = limiter.get_status()
         active_tasks = final_status.get('active_tasks', [])
 
         if active_tasks:
-            logger.info(f"⚠️ 仍有 {len(active_tasks)} 个任务在执行:")
+            logger.info(f"⚠️ 仍有 {len(active_tasks)} 个任务未返回:")
             for task in active_tasks:
                 logger.info(f"  - {task['benchmark']}: 运行 {task['duration']}秒")
+            logger.info("这些任务的部分结果应该已经返回")
 
     logger.info("优雅关闭准备完成，准备重启...")
     logger.info("="*50)
 
-    # 3. 延迟退出（让响应先发送）
+    # 4. 延迟退出（让响应先发送）
     def delayed_exit():
         time.sleep(1)
+        # 重置shutdown标志（为下次启动准备）
+        from scoreflow_reward_utils import reset_shutdown
+        reset_shutdown()
         logger.info("正在退出...")
         os._exit(0)  # 退出码0触发bash重启
 
@@ -164,7 +175,7 @@ def prepare_restart():
 
     return jsonify({
         'status': 'shutting_down',
-        'message': 'Graceful shutdown initiated'
+        'message': 'Graceful shutdown initiated with partial results'
     })
 
 @app.route('/compute_score', methods=['POST'])

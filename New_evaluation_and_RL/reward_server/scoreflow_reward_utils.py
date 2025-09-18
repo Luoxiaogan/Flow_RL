@@ -18,6 +18,8 @@ from typing import List, Dict, Optional
 from pathlib import Path
 from datetime import datetime
 import time
+import threading
+import uuid
 
 print("-"*60)
 # 设置NO_PROXY来排除localhost（防止被系统代理拦截）
@@ -75,6 +77,28 @@ METAGPT_CONFIG_PATH = project_root_path / metagpt_config
 # 添加必要路径
 # 重要：添加ScoreFlow的根目录，使得ScoreFlow可以被正确导入
 sys.path.insert(0, str(SCOREFLOW_HANDLERS_PATH))  # Add Flow_RL to path for ScoreFlow import
+
+# ========== 全局Shutdown机制 ==========
+# 用于优雅关闭：当收到重启通知时，所有正在执行的workflow立即返回部分结果
+_shutdown_requested = False
+_active_executors = {}
+_executors_lock = threading.Lock()
+
+def request_shutdown():
+    """请求所有executor停止执行并返回部分结果"""
+    global _shutdown_requested
+    _shutdown_requested = True
+    logger.info("🛑 Shutdown请求已发送，所有执行器将返回部分结果")
+
+def reset_shutdown():
+    """重置shutdown标志（用于下次启动）"""
+    global _shutdown_requested
+    _shutdown_requested = False
+    logger.info("✅ Shutdown标志已重置")
+
+def is_shutdown_requested():
+    """检查是否收到shutdown请求"""
+    return _shutdown_requested
 # 使用基于project_root的共享metagpt_root路径（所有程序共用）
 SHARED_METAGPT_ROOT = project_root_path / "metagpt_root"
 sys.path.append(str(SHARED_METAGPT_ROOT))
@@ -144,18 +168,23 @@ class WorkflowExecutionManager:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         random_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
         self.workflow_id = f"workflow_{timestamp}_{random_id}"
-        
+
         # 创建目录结构
         self.workflow_dir = workspace_path / data_source / self.workflow_id
         self.workflow_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # 基本信息
         self.test_cases = test_cases
         self.data_source = data_source
-        
+
         # 并行执行+安全汇总：线程安全的结果收集器
         self.results_collector = []
         self.results_lock = asyncio.Lock()
+
+        # 注册到全局executor字典（用于shutdown处理）
+        self.executor_id = str(uuid.uuid4())
+        with _executors_lock:
+            _active_executors[self.executor_id] = self
 
     def __enter__(self):
         """简化的上下文管理器入口 - 不再需要全局日志重定向"""
@@ -163,6 +192,10 @@ class WorkflowExecutionManager:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """简化的上下文管理器出口 - 主要用于清理和汇总"""
+        # 从全局字典注销
+        with _executors_lock:
+            _active_executors.pop(self.executor_id, None)
+
         if exc_type:
             logger.info(f"⚠️ 执行过程中发生异常: {exc_type.__name__}: {exc_val}")
 
@@ -370,20 +403,60 @@ TEXT AFTER CODE BLOCKS: Not found in this output
             tasks.append(task)
             task_to_index[task] = test_case_index
 
-        # 使用asyncio.wait设置批次超时
+        # 使用asyncio.wait设置批次超时，同时检查shutdown标志
         try:
-            done, pending = await asyncio.wait(
-                tasks,
-                timeout=calculator.batch_timeout,
-                return_when=asyncio.ALL_COMPLETED
-            )
+            # 如果已经收到shutdown请求，使用较短的超时时间
+            if is_shutdown_requested():
+                logger.info("⚠️ 检测到shutdown请求，立即返回部分结果")
+                wait_timeout = 0.1  # 几乎立即返回
+            else:
+                wait_timeout = calculator.batch_timeout
 
-            # 如果有未完成的任务，说明触发了批次超时
+            # 循环等待，每秒检查一次shutdown标志
+            remaining_timeout = wait_timeout
+            all_done = set()
+            remaining_tasks = set(tasks)
+
+            while remaining_timeout > 0 and remaining_tasks:
+                # 等待1秒或剩余时间（取较小值）
+                current_wait = min(1.0, remaining_timeout)
+                done, pending = await asyncio.wait(
+                    remaining_tasks,
+                    timeout=current_wait,
+                    return_when=asyncio.ALL_COMPLETED
+                )
+
+                # 累积已完成的任务
+                all_done.update(done)
+                remaining_tasks = pending
+
+                # 如果所有任务完成，退出循环
+                if not pending:
+                    break
+
+                # 检查shutdown标志
+                if is_shutdown_requested():
+                    logger.info("🛑 收到shutdown请求，立即处理部分结果")
+                    break
+
+                # 更新剩余超时时间
+                remaining_timeout -= current_wait
+
+            # 最终的done和pending
+            done = all_done
+            pending = remaining_tasks
+
+            # 如果有未完成的任务，说明触发了超时或shutdown
             if pending:
-                logger.info(f"🌟🌟🌟🌟🌟 Workflow批次执行超时！")
-                logger.info(f"   超时限制: {calculator.batch_timeout}秒")
-                logger.info(f"   已完成: {len(done)}/{len(tasks)} test cases")
-                logger.info(f"   未完成: {len(pending)} test cases")
+                if is_shutdown_requested():
+                    logger.info(f"🛑 因shutdown请求中断执行")
+                    logger.info(f"   已完成: {len(done)}/{len(tasks)} test cases")
+                    logger.info(f"   未完成: {len(pending)} test cases（将标记为0分）")
+                else:
+                    logger.info(f"🌟🌟🌟🌟🌟 Workflow批次执行超时！")
+                    logger.info(f"   超时限制: {calculator.batch_timeout}秒")
+                    logger.info(f"   已完成: {len(done)}/{len(tasks)} test cases")
+                    logger.info(f"   未完成: {len(pending)} test cases")
 
                 # 取消未完成的任务
                 for task in pending:
