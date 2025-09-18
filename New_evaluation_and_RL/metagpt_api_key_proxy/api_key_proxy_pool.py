@@ -480,7 +480,7 @@ def proxy_request(path):
                 print(f"   原因: 上次返回状态码 {last_status_code}")
             else:
                 timestamp = datetime.now().strftime('%H:%M:%S')
-                print(f"[{timestamp}] 重试 #{retry}: API#{api_index+1} (上次状态码: {last_status_code})")
+                print(f"[{timestamp}] 重试 #{retry}: API#{api_index+1} (上次状态码: {last_status_code})body:\n{modified_body}")
 
         try:
             # 发送请求到上游API
@@ -514,7 +514,7 @@ def proxy_request(path):
                     print(f"   响应时间: {response_time:.2f}秒")
                 else:
                     timestamp = datetime.now().strftime('%H:%M:%S')
-                    print(f"[{timestamp}] API#{api_index+1} 错误: 状态码 {response.status_code}")
+                    print(f"[{timestamp}] API#{api_index+1} 错误: 状态码 {response.status_code},body:\n{modified_body}")
 
                 # 如果还有重试机会，继续下一轮
                 if retry < max_retries - 1:
