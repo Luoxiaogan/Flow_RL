@@ -54,6 +54,7 @@ services:
     silent: true           # 控制终端输出详细程度：true=静默模式(只显示关键信息)，false=详细输出
     flask_debug: false      # false: 生产模式（单进程），true: 调试模式（双进程+自动重载）
     workspace: "New_evaluation_and_RL/workspace"  # workflow执行日志保存目录 (相对于project_root)
+    restart_per_step: 30   # 无连接自动重启时间（秒）
     
     # Token费用惩罚配置
     token_penalty:

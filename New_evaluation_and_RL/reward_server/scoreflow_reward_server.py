@@ -8,6 +8,9 @@ import logging
 from loguru import logger as loguru_logger
 import traceback
 import yaml
+import os
+import time
+import threading
 from pathlib import Path
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -85,6 +88,9 @@ if SILENT:
 app = Flask(__name__)
 CORS(app)  # 允许跨域请求
 
+# 全局状态管理
+shutdown_in_progress = False
+
 # 全局配置（从config.yaml读取）
 SERVER_CONFIG = {
     'host': service_config.get('host', '0.0.0.0'),
@@ -112,12 +118,61 @@ def health_check():
         'version': '1.0.0'
     })
 
+@app.route('/prepare_restart', methods=['POST'])
+def prepare_restart():
+    """接收API代理的重启通知 - 优雅关闭"""
+    global shutdown_in_progress
+
+    logger.info("="*50)
+    logger.info("收到API代理重启通知，准备优雅关闭...")
+
+    # 1. 设置关闭标志，拒绝新请求
+    shutdown_in_progress = True
+
+    # 2. 等待并发限制器中的活跃请求（最多5秒）
+    limiter = get_limiter()
+    if limiter:
+        wait_start = time.time()
+        while time.time() - wait_start < 5:
+            status = limiter.get_status()
+            active_count = status['concurrency']['active_requests']
+            if active_count == 0:
+                logger.info("✓ 所有活跃请求已完成")
+                break
+            logger.info(f"等待 {active_count} 个活跃请求完成...")
+            time.sleep(0.5)
+
+        # 获取最终状态
+        final_status = limiter.get_status()
+        active_tasks = final_status.get('active_tasks', [])
+
+        if active_tasks:
+            logger.info(f"⚠️ 仍有 {len(active_tasks)} 个任务在执行:")
+            for task in active_tasks:
+                logger.info(f"  - {task['benchmark']}: 运行 {task['duration']}秒")
+
+    logger.info("优雅关闭准备完成，准备重启...")
+    logger.info("="*50)
+
+    # 3. 延迟退出（让响应先发送）
+    def delayed_exit():
+        time.sleep(1)
+        logger.info("正在退出...")
+        os._exit(0)  # 退出码0触发bash重启
+
+    threading.Thread(target=delayed_exit, daemon=True).start()
+
+    return jsonify({
+        'status': 'shutting_down',
+        'message': 'Graceful shutdown initiated'
+    })
+
 @app.route('/compute_score', methods=['POST'])
 @with_concurrency_limit('data_source')
 def compute_score_endpoint():
     """
     计算reward分数的API端点
-    
+
     请求格式:
     {
         "data_source": "gsm8k",
@@ -128,7 +183,7 @@ def compute_score_endpoint():
             "data_path": "path/to/data.jsonl"
         }
     }
-    
+
     响应格式:
     {
         "success": true,
@@ -136,6 +191,13 @@ def compute_score_endpoint():
         "message": "Score computed successfully"
     }
     """
+    # 检查是否正在关闭
+    if shutdown_in_progress:
+        return jsonify({
+            'success': False,
+            'error': 'Server is shutting down for restart'
+        }), 503  # Service Unavailable
+
     try:
         # 获取请求数据
         data = request.get_json()
