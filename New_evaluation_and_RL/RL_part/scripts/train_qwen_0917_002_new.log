@@ -1,0 +1,509 @@
+2025-09-18 03:16:38,410	INFO worker.py:1918 -- Started a local Ray instance. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+[36m(TaskRunner pid=205363)[0m TaskRunner hostname: ctyun172022236189.et1032-ctyun, PID: 205363
+[36m(TaskRunner pid=205363)[0m {'actor_rollout_ref': {'actor': {'checkpoint': {'load_contents': ['model',
+[36m(TaskRunner pid=205363)[0m                                                                   'extra'],
+[36m(TaskRunner pid=205363)[0m                                                 'save_contents': ['model',
+[36m(TaskRunner pid=205363)[0m                                                                   'extra']},
+[36m(TaskRunner pid=205363)[0m                                  'clip_ratio': 0.2,
+[36m(TaskRunner pid=205363)[0m                                  'clip_ratio_c': 3.0,
+[36m(TaskRunner pid=205363)[0m                                  'clip_ratio_high': 0.2,
+[36m(TaskRunner pid=205363)[0m                                  'clip_ratio_low': 0.2,
+[36m(TaskRunner pid=205363)[0m                                  'entropy_checkpointing': False,
+[36m(TaskRunner pid=205363)[0m                                  'entropy_coeff': 0,
+[36m(TaskRunner pid=205363)[0m                                  'entropy_from_logits_with_chunking': False,
+[36m(TaskRunner pid=205363)[0m                                  'fsdp_config': {'forward_prefetch': False,
+[36m(TaskRunner pid=205363)[0m                                                  'fsdp_size': -1,
+[36m(TaskRunner pid=205363)[0m                                                  'offload_policy': False,
+[36m(TaskRunner pid=205363)[0m                                                  'optimizer_offload': False,
+[36m(TaskRunner pid=205363)[0m                                                  'param_offload': False,
+[36m(TaskRunner pid=205363)[0m                                                  'reshard_after_forward': True,
+[36m(TaskRunner pid=205363)[0m                                                  'wrap_policy': {'min_num_params': 0}},
+[36m(TaskRunner pid=205363)[0m                                  'grad_clip': 1.0,
+[36m(TaskRunner pid=205363)[0m                                  'kl_loss_coef': 0.001,
+[36m(TaskRunner pid=205363)[0m                                  'kl_loss_type': 'low_var_kl',
+[36m(TaskRunner pid=205363)[0m                                  'loss_agg_mode': 'token-mean',
+[36m(TaskRunner pid=205363)[0m                                  'optim': {'lr': 2e-06,
+[36m(TaskRunner pid=205363)[0m                                            'lr_warmup_steps': -1,
+[36m(TaskRunner pid=205363)[0m                                            'lr_warmup_steps_ratio': 0.05,
+[36m(TaskRunner pid=205363)[0m                                            'min_lr_ratio': 0.1,
+[36m(TaskRunner pid=205363)[0m                                            'num_cycles': 0.5,
+[36m(TaskRunner pid=205363)[0m                                            'total_training_steps': -1,
+[36m(TaskRunner pid=205363)[0m                                            'warmup_style': 'constant',
+[36m(TaskRunner pid=205363)[0m                                            'weight_decay': 0.01},
+[36m(TaskRunner pid=205363)[0m                                  'policy_loss': {'clip_cov_lb': 1.0,
+[36m(TaskRunner pid=205363)[0m                                                  'clip_cov_ratio': 0.0002,
+[36m(TaskRunner pid=205363)[0m                                                  'clip_cov_ub': 5.0,
+[36m(TaskRunner pid=205363)[0m                                                  'kl_cov_ratio': 0.0002,
+[36m(TaskRunner pid=205363)[0m                                                  'loss_mode': 'vanilla',
+[36m(TaskRunner pid=205363)[0m                                                  'ppo_kl_coef': 0.1},
+[36m(TaskRunner pid=205363)[0m                                  'ppo_epochs': 1,
+[36m(TaskRunner pid=205363)[0m                                  'ppo_max_token_len_per_gpu': 20000,
+[36m(TaskRunner pid=205363)[0m                                  'ppo_micro_batch_size': None,
+[36m(TaskRunner pid=205363)[0m                                  'ppo_micro_batch_size_per_gpu': 1,
+[36m(TaskRunner pid=205363)[0m                                  'ppo_mini_batch_size': 8,
+[36m(TaskRunner pid=205363)[0m                                  'shuffle': False,
+[36m(TaskRunner pid=205363)[0m                                  'strategy': 'fsdp',
+[36m(TaskRunner pid=205363)[0m                                  'ulysses_sequence_parallel_size': 1,
+[36m(TaskRunner pid=205363)[0m                                  'use_dynamic_bsz': False,
+[36m(TaskRunner pid=205363)[0m                                  'use_kl_loss': True,
+[36m(TaskRunner pid=205363)[0m                                  'use_torch_compile': True},
+[36m(TaskRunner pid=205363)[0m                        'hybrid_engine': True,
+[36m(TaskRunner pid=205363)[0m                        'model': {'custom_chat_template': None,
+[36m(TaskRunner pid=205363)[0m                                  'enable_activation_offload': False,
+[36m(TaskRunner pid=205363)[0m                                  'enable_gradient_checkpointing': True,
+[36m(TaskRunner pid=205363)[0m                                  'exclude_modules': None,
+[36m(TaskRunner pid=205363)[0m                                  'external_lib': None,
+[36m(TaskRunner pid=205363)[0m                                  'fused_kernel_options': {'impl_backend': 'torch'},
+[36m(TaskRunner pid=205363)[0m                                  'lora_alpha': 16,
+[36m(TaskRunner pid=205363)[0m                                  'lora_rank': 0,
+[36m(TaskRunner pid=205363)[0m                                  'override_config': {},
+[36m(TaskRunner pid=205363)[0m                                  'path': '/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/Merged_weight/Qwen3-8B/rank_8_epoch_2',
+[36m(TaskRunner pid=205363)[0m                                  'target_modules': 'all-linear',
+[36m(TaskRunner pid=205363)[0m                                  'torch_dtype': 'bfloat16',
+[36m(TaskRunner pid=205363)[0m                                  'trust_remote_code': True,
+[36m(TaskRunner pid=205363)[0m                                  'use_fused_kernels': False,
+[36m(TaskRunner pid=205363)[0m                                  'use_liger': False,
+[36m(TaskRunner pid=205363)[0m                                  'use_remove_padding': False,
+[36m(TaskRunner pid=205363)[0m                                  'use_shm': False},
+[36m(TaskRunner pid=205363)[0m                        'profiler': {'_target_': 'verl.utils.profiler.ProfilerConfig',
+[36m(TaskRunner pid=205363)[0m                                     'all_ranks': False,
+[36m(TaskRunner pid=205363)[0m                                     'discrete': False,
+[36m(TaskRunner pid=205363)[0m                                     'ranks': []},
+[36m(TaskRunner pid=205363)[0m                        'ref': {'entropy_checkpointing': False,
+[36m(TaskRunner pid=205363)[0m                                'entropy_from_logits_with_chunking': False,
+[36m(TaskRunner pid=205363)[0m                                'fsdp_config': {'forward_prefetch': False,
+[36m(TaskRunner pid=205363)[0m                                                'param_offload': False,
+[36m(TaskRunner pid=205363)[0m                                                'reshard_after_forward': True,
+[36m(TaskRunner pid=205363)[0m                                                'wrap_policy': {'min_num_params': 0}},
+[36m(TaskRunner pid=205363)[0m                                'log_prob_max_token_len_per_gpu': 20000,
+[36m(TaskRunner pid=205363)[0m                                'log_prob_micro_batch_size': None,
+[36m(TaskRunner pid=205363)[0m                                'log_prob_micro_batch_size_per_gpu': 1,
+[36m(TaskRunner pid=205363)[0m                                'log_prob_use_dynamic_bsz': False,
+[36m(TaskRunner pid=205363)[0m                                'strategy': 'fsdp',
+[36m(TaskRunner pid=205363)[0m                                'ulysses_sequence_parallel_size': 1,
+[36m(TaskRunner pid=205363)[0m                                'use_torch_compile': True},
+[36m(TaskRunner pid=205363)[0m                        'rollout': {'agent': {'agent_loop_config_path': None,
+[36m(TaskRunner pid=205363)[0m                                              'custom_async_server': {'name': None,
+[36m(TaskRunner pid=205363)[0m                                                                      'path': None},
+[36m(TaskRunner pid=205363)[0m                                              'num_workers': 8},
+[36m(TaskRunner pid=205363)[0m                                    'calculate_log_probs': False,
+[36m(TaskRunner pid=205363)[0m                                    'disable_log_stats': True,
+[36m(TaskRunner pid=205363)[0m                                    'do_sample': True,
+[36m(TaskRunner pid=205363)[0m                                    'dtype': 'bfloat16',
+[36m(TaskRunner pid=205363)[0m                                    'enable_chunked_prefill': True,
+[36m(TaskRunner pid=205363)[0m                                    'enforce_eager': True,
+[36m(TaskRunner pid=205363)[0m                                    'engine_kwargs': {'sglang': {'attention_backend': None,
+[36m(TaskRunner pid=205363)[0m                                                                 'trust_remote_code': True},
+[36m(TaskRunner pid=205363)[0m                                                      'vllm': {'disable_mm_preprocessor_cache': False,
+[36m(TaskRunner pid=205363)[0m                                                               'swap_space': None}},
+[36m(TaskRunner pid=205363)[0m                                    'free_cache_engine': True,
+[36m(TaskRunner pid=205363)[0m                                    'gpu_memory_utilization': 0.5,
+[36m(TaskRunner pid=205363)[0m                                    'ignore_eos': False,
+[36m(TaskRunner pid=205363)[0m                                    'layered_summon': False,
+[36m(TaskRunner pid=205363)[0m                                    'load_format': 'dummy_dtensor',
+[36m(TaskRunner pid=205363)[0m                                    'log_prob_max_token_len_per_gpu': 20000,
+[36m(TaskRunner pid=205363)[0m                                    'log_prob_micro_batch_size': None,
+[36m(TaskRunner pid=205363)[0m                                    'log_prob_micro_batch_size_per_gpu': 1,
+[36m(TaskRunner pid=205363)[0m                                    'log_prob_use_dynamic_bsz': False,
+[36m(TaskRunner pid=205363)[0m                                    'max_model_len': None,
+[36m(TaskRunner pid=205363)[0m                                    'max_num_batched_tokens': 8192,
+[36m(TaskRunner pid=205363)[0m                                    'max_num_seqs': 32,
+[36m(TaskRunner pid=205363)[0m                                    'mode': 'sync',
+[36m(TaskRunner pid=205363)[0m                                    'multi_stage_wake_up': False,
+[36m(TaskRunner pid=205363)[0m                                    'multi_turn': {'completion_callback': None,
+[36m(TaskRunner pid=205363)[0m                                                   'enable': False,
+[36m(TaskRunner pid=205363)[0m                                                   'format': 'hermes',
+[36m(TaskRunner pid=205363)[0m                                                   'interaction_config_path': None,
+[36m(TaskRunner pid=205363)[0m                                                   'max_assistant_turns': None,
+[36m(TaskRunner pid=205363)[0m                                                   'max_parallel_calls': 1,
+[36m(TaskRunner pid=205363)[0m                                                   'max_tool_response_length': 256,
+[36m(TaskRunner pid=205363)[0m                                                   'max_user_turns': None,
+[36m(TaskRunner pid=205363)[0m                                                   'tokenization_sanity_check_mode': 'strict',
+[36m(TaskRunner pid=205363)[0m                                                   'tool_config_path': None,
+[36m(TaskRunner pid=205363)[0m                                                   'tool_response_truncate_side': 'middle',
+[36m(TaskRunner pid=205363)[0m                                                   'use_inference_chat_template': False},
+[36m(TaskRunner pid=205363)[0m                                    'n': 5,
+[36m(TaskRunner pid=205363)[0m                                    'name': 'sglang',
+[36m(TaskRunner pid=205363)[0m                                    'prompt_length': 3330,
+[36m(TaskRunner pid=205363)[0m                                    'response_length': 8192,
+[36m(TaskRunner pid=205363)[0m                                    'temperature': 0.7,
+[36m(TaskRunner pid=205363)[0m                                    'tensor_model_parallel_size': 1,
+[36m(TaskRunner pid=205363)[0m                                    'top_k': 50,
+[36m(TaskRunner pid=205363)[0m                                    'top_p': 0.95,
+[36m(TaskRunner pid=205363)[0m                                    'trace': {'backend': None,
+[36m(TaskRunner pid=205363)[0m                                              'token2text': False},
+[36m(TaskRunner pid=205363)[0m                                    'update_weights_bucket_megabytes': 512,
+[36m(TaskRunner pid=205363)[0m                                    'val_kwargs': {'do_sample': False,
+[36m(TaskRunner pid=205363)[0m                                                   'n': 1,
+[36m(TaskRunner pid=205363)[0m                                                   'response_length': 8192,
+[36m(TaskRunner pid=205363)[0m                                                   'temperature': 0,
+[36m(TaskRunner pid=205363)[0m                                                   'top_k': -1,
+[36m(TaskRunner pid=205363)[0m                                                   'top_p': 1.0}}},
+[36m(TaskRunner pid=205363)[0m  'algorithm': {'_target_': 'verl.trainer.config.AlgoConfig',
+[36m(TaskRunner pid=205363)[0m                'adv_estimator': 'grpo',
+[36m(TaskRunner pid=205363)[0m                'gamma': 1.0,
+[36m(TaskRunner pid=205363)[0m                'kl_ctrl': {'_target_': 'verl.trainer.config.KLControlConfig',
+[36m(TaskRunner pid=205363)[0m                            'horizon': 10000,
+[36m(TaskRunner pid=205363)[0m                            'kl_coef': 0.001,
+[36m(TaskRunner pid=205363)[0m                            'target_kl': 0.1,
+[36m(TaskRunner pid=205363)[0m                            'type': 'fixed'},
+[36m(TaskRunner pid=205363)[0m                'kl_penalty': 'kl',
+[36m(TaskRunner pid=205363)[0m                'lam': 1.0,
+[36m(TaskRunner pid=205363)[0m                'norm_adv_by_std_in_grpo': True,
+[36m(TaskRunner pid=205363)[0m                'pf_ppo': {'_target_': 'verl.trainer.config.PFPPOConfig',
+[36m(TaskRunner pid=205363)[0m                           'reweight_method': 'pow',
+[36m(TaskRunner pid=205363)[0m                           'weight_pow': 2.0},
+[36m(TaskRunner pid=205363)[0m                'use_kl_in_reward': False,
+[36m(TaskRunner pid=205363)[0m                'use_pf_ppo': False},
+[36m(TaskRunner pid=205363)[0m  'critic': {'_target_': 'verl.trainer.config.FSDPCriticConfig',
+[36m(TaskRunner pid=205363)[0m             'checkpoint': {'load_contents': ['model', 'optimizer', 'extra'],
+[36m(TaskRunner pid=205363)[0m                            'save_contents': ['model', 'optimizer', 'extra']},
+[36m(TaskRunner pid=205363)[0m             'cliprange_value': 0.5,
+[36m(TaskRunner pid=205363)[0m             'enable': False,
+[36m(TaskRunner pid=205363)[0m             'forward_max_token_len_per_gpu': 32768,
+[36m(TaskRunner pid=205363)[0m             'forward_micro_batch_size': None,
+[36m(TaskRunner pid=205363)[0m             'forward_micro_batch_size_per_gpu': None,
+[36m(TaskRunner pid=205363)[0m             'grad_clip': 1.0,
+[36m(TaskRunner pid=205363)[0m             'loss_agg_mode': 'token-mean',
+[36m(TaskRunner pid=205363)[0m             'model': {'enable_activation_offload': False,
+[36m(TaskRunner pid=205363)[0m                       'enable_gradient_checkpointing': True,
+[36m(TaskRunner pid=205363)[0m                       'external_lib': None,
+[36m(TaskRunner pid=205363)[0m                       'fsdp_config': {'forward_prefetch': False,
+[36m(TaskRunner pid=205363)[0m                                       'fsdp_size': -1,
+[36m(TaskRunner pid=205363)[0m                                       'offload_policy': False,
+[36m(TaskRunner pid=205363)[0m                                       'optimizer_offload': False,
+[36m(TaskRunner pid=205363)[0m                                       'param_offload': False,
+[36m(TaskRunner pid=205363)[0m                                       'reshard_after_forward': True,
+[36m(TaskRunner pid=205363)[0m                                       'wrap_policy': {'min_num_params': 0}},
+[36m(TaskRunner pid=205363)[0m                       'lora_alpha': 16,
+[36m(TaskRunner pid=205363)[0m                       'lora_rank': 0,
+[36m(TaskRunner pid=205363)[0m                       'override_config': {},
+[36m(TaskRunner pid=205363)[0m                       'path': '~/models/deepseek-llm-7b-chat',
+[36m(TaskRunner pid=205363)[0m                       'target_modules': 'all-linear',
+[36m(TaskRunner pid=205363)[0m                       'tokenizer_path': '/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/Merged_weight/Qwen3-8B/rank_8_epoch_2',
+[36m(TaskRunner pid=205363)[0m                       'trust_remote_code': True,
+[36m(TaskRunner pid=205363)[0m                       'use_remove_padding': False,
+[36m(TaskRunner pid=205363)[0m                       'use_shm': False},
+[36m(TaskRunner pid=205363)[0m             'optim': {'lr': 1e-05,
+[36m(TaskRunner pid=205363)[0m                       'lr_warmup_steps_ratio': 0.0,
+[36m(TaskRunner pid=205363)[0m                       'min_lr_ratio': None,
+[36m(TaskRunner pid=205363)[0m                       'total_training_steps': -1,
+[36m(TaskRunner pid=205363)[0m                       'warmup_style': 'constant',
+[36m(TaskRunner pid=205363)[0m                       'weight_decay': 0.01},
+[36m(TaskRunner pid=205363)[0m             'ppo_epochs': 1,
+[36m(TaskRunner pid=205363)[0m             'ppo_max_token_len_per_gpu': 32768,
+[36m(TaskRunner pid=205363)[0m             'ppo_micro_batch_size': None,
+[36m(TaskRunner pid=205363)[0m             'ppo_micro_batch_size_per_gpu': None,
+[36m(TaskRunner pid=205363)[0m             'ppo_mini_batch_size': 8,
+[36m(TaskRunner pid=205363)[0m             'profiler': {'_target_': 'verl.utils.profiler.ProfilerConfig',
+[36m(TaskRunner pid=205363)[0m                          'all_ranks': False,
+[36m(TaskRunner pid=205363)[0m                          'discrete': False,
+[36m(TaskRunner pid=205363)[0m                          'ranks': []},
+[36m(TaskRunner pid=205363)[0m             'rollout_n': 5,
+[36m(TaskRunner pid=205363)[0m             'shuffle': False,
+[36m(TaskRunner pid=205363)[0m             'strategy': 'fsdp',
+[36m(TaskRunner pid=205363)[0m             'ulysses_sequence_parallel_size': 1,
+[36m(TaskRunner pid=205363)[0m             'use_dynamic_bsz': False},
+[36m(TaskRunner pid=205363)[0m  'custom_reward_function': {'name': 'compute_score',
+[36m(TaskRunner pid=205363)[0m                             'path': '/nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py'},
+[36m(TaskRunner pid=205363)[0m  'data': {'custom_cls': {'name': None, 'path': None},
+[36m(TaskRunner pid=205363)[0m           'datagen': {'name': None, 'path': None},
+[36m(TaskRunner pid=205363)[0m           'dataloader_num_workers': 4,
+[36m(TaskRunner pid=205363)[0m           'filter_overlong_prompts': True,
+[36m(TaskRunner pid=205363)[0m           'filter_overlong_prompts_workers': 4,
+[36m(TaskRunner pid=205363)[0m           'image_key': 'images',
+[36m(TaskRunner pid=205363)[0m           'max_prompt_length': 3330,
+[36m(TaskRunner pid=205363)[0m           'max_response_length': 8192,
+[36m(TaskRunner pid=205363)[0m           'prompt_key': 'prompt',
+[36m(TaskRunner pid=205363)[0m           'return_full_prompt': False,
+[36m(TaskRunner pid=205363)[0m           'return_multi_modal_inputs': True,
+[36m(TaskRunner pid=205363)[0m           'return_raw_chat': False,
+[36m(TaskRunner pid=205363)[0m           'return_raw_input_ids': False,
+[36m(TaskRunner pid=205363)[0m           'reward_fn_key': 'data_source',
+[36m(TaskRunner pid=205363)[0m           'sampler': {'class_name': None, 'class_path': None},
+[36m(TaskRunner pid=205363)[0m           'shuffle': True,
+[36m(TaskRunner pid=205363)[0m           'tokenizer': None,
+[36m(TaskRunner pid=205363)[0m           'train_batch_size': 16,
+[36m(TaskRunner pid=205363)[0m           'train_files': ['/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train_sampled_10_to_5_le3330.parquet'],
+[36m(TaskRunner pid=205363)[0m           'truncation': 'error',
+[36m(TaskRunner pid=205363)[0m           'trust_remote_code': False,
+[36m(TaskRunner pid=205363)[0m           'use_shm': False,
+[36m(TaskRunner pid=205363)[0m           'val_batch_size': None,
+[36m(TaskRunner pid=205363)[0m           'val_files': ['/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/test_only_one_le3330.parquet'],
+[36m(TaskRunner pid=205363)[0m           'validation_shuffle': False,
+[36m(TaskRunner pid=205363)[0m           'video_key': 'videos'},
+[36m(TaskRunner pid=205363)[0m  'ray_init': {'num_cpus': None, 'timeline_json_file': None},
+[36m(TaskRunner pid=205363)[0m  'reward_model': {'enable': False,
+[36m(TaskRunner pid=205363)[0m                   'forward_max_token_len_per_gpu': 32768,
+[36m(TaskRunner pid=205363)[0m                   'launch_reward_fn_async': False,
+[36m(TaskRunner pid=205363)[0m                   'max_length': None,
+[36m(TaskRunner pid=205363)[0m                   'micro_batch_size': None,
+[36m(TaskRunner pid=205363)[0m                   'micro_batch_size_per_gpu': None,
+[36m(TaskRunner pid=205363)[0m                   'model': {'external_lib': None,
+[36m(TaskRunner pid=205363)[0m                             'fsdp_config': {'forward_prefetch': False,
+[36m(TaskRunner pid=205363)[0m                                             'fsdp_size': -1,
+[36m(TaskRunner pid=205363)[0m                                             'param_offload': False,
+[36m(TaskRunner pid=205363)[0m                                             'reshard_after_forward': True,
+[36m(TaskRunner pid=205363)[0m                                             'wrap_policy': {'min_num_params': 0}},
+[36m(TaskRunner pid=205363)[0m                             'input_tokenizer': '/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/Merged_weight/Qwen3-8B/rank_8_epoch_2',
+[36m(TaskRunner pid=205363)[0m                             'path': '~/models/FsfairX-LLaMA3-RM-v0.1',
+[36m(TaskRunner pid=205363)[0m                             'trust_remote_code': False,
+[36m(TaskRunner pid=205363)[0m                             'use_fused_kernels': False,
+[36m(TaskRunner pid=205363)[0m                             'use_remove_padding': False,
+[36m(TaskRunner pid=205363)[0m                             'use_shm': False},
+[36m(TaskRunner pid=205363)[0m                   'profiler': {'_target_': 'verl.utils.profiler.ProfilerConfig',
+[36m(TaskRunner pid=205363)[0m                                'all_ranks': False,
+[36m(TaskRunner pid=205363)[0m                                'discrete': False,
+[36m(TaskRunner pid=205363)[0m                                'ranks': []},
+[36m(TaskRunner pid=205363)[0m                   'reward_manager': 'prime',
+[36m(TaskRunner pid=205363)[0m                   'sandbox_fusion': {'max_concurrent': 64,
+[36m(TaskRunner pid=205363)[0m                                      'memory_limit_mb': 1024,
+[36m(TaskRunner pid=205363)[0m                                      'url': None},
+[36m(TaskRunner pid=205363)[0m                   'strategy': 'fsdp',
+[36m(TaskRunner pid=205363)[0m Setting TOKENIZERS_PARALLELISM=false for forked processes.
+[36m(TaskRunner pid=205363)[0m WARNING:2025-09-18 03:16:47,993:Setting TOKENIZERS_PARALLELISM=false for forked processes.
+[36m(TaskRunner pid=205363)[0m Filtering prompts longer than 3330 tokens (num_proc=4):   0%|          | 0/1170 [00:00<?, ? examples/s]
+[36m(TaskRunner pid=205363)[0m Filtering prompts longer than 3330 tokens (num_proc=4):  25%|██▌       | 293/1170 [00:01<00:05, 164.71 examples/s]
+[36m(TaskRunner pid=205363)[0m Filtering prompts longer than 3330 tokens (num_proc=4):  50%|█████     | 586/1170 [00:01<00:01, 353.81 examples/s]
+[36m(TaskRunner pid=205363)[0m Filtering prompts longer than 3330 tokens (num_proc=4): 100%|██████████| 1170/1170 [00:02<00:00, 826.04 examples/s]
+[36m(TaskRunner pid=205363)[0m Filtering prompts longer than 3330 tokens (num_proc=4): 100%|██████████| 1170/1170 [00:02<00:00, 542.28 examples/s]
+[36m(TaskRunner pid=205363)[0m num_proc must be <= 1. Reducing num_proc to 1 for dataset of size 1.
+[36m(TaskRunner pid=205363)[0m WARNING:2025-09-18 03:16:50,619:num_proc must be <= 1. Reducing num_proc to 1 for dataset of size 1.
+[36m(TaskRunner pid=205363)[0m Filtering prompts longer than 3330 tokens:   0%|          | 0/1 [00:00<?, ? examples/s]Filtering prompts longer than 3330 tokens: 100%|██████████| 1/1 [00:00<00:00, 39.96 examples/s]
+[36m(TaskRunner pid=205363)[0m DeprecationWarning: `ray.state.available_resources_per_node` is a private attribute and access will be removed in a future Ray version.
+[36m(TaskRunner pid=205363)[0m WARNING:2025-09-18 03:16:51,395:Waiting for register center actor U5tqyi_register_center to be ready. Elapsed time: 0 seconds out of 300 seconds.
+[36m(WorkerDict pid=216035)[0m You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+[36m(WorkerDict pid=216035)[0m Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]
+[36m(WorkerDict pid=216035)[0m Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 25.03it/s]
+[36m(WorkerDict pid=216033)[0m Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 27.02it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 31.43it/s]
+[36m(WorkerDict pid=216035)[0m Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 29.30it/s]
+[36m(TaskRunner pid=205363)[0m                   'ulysses_sequence_parallel_size': 1,
+[36m(TaskRunner pid=205363)[0m                   'use_dynamic_bsz': False},
+[36m(TaskRunner pid=205363)[0m  'trainer': {'balance_batch': True,
+[36m(TaskRunner pid=205363)[0m              'controller_nsight_options': {'cuda-graph-trace': 'graph',
+[36m(TaskRunner pid=205363)[0m                                            'cuda-memory-usage': 'true',
+[36m(TaskRunner pid=205363)[0m                                            'trace': 'cuda,nvtx,cublas,ucx'},
+[36m(TaskRunner pid=205363)[0m              'critic_warmup': 0,
+[36m(TaskRunner pid=205363)[0m              'default_hdfs_dir': None,
+[36m(TaskRunner pid=205363)[0m              'default_local_dir': '/nas/ganluo/Flow_RL/rl_out_0917_old_ckpt_002/checkpoints',
+[36m(TaskRunner pid=205363)[0m              'del_local_ckpt_after_load': False,
+[36m(TaskRunner pid=205363)[0m              'device': 'cuda',
+[36m(TaskRunner pid=205363)[0m              'esi_redundant_time': 0,
+[36m(TaskRunner pid=205363)[0m              'experiment_name': 'qwen3_8b_0917_old_ckpt',
+[36m(TaskRunner pid=205363)[0m              'log_val_generations': 0,
+[36m(TaskRunner pid=205363)[0m              'logger': ['console', 'wandb'],
+[36m(TaskRunner pid=205363)[0m              'max_actor_ckpt_to_keep': None,
+[36m(TaskRunner pid=205363)[0m              'max_critic_ckpt_to_keep': None,
+[36m(TaskRunner pid=205363)[0m              'n_gpus_per_node': 8,
+[36m(TaskRunner pid=205363)[0m              'nnodes': 1,
+[36m(TaskRunner pid=205363)[0m              'npu_profile': {'options': {'analysis': True,
+[36m(TaskRunner pid=205363)[0m                                          'level': 'level1',
+[36m(TaskRunner pid=205363)[0m                                          'record_shapes': False,
+[36m(TaskRunner pid=205363)[0m                                          'save_path': './profiler_data',
+[36m(TaskRunner pid=205363)[0m                                          'with_cpu': True,
+[36m(TaskRunner pid=205363)[0m                                          'with_memory': False,
+[36m(TaskRunner pid=205363)[0m                                          'with_module': False,
+[36m(TaskRunner pid=205363)[0m                                          'with_npu': True,
+[36m(TaskRunner pid=205363)[0m                                          'with_stack': False}},
+[36m(TaskRunner pid=205363)[0m              'profile_steps': None,
+[36m(TaskRunner pid=205363)[0m              'project_name': 'qwen3_rl_0917_old_ckpt',
+[36m(TaskRunner pid=205363)[0m              'ray_wait_register_center_timeout': 300,
+[36m(TaskRunner pid=205363)[0m              'resume_from_path': None,
+[36m(TaskRunner pid=205363)[0m              'resume_mode': 'auto',
+[36m(TaskRunner pid=205363)[0m              'rollout_data_dir': None,
+[36m(TaskRunner pid=205363)[0m              'save_freq': 100,
+[36m(TaskRunner pid=205363)[0m              'test_freq': 5,
+[36m(TaskRunner pid=205363)[0m              'total_epochs': 5,
+[36m(TaskRunner pid=205363)[0m              'total_training_steps': None,
+[36m(TaskRunner pid=205363)[0m              'val_before_train': True,
+[36m(TaskRunner pid=205363)[0m              'val_only': False,
+[36m(TaskRunner pid=205363)[0m              'validation_data_dir': '/nas/ganluo/Flow_RL/New_evaluation_and_RL/val_logs/0914_001_20250918_031630',
+[36m(TaskRunner pid=205363)[0m              'worker_nsight_options': {'capture-range': 'cudaProfilerApi',
+[36m(TaskRunner pid=205363)[0m                                        'capture-range-end': None,
+[36m(TaskRunner pid=205363)[0m                                        'cuda-graph-trace': 'graph',
+[36m(TaskRunner pid=205363)[0m                                        'cuda-memory-usage': 'true',
+[36m(TaskRunner pid=205363)[0m                                        'kill': 'none',
+[36m(TaskRunner pid=205363)[0m                                        'trace': 'cuda,nvtx,cublas,ucx'}}}
+[36m(TaskRunner pid=205363)[0m [2025-09-18 03:16:45,779] [WARNING] [real_accelerator.py:209:get_accelerator] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+[36m(TaskRunner pid=205363)[0m [2025-09-18 03:16:45,780] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cpu (auto detect)
+[36m(TaskRunner pid=205363)[0m [2025-09-18 03:16:46,677] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[36m(TaskRunner pid=205363)[0m using customized reward function 'compute_score' from '/nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py'
+[36m(TaskRunner pid=205363)[0m using customized reward function 'compute_score' from '/nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py'
+[36m(TaskRunner pid=205363)[0m Using dataset class: RLHFDataset
+[36m(TaskRunner pid=205363)[0m dataset len: 1170
+[36m(TaskRunner pid=205363)[0m filter dataset len: 1170
+[36m(TaskRunner pid=205363)[0m Using dataset class: RLHFDataset
+[36m(TaskRunner pid=205363)[0m dataset len: 1
+[36m(TaskRunner pid=205363)[0m filter dataset len: 1
+[36m(TaskRunner pid=205363)[0m [validate_config] All configuration checks passed successfully!
+[36m(TaskRunner pid=205363)[0m Size of train dataloader: 73, Size of val dataloader: 1
+[36m(TaskRunner pid=205363)[0m Total training steps: 365
+[36m(TaskRunner pid=205363)[0m colocated worker base class <class 'verl.single_controller.base.worker.Worker'>
+[36m(pid=207311)[0m [2025-09-18 03:16:56,188] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[36m(pid=207311)[0m [2025-09-18 03:16:57,176] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[36m(pid=216037)[0m [2025-09-18 03:17:06,715] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[36m(pid=216039)[0m [2025-09-18 03:17:06,813] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[36m(pid=216037)[0m [2025-09-18 03:17:07,760] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[36m(WorkerDict pid=216033)[0m Monkey patch state_dict in AutoModelForCausalLMWithValueHead. 
+[36m(WorkerDict pid=216033)[0m Skipping monkey patch for Qwen3ForCausalLM as use_fused_kernels is False or fused_kernels_backend is torch
+[36m(WorkerDict pid=207311)[0m Model config after override: Qwen3Config {
+[36m(WorkerDict pid=207311)[0m   "architectures": [
+[36m(WorkerDict pid=207311)[0m     "Qwen3ForCausalLM"
+[36m(WorkerDict pid=207311)[0m   ],
+[36m(WorkerDict pid=207311)[0m   "attention_bias": false,
+[36m(WorkerDict pid=207311)[0m   "attention_dropout": 0.0,
+[36m(WorkerDict pid=207311)[0m   "eos_token_id": 151645,
+[36m(WorkerDict pid=207311)[0m   "head_dim": 128,
+[36m(WorkerDict pid=207311)[0m   "hidden_act": "silu",
+[36m(WorkerDict pid=207311)[0m   "hidden_size": 4096,
+[36m(WorkerDict pid=207311)[0m   "initializer_range": 0.02,
+[36m(WorkerDict pid=207311)[0m   "intermediate_size": 12288,
+[36m(WorkerDict pid=207311)[0m   "max_position_embeddings": 40960,
+[36m(WorkerDict pid=207311)[0m   "max_window_layers": 36,
+[36m(WorkerDict pid=207311)[0m   "model_type": "qwen3",
+[36m(WorkerDict pid=207311)[0m   "num_attention_heads": 32,
+[36m(WorkerDict pid=207311)[0m   "num_hidden_layers": 36,
+[36m(WorkerDict pid=207311)[0m   "num_key_value_heads": 8,
+[36m(WorkerDict pid=207311)[0m   "pad_token_id": 151643,
+[36m(WorkerDict pid=207311)[0m   "rms_norm_eps": 1e-06,
+[36m(WorkerDict pid=207311)[0m   "rope_scaling": null,
+[36m(WorkerDict pid=207311)[0m   "rope_theta": 1000000,
+[36m(WorkerDict pid=207311)[0m   "sliding_window": null,
+[36m(WorkerDict pid=207311)[0m   "tie_word_embeddings": false,
+[36m(WorkerDict pid=207311)[0m   "torch_dtype": "bfloat16",
+[36m(WorkerDict pid=207311)[0m   "transformers_version": "4.51.1",
+[36m(WorkerDict pid=207311)[0m   "use_cache": true,
+[36m(WorkerDict pid=207311)[0m Flash Attention 2.0 only supports torch.float16 and torch.bfloat16 dtypes, but the current dype in Qwen3ForCausalLM is torch.float32. You should run training or inference using Automatic Mixed-Precision via the `with torch.autocast(device_type='torch_device'):` decorator, or load the model with the `torch_dtype` argument. Example: `model = AutoModel.from_pretrained("openai/whisper-tiny", attn_implementation="flash_attention_2", torch_dtype=torch.float16)`
+[36m(WorkerDict pid=207311)[0m You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.[32m [repeated 7x across cluster][0m
+[36m(WorkerDict pid=207311)[0m Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s][32m [repeated 7x across cluster][0m
+[36m(WorkerDict pid=207311)[0m Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 26.98it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 31.29it/s][32m [repeated 6x across cluster][0m
+[36m(WorkerDict pid=207311)[0m Loading checkpoint shards:  25%|██▌       | 1/4 [00:04<00:14,  4.72s/it]
+[36m(WorkerDict pid=216035)[0m Flash Attention 2.0 only supports torch.float16 and torch.bfloat16 dtypes, but the current dype in Qwen3ForCausalLM is torch.float32. You should run training or inference using Automatic Mixed-Precision via the `with torch.autocast(device_type='torch_device'):` decorator, or load the model with the `torch_dtype` argument. Example: `model = AutoModel.from_pretrained("openai/whisper-tiny", attn_implementation="flash_attention_2", torch_dtype=torch.float16)`[32m [repeated 7x across cluster][0m
+[36m(WorkerDict pid=216035)[0m Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s][32m [repeated 8x across cluster][0m
+[36m(WorkerDict pid=216037)[0m Loading checkpoint shards:  50%|█████     | 2/4 [00:09<00:09,  4.94s/it][32m [repeated 9x across cluster][0m
+[36m(WorkerDict pid=216033)[0m Loading checkpoint shards:  75%|███████▌  | 3/4 [00:15<00:05,  5.00s/it][32m [repeated 12x across cluster][0m
+[36m(WorkerDict pid=207311)[0m Loading checkpoint shards: 100%|██████████| 4/4 [00:15<00:00,  3.46s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:15<00:00,  3.92s/it]
+[36m(WorkerDict pid=216037)[0m   0%|          | 0/23 [00:00<?, ?it/s]Capturing batches (avail_mem=28.16 GB):   0%|          | 0/23 [00:00<?, ?it/s]
+[36m(WorkerDict pid=216039)[0m Loading checkpoint shards:  75%|███████▌  | 3/4 [00:15<00:04,  4.99s/it][32m [repeated 2x across cluster][0m
+[36m(WorkerDict pid=216039)[0m Loading checkpoint shards: 100%|██████████| 4/4 [00:16<00:00,  3.67s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:16<00:00,  4.16s/it][32m [repeated 7x across cluster][0m
+[36m(WorkerDict pid=216037)[0m Capturing batches (avail_mem=28.16 GB):   4%|▍         | 1/23 [00:00<00:20,  1.05it/s]Capturing batches (avail_mem=27.91 GB):   4%|▍         | 1/23 [00:00<00:20,  1.05it/s]
+[36m(WorkerDict pid=216035)[0m Capturing batches (avail_mem=27.89 GB):   9%|▊         | 2/23 [00:01<00:16,  1.27it/s]
+[36m(WorkerDict pid=216035)[0m Capturing batches (avail_mem=27.77 GB):   9%|▊         | 2/23 [00:01<00:16,  1.27it/s]
+[36m(WorkerDict pid=216036)[0m   0%|          | 0/23 [00:00<?, ?it/s]Capturing batches (avail_mem=28.16 GB):   0%|          | 0/23 [00:00<?, ?it/s][32m [repeated 7x across cluster][0m
+[36m(WorkerDict pid=207311)[0m Capturing batches (avail_mem=24.71 GB):  48%|████▊     | 11/23 [00:04<00:04,  2.53it/s]Capturing batches (avail_mem=24.65 GB):  48%|████▊     | 11/23 [00:04<00:04,  2.53it/s][32m [repeated 72x across cluster][0m
+[36m(WorkerDict pid=216033)[0m Capturing batches (avail_mem=27.07 GB):  43%|████▎     | 10/23 [00:04<00:05,  2.54it/s][32m [repeated 8x across cluster][0m
+[36m(WorkerDict pid=216035)[0m Capturing batches (avail_mem=26.72 GB):  91%|█████████▏| 21/23 [00:08<00:00,  2.83it/s]Capturing batches (avail_mem=26.71 GB):  91%|█████████▏| 21/23 [00:08<00:00,  2.83it/s]
+[36m(WorkerDict pid=216035)[0m /root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py:690: FutureWarning: FSDP.state_dict_type() and FSDP.set_state_dict_type() are being deprecated. Please use APIs, get_state_dict() and set_state_dict(), which can support different parallelisms, FSDP1, FSDP2, DDP. API doc: https://pytorch.org/docs/stable/distributed.checkpoint.html#torch.distributed.checkpoint.state_dict.get_state_dict .Tutorial: https://pytorch.org/tutorials/recipes/distributed_checkpoint_recipe.html .
+[36m(WorkerDict pid=216035)[0m   warnings.warn(
+[36m(WorkerDict pid=216039)[0m Capturing batches (avail_mem=26.84 GB):  87%|████████▋ | 20/23 [00:08<00:01,  2.58it/s]Capturing batches (avail_mem=26.84 GB):  87%|████████▋ | 20/23 [00:08<00:01,  2.58it/s][32m [repeated 79x across cluster][0m
+[36m(WorkerDict pid=216039)[0m Capturing batches (avail_mem=26.84 GB):  83%|████████▎ | 19/23 [00:08<00:01,  2.50it/s][32m [repeated 6x across cluster][0m
+[36m(TaskRunner pid=205363)[0m wandb: Currently logged in as: luogan_little_wolf (luogan_little_wolf-peking-university) to https://api.bandw.top. Use `wandb login --relogin` to force relogin
+[36m(WorkerDict pid=216039)[0m Capturing batches (avail_mem=26.82 GB): 100%|██████████| 23/23 [00:10<00:00,  2.69it/s]Capturing batches (avail_mem=26.82 GB): 100%|██████████| 23/23 [00:10<00:00,  2.29it/s][32m [repeated 23x across cluster][0m
+[36m(TaskRunner pid=205363)[0m wandb: creating run
+[36m(WorkerDict pid=216039)[0m /root/miniforge3/envs/wf_rl/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py:690: FutureWarning: FSDP.state_dict_type() and FSDP.set_state_dict_type() are being deprecated. Please use APIs, get_state_dict() and set_state_dict(), which can support different parallelisms, FSDP1, FSDP2, DDP. API doc: https://pytorch.org/docs/stable/distributed.checkpoint.html#torch.distributed.checkpoint.state_dict.get_state_dict .Tutorial: https://pytorch.org/tutorials/recipes/distributed_checkpoint_recipe.html .[32m [repeated 7x across cluster][0m
+[36m(WorkerDict pid=216039)[0m   warnings.warn([32m [repeated 7x across cluster][0m
+[36m(TaskRunner pid=205363)[0m wandb: Tracking run with wandb version 0.21.0
+[36m(TaskRunner pid=205363)[0m wandb: Run data is saved locally in /nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/wandb/run-20250918_031920-z2hgrtmq
+[36m(TaskRunner pid=205363)[0m wandb: Run `wandb offline` to turn off syncing.
+[36m(TaskRunner pid=205363)[0m wandb: Syncing run qwen3_8b_0917_old_ckpt
+[36m(TaskRunner pid=205363)[0m wandb: ⭐️ View project at https://app.bandw.top/luogan_little_wolf-peking-university/qwen3_rl_0917_old_ckpt
+[36m(TaskRunner pid=205363)[0m wandb: 🚀 View run at https://app.bandw.top/luogan_little_wolf-peking-university/qwen3_rl_0917_old_ckpt/runs/z2hgrtmq
+[36m(WorkerDict pid=207311)[0m /nas/ganluo/Flow_RL/verl/verl/workers/rollout/sglang_rollout/utils.py:49: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+[36m(WorkerDict pid=207311)[0m   tensor_data = torch.ByteTensor(np.frombuffer(serialized_data, dtype=np.uint8)).to(device)
+[36m(WorkerDict pid=207311)[0m   "use_sliding_window": false,
+[36m(WorkerDict pid=207311)[0m   "vocab_size": 151936
+[36m(WorkerDict pid=207311)[0m }
+[36m(WorkerDict pid=207311)[0m 
+[36m(WorkerDict pid=207311)[0m Qwen3ForCausalLM contains 8.19B parameters
+[36m(WorkerDict pid=207311)[0m wrap_policy: functools.partial(<function _or_policy at 0x7f603f072b00>, policies=[functools.partial(<function transformer_auto_wrap_policy at 0x7f603f0729e0>, transformer_layer_cls={<class 'transformers.models.qwen3.modeling_qwen3.Qwen3DecoderLayer'>})])
+[36m(pid=216036)[0m [2025-09-18 03:17:08,239] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)[32m [repeated 5x across cluster] (Ray deduplicates logs by default. Set RAY_DEDUP_LOGS=0 to disable log deduplication, or see https://docs.ray.io/en/master/ray-observability/user-guides/configure-logging.html#log-deduplication for more options.)[0m
+[36m(WorkerDict pid=207311)[0m NCCL version 2.21.5+cuda12.4
+[36m(pid=216036)[0m [2025-09-18 03:17:09,365] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False[32m [repeated 6x across cluster][0m
+[36m(WorkerDict pid=207311)[0m Actor use_remove_padding=False
+[36m(WorkerDict pid=207311)[0m Actor use_fused_kernels=False
+[36m(WorkerDict pid=207311)[0m Monkey patch state_dict in AutoModelForCausalLMWithValueHead. [32m [repeated 7x across cluster][0m
+[36m(WorkerDict pid=207311)[0m Skipping monkey patch for Qwen3ForCausalLM as use_fused_kernels is False or fused_kernels_backend is torch[32m [repeated 7x across cluster][0m
+[36m(WorkerDict pid=207311)[0m Model config after override: Qwen3Config {
+[36m(WorkerDict pid=207311)[0m   "architectures": [
+[36m(WorkerDict pid=207311)[0m     "Qwen3ForCausalLM"
+[36m(WorkerDict pid=207311)[0m   ],
+[36m(WorkerDict pid=207311)[0m   "attention_bias": false,
+[36m(WorkerDict pid=207311)[0m   "attention_dropout": 0.0,
+[36m(WorkerDict pid=207311)[0m   "eos_token_id": 151645,
+[36m(WorkerDict pid=207311)[0m   "head_dim": 128,
+[36m(WorkerDict pid=207311)[0m   "hidden_act": "silu",
+[36m(WorkerDict pid=207311)[0m   "hidden_size": 4096,
+[36m(WorkerDict pid=207311)[0m   "initializer_range": 0.02,
+[36m(WorkerDict pid=207311)[0m   "intermediate_size": 12288,
+[36m(WorkerDict pid=207311)[0m   "max_position_embeddings": 40960,
+[36m(WorkerDict pid=207311)[0m   "max_window_layers": 36,
+[36m(WorkerDict pid=207311)[0m   "model_type": "qwen3",
+[36m(WorkerDict pid=207311)[0m   "num_attention_heads": 32,
+[36m(WorkerDict pid=207311)[0m   "num_hidden_layers": 36,
+[36m(WorkerDict pid=207311)[0m   "num_key_value_heads": 8,
+[36m(WorkerDict pid=207311)[0m   "pad_token_id": 151643,
+[36m(WorkerDict pid=207311)[0m   "rms_norm_eps": 1e-06,
+[36m(WorkerDict pid=207311)[0m   "rope_scaling": null,
+[36m(WorkerDict pid=207311)[0m   "rope_theta": 1000000,
+[36m(WorkerDict pid=207311)[0m   "sliding_window": null,
+[36m(WorkerDict pid=207311)[0m   "tie_word_embeddings": false,
+[36m(WorkerDict pid=207311)[0m   "torch_dtype": "bfloat16",
+[36m(WorkerDict pid=207311)[0m   "transformers_version": "4.51.1",
+[36m(WorkerDict pid=207311)[0m   "use_cache": true,
+[36m(WorkerDict pid=207311)[0m   "use_sliding_window": false,
+[36m(WorkerDict pid=207311)[0m   "vocab_size": 151936
+[36m(WorkerDict pid=207311)[0m }
+[36m(WorkerDict pid=207311)[0m 
+[36m(WorkerDict pid=207311)[0m Monkey patch state_dict in AutoModelForCausalLMWithValueHead. 
+[36m(WorkerDict pid=207311)[0m Skipping monkey patch for Qwen3ForCausalLM as use_fused_kernels is False or fused_kernels_backend is torch
+[36m(WorkerDict pid=216037)[0m Monkey patch state_dict in AutoModelForCausalLMWithValueHead. 
+[36m(WorkerDict pid=216037)[0m Skipping monkey patch for Qwen3ForCausalLM as use_fused_kernels is False or fused_kernels_backend is torch
+[36m(WorkerDict pid=207311)[0m Qwen3ForCausalLM contains 8.19B parameters
+[36m(WorkerDict pid=207311)[0m wrap_policy: functools.partial(<function _or_policy at 0x7f603f072b00>, policies=[functools.partial(<function transformer_auto_wrap_policy at 0x7f603f0729e0>, transformer_layer_cls={<class 'transformers.models.qwen3.modeling_qwen3.Qwen3DecoderLayer'>})])
+[36m(WorkerDict pid=207311)[0m Total steps: 365, num_warmup_steps: 18
+[36m(WorkerDict pid=207311)[0m Actor use_remove_padding=False
+[36m(WorkerDict pid=207311)[0m Actor use_fused_kernels=False
+[36m(WorkerDict pid=216039)[0m Monkey patch state_dict in AutoModelForCausalLMWithValueHead. [32m [repeated 6x across cluster][0m
+[36m(WorkerDict pid=216039)[0m Skipping monkey patch for Qwen3ForCausalLM as use_fused_kernels is False or fused_kernels_backend is torch[32m [repeated 6x across cluster][0m
+[36m(WorkerDict pid=216037)[0m [2025-09-18 03:19:01,010] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[36m(WorkerDict pid=216037)[0m [2025-09-18 03:19:01,370] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[36m(TaskRunner pid=205363)[0m Checkpoint tracker file does not exist: /nas/ganluo/Flow_RL/rl_out_0917_old_ckpt_002/checkpoints/latest_checkpointed_iteration.txt
+[36m(TaskRunner pid=205363)[0m Training from scratch
+[36m(WorkerDict pid=216039)[0m [2025-09-18 03:19:02,526] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)[32m [repeated 7x across cluster][0m
+[36m(WorkerDict pid=216039)[0m [2025-09-18 03:19:02,873] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False[32m [repeated 7x across cluster][0m
+[36m(TaskRunner pid=205363)[0m test_gen_batch meta info: {'eos_token_id': 151645, 'pad_token_id': 151643, 'recompute_log_prob': False, 'do_sample': False, 'validate': True, 'global_steps': 0}
+[36m(WorkerDict pid=216033)[0m NCCL version 2.21.5+cuda12.4
+[36m(TaskRunner pid=205363)[0m validation generation end
+[36m(TaskRunner pid=205363)[0m Training Progress:   0%|          | 0/365 [00:00<?, ?it/s]
+[36m(TaskRunner pid=205363)[0m Training Progress:   0%|          | 1/365 [07:38<46:19:57, 458.23s/it]
+[36m(WorkerDict pid=216035)[0m /nas/ganluo/Flow_RL/verl/verl/workers/rollout/sglang_rollout/utils.py:49: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)[32m [repeated 7x across cluster][0m
+[36m(WorkerDict pid=216035)[0m   tensor_data = torch.ByteTensor(np.frombuffer(serialized_data, dtype=np.uint8)).to(device)[32m [repeated 7x across cluster][0m
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 03:43:16,774:⏰ Reward计算超时: HTTPConnectionPool(host='localhost', port=7788): Read timed out. (read timeout=900)
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 03:43:16,774:workflow执行时间过长，可能存在性能问题
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 03:43:16,802:⏰ Reward计算超时: HTTPConnectionPool(host='localhost', port=7788): Read timed out. (read timeout=900)
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 03:43:16,802:workflow执行时间过长，可能存在性能问题
+[36m(TaskRunner pid=205363)[0m ['<think>\nTo design a robust workflow for this multi-step mathematical reasoning domain, we need to ensure that the solution can handle a wide variety of problems while maintaining clarity, correctness, and efficiency. Here\'s the reasoning behind the workflow design:\n\n1. **Initial Analysis with `generate`:**  \n   The first step is to extract all numerical values, their units, and the relationships between them. This requires a detailed instruction to guide the operator in identifying key information from the problem text. The output will serve as the foundation for subsequent steps.\n\n2. **Solution Strategy Generation with `generate`:**  \n   Once the key information is extracted, we need to generate a step-by-step solution plan. This involves identifying the sequence of operations (e.g., addition, subtraction, multiplication, division) and ensuring that intermediate results are tracked explicitly. The instruction must emphasize the need for a clear, logical chain of reasoning.\n\n3. **Parallel Validation with `generate`:**  \n   To ensure robustness, we can generate multiple solution attempts in parallel. Each attempt will follow a slightly different reasoning path, leveraging the extracted information. This helps identify potential errors or alternative approaches.\n\n4. **Ensemble Decision with `ensemble`:**  \n   After generating multiple solutions, we use the `ensemble` operator to evaluate and select the best one. The instruction will focus on comparing the solutions based on correctness, completeness, and adherence to the problem requirements.\n\n5. **Final Answer Extraction with `summarize`:**  \n   The selected solution will be summarized to extract the final numerical answer. This step ensures that the output is concise and adheres to the required format.\n\n6. **Error Handling and Refinement:**  \n   If any step produces ambiguous or incomplete results, the `revise` operator can be used to refine the output. However, given the simplicity of the domain, this step is optional but valuable for edge cases.\n\nThis workflow is designed to handle any problem in the domain by dynamically adapting to the problem structure and leveraging detailed instructions for each operator. It ensures that intermediate results are tracked, units are respected, and the final answer is numerically exact.\n\n```python\n# --- DO NOT IMPORT HERE ---\nclass Workflow:\n    def __init__(self, config, problem) -> None:\n        # --- DO NOT MODIFY THIS SECTION ---\n        self.config = config\n        self.problem_text = problem\n        self.llm = create(config)\n        \n        self.generate = operator.Generate(self.llm, self.problem_text)\n        self.revise = operator.Revise(self.llm, self.problem_text)\n        self.summarize = operator.Summarize(self.llm, self.problem_text)\n        self.ensemble = operator.Ensemble(self.llm, self.problem_text)\n\n    async def run_workflow(self):\n        """\n        Implement the core problem-solving logic here.\n        Remember: \n        - Use detailed, comprehensive instructions\n        - Dynamic instruction construction is powerful\n        """\n        import asyncio\n\n        # Step 1: Extract key information\n        extraction_instruction = (\n            "Extract all numerical values, their units, and the relationships between them. "\n            "Identify what the question is asking for and any constraints or conditions mentioned. "\n            "Format the output as a structured list of key points."\n        )\n        extracted_info = await self.generate(instruction=extraction_instruction, context="")\n\n        # Step 2: Generate solution strategies\n        solution_instruction = (\n            "Based on the extracted information, create a step-by-step solution plan. "\n            "Identify the sequence of operations (e.g., addition, subtraction, multiplication, division) "\n            "and ensure that intermediate results are tracked explicitly. "\n            "Include all necessary calculations and units in the reasoning chain."\n        )\n        solution_attempts = await asyncio.gather(\n            self.generate(instruction=solution_instruction, context=extracted_info),\n            self.generate(instruction=solution_instruction, context=extracted_info)\n        )\n\n        # Step 3: Ensemble decision\n        ensemble_instruction = (\n            "Evaluate the provided solution attempts and select the best one. "\n            "Compare them based on correctness, completeness, and adherence to the problem requirements. "\n            "If there are multiple valid solutions, choose the one that is most concise and precise."\n        )\n        best_solution = await self.ensemble(instruction=ensemble_instruction, contexts_list=solution_attempts)\n\n        # Step 4: Summarize the final answer\n        summarize_instruction = (\n            "Extract the final numerical answer from the selected solution. "\n            "Ensure the output is a single numerical value (integer or decimal) without any additional text."\n        )\n        final_answer = await self.summarize(instruction=summarize_instruction, context=best_solution)\n\n        return final_answer\n```']
+[36m(TaskRunner pid=205363)[0m len reward_extra_infos_dict['reward']: 1
+[36m(TaskRunner pid=205363)[0m Dumped generations to /nas/ganluo/Flow_RL/New_evaluation_and_RL/val_logs/0914_001_20250918_031630/0.jsonl
+[36m(TaskRunner pid=205363)[0m "Initial validation metrics: {'val-core/workflow_gsm8k/reward/mean@1': 0.0}"
+[36m(TaskRunner pid=205363)[0m step:0 - val-core/workflow_gsm8k/reward/mean@1:0.0
+[36m(TaskRunner pid=205363)[0m step:1 - global_seqlen/min:26981 - global_seqlen/max:36964 - global_seqlen/minmax_diff:9983 - global_seqlen/balanced_min:32376 - global_seqlen/balanced_max:32419 - global_seqlen/mean:32402.75 - actor/entropy:0.19769692420959473 - actor/kl_loss:0.0008599453140050173 - actor/kl_coef:0.0010000000000000002 - actor/pg_loss:0.2282932221889496 - actor/pg_clipfrac:0.0 - actor/ppo_kl:0.0 - actor/pg_clipfrac_lower:0.0 - actor/grad_norm:0.6366724073886871 - perf/mfu/actor:0.1042866784859117 - perf/max_memory_allocated_gb:27.686679363250732 - perf/max_memory_reserved_gb:75.197265625 - perf/cpu_memory_used_gb:51.9787483215332 - actor/lr:0.0 - training/global_step:1 - training/epoch:0 - critic/score/mean:0.6100000143051147 - critic/score/max:1.0 - critic/score/min:0.0 - critic/rewards/mean:0.6100000143051147 - critic/rewards/max:1.0 - critic/rewards/min:0.0 - critic/advantages/mean:-6.059859151719138e-05 - critic/advantages/max:1.788834810256958 - critic/advantages/min:-1.7888504266738892 - critic/returns/mean:-6.059859151719138e-05 - critic/returns/max:1.788834810256958 - critic/returns/min:-1.7888504266738892 - response_length/mean:1020.9625244140625 - response_length/max:1303.0 - response_length/min:424.0 - response_length/clip_ratio:0.0 - prompt_length/mean:2219.3125 - prompt_length/max:2772.0 - prompt_length/min:1632.0 - prompt_length/clip_ratio:0.0 - timing_s/start_profile:3.0018389225006104e-05 - timing_s/generate_sequences:15.820646286010742 - timing_s/reshard:10.41843318939209 - timing_s/gen:26.466844014823437 - timing_s/reward:255.9937699623406 - timing_s/old_log_prob:19.762784615159035 - timing_s/ref:12.740577168762684 - timing_s/adv:0.0037335678935050964 - timing_s/update_actor:142.97002264112234 - timing_s/step:457.9641093984246 - timing_s/stop_profile:3.900378942489624e-06 - timing_per_token_ms/adv:1.4402974645304397e-05 - timing_per_token_ms/ref:0.04914928967742971 - timing_per_token_ms/update_actor:0.5515350650836824 - timing_per_token_ms/gen:0.324042802928896 - perf/total_num_tokens:259222 - perf/time_per_step:457.9641093984246 - perf/throughput:70.75390698752312
+[36m(WorkerDict pid=216038)[0m NCCL version 2.21.5+cuda12.4[32m [repeated 6x across cluster][0m
+[36m(TaskRunner pid=205363)[0m Training Progress:   1%|          | 2/365 [26:35<86:30:19, 857.91s/it]
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,278:⏰ Reward计算超时: HTTPConnectionPool(host='localhost', port=7788): Read timed out. (read timeout=900)
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,279:⏰ Reward计算超时: HTTPConnectionPool(host='localhost', port=7788): Read timed out. (read timeout=900)
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,279:workflow执行时间过长，可能存在性能问题
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,279:workflow执行时间过长，可能存在性能问题
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,330:⏰ Reward计算超时: HTTPConnectionPool(host='localhost', port=7788): Read timed out. (read timeout=900)
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,330:workflow执行时间过长，可能存在性能问题
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,344:⏰ Reward计算超时: HTTPConnectionPool(host='localhost', port=7788): Read timed out. (read timeout=900)
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,344:workflow执行时间过长，可能存在性能问题
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,345:⏰ Reward计算超时: HTTPConnectionPool(host='localhost', port=7788): Read timed out. (read timeout=900)
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,345:⏰ Reward计算超时: HTTPConnectionPool(host='localhost', port=7788): Read timed out. (read timeout=900)
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,345:workflow执行时间过长，可能存在性能问题
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,345:workflow执行时间过长，可能存在性能问题
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,351:⏰ Reward计算超时: HTTPConnectionPool(host='localhost', port=7788): Read timed out. (read timeout=900)
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:01:55,351:workflow执行时间过长，可能存在性能问题
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:03:14,710:⏰ Reward计算超时: HTTPConnectionPool(host='localhost', port=7788): Read timed out. (read timeout=900)
+[36m(TaskRunner pid=205363)[0m ERROR:2025-09-18 04:03:14,710:workflow执行时间过长，可能存在性能问题
+[36m(TaskRunner pid=205363)[0m Training Progress:   1%|          | 3/365 [46:30<101:43:31, 1011.64s/it]
