@@ -1,0 +1,61 @@
+# API池配置文件
+# 该文件定义了所有可用的API endpoints及其独立的速率和并发限制
+# 代理服务会使用Round-Robin方式在这些API之间负载均衡
+
+api_pool:
+  # API #1 - ali内网
+  - target_url: "http://39.96.211.155:8000/proxy/api/openai/v1"
+    target_api_key: "8cf060f9e1f444858609730176542253"  # ali内网
+    rate_per_second: 3.2      # 该API的独立速率限制（请求/秒）
+    max_concurrency: 500       # 该API的独立并发限制
+    # 模型参数配置（会覆盖请求中的相应参数）
+    model: "qwen-turbo"        # 强制使用的模型名称
+    temperature: 0.9           # 生成温度（0-2，越高越随机）
+    max_tokens: 4096          # 最大生成token数
+
+  # API #2 - ali-lg (已注释，账户可能有问题)
+  - target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    target_api_key: "sk-0040331ac2d442b6b813304a807d88cd"  # ali-lg
+    rate_per_second: 3.0
+    max_concurrency: 15
+    # 模型参数配置
+    model: "qwen-turbo"        # 也可以配置不同的模型
+    temperature: 0.9
+    max_tokens: 4096
+  
+  - target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    target_api_key: "sk-0040331ac2d442b6b813304a807d88cd"  # ali-lg
+    rate_per_second: 3.0
+    max_concurrency: 15
+    # 模型参数配置
+    model: "qwen-flash"        # 也可以配置不同的模型
+    temperature: 0.9
+    max_tokens: 4096
+
+  # API #3 - ali-qzh
+  - target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    target_api_key: "sk-2df74af0570a42059c10a3f24de1b9df"  # ali-qzh
+    rate_per_second: 3.0      # 该API的独立速率限制
+    max_concurrency: 15       # 该API的独立并发限制
+    model: "qwen-turbo"        # 也可以配置不同的模型
+    temperature: 0.9
+    max_tokens: 4096
+
+  - target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    target_api_key: "sk-2df74af0570a42059c10a3f24de1b9df"  # ali-qzh
+    rate_per_second: 3.0      # 该API的独立速率限制
+    max_concurrency: 15       # 该API的独立并发限制
+    model: "qwen-flash"        # 也可以配置不同的模型
+    temperature: 0.9
+    max_tokens: 4096
+
+# 注意事项：
+# 1. 每个API endpoint必须包含以下字段：
+#    - target_url: API的URL地址
+#    - target_api_key: API密钥
+#    - rate_per_second: 速率限制（支持小数，如0.5表示2秒一个请求）
+#    - max_concurrency: 最大并发请求数
+# 2. 每个API的限制是独立的，互不影响
+# 3. 总吞吐量 = 所有API的rate_per_second之和
+# 4. 代理会自动在这些API之间进行Round-Robin负载均衡
+# 5. 如果某个API失败或达到限制，会自动尝试下一个API
