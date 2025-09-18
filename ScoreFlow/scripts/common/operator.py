@@ -101,7 +101,7 @@ class Operator:
                 return node.instruct_content.model_dump()
                 
         except Exception as e:
-            logger.error(f"在 _fill_node 中调用LLM或Pydantic填充时失败: {e}", exc_info=True)
+            # logger.error(f"在 _fill_node 中调用LLM或Pydantic填充时失败: {e}", exc_info=True)
             return {}
 
 
@@ -285,7 +285,7 @@ def run_code(code: str, timeout: int = 30):
         # AST安全检查
         is_safe, error_msg = check_code_safety(code, disallowed_imports)
         if not is_safe:
-            logger.info(f"Code safety check failed: {error_msg}")
+            # logger.info(f"Code safety check failed: {error_msg}")
             return "Error", error_msg
         
         # Execute code
@@ -354,7 +354,7 @@ class Programmer(Operator):
             
             # 准备下一轮的反馈
             if attempt < max_retries - 1:
-                logger.info(f"Execution failed on attempt {attempt + 1}, retrying...")
+                # logger.info(f"Execution failed on attempt {attempt + 1}, retrying...")
                 feedback = f"""
 Previous attempt failed with error:
 Status: {status}

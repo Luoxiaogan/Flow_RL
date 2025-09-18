@@ -241,7 +241,7 @@ Function name: {entry_point}
             ast.parse(fixed_code)
             return fixed_code
         except SyntaxError as e:
-            print(f"Warning: Code has syntax errors after indentation fix: {e}")
+            # print(f"Warning: Code has syntax errors after indentation fix: {e}")
             return code
     
     def _extract_code_from_response(self, response: str) -> str:

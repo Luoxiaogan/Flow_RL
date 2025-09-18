@@ -335,7 +335,7 @@ class MbppHandler(BenchmarkHandler):
             return fixed_code
         except SyntaxError as e:
             # 如果还有语法错误，返回原始代码并记录警告
-            print(f"Warning: Code has syntax errors after indentation fix: {e}")
+            # print(f"Warning: Code has syntax errors after indentation fix: {e}")
             return code
     
     def _extract_code_from_response(self, response: str) -> str:
@@ -442,7 +442,7 @@ class MbppHandler(BenchmarkHandler):
             
             if not test_cases:
                 # 如果没有测试用例，回退到LLM判断
-                print("[MBPP] Warning: No test cases found, falling back to LLM judge")
+                # print("[MBPP] Warning: No test cases found, falling back to LLM judge")
                 return await self.llm_judge(model_output, ground_truth_data)
             
             # 执行代码并运行测试
@@ -452,10 +452,10 @@ class MbppHandler(BenchmarkHandler):
                 test_setup
             )
             
-            print(f"Code execution result: {message}")
+            # print(f"Code execution result: {message}")
             return passed
             
         except Exception as e:
-            print(f"Error in MBPP judge: {e}")
+            # print(f"Error in MBPP judge: {e}")
             # 如果执行失败，认为答案错误
             return False

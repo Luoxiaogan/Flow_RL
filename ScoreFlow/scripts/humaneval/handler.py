@@ -292,7 +292,7 @@ Function name: {entry_point}
             return fixed_code
         except SyntaxError as e:
             # 如果还有语法错误，返回原始代码并记录警告
-            print(f"Warning: Code has syntax errors after indentation fix: {e}")
+            # print(f"Warning: Code has syntax errors after indentation fix: {e}")
             return code
     
     def _extract_code_from_response(self, response: str) -> str:
@@ -409,7 +409,7 @@ Function name: {entry_point}
             
             if not test_code:
                 # 如果没有测试代码，回退到LLM判断
-                print("[Human_Eval] Warning: No test code found (neither 'test' nor 'test_list'), falling back to LLM judge")
+                # print("[Human_Eval] Warning: No test code found (neither 'test' nor 'test_list'), falling back to LLM judge")
                 return await self.llm_judge(model_output, ground_truth_data)
             
             if not entry_point:
@@ -420,7 +420,7 @@ Function name: {entry_point}
                 if match:
                     entry_point = match.group(1)
                 else:
-                    print("Warning: No entry_point found, falling back to LLM judge")
+                    # print("Warning: No entry_point found, falling back to LLM judge")
                     return await self.llm_judge(model_output, ground_truth_data)
             
             # 执行代码并运行测试

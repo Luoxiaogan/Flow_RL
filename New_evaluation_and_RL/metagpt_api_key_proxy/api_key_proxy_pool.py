@@ -491,9 +491,9 @@ def proxy_request(path):
                 headers=headers,
                 params=request.args,
                 data=modified_body,  # 使用注入参数后的请求体
-                timeout=600,
+                timeout=30, # 硬编码1分种超时
                 verify=True,
-                stream=True
+                # stream=True
             )
 
             response_time = time.time() - start_time

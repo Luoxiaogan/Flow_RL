@@ -393,7 +393,7 @@ class MbppplusHandler(BenchmarkHandler):
         4. 只有所有测试都通过才返回True
         """
         if not model_output or not ground_truth_data:
-            print("[MBPP+] Missing model output or ground truth data")
+            # print("[MBPP+] Missing model output or ground truth data")
             return False
         
         # 转换输出为字符串并提取代码
@@ -401,7 +401,7 @@ class MbppplusHandler(BenchmarkHandler):
         generated_code = self._extract_code_from_response(output_str)
         
         if not generated_code:
-            print("[MBPP+] No code found in model output")
+            # print("[MBPP+] No code found in model output")
             return False
         
         # 获取测试组件
@@ -411,16 +411,16 @@ class MbppplusHandler(BenchmarkHandler):
         
         # 步骤1：运行基础测试用例
         if test_cases:
-            print(f"[MBPP+] Running {len(test_cases)} basic test cases...")
+            # print(f"[MBPP+] Running {len(test_cases)} basic test cases...")
             passed, error_msg = self._execute_basic_tests(generated_code, test_cases)
             if not passed:
-                print(f"[MBPP+] Basic tests failed: {error_msg}")
+                # print(f"[MBPP+] Basic tests failed: {error_msg}")
                 return False
-            print("[MBPP+] Basic tests passed ✓")
+            # print("[MBPP+] Basic tests passed ✓")
         
         # 步骤2：运行扩展测试套件
         if extended_test:
-            print("[MBPP+] Running extended test suite...")
+            # print("[MBPP+] Running extended test suite...")
             
             # 从参考代码中提取函数名，并替换测试代码中的函数调用
             reference_code = ground_truth_data.get('code', '')
@@ -447,9 +447,9 @@ class MbppplusHandler(BenchmarkHandler):
             )
             
             if not passed:
-                print(f"[MBPP+] Extended tests failed: {error_msg}")
+                # print(f"[MBPP+] Extended tests failed: {error_msg}")
                 return False
-            print("[MBPP+] Extended tests passed ✓")
+            # print("[MBPP+] Extended tests passed ✓")
         
-        print("[MBPP+] All tests passed successfully! ✅")
+        # print("[MBPP+] All tests passed successfully! ✅")
         return True
