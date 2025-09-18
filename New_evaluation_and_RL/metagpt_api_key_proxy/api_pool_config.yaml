@@ -16,7 +16,7 @@ api_pool:
   # API #2 - ali-lg (已注释，账户可能有问题)
   - target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
     target_api_key: "sk-0040331ac2d442b6b813304a807d88cd"  # ali-lg
-    rate_per_second: 5.0
+    rate_per_second: 12.0
     max_concurrency: 500
     # 模型参数配置
     model: "qwen-turbo"        # 也可以配置不同的模型
@@ -25,29 +25,29 @@ api_pool:
   
   - target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
     target_api_key: "sk-0040331ac2d442b6b813304a807d88cd"  # ali-lg
-    rate_per_second: 5.0
+    rate_per_second: 12.0
     max_concurrency: 500
     # 模型参数配置
     model: "qwen-flash"        # 也可以配置不同的模型
     temperature: 0.7
     max_tokens: 8192    
 
-  # API #3 - ali-qzh
-  - target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    target_api_key: "sk-2df74af0570a42059c10a3f24de1b9df"  # ali-qzh
-    rate_per_second: 5.0      # 该API的独立速率限制
-    max_concurrency: 500       # 该API的独立并发限制
-    model: "qwen-turbo"        # 也可以配置不同的模型
-    temperature: 0.7
-    max_tokens: 8192    
+  # # API #3 - ali-qzh
+  # - target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+  #   target_api_key: "sk-2df74af0570a42059c10a3f24de1b9df"  # ali-qzh
+  #   rate_per_second: 2.0      # 该API的独立速率限制
+  #   max_concurrency: 500       # 该API的独立并发限制
+  #   model: "qwen-turbo"        # 也可以配置不同的模型
+  #   temperature: 0.7
+  #   max_tokens: 8192    
 
-  - target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    target_api_key: "sk-2df74af0570a42059c10a3f24de1b9df"  # ali-qzh
-    rate_per_second: 5.0      # 该API的独立速率限制
-    max_concurrency: 500       # 该API的独立并发限制
-    model: "qwen-flash"        # 也可以配置不同的模型
-    temperature: 0.7
-    max_tokens: 8192    
+  # - target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+  #   target_api_key: "sk-2df74af0570a42059c10a3f24de1b9df"  # ali-qzh
+  #   rate_per_second: 2.0      # 该API的独立速率限制
+  #   max_concurrency: 500       # 该API的独立并发限制
+  #   model: "qwen-flash"        # 也可以配置不同的模型
+  #   temperature: 0.7
+  #   max_tokens: 8192    
 
 # 注意事项：
 # 1. 每个API endpoint必须包含以下字段：

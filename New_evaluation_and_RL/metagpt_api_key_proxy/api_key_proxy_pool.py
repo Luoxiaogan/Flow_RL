@@ -13,6 +13,7 @@ import time
 import threading
 import signal
 import itertools
+import logging
 from flask import Flask, request, Response, jsonify
 from pathlib import Path
 from tqdm import tqdm
@@ -491,7 +492,7 @@ def proxy_request(path):
                 headers=headers,
                 params=request.args,
                 data=modified_body,  # 使用注入参数后的请求体
-                timeout=30, # 硬编码1分种超时
+                timeout=60, # 硬编码60秒超时，给复杂请求更多时间
                 verify=True,
                 # stream=True
             )
@@ -519,13 +520,13 @@ def proxy_request(path):
                 else:
                     timestamp = datetime.now().strftime('%H:%M:%S')
                     # print("=" * 80)
-                    # print(f"[{timestamp}] ❌ API #{api_index + 1} 错误响应")
+                    print(f"[{timestamp}] ❌ API #{api_index + 1} 错误响应")
                     # print("-" * 40, "发送的文本", "-" * 40)
                     # print(full_request_body)
                     # print("-" * 40, "完整响应", "-" * 40)
                     # print(full_response_body)
                     # print("=" * 80)
-                    # print(f"   状态码: {response.status_code}")
+                    print(f"状态码: {response.status_code}")
 
                 # 如果还有重试机会，继续下一轮
                 if retry < max_retries - 1:
@@ -610,6 +611,46 @@ def proxy_request(path):
                 )
                 load_balancer.rate_limiters[api_index].release_concurrency()
                 return result
+
+        except requests.exceptions.Timeout as e:
+            # 专门处理超时异常 - 超时后直接退出，不再重试
+            timestamp = datetime.now().strftime('%H:%M:%S')
+
+            # 使用logging.info确保始终输出
+            logging.info(f"⏰⏰⏰ [{timestamp}] API #{api_index+1} 请求超时（60秒）")
+            logging.info(f"   URL: {final_url}")
+            logging.info(f"   超时类型: {type(e).__name__}")
+            logging.info(f"❌ 超时后直接退出，不再重试其他API")
+
+            # 释放并发槽位
+            load_balancer.rate_limiters[api_index].release_concurrency()
+            load_balancer.update_stats(api_index, False)
+
+            # 更新全局失败统计
+            with stats_lock:
+                request_stats["failed"] += 1
+                request_stats["in_progress"] -= 1
+
+            if pbar is not None:
+                pbar.set_postfix({
+                    "成功": request_stats["success"],
+                    "失败": request_stats["failed"]
+                })
+                pbar.update()
+
+            # 立即返回超时错误，不再重试
+            error_response = {
+                "error": {
+                    "message": f"API请求超时（60秒），操作终止",
+                    "type": "RequestTimeout",
+                    "details": f"超时API: {final_url}, 重试次数: {retry+1}/{max_retries}"
+                }
+            }
+            return Response(
+                json.dumps(error_response, ensure_ascii=False),
+                status=504,  # Gateway Timeout
+                content_type='application/json'
+            )
 
         except Exception as e:
             last_error = e
