@@ -121,29 +121,29 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
         logger.error(f"Invalid test_cases: {test_cases}, expected list or tuple")
         return 0.0
     
-    try:
-        # 获取reward_server的配置
-        server_config = get_reward_server_config()
-        server_url = server_config['url']
-        client_timeout = server_config['client_http_timeout']
-        api_url = f"{server_url}/compute_score"
-        
-        logger.info(f"🚀 VERL Reward请求 - benchmark: {data_source}")
-        logger.info(f"📊 测试用例: {test_cases} (共{len(test_cases)}个)")
-        logger.info(f"🌐 API地址: {api_url}")
-        logger.info(f"⏱️ HTTP超时: {client_timeout}秒")
-        
-        # 构建标准的reward_server API请求数据
-        request_data = {
-            "data_source": data_source,
-            "solution_str": solution_str,
-            "ground_truth": ground_truth,
-            "extra_info": extra_info
-        }
-        
-        # 添加503重试逻辑
-        max_retries = 3
-        for retry in range(max_retries):
+    # 获取reward_server的配置
+    server_config = get_reward_server_config()
+    server_url = server_config['url']
+    client_timeout = server_config['client_http_timeout']
+    api_url = f"{server_url}/compute_score"
+
+    logger.info(f"🚀 VERL Reward请求 - benchmark: {data_source}")
+    logger.info(f"📊 测试用例: {test_cases} (共{len(test_cases)}个)")
+    logger.info(f"🌐 API地址: {api_url}")
+    logger.info(f"⏱️ HTTP超时: {client_timeout}秒")
+
+    # 构建标准的reward_server API请求数据
+    request_data = {
+        "data_source": data_source,
+        "solution_str": solution_str,
+        "ground_truth": ground_truth,
+        "extra_info": extra_info
+    }
+
+    # 重试逻辑（包括ConnectionError和503）
+    max_retries = 3
+    for retry in range(max_retries):
+        try:
             # 发送HTTP请求到reward_server（使用配置的超时时间）
             response = requests.post(
                 api_url,
@@ -186,27 +186,32 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
                 logger.error(f"响应内容: {response.text[:200]}...")
                 return 0.0
 
-            # 如果执行到这里说明已经处理完成，跳出循环
-            break
-            
-    except requests.exceptions.ConnectionError as e:
-        logger.error(f"🔌 无法连接到ScoreFlow reward_server: {e}")
-        logger.error(f"请确保服务已启动: {get_reward_server_url()}")
-        return 0.0
-        
-    except requests.exceptions.Timeout as e:
-        logger.error(f"⏰ Reward计算超时: {e}")
-        logger.error("workflow执行时间过长，可能存在性能问题")
-        return 0.0
-        
-    except ValueError as e:
-        logger.error(f"📊 数据格式错误: {e}")
-        return 0.0
-        
-    except Exception as e:
-        logger.error(f"💥 Reward计算异常: {e}")
-        logger.error(f"数据源: {data_source}, 响应长度: {len(solution_str) if solution_str else 0}")
-        return 0.0
+        except requests.exceptions.ConnectionError as e:
+            if retry < max_retries - 1:
+                logger.info(f"⏳ 无法连接到服务器（可能正在重启），等待10秒后重试 ({retry+1}/{max_retries})...")
+                time.sleep(10)
+                continue
+            else:
+                logger.error(f"🔌 无法连接到ScoreFlow reward_server: {e}")
+                logger.error(f"请确保服务已启动: {server_url}")
+                return 0.0
+
+        except requests.exceptions.Timeout as e:
+            logger.error(f"⏰ Reward计算超时: {e}")
+            logger.error("workflow执行时间过长，可能存在性能问题")
+            return 0.0
+
+        except ValueError as e:
+            logger.error(f"📊 数据格式错误: {e}")
+            return 0.0
+
+        except Exception as e:
+            logger.error(f"💥 Reward计算异常: {e}")
+            logger.error(f"数据源: {data_source}, 响应长度: {len(solution_str) if solution_str else 0}")
+            return 0.0
+
+    # 不应该执行到这里
+    return 0.0
 
 
 def compute_score_batch(data_sources: List[str], solution_strs: List[str], 
