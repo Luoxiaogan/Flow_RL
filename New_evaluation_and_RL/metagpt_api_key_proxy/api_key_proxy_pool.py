@@ -427,7 +427,7 @@ def proxy_request(path):
         print(f"最终URL: {final_url}")
 
     # 尝试发送请求，如果失败则尝试下一个API
-    max_retries = 3  # 固定最多重试3次
+    max_retries = 5  # 固定最多重试3次
     last_error = None
     last_status_code = None
 
@@ -480,7 +480,8 @@ def proxy_request(path):
                 print(f"   原因: 上次返回状态码 {last_status_code}")
             else:
                 timestamp = datetime.now().strftime('%H:%M:%S')
-                print(f"[{timestamp}] 重试 #{retry}: API#{api_index+1} (上次状态码: {last_status_code})body:\n{modified_body}")
+                # print(f"[{timestamp}] 重试 #{retry}: API#{api_index+1} (上次状态码: {last_status_code})")
+                pass
 
         try:
             # 发送请求到上游API
@@ -499,6 +500,9 @@ def proxy_request(path):
 
             # 检查响应状态码，决定是否重试
             if response.status_code != 200:
+                full_request_body = modified_body.decode('utf-8')   # 已注入模型参数后的 JSON
+                full_response_body = response.text                  # 服务端返回的完整 body
+                timestamp = datetime.now().strftime('%H:%M:%S')
                 last_status_code = response.status_code
 
                 # 释放当前API的并发槽位（重要！）
@@ -514,7 +518,14 @@ def proxy_request(path):
                     print(f"   响应时间: {response_time:.2f}秒")
                 else:
                     timestamp = datetime.now().strftime('%H:%M:%S')
-                    print(f"[{timestamp}] API#{api_index+1} 错误: 状态码 {response.status_code},body:\n{modified_body}")
+                    # print("=" * 80)
+                    # print(f"[{timestamp}] ❌ API #{api_index + 1} 错误响应")
+                    # print("-" * 40, "发送的文本", "-" * 40)
+                    # print(full_request_body)
+                    # print("-" * 40, "完整响应", "-" * 40)
+                    # print(full_response_body)
+                    # print("=" * 80)
+                    # print(f"   状态码: {response.status_code}")
 
                 # 如果还有重试机会，继续下一轮
                 if retry < max_retries - 1:
@@ -614,7 +625,8 @@ def proxy_request(path):
                 print(f"\n❌ API #{api_index + 1} 请求异常")
                 print(f"   错误: {type(e).__name__}: {str(e)}")
             else:
-                print(f"[{timestamp}] API#{api_index+1} 异常: {type(e).__name__}")
+                # print(f"[{timestamp}] API#{api_index+1} 异常: {type(e).__name__}")
+                pass
 
             if retry < max_retries - 1:
                 if DEBUG_MODE:
@@ -640,11 +652,12 @@ def proxy_request(path):
 
     error_response = {
         "error": {
-            "message": f"所有API请求失败: {str(last_error)}",
+            "message": f"所有5次API请求失败, operator执行失败: {str(last_error)}",
             "type": "AllAPIsFailed",
             "details": f"尝试了{max_retries}个API endpoints"
         }
     }
+    print("所有5次API请求都失败了")
 
     return Response(
         json.dumps(error_response, ensure_ascii=False),
