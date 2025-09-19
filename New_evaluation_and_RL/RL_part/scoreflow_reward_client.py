@@ -132,6 +132,19 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
     logger.info(f"🌐 API地址: {api_url}")
     logger.info(f"⏱️ HTTP超时: {client_timeout}秒")
 
+    # 预检查：验证服务器健康状态
+    if not _quick_health_check():
+        logger.info("🔍 服务器健康检查失败，等待10秒后重试...")
+        time.sleep(10)
+
+        # 再次检查，如果仍然失败则记录警告但继续执行
+        if not _quick_health_check():
+            logger.warning("⚠️ 服务器健康检查仍然失败，将尝试直接发送请求")
+        else:
+            logger.info("✅ 服务器健康检查恢复正常，继续处理请求")
+    else:
+        logger.info("✅ 服务器健康检查通过")
+
     # 构建标准的reward_server API请求数据
     request_data = {
         "data_source": data_source,
@@ -245,6 +258,31 @@ def compute_score_batch(data_sources: List[str], solution_strs: List[str],
 
 
 # 为了向后兼容，提供一些常用的工具函数
+def _quick_health_check() -> bool:
+    """
+    快速健康检查函数 - 用于compute_score前的预检查
+    使用较短超时时间(2秒)快速验证服务器是否可用
+
+    Returns:
+        bool: True if server is healthy, False otherwise
+    """
+    try:
+        server_url = get_reward_server_url()
+        health_url = f"{server_url}/health"
+
+        # 使用较短的超时时间进行快速检查
+        response = requests.get(health_url, timeout=2)
+        if response.status_code == 200:
+            result = response.json()
+            return result.get('status') == 'healthy'
+        else:
+            return False
+
+    except Exception:
+        # 快速检查失败，不记录详细错误（避免日志污染）
+        return False
+
+
 def test_connection() -> bool:
     """
     测试reward_server的连接性
@@ -302,34 +340,46 @@ if __name__ == "__main__":
     # 简单的测试代码
     print("ScoreFlow Reward Client Test")
     print("-" * 40)
-    
-    # 测试连接
-    print(f"连接测试: {'成功' if test_connection() else '失败'}")
-    
+
+    # 测试快速健康检查函数
+    print("\n1. 测试快速健康检查:")
+    health_result = _quick_health_check()
+    print(f"   快速健康检查: {'成功' if health_result else '失败'}")
+
+    # 测试详细连接
+    print("\n2. 测试详细连接:")
+    connection_result = test_connection()
+    print(f"   详细连接测试: {'成功' if connection_result else '失败'}")
+
     # 获取可用benchmarks
+    print("\n3. 测试benchmark列表:")
     benchmarks = get_available_benchmarks()
-    print(f"可用benchmarks: {benchmarks}")
-    
-    # 测试计算
+    print(f"   可用benchmarks: {benchmarks}")
+
+    # 测试计算（这会触发新的预检查逻辑）
+    print("\n4. 测试reward计算（含预检查逻辑）:")
     test_workflow = '''
 class Workflow:
     def __init__(self, config, problem):
         self.config = config
         self.problem = problem
         self.custom = operator.Custom(self.config, self.problem)
-    
+
     async def run_workflow(self):
         solution = await self.custom(instruction='Solve the problem.')
         return solution
 '''
-    
+
     test_extra_info = {
-        'test_cases': [0], 
+        'test_cases': [0],
         'data_path': 'Processed_dataset/gsm8k/test.jsonl'
     }
-    
+
     try:
         score = compute_score('gsm8k', test_workflow, 'default', test_extra_info)
-        print(f"测试计算结果: {score:.3f}")
+        print(f"   测试计算结果: {score:.3f}")
     except Exception as e:
-        print(f"测试计算失败: {e}")
+        print(f"   测试计算失败: {e}")
+
+    print("\n测试完成！")
+    print("注意：如果服务器未运行，预检查逻辑会正确检测并记录日志。")
