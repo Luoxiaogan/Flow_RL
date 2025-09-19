@@ -147,17 +147,26 @@ def prepare_restart():
     logger.info("立即重启...")
     logger.info("="*50)
 
-    # 3. 立即退出（强制中断所有执行中的任务）
-    def immediate_exit():
-        time.sleep(0.1)  # 只等0.1秒让当前响应发出
-        logger.info("正在退出...")
-        os._exit(0)  # 退出码0触发bash重启
+    # 3. 强制退出（确保进程一定被终止）
+    def force_exit():
+        time.sleep(0.1)  # 让响应发出去
+        logger.info("正在强制退出...")
 
-    threading.Thread(target=immediate_exit, daemon=True).start()
+        # 使用kill -9强制终止进程
+        import subprocess
+        try:
+            subprocess.Popen(['kill', '-9', str(os.getpid())])
+        except Exception as e:
+            logger.error(f"强制退出失败: {e}")
+            # 备用方案：使用signal
+            import signal
+            os.kill(os.getpid(), signal.SIGKILL)
+
+    threading.Thread(target=force_exit, daemon=True).start()
 
     return jsonify({
         'status': 'shutting_down',
-        'message': 'Server restarting immediately - all active requests interrupted'
+        'message': 'Server will be force killed immediately - all active requests interrupted'
     })
 
 @app.route('/compute_score', methods=['POST'])
