@@ -106,11 +106,51 @@ if [ "$DEBUG_MODE" = true ]; then
     mkdir -p "$DEBUG_LOG_DIR"
 fi
 
+# 监控重启信号的函数
+monitor_restart_signal() {
+    local python_pid=$1
+    local restart_flag="/tmp/scoreflow_restart_requested"
+
+    echo -e "${YELLOW}🔍 启动重启信号监控 (PID: $python_pid)${NC}"
+
+    while kill -0 $python_pid 2>/dev/null; do
+        if [ -f "$restart_flag" ]; then
+            echo -e "${RED}🔴 检测到重启信号，开始外部终止进程...${NC}"
+
+            # 先尝试SIGTERM (优雅退出)
+            echo -e "${YELLOW}📤 发送SIGTERM信号...${NC}"
+            kill -TERM $python_pid 2>/dev/null
+            sleep 2
+
+            # 检查是否还在运行
+            if kill -0 $python_pid 2>/dev/null; then
+                echo -e "${RED}📤 SIGTERM无效，发送SIGKILL信号...${NC}"
+                kill -KILL $python_pid 2>/dev/null
+            fi
+
+            # 清理标志文件
+            rm -f "$restart_flag"
+            echo -e "${GREEN}✅ 进程已终止，标志文件已清理${NC}"
+            break
+        fi
+        sleep 0.5  # 每0.5秒检查一次
+    done
+
+    echo -e "${BLUE}🏁 重启信号监控结束${NC}"
+}
+
 # 清理函数
 cleanup() {
     echo ""
     echo -e "${BLUE}[$(date '+%F %T')] 停止服务...${NC}"
+
+    # 清理重启标志文件
+    rm -f "/tmp/scoreflow_restart_requested"
+
+    # 终止所有相关进程
     pkill -f "scoreflow_reward_server.py" 2>/dev/null || true
+    pkill -f "monitor_restart_signal" 2>/dev/null || true
+
     exit 0
 }
 
@@ -154,9 +194,26 @@ while true; do
         CMD="$CMD --debug"
     fi
 
-    # 启动主服务（前台运行）
-    $CMD 2>&1 | tee "$LOG_FILE"
+    # 启动主服务（后台运行，支持外部监控）
+    echo -e "${GREEN}🚀 启动Python进程...${NC}"
+    $CMD 2>&1 | tee "$LOG_FILE" &
+    PYTHON_PID=$!
+
+    echo -e "${BLUE}📋 Python进程PID: $PYTHON_PID${NC}"
+
+    # 启动监控进程 (后台运行)
+    monitor_restart_signal $PYTHON_PID &
+    MONITOR_PID=$!
+
+    # 等待Python进程结束
+    wait $PYTHON_PID
     EXIT_CODE=$?
+
+    # 清理监控进程
+    kill $MONITOR_PID 2>/dev/null || true
+    wait $MONITOR_PID 2>/dev/null || true
+
+    echo -e "${BLUE}💭 Python进程已退出，退出代码: $EXIT_CODE${NC}"
 
     # 检查退出原因
     if [ $EXIT_CODE -eq 0 ]; then

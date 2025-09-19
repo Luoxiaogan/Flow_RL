@@ -148,40 +148,22 @@ def prepare_restart():
     logger.info("立即重启...")
     logger.info("="*50)
 
-    # 3. 发送响应后通过系统调用退出 (等价Ctrl+C，绝对不会卡住)
-    from flask import make_response
-    import subprocess
-    import threading
+    # 3. 写重启标志文件，让外部bash脚本处理进程终止
+    restart_flag_file = "/tmp/scoreflow_restart_requested"
+    try:
+        with open(restart_flag_file, 'w') as f:
+            f.write(f"{os.getpid()}\n{time.time()}")  # 进程ID和时间戳
+        logger.info(f"✅ 重启信号已写入: {restart_flag_file}")
+    except Exception as e:
+        logger.error(f"写入重启信号失败: {e}")
 
-    response = make_response(jsonify({
-        'status': 'shutting_down',
-        'message': 'Server will restart in 1 second via SIGKILL (forced exit)...'
-    }))
-
-    # 强制发送响应
-    response.headers['Content-Length'] = len(response.get_data())
-    response.headers['Connection'] = 'close'
-
-    def delayed_exit():
-        import time
-        time.sleep(1.0)  # 1秒延迟，给shutdown检查点时间
-        logger.info("💥 1秒到期，通过SIGKILL强制退出主进程...")
-        try:
-            # 使用SIGKILL(-9)强制退出主进程，无法被阻塞
-            subprocess.call(['kill', '-9', str(os.getpid())])
-        except Exception as e:
-            logger.info(f"系统调用失败: {e}，尝试Python方式...")
-            try:
-                os.kill(os.getpid(), signal.SIGKILL)
-            except:
-                os._exit(1)  # 最终备用方案
-
-    threading.Thread(target=delayed_exit, daemon=True).start()
-
-    logger.info("⏰ 响应已发送，1秒后通过SIGKILL强制退出主进程...")
+    logger.info("⏰ 等待外部监控脚本终止进程...")
     logger.info("="*50)
 
-    return response
+    return jsonify({
+        'status': 'shutting_down',
+        'message': 'Restart signal sent to external monitoring script'
+    })
 
 @app.route('/compute_score', methods=['POST'])
 @with_concurrency_limit('data_source')
