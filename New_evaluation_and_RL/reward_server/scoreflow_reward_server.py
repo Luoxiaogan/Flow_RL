@@ -155,7 +155,7 @@ def prepare_restart():
 
     response = make_response(jsonify({
         'status': 'shutting_down',
-        'message': 'Server restarting via SIGINT (Ctrl+C)...'
+        'message': 'Server will restart in 1 second via SIGKILL (forced exit)...'
     }))
 
     # 强制发送响应
@@ -164,13 +164,21 @@ def prepare_restart():
 
     def delayed_exit():
         import time
-        time.sleep(0.2)  # 确保响应发送完成
-        logger.info("💥 通过系统调用发送SIGINT信号 (等价Ctrl+C)...")
-        subprocess.call(['kill', '-2', str(os.getpid())])  # -2 = SIGINT = Ctrl+C
+        time.sleep(1.0)  # 1秒延迟，给shutdown检查点时间
+        logger.info("💥 1秒到期，通过SIGKILL强制退出主进程...")
+        try:
+            # 使用SIGKILL(-9)强制退出主进程，无法被阻塞
+            subprocess.call(['kill', '-9', str(os.getpid())])
+        except Exception as e:
+            logger.info(f"系统调用失败: {e}，尝试Python方式...")
+            try:
+                os.kill(os.getpid(), signal.SIGKILL)
+            except:
+                os._exit(1)  # 最终备用方案
 
     threading.Thread(target=delayed_exit, daemon=True).start()
 
-    logger.info("⏰ 响应已发送，0.2秒后通过SIGINT退出...")
+    logger.info("⏰ 响应已发送，1秒后通过SIGKILL强制退出主进程...")
     logger.info("="*50)
 
     return response

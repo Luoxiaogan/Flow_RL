@@ -109,7 +109,8 @@ def main():
     print("🚀 修复内容:")
     print("- 用 threading.Timer 替代 signal.alarm")
     print("- 在多个执行层次添加 shutdown 检查点")
-    print("- 使用 os._exit(0) 确保正确的退出代码")
+    print("- 使用 SIGKILL(-9) 1秒后强制退出主进程")
+    print("- 确保不被长时间运行的workflow阻塞")
     print("=" * 60)
 
 if __name__ == "__main__":
