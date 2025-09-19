@@ -126,56 +126,38 @@ def prepare_restart():
     logger.info("="*50)
     logger.info("收到API代理重启通知，准备优雅关闭...")
 
-    # 1. 设置关闭标志，拒绝新请求
+    # 1. 设置关闭标志，新请求将收到503响应
     shutdown_in_progress = True
+    logger.info("✅ 已设置shutdown标志，新请求将收到503响应")
 
-    # 2. 请求所有executor返回部分结果
-    from scoreflow_reward_utils import request_shutdown
-    request_shutdown()
-    logger.info("✅ 已通知所有执行器返回部分结果")
-
-    # 3. 等待executor返回部分结果（最多20秒）
+    # 2. 查看当前活跃请求数，记录正在执行的任务
     limiter = get_limiter()
     if limiter:
-        wait_start = time.time()
-        max_wait = 20  # 最多等待20秒
-        while time.time() - wait_start < max_wait:
-            elapsed = int(time.time() - wait_start)
-            status = limiter.get_status()
-            active_count = status['concurrency']['active_requests']
-            if active_count == 0:
-                logger.info("✓ 所有请求已处理完成")
-                break
-            logger.info(f"等待 {active_count} 个请求返回结果... ({elapsed}/{max_wait}秒)")
-            time.sleep(1)  # 每秒检查一次
-
-        # 获取最终状态
-        final_status = limiter.get_status()
-        active_tasks = final_status.get('active_tasks', [])
-
-        if active_tasks:
-            logger.info(f"⚠️ 仍有 {len(active_tasks)} 个任务未返回:")
+        status = limiter.get_status()
+        active_count = status['concurrency']['active_requests']
+        if active_count > 0:
+            logger.info(f"ℹ️ 当前有 {active_count} 个请求正在执行")
+            active_tasks = status.get('active_tasks', [])
             for task in active_tasks:
-                logger.info(f"  - {task['benchmark']}: 运行 {task['duration']}秒")
-            logger.info("这些任务的部分结果应该已经返回")
+                logger.info(f"  - 任务{task['id']} ({task['benchmark']}): 已运行 {task['duration']}秒")
+            logger.info("这些正在执行的任务将在1秒后被强制中断")
+        else:
+            logger.info("✓ 当前没有活跃请求")
 
-    logger.info("优雅关闭准备完成，准备重启...")
+    logger.info("立即重启...")
     logger.info("="*50)
 
-    # 4. 延迟退出（让响应先发送）
-    def delayed_exit():
-        time.sleep(1)
-        # 重置shutdown标志（为下次启动准备）
-        from scoreflow_reward_utils import reset_shutdown
-        reset_shutdown()
+    # 3. 立即退出（强制中断所有执行中的任务）
+    def immediate_exit():
+        time.sleep(0.1)  # 只等0.1秒让当前响应发出
         logger.info("正在退出...")
         os._exit(0)  # 退出码0触发bash重启
 
-    threading.Thread(target=delayed_exit, daemon=True).start()
+    threading.Thread(target=immediate_exit, daemon=True).start()
 
     return jsonify({
         'status': 'shutting_down',
-        'message': 'Graceful shutdown initiated with partial results'
+        'message': 'Server restarting immediately - all active requests interrupted'
     })
 
 @app.route('/compute_score', methods=['POST'])
@@ -235,7 +217,7 @@ def compute_score_endpoint():
         
         # 调用计算函数
         score = compute_score(data_source, solution_str, ground_truth, extra_info)
-        
+
         return jsonify({
             'success': True,
             'score': float(score),

@@ -262,6 +262,19 @@ def with_concurrency_limit(identifier_param: str = 'data_source'):
                     'message': f'请求排队超时（{limiter.queue_timeout}秒），服务器繁忙，请稍后重试'
                 }), 503  # Service Unavailable
             
+            # 检查服务器是否正在关闭（在执行前检查）
+            try:
+                from scoreflow_reward_server import shutdown_in_progress
+                if shutdown_in_progress:
+                    logger.info(f"🚫 服务器正在关闭，拒绝执行任务 {task_id} ({identifier})")
+                    limiter.release(task_id, False)
+                    return jsonify({
+                        'success': False,
+                        'error': 'Server is shutting down for restart'
+                    }), 503
+            except ImportError:
+                pass  # 如果无法导入，继续执行
+
             # 执行实际函数
             success = True
             try:
