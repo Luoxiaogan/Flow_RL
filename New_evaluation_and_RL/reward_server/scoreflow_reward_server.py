@@ -148,26 +148,32 @@ def prepare_restart():
     logger.info("立即重启...")
     logger.info("="*50)
 
-    # 3. 设置定时器 - 1秒后强制退出 (使用threading.Timer替代signal机制)
+    # 3. 发送响应后通过系统调用退出 (等价Ctrl+C，绝对不会卡住)
+    from flask import make_response
+    import subprocess
+    import threading
+
+    response = make_response(jsonify({
+        'status': 'shutting_down',
+        'message': 'Server restarting via SIGINT (Ctrl+C)...'
+    }))
+
+    # 强制发送响应
+    response.headers['Content-Length'] = len(response.get_data())
+    response.headers['Connection'] = 'close'
+
     def delayed_exit():
-        logger.info("💥 定时器触发，强制退出...")
-        try:
-            # 使用退出代码0，让bash脚本知道这是正常重启
-            os._exit(0)
-        except:
-            # 备用方案
-            os._exit(9)
+        import time
+        time.sleep(0.2)  # 确保响应发送完成
+        logger.info("💥 通过系统调用发送SIGINT信号 (等价Ctrl+C)...")
+        subprocess.call(['kill', '-2', str(os.getpid())])  # -2 = SIGINT = Ctrl+C
 
-    timer = threading.Timer(1.0, delayed_exit)
-    timer.start()
+    threading.Thread(target=delayed_exit, daemon=True).start()
 
-    logger.info("⏰ 定时器已设置，1秒后强制退出...")
+    logger.info("⏰ 响应已发送，0.2秒后通过SIGINT退出...")
     logger.info("="*50)
 
-    return jsonify({
-        'status': 'shutting_down',
-        'message': 'Timer set - server will exit in 1 second via threading.Timer'
-    })
+    return response
 
 @app.route('/compute_score', methods=['POST'])
 @with_concurrency_limit('data_source')
