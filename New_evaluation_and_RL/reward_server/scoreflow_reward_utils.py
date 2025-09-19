@@ -358,6 +358,18 @@ TEXT AFTER CODE BLOCKS: Not found in this output
         Returns:
             平均分数 (0.0-1.0)
         """
+        # 执行前检查服务器是否正在关闭
+        try:
+            # 尝试导入并检查shutdown状态
+            import sys
+            if 'scoreflow_reward_server' in sys.modules:
+                from scoreflow_reward_server import shutdown_in_progress
+                if shutdown_in_progress:
+                    logger.info("🚫 检测到服务器关闭信号，终止workflow批次执行")
+                    return 0.0
+        except (ImportError, AttributeError):
+            pass  # 如果无法检查，继续执行
+
         total_start_time = time.time()
 
         # 1. 并行执行所有test cases，每个使用独立日志文件
@@ -467,6 +479,24 @@ TEXT AFTER CODE BLOCKS: Not found in this output
                                      test_case_index: int, dataset_path: str) -> dict:
         """无日志执行 - 使用上下文局部重定向"""
         start_time = time.time()
+
+        # 单个test case执行前检查服务器是否正在关闭
+        try:
+            import sys
+            if 'scoreflow_reward_server' in sys.modules:
+                from scoreflow_reward_server import shutdown_in_progress
+                if shutdown_in_progress:
+                    logger.info(f"🚫 检测到服务器关闭信号，终止test case {test_case_index}执行")
+                    return {
+                        "test_case": test_case_index,
+                        "success": False,
+                        "score": 0.0,
+                        "duration": 0.0,
+                        "error": "Server shutdown requested",
+                        "timestamp": datetime.now().isoformat()
+                    }
+        except (ImportError, AttributeError):
+            pass  # 如果无法检查，继续执行
 
         try:
             calculator._current_workflow_dir = self.workflow_dir
@@ -995,13 +1025,24 @@ class ScoreFlowRewardCalculator:
             logger.info(error_msg)
             return f"Error: {str(e)}"
     
-    async def compute_score_for_testcase(self, workflow_code: str, benchmark_name: str, 
+    async def compute_score_for_testcase(self, workflow_code: str, benchmark_name: str,
                                         test_case_index: int, dataset_path: str) -> float:
         """
         在单个test case上计算分数
         使用MetaGPT执行并使用handler的judge方法验证
         """
         try:
+            # 在最深层执行前也检查服务器是否正在关闭
+            try:
+                import sys
+                if 'scoreflow_reward_server' in sys.modules:
+                    from scoreflow_reward_server import shutdown_in_progress
+                    if shutdown_in_progress:
+                        logger.info(f"🚫 检测到服务器关闭信号，跳过test case {test_case_index}的score计算")
+                        return 0.0
+            except (ImportError, AttributeError):
+                pass  # 如果无法检查，继续执行
+
             # 加载handler
             handler = self._load_benchmark_handler(benchmark_name, dataset_path)
             if not handler:

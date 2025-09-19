@@ -148,25 +148,25 @@ def prepare_restart():
     logger.info("立即重启...")
     logger.info("="*50)
 
-    # 3. 设置定时炸弹 - 1秒后强制退出
-    def force_exit_handler(signum, frame):
-        logger.info("💥 定时炸弹触发，强制退出...")
+    # 3. 设置定时器 - 1秒后强制退出 (使用threading.Timer替代signal机制)
+    def delayed_exit():
+        logger.info("💥 定时器触发，强制退出...")
         try:
-            # 方法1：使用os.kill
-            os.kill(os.getpid(), signal.SIGKILL)
+            # 使用退出代码0，让bash脚本知道这是正常重启
+            os._exit(0)
         except:
-            # 方法2：备用方案
+            # 备用方案
             os._exit(9)
 
-    signal.signal(signal.SIGALRM, force_exit_handler)
-    signal.alarm(1)  # 1秒后触发SIGALRM
+    timer = threading.Timer(1.0, delayed_exit)
+    timer.start()
 
-    logger.info("⏰ 定时炸弹已设置，1秒后强制退出...")
+    logger.info("⏰ 定时器已设置，1秒后强制退出...")
     logger.info("="*50)
 
     return jsonify({
         'status': 'shutting_down',
-        'message': 'Timer bomb set - server will exit in 1 second via SIGALRM'
+        'message': 'Timer set - server will exit in 1 second via threading.Timer'
     })
 
 @app.route('/compute_score', methods=['POST'])
