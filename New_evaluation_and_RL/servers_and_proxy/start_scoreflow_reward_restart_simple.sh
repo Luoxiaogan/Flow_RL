@@ -223,11 +223,19 @@ while true; do
         echo "5秒后重新启动..."
         sleep 5
         continue
-    elif [ $EXIT_CODE -eq 130 ] || [ $EXIT_CODE -eq 143 ]; then
-        # 130 = Ctrl+C (SIGINT), 143 = SIGTERM
+    elif [ $EXIT_CODE -eq 130 ]; then
+        # 130 = Ctrl+C (SIGINT) - 用户主动中断
         echo ""
         echo -e "${BLUE}========== [用户中断] ==========${NC}"
+        echo "检测到Ctrl+C，停止服务"
         break
+    elif [ $EXIT_CODE -eq 143 ]; then
+        # 143 = SIGTERM - 外部重启信号
+        echo ""
+        echo -e "${GREEN}========== [外部重启] ==========${NC}"
+        echo "检测到外部重启信号(SIGTERM)，5秒后重新启动..."
+        sleep 5
+        continue
     else
         echo ""
         echo -e "${YELLOW}========== [异常退出] ==========${NC}"
