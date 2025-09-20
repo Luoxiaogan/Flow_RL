@@ -15,6 +15,7 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor  # Changed from ProcessPoolExecutor to avoid pickle issues
 from functools import partial
+import time
 from typing import Callable, Optional
 
 import psutil
@@ -26,17 +27,17 @@ from verl.utils.reward_score import default_compute_score
 from verl.workers.reward_manager import register
 
 
-async def single_compute_score(evaluation_func, completion, reference, task, task_extra_info, executor, timeout=300.0):
+async def single_compute_score(evaluation_func, completion, reference, task, task_extra_info, executor, timeout=4800.0):
     loop = asyncio.get_running_loop()
     try:
         # Ensure process_completion is called properly
         future = loop.run_in_executor(executor, partial(evaluation_func, task, completion, reference, task_extra_info))
         return await asyncio.wait_for(future, timeout=timeout)
     except asyncio.TimeoutError:
-        print(f"[Timeout] Task timeout: {completion}")
+        print(f"timeout=4800s, [Timeout] Task timeout: {completion[:80]}")
         return None  # Default value for timed-out rows
     except Exception as e:
-        print(f"[Error] Task failed: {e}, completion: {completion[:80]}")
+        print(f"timeout=4800s, [Error] Task failed: {e}, completion: {completion[:80]}")
         return None  # Default value for failed rows
 
 
