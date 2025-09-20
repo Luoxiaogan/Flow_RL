@@ -36,7 +36,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=2 \
   ++actor_rollout_ref.ref.fsdp_config.param_offload=false \
   ++actor_rollout_ref.rollout.name=sglang \
-  ++actor_rollout_ref.rollout.n=3 \
+  ++actor_rollout_ref.rollout.n=8 \
   ++actor_rollout_ref.rollout.temperature=0.7 \
   ++actor_rollout_ref.rollout.top_k=50 \
   ++actor_rollout_ref.rollout.top_p=0.95 \
@@ -56,6 +56,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   reward_model.reward_manager=prime \
   +custom_reward_function.path=/nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py \
   ++custom_reward_function.name=compute_score \
+  ++trainer.validation_data_dir=/nas/ganluo/Flow_RL/New_evaluation_and_RL/val_logs/0914_001_$time_stamp \
   trainer.total_epochs=15 \
   trainer.save_freq=100 \
   trainer.test_freq=5 \
