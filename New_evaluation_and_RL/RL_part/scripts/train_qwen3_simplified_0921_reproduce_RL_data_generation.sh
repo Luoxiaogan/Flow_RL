@@ -42,7 +42,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.rollout.top_p=0.95 \
   ++actor_rollout_ref.rollout.prompt_length=4600 \
   ++actor_rollout_ref.rollout.response_length=4096 \
-  ++actor_rollout_ref.rollout.gpu_memory_utilization=0.65 \
+  ++actor_rollout_ref.rollout.gpu_memory_utilization=0.5 \
   ++actor_rollout_ref.rollout.dtype=bfloat16 \
   ++actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=2 \
   ++actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
