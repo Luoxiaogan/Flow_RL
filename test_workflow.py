@@ -35,7 +35,7 @@ TEST_INDEX = 1
 # LLM配置
 LLM_CONFIG = {
     "provider": "openai",
-    "model": "qwen-turbo",
+    "model": "qwen3-8b",
     "api_key": "8cf060f9e1f444858609730176542253",
     "base_url": "http://39.96.211.155:8000/proxy/api/openai/v1"
 }

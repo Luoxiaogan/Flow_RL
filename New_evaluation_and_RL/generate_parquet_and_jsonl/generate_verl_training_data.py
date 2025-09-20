@@ -48,25 +48,39 @@ class VerlTrainingDataGenerator:
     def __init__(self, output_dir: str = None, benchmark_mapping_file: str = None):
         """
         Initialize the generator
-        
+
         Args:
             output_dir: Directory to save generated parquet files
             benchmark_mapping_file: Path to benchmark mapping JSONL file
         """
         self.output_dir = Path(output_dir) if output_dir else CURRENT_DIR / "data"
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Load benchmark mapping
-        self.benchmark_mapping = self._load_benchmark_mapping(benchmark_mapping_file)
-        
+
+        # Load benchmark mapping (now a list to support multiple configs per benchmark)
+        self.benchmark_mapping_list = self._load_benchmark_mapping(benchmark_mapping_file)
+
+        # Create quick lookup dictionary for handlers (use first occurrence for each benchmark)
+        self.benchmark_handler_info = {}
+        for config in self.benchmark_mapping_list:
+            benchmark = config['benchmark']
+            if benchmark not in self.benchmark_handler_info:
+                self.benchmark_handler_info[benchmark] = config
+
+        # List unique benchmark names
+        self.available_benchmarks = list(set(config['benchmark'] for config in self.benchmark_mapping_list))
+
         logging.info(f"VerlTrainingDataGenerator initialized with output dir: {self.output_dir}")
-        logging.info(f"Available benchmarks: {list(self.benchmark_mapping.keys())}")
+        logging.info(f"Available benchmarks: {self.available_benchmarks}")
+        logging.info(f"Total configurations: {len(self.benchmark_mapping_list)}")
     
-    def _load_benchmark_mapping(self, benchmark_mapping_file: str = None) -> Dict[str, Dict]:
+    def _load_benchmark_mapping(self, benchmark_mapping_file: str = None) -> List[Dict]:
         """Load benchmark mapping from jsonl file
-        
+
         Args:
             benchmark_mapping_file: Path to benchmark mapping file (optional)
+
+        Returns:
+            List of all benchmark configurations (supports multiple configs per benchmark)
         """
         # Priority: command line arg > config file > default
         if benchmark_mapping_file:
@@ -80,7 +94,7 @@ class VerlTrainingDataGenerator:
             # Get project_root from config
             project_root = config.get('project_root', str(PROJECT_ROOT))
             project_root_path = Path(project_root)
-            
+
             # Get benchmark_mapping relative path and build full path
             benchmark_mapping_rel = config.get('paths', {}).get('benchmark_mapping', 'ScoreFlow/benchmark_mapping.jsonl')
             mapping_file_path = project_root_path / benchmark_mapping_rel
@@ -89,23 +103,23 @@ class VerlTrainingDataGenerator:
             # Fallback to default path
             mapping_file_path = PROJECT_ROOT / "ScoreFlow" / "benchmark_mapping.jsonl"
             logging.info(f"Using default benchmark mapping: {mapping_file_path}")
-    
-        
-        mapping = {}
+
+
+        # Return list to support multiple configs per benchmark
+        mapping_list = []
         with open(mapping_file_path, 'r', encoding='utf-8') as f:
             for line in f:
                 if line.strip():
                     data = json.loads(line)
-                    benchmark = data['benchmark']
-                    mapping[benchmark] = data
-        
-        return mapping
+                    mapping_list.append(data)
+
+        return mapping_list
     
     def _get_benchmark_handler(self, benchmark_name: str, dataset_path: str) -> BenchmarkHandler:
         """Get handler for a specific benchmark"""
         try:
-            # Check benchmark mapping first
-            benchmark_info = self.benchmark_mapping.get(benchmark_name)
+            # Check benchmark mapping first (use handler info which has first occurrence)
+            benchmark_info = self.benchmark_handler_info.get(benchmark_name)
             if benchmark_info:
                 # Use mapping info for handler class name and path
                 handler_class_name = benchmark_info['handler_class']
@@ -168,8 +182,8 @@ class VerlTrainingDataGenerator:
     def _load_prompt_templates(self, benchmark_name: str) -> Dict[str, Any]:
         """Load prompt templates from conditions.py and related modules"""
         try:
-            # Check benchmark mapping first
-            benchmark_info = self.benchmark_mapping.get(benchmark_name)
+            # Check benchmark mapping first (use handler info which has first occurrence)
+            benchmark_info = self.benchmark_handler_info.get(benchmark_name)
             if benchmark_info:
                 handler_dir = benchmark_info['handler_dir']
                 
@@ -223,7 +237,15 @@ class VerlTrainingDataGenerator:
             # Since we can't always load the operator module (due to metagpt dependency),
             # we'll use a predefined list that matches what's in common.operator
             # This list corresponds to the operators defined in ScoreFlow
-            available_operators = ['ScGenerate', 'ScRevise', 'ScEnsemble', 'ScSummarize', 'ScProgrammer', 'ScDecompose']
+            available_operators = [
+                'ScGenerate', 
+                'ScRevise', 
+                'ScEnsemble', 
+                'ScSummarize', 
+                'ScProgrammer', 
+                'ScDecompose',
+                'ScVerifyAndRefine',
+                ]
             
             # Load operator descriptions and init codes
             operator_descriptions = {}
@@ -236,7 +258,8 @@ class VerlTrainingDataGenerator:
                 'ScSummarize': 'summarize',
                 'ScEnsemble': 'ensemble',
                 'ScProgrammer': 'programmer',
-                'ScDecompose': 'decompose'
+                'ScDecompose': 'decompose',
+                'ScVerifyAndRefine': 'verifyandrefine',
             }
             
             for op_class in available_operators:
@@ -287,7 +310,7 @@ class VerlTrainingDataGenerator:
 
         # 2. 根据benchmark配置获取operators组
         import random
-        benchmark_info = self.benchmark_mapping.get(benchmark_name, {})
+        benchmark_info = self.benchmark_handler_info.get(benchmark_name, {})
         operators_group = benchmark_info.get('operators_group', [])  # 注意：单数形式，直接是算子列表
 
         if operators_group:
@@ -364,6 +387,7 @@ class VerlTrainingDataGenerator:
 
     
     def generate_for_benchmark(self, benchmark_name: str,
+                              operators_group: List[str] = None,
                               dataset_type: str = 'both',
                               num_train_entries: Optional[int] = None,
                               num_test_entries: Optional[int] = None,
@@ -376,6 +400,7 @@ class VerlTrainingDataGenerator:
 
         Args:
             benchmark_name: Name of the benchmark
+            operators_group: List of operators for this configuration (optional)
             dataset_type: 'train', 'test', or 'both'
             num_train_entries: Number of train entries to generate
             num_test_entries: Number of test entries to generate
@@ -387,16 +412,30 @@ class VerlTrainingDataGenerator:
         Returns:
             Dictionary with 'train' and/or 'test' DataFrames
         """
-        if benchmark_name not in self.benchmark_mapping:
-            raise ValueError(f"Benchmark {benchmark_name} not found in mapping")
-        
-        benchmark_info = self.benchmark_mapping[benchmark_name]
-        logging.info(f"Generating data for benchmark: {benchmark_name}")
-        
+        # Find matching configuration
+        benchmark_info = None
+        for config in self.benchmark_mapping_list:
+            if config['benchmark'] == benchmark_name:
+                # If operators_group is specified, must match exactly
+                if operators_group is not None:
+                    if config.get('operators_group', []) == operators_group:
+                        benchmark_info = config
+                        break
+                else:
+                    # If no operators_group specified, take the first matching benchmark
+                    benchmark_info = config
+                    break
+
+        if benchmark_info is None:
+            raise ValueError(f"Benchmark {benchmark_name} with operators {operators_group} not found in mapping")
+
+        # If operators_group wasn't specified, get it from the matched config
+        if operators_group is None:
+            operators_group = benchmark_info.get('operators_group', [])
+
+        logging.info(f"Generating data for benchmark: {benchmark_name} with operators: {operators_group}")
+
         results = {}
-        
-        # Get operators_group from benchmark_info for later use
-        operators_group = benchmark_info.get('operators_group', [])
 
         # Process train and/or test datasets
         datasets_to_process = []
@@ -440,7 +479,7 @@ class VerlTrainingDataGenerator:
             # Generate entries
             verl_data = []
 
-            for _ in range(entries_to_generate):
+            for idx in range(entries_to_generate):
                 try:
                     # 随机选择num_examples个不同的问题索引作为prompt示例
                     example_indices = random.sample(range(total_size), min(num_examples, total_size))
@@ -481,7 +520,7 @@ class VerlTrainingDataGenerator:
                     verl_data.append(record)
                     
                 except Exception as e:
-                    logging.error(f"Error generating entry {idx} for {benchmark_name}: {e}")
+                    logging.error(f"Error generating entry {idx+1}/{entries_to_generate} for {benchmark_name}: {e}")
                     continue
             
             # Create DataFrame and optionally save
@@ -552,13 +591,23 @@ class VerlTrainingDataGenerator:
         """
         all_results = {'train': [], 'test': []}
 
-        for benchmark in benchmarks:
-            if benchmark not in self.benchmark_mapping:
-                logging.warning(f"Skipping unknown benchmark: {benchmark}")
-                continue
+        # If no benchmarks specified, use all configs from mapping
+        if benchmarks is None:
+            configs_to_process = self.benchmark_mapping_list
+        else:
+            # Filter configs for specified benchmarks
+            configs_to_process = [c for c in self.benchmark_mapping_list
+                                  if c['benchmark'] in benchmarks]
+
+        for config in configs_to_process:
+            benchmark_name = config['benchmark']
+            operators_group = config.get('operators_group', [])
+
+            logging.info(f"Processing config: {benchmark_name} with operators {operators_group}")
 
             results = self.generate_for_benchmark(
-                benchmark,
+                benchmark_name,
+                operators_group=operators_group,  # Pass the specific operators_group
                 dataset_type=dataset_type,
                 num_train_entries=train_num,
                 num_test_entries=test_num,
@@ -577,7 +626,7 @@ class VerlTrainingDataGenerator:
             if all_results[dtype]:
                 combined_df = pd.concat(all_results[dtype], ignore_index=True)
                 combined_df = combined_df.sample(frac=1).reset_index(drop=True)  # Shuffle
-                
+
                 # Save both parquet and jsonl formats using unified method
                 self.save_dataset(combined_df, dtype, "mixed")
                 final_results[dtype] = combined_df
@@ -588,9 +637,20 @@ class VerlTrainingDataGenerator:
         """Print statistics for a dataset"""
         logging.info(f"\\n=== {name} Statistics ===")
         logging.info(f"Total entries: {len(df)}")
-        
-        # Count by data source
-        if 'data_source' in df.columns:
+
+        # Count by benchmark and operators_group combination
+        if 'benchmark' in df.columns and 'operators_group' in df.columns:
+            # Create a combined key for grouping
+            df['config_key'] = df.apply(
+                lambda row: f"{row['benchmark']} with operators: {row.get('operators_group', [])}",
+                axis=1
+            )
+            config_counts = df['config_key'].value_counts()
+            logging.info(f"Entries by configuration:")
+            for config, count in config_counts.items():
+                logging.info(f"  {config}: {count}")
+        elif 'data_source' in df.columns:
+            # Fallback to data_source if new fields not present
             source_counts = df['data_source'].value_counts()
             logging.info(f"Entries by benchmark:")
             for benchmark, count in source_counts.items():
@@ -671,17 +731,22 @@ def main():
         benchmark_mapping_file=args.benchmark_mapping
     )
 
-    # Get all benchmarks from the mapping file
-    benchmarks = list(generator.benchmark_mapping.keys())
+    # Get all benchmarks from the mapping file (use available_benchmarks from init)
+    benchmarks = generator.available_benchmarks
     logging.info(f"Processing benchmarks: {benchmarks}")
 
     try:
         # Generate individual benchmark files if requested
         if args.save_individual:
             logging.info("🔄 生成单个基准测试文件...")
-            for benchmark in benchmarks:
+            # Iterate through all configurations, not just benchmarks
+            for config in generator.benchmark_mapping_list:
+                benchmark = config['benchmark']
+                operators_group = config.get('operators_group', [])
+
                 individual_results = generator.generate_for_benchmark(
                     benchmark,
+                    operators_group=operators_group,
                     dataset_type=args.dataset_type,
                     num_train_entries=args.train_num,
                     num_test_entries=args.test_num,
@@ -691,8 +756,9 @@ def main():
                     save_files=True  # Save individual files
                 )
 
+                operators_str = '_'.join(operators_group) if operators_group else 'default'
                 for dtype, df in individual_results.items():
-                    generator.print_statistics(df, f"{benchmark} {dtype} dataset")
+                    generator.print_statistics(df, f"{benchmark}_{operators_str} {dtype} dataset")
 
         # Always generate mixed dataset (default behavior)
         logging.info("🔄 生成混合数据集...")

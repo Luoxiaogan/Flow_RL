@@ -21,7 +21,7 @@ os.chdir('/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE')
 # ========================================
 
 # Workflow文件路径
-WORKFLOW_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/tmp_workflow.py"
+WORKFLOW_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/New_evaluation_and_RL/workspace/drop/workflow_20250818_220019_h3ty23/workflow.py"
 
 # Benchmark名称（可以从workflow路径自动推断）
 BENCHMARK = "drop"  # gsm8k, mbpp, drop, etc.
@@ -35,7 +35,7 @@ TEST_INDEX = 5
 # LLM配置
 LLM_CONFIG = {
         "provider": "openai",
-        "model": "qwen-turbo",
+        "model": "qwen3-4b",
         "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
     }

@@ -128,12 +128,78 @@ decompose = '''**Decompose: BREAK DOWN complexity**
 - **Important special note:** Decompose is special: it's output is a structured list of subproblems, which is List[Dict[str, str]]
 '''
 
+verifyandrefine = '''**VerifyAndRefine: SELF-CORRECT and rigorously improve a solution**
+
+-   **Signature:** `await self.verify_and_refine(instruction: str, context: str) -> str`
+-   **Purpose:** Executes an automated, in-depth verification and refinement cycle to fix errors, fill logical gaps, and comprehensively enhance the quality and rigor of a solution. This is the most powerful tool for ensuring the final output is correct and robust.
+
+---
+
+### **Detailed Description**
+
+#### **Key Features & Benefits**
+
+1.  **Power & Simplicity:** This is a high-level operator that encapsulates a complex, multi-step self-correction process into a single, simple function call. It transforms a potentially flawed draft into a polished, correct solution in one line of code.
+2.  **Automated Error Correction:** It goes beyond just *identifying* issues; it actively attempts to *fix* them. This includes:
+    *   **Critical Errors:** Logical fallacies, calculation mistakes, incorrect application of formulas.
+    *   **Justification Gaps:** Leaps in logic, missing proofs, hand-wavy explanations, or steps that lack sufficient reasoning.
+3.  **Complexity Hidden:** You (the workflow-generating LLM) do **NOT** need to handle any complex internal data structures. There is no need to parse XML or JSON, check dictionary keys, or write `if/else` logic. The operator handles all verdict-checking and conditional logic internally.
+4.  **Enhanced Rigor:** Beyond just fixing overt errors, this operator strives to elevate the overall quality of the solution, making it more logically sound, well-structured, and professionally articulated.
+
+#### **How It Works Internally**
+
+When you call this operator, it executes a rigorous internal process:
+
+1.  **Verification:** An extremely meticulous 'internal verification expert' (`_internal_verifier`) examines the provided `context` (the solution draft) with the standards of an academic peer reviewer or a competition judge.
+2.  **Decision:** The operator programmatically checks the `verdict` from the verification step. If the verdict is 'correct' and no issues are found, it immediately stops and returns the original solution, saving time and avoiding unnecessary changes.
+3.  **Refinement:** If any issues are found, the verifier provides a detailed, structured report to an 'internal refinement expert' (`_internal_refiner`).
+4.  **Return:** The 'refinement expert' uses this report to generate a new, improved version of the solution. This refined version is then returned. If the refinement process fails for any reason, the operator safely returns the original solution to prevent workflow interruption.
+
+#### **Strategic Usage & Best Practices**
+
+*   **When to Use It:**
+    `VerifyAndRefine` should be used as the **final quality assurance gate** before producing the final answer. It is ideal after you have a complete solution draft from `generate` or `revise`. It acts as a powerful "self-correction" or "self-critique" step.
+
+*   **How to Use the `instruction` Parameter:**
+    This parameter sets a high-level goal for the refinement, influencing the *style* of the final corrected solution.
+    *   Example 1: `instruction="Ensure the final solution is clear enough for a high-school student to understand."` (The corrected output will prioritize simplicity and clarity).
+    *   Example 2: `instruction="Refine the proof to meet the publication standards of a mathematical journal."` (The corrected output will be more formal, dense, and rigorous).
+
+*   **Difference from `Revise`:**
+    *   `Revise` is a general-purpose "improvement" tool, often used for changes in style, tone, clarity, or format based on your instructions.
+    *   `VerifyAndRefine` is a specialized "correction" tool focused on **correctness and logical rigor**. When you are unsure if a solution is *correct*, always prefer `VerifyAndRefine`.
+
+#### **Canonical Example:**
+
+This is the golden pattern you should follow in your workflows:
+
+```python
+# class Workflow:
+#     async def run_workflow(self):
+
+# Step 1: Generate an initial draft of the solution.
+draft_solution = await self.generate(
+    instruction="Solve the problem step-by-step, showing all calculations and reasoning.",
+    context=self.problem_text
+)
+
+# Step 2: Use VerifyAndRefine as the final, powerful step to ensure correctness and quality.
+final_solution = await self.verify_and_refine(
+    instruction="Fix any and all errors. The final answer must be rigorously correct and well-explained.",
+    context=draft_solution
+)
+
+# The 'final_solution' is now the highest quality version achievable through one self-correction loop.
+return final_solution
+```'''
+
 generate_init = '''self.generate = operator.Generate(self.llm, self.problem_text)'''
 revise_init = '''self.revise = operator.Revise(self.llm, self.problem_text)'''
 summarize_init = '''self.summarize = operator.Summarize(self.llm, self.problem_text)'''
 ensemble_init = '''self.ensemble = operator.Ensemble(self.llm, self.problem_text)'''
 programmer_init = '''self.programmer = operator.Programmer(self.llm, self.problem_text)'''
 decompose_init = '''self.decompose = operator.Decompose(self.llm, self.problem_text)'''
+verifyandrefine_init = '''self.verify_and_refine = operator.VerifyAndRefine(self.llm, self.problem_text)'''
 
 
 USER_PROMPT_PART_2_RL_RIGHT = '''

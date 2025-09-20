@@ -210,9 +210,14 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
                 return 0.0
 
         except requests.exceptions.Timeout as e:
-            logger.error(f"⏰ Reward计算超时: {e}")
-            logger.error("workflow执行时间过长，可能存在性能问题")
-            return 0.0
+            if retry < max_retries - 1:
+                logger.info(f"⏰ 请求超时，等待10秒后重试 ({retry+1}/{max_retries})...")
+                time.sleep(10)
+                continue
+            else:
+                logger.error(f"⏰ Reward计算超时: {e}")
+                logger.error(f"已重试{max_retries}次，workflow执行时间可能过长")
+                return 0.0
 
         except ValueError as e:
             logger.error(f"📊 数据格式错误: {e}")
