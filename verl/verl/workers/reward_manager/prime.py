@@ -15,7 +15,6 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor  # Changed from ProcessPoolExecutor to avoid pickle issues
 from functools import partial
-import time
 from typing import Callable, Optional
 
 import psutil
@@ -34,10 +33,10 @@ async def single_compute_score(evaluation_func, completion, reference, task, tas
         future = loop.run_in_executor(executor, partial(evaluation_func, task, completion, reference, task_extra_info))
         return await asyncio.wait_for(future, timeout=timeout)
     except asyncio.TimeoutError:
-        print(f"timeout=4800s, [Timeout] Task timeout: {completion[:80]}")
+        print(f"4800s 仍然超时, [Timeout] Task timeout: {completion}")
         return None  # Default value for timed-out rows
     except Exception as e:
-        print(f"timeout=4800s, [Error] Task failed: {e}, completion: {completion[:80]}")
+        print(f"[Error] Task failed: {e}, completion: {completion[:80]}")
         return None  # Default value for failed rows
 
 
@@ -53,7 +52,7 @@ async def parallel_compute_score_async(
         try:
             # Create tasks for all rows
             tasks_async = [
-                single_compute_score(evaluation_func, c, r, t, ei, executor, timeout=300.0)
+                single_compute_score(evaluation_func, c, r, t, ei, executor, timeout=4800.0)
                 for c, r, t, ei in zip(completions, references, tasks, extra_info, strict=True)
             ]
             results = await asyncio.gather(*tasks_async, return_exceptions=False)
