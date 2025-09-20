@@ -30,7 +30,7 @@ set_up.bash
 Test_FILE/verl_support/core-ray::WorkerDict-144415-1753628193
 Test_FILE/verl_support/core-ray::WorkerDict-158030-1753628193
 Test_FILE/verl_support/core-ray::WorkerDict-158032-1753628193
-*.parquet
+# *.parquet
 .claude
 Test_FILE/verl_support/checkpoints/
 metagpt_root/
@@ -52,7 +52,7 @@ evaluation_workflow/workspace/
 evaluation_workflow/services/logs/
 New_evaluation_and_RL/workspace/
 New_evaluation_and_RL/logs/
-New_evaluation_and_RL/parquet_and_jsonl_data/
+# New_evaluation_and_RL/parquet_and_jsonl_data/
 New_evaluation_and_RL/evaluation/*.log
 New_evaluation_and_RL/reward_server/New_evaluation_and_RL/workspace
 New_evaluation_and_RL/config.yaml
@@ -92,3 +92,9 @@ llama_factory_qwen3_thinking_lora/local_save/*.zip
 llama_factory_qwen3_thinking_lora/local_save/*.jsonl
 rl_out/
 llama_factory_qwen3_thinking_lora/Merged_weight/
+
+New_evaluation_and_RL/RL_part/wandb_data_save
+Test_FILE/*.zip
+*.zip
+data_qwen-max-latest/
+data_qwen_3_max_preview/
