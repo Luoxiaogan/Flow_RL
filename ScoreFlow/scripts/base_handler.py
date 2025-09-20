@@ -113,7 +113,7 @@ class BenchmarkHandler(abc.ABC):
            并修改执行器代码来传递这个参数。
         """
         try:
-            conditions_module = importlib.import_module(f"ScoreFlow.scripts.{self.benchmark_name}.conditions")
+            conditions_module = importlib.import_module(f"ScoreFlow.scripts.common.conditions")
             python_start = getattr(conditions_module, "PYTHON_START", "")
             python_end = getattr(conditions_module, "PYTHON_END", "")
         except (ModuleNotFoundError, AttributeError) as e:
