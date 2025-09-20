@@ -39,7 +39,7 @@ CONFIG_FILE = PROJECT_ROOT / "config.yaml"
 def get_reward_server_config() -> Dict[str, Any]:
     """从配置文件获取reward_server的完整配置"""
     default_config = {
-        'url': 'http://localhost:8899',
+        'url': 'http://localhost:7788',
         'client_http_timeout': 600  # 默认10分钟
     }
     
@@ -50,7 +50,7 @@ def get_reward_server_config() -> Dict[str, Any]:
                 scoreflow_config = config.get('services', {}).get('scoreflow_reward', {})
                 
                 host = scoreflow_config.get('host', 'localhost')
-                port = scoreflow_config.get('port', 8899)
+                port = scoreflow_config.get('port', 7788)
                 
                 # 如果host是0.0.0.0，转换为localhost用于客户端连接
                 if host == '0.0.0.0':

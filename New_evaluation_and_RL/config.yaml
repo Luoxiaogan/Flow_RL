@@ -7,7 +7,7 @@
 # 本地: /Users/luogan/Code/workflow_generation/Flow_RL
 # 服务器: /nas/ganluo/Flow_RL
 # project_root: "/nas/ganluo/Flow_RL"
-project_root: "/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT"
+project_root: "/nas/ganluo/Flow_RL"
 # /Users/luogan/Code/workflow_generation/Flow_RL_RIGHT
 
 api_metagpt:
@@ -47,7 +47,7 @@ services:
     host: "0.0.0.0"
     port: 7788
     timeout: 4800           # workflow执行超时：80分钟（4800秒）
-    max_concurrent_requests: 10     # 最大并发请求数（同时处理的请求数量限制）
+    max_concurrent_requests: 24     # 最大并发请求数（同时处理的请求数量限制）
     request_queue_timeout: 4800     # 请求排队超时时间：80分钟（4800秒）
     client_http_timeout: 4800        # 客户端HTTP连接超时：80分钟（4800秒）
     debug: false            # 控制是否保存debug日志文件到debug_logs/目录
