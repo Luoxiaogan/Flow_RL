@@ -69,6 +69,18 @@ class BenchmarkHandler(abc.ABC):
         :return: 一个拼接好的字符串，包含所有问题。
         """
         pass
+    
+    @abc.abstractmethod
+    def get_prompt_text_example(self, indices: List[int]) -> str:
+        """
+        【必须被子类实现】
+        根据问题索引列表，生成用于构建 Prompt 的问题描述文本。
+        每个数据集的 "问题" 格式不同，因此需要具体实现。
+        
+        :param indices: 用于生成prompt的问题索引列表。
+        :return: 一个拼接好的字符串，包含所有问题。
+        """
+        pass
 
     @abc.abstractmethod
     def get_verification_data(self, index: int) -> Dict[str, Any]:

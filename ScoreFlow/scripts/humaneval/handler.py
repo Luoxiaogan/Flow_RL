@@ -55,6 +55,44 @@ Function name: {entry_point}
             return "\n\n".join(formatted_problems)
         except (KeyError, IndexError) as e:
             raise ValueError(f"从HumanEval数据中提取问题时出错: {e}")
+    
+    def get_prompt_text_example(self, indices: List[int]) -> str:
+        """
+        从 HumanEval 数据中提取函数签名和文档字符串，并格式化为清晰的文本用于生成工作流。
+        
+        格式:
+        ---
+        **FUNCTION SIGNATURE AND SPECIFICATION:**
+        [prompt with docstring]
+        
+        **ENTRY POINT:**
+        Function name: [entry_point]
+        ---
+        
+        (如果提供多个索引，则重复此结构)
+        """
+        try:
+            problems = [self._get_problem_by_index(i) for i in indices]
+            formatted_problems = []
+            
+            for problem in problems:
+                # 提取prompt（包含函数签名和docstring）和entry point
+                prompt = problem.get('prompt', problem.get('question', ''))
+                entry_point = problem.get('entry_point', '')
+                
+                # 组合问题
+                formatted_problem = f"""---
+**FUNCTION SIGNATURE AND SPECIFICATION:**
+{prompt}
+
+**ENTRY POINT:**
+Function name: {entry_point}
+---"""
+                formatted_problems.append(formatted_problem)
+            
+            return "\n\n".join(formatted_problems)
+        except (KeyError, IndexError) as e:
+            raise ValueError(f"从HumanEval数据中提取问题时出错: {e}")
 
     def get_verification_data(self, index: int) -> Dict[str, Any]:
         """

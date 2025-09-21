@@ -25,7 +25,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.actor.grad_clip=1.0 \
   ++actor_rollout_ref.actor.clip_ratio=0.2 \
   ++actor_rollout_ref.actor.use_kl_loss=true \
-  ++actor_rollout_ref.actor.kl_loss_coef=0.01 \
+  ++actor_rollout_ref.actor.kl_loss_coef=0.015 \
   ++actor_rollout_ref.actor.kl_loss_type=low_var_kl \
   ++actor_rollout_ref.actor.optim.lr=2e-6 \
   ++actor_rollout_ref.actor.optim.lr_warmup_steps=-1 \
@@ -37,7 +37,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=2 \
   ++actor_rollout_ref.ref.fsdp_config.param_offload=false \
   ++actor_rollout_ref.rollout.name=sglang \
-  ++actor_rollout_ref.rollout.n=3 \
+  ++actor_rollout_ref.rollout.n=8 \
   ++actor_rollout_ref.rollout.temperature=0.7 \
   ++actor_rollout_ref.rollout.top_k=50 \
   ++actor_rollout_ref.rollout.top_p=0.95 \
@@ -57,7 +57,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   reward_model.reward_manager=prime \
   +custom_reward_function.path=/nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py \
   ++custom_reward_function.name=compute_score \
-  ++trainer.validation_data_dir=/nas/ganluo/Flow_RL/New_evaluation_and_RL/val_logs/higher_CLIP_KL_0921_001_$time_stamp \
+  ++trainer.validation_data_dir=/nas/ganluo/Flow_RL/New_evaluation_and_RL/val_logs/higher_CLIP_KL_0921_002_$time_stamp \
   trainer.total_epochs=10 \
   trainer.save_freq=100 \
   trainer.test_freq=5 \

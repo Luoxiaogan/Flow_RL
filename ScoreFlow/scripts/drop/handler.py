@@ -47,6 +47,45 @@ class DropHandler(BenchmarkHandler):
             return "\n\n".join(formatted_problems)
         except (KeyError, IndexError) as e:
             raise ValueError(f"从DROP数据中提取问题时出错: {e}")
+        
+    def get_prompt_text_example(self, indices: List[int]) -> str:
+        """
+        从 DROP 数据中提取问题和相关段落，并格式化为清晰的文本用于生成工作流。
+        
+        格式:
+        ---
+        **PASSAGE:**
+        [passage text]
+
+        **QUESTION:**
+        [question text]
+        ---
+        
+        (如果提供多个索引，则重复此结构)
+        """
+        try:
+            problems = [self._get_problem_by_index(i) for i in indices]
+            formatted_problems = []
+            
+            for problem in problems:
+                # 提取问题和段落
+                question = problem['question']
+                passage = problem['passage'][:350]
+                
+                # 组合问题和段落
+                formatted_problem = f"""---
+**PASSAGE:**
+{passage} ......
+
+
+**QUESTION:**
+{question}
+---"""
+                formatted_problems.append(formatted_problem)
+            
+            return "\n\n".join(formatted_problems)
+        except (KeyError, IndexError) as e:
+            raise ValueError(f"从DROP数据中提取问题时出错: {e}")
 
     def get_verification_data(self, index: int) -> Dict[str, Any]:
         """

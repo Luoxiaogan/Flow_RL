@@ -306,7 +306,7 @@ class VerlTrainingDataGenerator:
         templates = self._load_prompt_templates(benchmark_name)
 
         # 1. 使用 handler 获取问题文本（传入多个索引）
-        problem_text = handler.get_prompt_text(data_indices)
+        problem_text = handler.get_prompt_text_example(data_indices)
 
         # 2. 根据benchmark配置获取operators组
         import random

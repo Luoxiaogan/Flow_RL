@@ -6,10 +6,10 @@ export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:128,expandable_segments:True"
 time_stamp=$(date +%Y%m%d_%H%M%S)
 
 python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
-  data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0921_RL_003_4_operator_4_domain_more_data/train.parquet"]' \
-  data.val_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0921_RL_003_4_operator_4_domain_more_data/test.parquet"]' \
+  data.train_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0922_RL_002_5_and4_operator_5_domain_more_data/train.parquet"]' \
+  data.val_files='["/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0922_RL_002_5_and4_operator_5_domain_more_data/test.parquet"]' \
   data.train_batch_size=16 \
-  data.max_prompt_length=4600 \
+  data.max_prompt_length=4620 \
   data.max_response_length=4096 \
   data.filter_overlong_prompts=true \
   data.filter_overlong_prompts_workers=4 \
@@ -25,7 +25,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.actor.grad_clip=1.0 \
   ++actor_rollout_ref.actor.clip_ratio=0.2 \
   ++actor_rollout_ref.actor.use_kl_loss=true \
-  ++actor_rollout_ref.actor.kl_loss_coef=0.01 \
+  ++actor_rollout_ref.actor.kl_loss_coef=0.015 \
   ++actor_rollout_ref.actor.kl_loss_type=low_var_kl \
   ++actor_rollout_ref.actor.optim.lr=2e-6 \
   ++actor_rollout_ref.actor.optim.lr_warmup_steps=-1 \
@@ -37,11 +37,11 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   ++actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=2 \
   ++actor_rollout_ref.ref.fsdp_config.param_offload=false \
   ++actor_rollout_ref.rollout.name=sglang \
-  ++actor_rollout_ref.rollout.n=3 \
+  ++actor_rollout_ref.rollout.n=4 \
   ++actor_rollout_ref.rollout.temperature=0.7 \
   ++actor_rollout_ref.rollout.top_k=50 \
   ++actor_rollout_ref.rollout.top_p=0.95 \
-  ++actor_rollout_ref.rollout.prompt_length=4600 \
+  ++actor_rollout_ref.rollout.prompt_length=4620 \
   ++actor_rollout_ref.rollout.response_length=4096 \
   ++actor_rollout_ref.rollout.gpu_memory_utilization=0.5 \
   ++actor_rollout_ref.rollout.dtype=bfloat16 \
@@ -57,7 +57,7 @@ python /nas/ganluo/Flow_RL/verl/verl/trainer/main_ppo.py \
   reward_model.reward_manager=prime \
   +custom_reward_function.path=/nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py \
   ++custom_reward_function.name=compute_score \
-  ++trainer.validation_data_dir=/nas/ganluo/Flow_RL/New_evaluation_and_RL/val_logs/higher_CLIP_KL_0921_001_$time_stamp \
+  ++trainer.validation_data_dir=/nas/ganluo/Flow_RL/New_evaluation_and_RL/val_logs/higher_CLIP_KL_0921_002_$time_stamp \
   trainer.total_epochs=10 \
   trainer.save_freq=100 \
   trainer.test_freq=5 \
