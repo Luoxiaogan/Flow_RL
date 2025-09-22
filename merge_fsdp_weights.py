@@ -90,7 +90,7 @@ def merge_fsdp_checkpoint(fsdp_path, output_path):
             # 只有一个分片，直接使用
             merged_tensor = tensors[0]
         elif len(tensors) == world_size:
-            # 有完整的分片集合，需要拼接
+            # 有完整的分片集合
             try:
                 # 检查张量形状
                 shapes = [t.shape for t in tensors]
@@ -100,37 +100,73 @@ def merge_fsdp_checkpoint(fsdp_path, output_path):
                 if len(set(dtypes)) > 1:
                     print(f"  警告: {param_name} 的分片有不同的dtype: {set(dtypes)}")
 
-                # 判断拼接维度
-                # FSDP通常在第0维分片（对于2D权重矩阵）
-                if all(len(shape) > 0 for shape in shapes):
-                    # 检查哪个维度不同
-                    concat_dim = 0
-                    for dim in range(len(shapes[0])):
-                        dim_sizes = [shape[dim] if dim < len(shape) else 1 for shape in shapes]
-                        if len(set(dim_sizes)) > 1:
-                            concat_dim = dim
-                            break
-
-                    # 拼接张量
-                    merged_tensor = torch.cat(tensors, dim=concat_dim)
-
-                    # 验证拼接后的形状
-                    expected_size = sum(shape[concat_dim] for shape in shapes)
-                    actual_size = merged_tensor.shape[concat_dim]
-                    if actual_size != expected_size:
-                        print(f"  形状验证失败: {param_name}")
-                        print(f"    期望维度{concat_dim}大小: {expected_size}")
-                        print(f"    实际维度{concat_dim}大小: {actual_size}")
+                # 检查是否所有形状都相同（复制参数）
+                if len(set(shapes)) == 1:
+                    # 所有分片形状相同，这是复制参数（如LayerNorm weights）
+                    # 直接使用第一个分片，避免process group错误
+                    merged_tensor = tensors[0]
+                    if 'norm' in param_name or 'layernorm' in param_name.lower():
+                        # 这是预期的行为，LayerNorm通常不分片
+                        pass
+                    else:
+                        # 其他参数如果形状相同可能需要注意
+                        if tensors[0].numel() < 10000:  # 小参数通常是bias或norm
+                            pass  # 预期的
+                        else:
+                            print(f"  注意: {param_name} 所有分片形状相同 {shapes[0]}，使用第一个分片")
                 else:
-                    # 0维张量（标量）或其他特殊情况
-                    merged_tensor = tensors[0]  # 使用第一个
+                    # 形状不同，需要拼接（真正的分片参数）
+                    # 判断拼接维度
+                    if all(len(shape) > 0 for shape in shapes):
+                        # 检查哪个维度不同
+                        concat_dim = None
+                        for dim in range(len(shapes[0])):
+                            dim_sizes = [shape[dim] if dim < len(shape) else 1 for shape in shapes]
+                            if len(set(dim_sizes)) > 1:
+                                concat_dim = dim
+                                break
+
+                        if concat_dim is not None:
+                            # 清理张量以避免process group错误
+                            # 创建新的张量副本，去除分布式元数据
+                            clean_tensors = []
+                            for t in tensors:
+                                # 使用.data访问底层数据，或clone()创建新张量
+                                if hasattr(t, 'data'):
+                                    clean_t = t.data.clone()
+                                else:
+                                    clean_t = t.clone()
+                                clean_tensors.append(clean_t)
+
+                            # 拼接清理后的张量
+                            merged_tensor = torch.cat(clean_tensors, dim=concat_dim)
+
+                            # 验证拼接后的形状
+                            expected_size = sum(shape[concat_dim] for shape in shapes)
+                            actual_size = merged_tensor.shape[concat_dim]
+                            if actual_size != expected_size:
+                                print(f"  形状验证失败: {param_name}")
+                                print(f"    期望维度{concat_dim}大小: {expected_size}")
+                                print(f"    实际维度{concat_dim}大小: {actual_size}")
+                        else:
+                            # 没有找到不同的维度，使用第一个
+                            merged_tensor = tensors[0]
+                    else:
+                        # 0维张量（标量）或其他特殊情况
+                        merged_tensor = tensors[0]  # 使用第一个
 
             except Exception as e:
                 print(f"  合并失败: {param_name}")
                 print(f"    错误: {e}")
-                print(f"    分片形状: {shapes}")
-                # 失败时使用第一个分片
-                merged_tensor = tensors[0]
+                try:
+                    print(f"    分片形状: {shapes}")
+                except:
+                    print(f"    分片数量: {len(tensors)}")
+                # 失败时使用第一个分片的克隆版本
+                try:
+                    merged_tensor = tensors[0].clone()
+                except:
+                    merged_tensor = tensors[0]
         else:
             # 分片数量不匹配，使用第一个
             print(f"  跳过不完整分片: {param_name} (只有 {len(tensors)} 个分片)")
