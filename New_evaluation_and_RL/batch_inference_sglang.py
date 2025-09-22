@@ -13,12 +13,16 @@ from typing import List, Dict, Any, Optional
 from tqdm.asyncio import tqdm
 import sys
 
+# 
+
+# python -m sglang.launch_server       --model-path /nas/ganluo/Flow_RL/rl_out/checkpoints_0921_20250921_031524/global_step_100/actor_merged       --host 0.0.0.0       --port 30000       --base-gpu-id 0       --mem-fraction-static 0.85
+
 # Hardcoded parameters
 HOST = "localhost"
-PORT = 5010
+PORT = 30000
 BATCH_SIZE = 20
-INPUT_JSONL = "/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/New_evaluation_and_RL/parquet_and_jsonl_data/test_IMO_0922_QZH.jsonl"
-OUTPUT_JSONL = "/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/New_evaluation_and_RL/test_IMO_0922_QZH_with_responses.jsonl"
+INPUT_JSONL = "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test_IMO_0922_QZH.jsonl"
+OUTPUT_JSONL = "/nas/ganluo/Flow_RL/New_evaluation_and_RL/test_IMO_0922_QZH_with_responses.jsonl"
 
 # Request configuration
 API_ENDPOINT = f"http://{HOST}:{PORT}/chat/completions"

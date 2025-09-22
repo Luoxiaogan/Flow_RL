@@ -2,6 +2,7 @@
 """
 合并FSDP checkpoint为HuggingFace格式
 """
+# python /nas/ganluo/Flow_RL/merge_fsdp_weights.py --fsdp-checkpoint-path /nas/ganluo/Flow_RL/rl_out/checkpoints_0921_20250921_031524/global_step_100/actor --hf-model-path /nas/ganluo/Flow_RL/rl_out/checkpoints_0921_20250921_031524/global_step_100/actor_merged
 
 import torch
 import os
@@ -38,7 +39,7 @@ def merge_fsdp_checkpoint(fsdp_path, output_path):
 
     for rank_file in rank_files:
         print(f"  加载 {rank_file.name}...")
-        state_dict = torch.load(rank_file, map_location="cpu")
+        state_dict = torch.load(rank_file, map_location="cpu", weights_only=False)
 
         # FSDP可能会添加前缀，需要处理
         for key, value in state_dict.items():
@@ -57,7 +58,17 @@ def merge_fsdp_checkpoint(fsdp_path, output_path):
     # 保存合并的权重
     output_file = output_path / "pytorch_model.bin"
     print(f"保存到 {output_file}...")
-    torch.save(merged_state_dict, output_file)
+    # torch.save(merged_state_dict, output_file)
+    from safetensors.torch import save_file
+    from safetensors.torch import save_file
+    # 保存合并的权重
+    output_file = output_path / "model.safetensors"
+    print(f"保存到 {output_file} ...")
+    save_file(
+        {k: v.contiguous().clone() for k, v in merged_state_dict.items()},
+        output_file
+    )
+    print(f"权重文件大小: {output_file.stat().st_size / 1024**3:.2f} GB")
 
     print(f"权重文件大小: {output_file.stat().st_size / 1024**3:.2f} GB")
     print("完成！")
