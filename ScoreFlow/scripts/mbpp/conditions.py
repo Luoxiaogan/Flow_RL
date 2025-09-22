@@ -17,17 +17,24 @@ This domain tests code generation from natural language descriptions. Each probl
 - **Data Structures**: Dictionary/set operations, basic algorithms
 - **Standard Library Usage**: Leveraging built-in functions and modules
 
-#### Workflow Focus Points
-1. Extract function name from assert statements carefully
-2. Parse natural language to understand all requirements
-3. Identify edge cases from test examples
-4. Generate complete, working Python code with proper imports
-5. Validate code structure: proper indentation, complete imports, clean syntax
+**Key Success Factors:**
+- Understanding the exact requirements from the description
+- Identifying all edge cases and constraints
+- Writing clean, efficient, and correct Python code
+- Ensuring the function signature matches test expectations
+- Handling type conversions and input validation appropriately
+- **Including all necessary import statements** (e.g., `import math`, `import re`, `from collections import Counter`)
+- **TEST CASES GIVE THE FUNCTION NAME!, MAKE SURE THAT THE OUTPUT FUCNTION MATCH THE FUNCTION NAME!**
 
 #### Code Output Requirements
 **CRITICAL**: Your final answer should contain Python code in ONE of these formats:
 
-**Format 1 (Preferred)**: Markdown code block
+**CRITICAL Workflow Design Considerations for MBPP:**
+
+### Understanding Operator Return Types (MUST READ!)
+**ALL operators (Generate, Revise, Summarize, Ensemble) ALWAYS return STRINGS, never structured data!**
+
+**WRONG - This will cause TypeError:**
 ```python
 import math  # Include all necessary imports
 
@@ -37,24 +44,22 @@ def function_name(args):
     return result
 ```
 
-**Format 2**: Direct code (if not using markdown)
-```
-import math
-
-def function_name(args):
-    # Still maintain proper indentation
-    result = computation
-    return result
+**CORRECT Option 1 - Parse JSON string:**
+```python
+import json  # Remember to import json at the beginning of run_workflow
+result_json = await self.generate(instruction="Return JSON with keys 'name' and 'age'", context="")
+result = json.loads(result_json)  # Parse string to dict
+name = result["name"]  # Now this works
 ```
 
-**Important Notes**:
-- The code extractor looks for ```python blocks first, then falls back to raw code
-- Preserve ALL indentation - use exactly 4 spaces per level
-- Include ALL necessary imports at the top of the code
-- The function name MUST match what appears in the assert statements
-- Code should be complete and executable without modifications
-
-#### Input Format
+**BETTER Option 2 - Use simple text (RECOMMENDED for MBPP):**
+```python
+# Ask for simple, directly usable text instead of JSON
+func_name = await self.generate(
+    instruction="Extract the function name from the test cases. Return ONLY the function name, nothing else.",
+    context=""
+)
+# Now func_name is directly usable: "first_repeated_char"
 ```
 ---
 **TASK:**
@@ -69,5 +74,5 @@ assert function_name(args) == expected_output
 [reference solution code]
 ---
 ```
-Multiple problems follow the same structure if provided.
+
 '''

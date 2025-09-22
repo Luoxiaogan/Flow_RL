@@ -15,8 +15,6 @@ from .operator_an import (
     EnsembleOp,
     GenerateOp,
     ReviseOp,
-    CodeGenerateOp,
-    DecomposeOp,
     FormatAnswerOp,
     VerifierOp,
     RefinerOp
@@ -238,190 +236,7 @@ If the instruction is "Choose the option with the most recent date." and the opt
 so notice that here in the <result></result> **is not the index, but the content of the option itself, and you should put all the selected text, not simplified.**.
 """
         response = await self._fill_node(EnsembleOp, prompt, mode="xml_fill")
-        return response["result"]      
-
-# Code execution functions have been moved to code_executor.py
-# to minimize imports when using ProcessPoolExecutor
-
-class Programmer(Operator):
-    """
-    核心算子：编程。
-    根据指令和上下文, 生成并执行Python代码来解决问题。
-    """
-    
-    async def __call__(self, instruction: str = "", context: str = "", max_retries: int = 3) -> str:
-        """
-        生成并执行代码，支持自动重试和错误修正。
-        
-        Args:
-            instruction: 编程任务的具体指令
-            context: 之前步骤的上下文或分析结果
-            max_retries: 最大重试次数
-            
-        Returns:
-            执行结果的字符串描述
-        """
-        # 检查SILENT模式环境变量
-        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
-            print("=" * 60)
-            print("\n🚀 执行 operator: Programmer")
-        
-        feedback = ""
-        code = None
-        output = None
-        
-        for attempt in range(max_retries):
-            # 生成代码
-            code_response = await self._generate_code(instruction, context, feedback)
-            code = code_response.get("code", "")
-            
-            if not code:
-                return "Error: No code generated"
-            
-            # 执行代码
-            status, output = await self._exec_code(code)
-            
-            if status == "Success":
-                return f"""Successfully executed the generated code.
-
-**Generated Code:**
-```python
-{code}
-```
-
-**Output:**
-{output}"""
-            
-            # 准备下一轮的反馈
-            if attempt < max_retries - 1:
-                logger.info(f"Execution failed on attempt {attempt + 1}, retrying...")
-                feedback = f"""
-Previous attempt failed with error:
-Status: {status}
-Error: {output}
-
-Please fix the code and try again."""
-        
-        # 所有重试都失败
-        return f"""Code execution failed after {max_retries} attempts.
-
-**Last Generated Code:**
-```python
-{code}
-```
-
-**Error:**
-{output}"""
-    
-    async def _generate_code(self, instruction: str, context: str, feedback: str) -> dict:
-        """生成Python代码"""
-        prompt = f"""You are an expert Python programmer. Generate code to solve the given problem.
-
-**Original Problem:**
-{self.problem_text}
-
-**Programming Instruction:**
-{instruction}
-
-**Context/Analysis from Previous Steps:**
-{context if context else "No previous context."}
-
-{feedback if feedback else ""}
-
-Your response MUST be a valid XML format with two fields: 'think' and 'code'.
-- In the "think" field, explain your approach to solving the problem.
-- In the "code" field, provide complete, executable Python code.
-
-**IMPORTANT REQUIREMENTS:**
-1. Your code MUST define a function named 'solve()' that returns the answer
-2. The solve() function should take no arguments
-3. Do not use any prohibited libraries (os, sys, subprocess, plotting libraries, etc.)
-4. The code should be self-contained and runnable
-
-**EXAMPLE FORMAT:**
-<think>I need to calculate the sum of numbers from 1 to 10. I'll use a simple loop.</think>
-<code>
-def solve():
-    total = sum(range(1, 11))
-    return total
-</code>"""
-        
-        response = await self._fill_node(CodeGenerateOp, prompt, mode="xml_fill")
-        return response
-    
-    async def _exec_code(self, code: str, timeout: int = 30) -> tuple:
-        """异步执行代码并处理超时"""
-        loop = asyncio.get_running_loop()
-
-        # Windows平台使用线程池，避免多进程问题
-        if platform.system() == 'Windows':
-            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-                try:
-                    # 提交执行任务到线程池
-                    future = loop.run_in_executor(executor, execute_code, code)
-                    # 等待完成或超时
-                    result = await asyncio.wait_for(future, timeout=timeout)
-                    return result
-                except asyncio.TimeoutError:
-                    return "Error", f"Code execution timed out after {timeout} seconds"
-                except Exception as e:
-                    return "Error", f"Unexpected error: {str(e)}"
-        else:
-            # Unix/Linux/Mac使用进程池，更好的隔离性
-            with concurrent.futures.ProcessPoolExecutor(max_workers=1) as executor:
-                try:
-                    # 提交执行任务到进程池
-                    future = loop.run_in_executor(executor, execute_code, code)
-                    # 等待完成或超时
-                    result = await asyncio.wait_for(future, timeout=timeout)
-                    return result
-                except asyncio.TimeoutError:
-                    # 超时处理
-                    executor.shutdown(wait=False, cancel_futures=True)
-                    return "Error", f"Code execution timed out after {timeout} seconds"
-                except Exception as e:
-                    return "Error", f"Unexpected error: {str(e)}"
-            
-class Decompose(Operator):
-    """
-    核心算子：分解。
-    将复杂问题分解为可管理的子问题。
-    """
-    async def __call__(self, instruction: str = "", context: str = "") -> List[Dict[str, str]]:
-        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
-            print("=" * 60)
-            print("\n🚀 执行 operator: Decompose")
-        
-        prompt = f"""You are an expert at problem decomposition. Break down the complex problem into manageable subproblems.
-
-**Instruction on decomposition strategy:**
-{instruction}
-
-**Problem/Context to Decompose:**
-{context if context else "No context provided."}
-
-**Original Problem:**
-{self.problem_text}
-
-Your response MUST be valid XML with 'think' and 'subproblems' fields.
-- In "think", explain your decomposition strategy
-- In "subproblems", provide a list where each item has:
-  - id: unique identifier (e.g., "sub1", "sub2")
-  - description: clear description of the subproblem
-  - dependencies: comma-separated IDs of prerequisite subproblems (empty string if none)
-
-**EXAMPLE:**
-<think>This math problem requires finding area then volume. I'll break it into geometric calculations.</think>
-<subproblems>
-[
-  {{"id": "sub1", "description": "Calculate the radius of the circle", "dependencies": ""}},
-  {{"id": "sub2", "description": "Calculate the area using the radius", "dependencies": "sub1"}},
-  {{"id": "sub3", "description": "Calculate the volume using the area", "dependencies": "sub2"}}
-]
-</subproblems>"""
-        
-        response = await self._fill_node(DecomposeOp, prompt, mode="xml_fill")
-        return response["subproblems"]
+        return response["result"]
 
 
 class Verifier(Operator):
@@ -591,3 +406,132 @@ From Step 1, we have established... Now, to proceed further... [detailed justifi
             "analysis": response.get("analysis", ""),
             "refined_solution": response.get("refined_solution", "")
         }
+    
+class VerifyAndRefine(Operator):
+    """
+    一个强大的、高级别的组合算子，它将一个完整的“验证-修正”循环封装成一个单一的、
+    对工作流友好的调用。
+
+    它的核心设计理念是向负责生成工作流的LLM隐藏所有内部复杂性。LLM只需要知道
+    将一个可能有问题的解决方案（context）输入此算子，就能得到一个经过验证和修正后
+    的、更高质量的解决方案（返回的字符串）。
+
+    它内部处理了从Verifier获取结构化数据、进行条件判断、格式化反馈、调用Refiner
+    等所有步骤。
+    """
+    def __init__(self, llm, problem_text: str = ""):
+        """
+        # 初始化VerifyAndRefine算子。
+        # 它会创建其自身所需的内部Verifer和Refiner实例，作为其执行逻辑的“积木”。
+        """
+        super().__init__(llm, problem_text)
+        # 这些是实现细节，被封装在此类内部，不会暴露给工作流。
+        self._internal_verifier = Verifier(llm, problem_text)
+        self._internal_refiner = Refiner(llm, problem_text)
+
+    def _format_feedback_for_prompt(self, verification_output: Dict[str, Any]) -> str:
+        """
+        # 一个内部辅助方法，用于将Verifier返回的结构化字典转换为一个清晰、高质量、
+        # 适合作为Prompt一部分的英文文本。
+        """
+        verdict = verification_output.get("verdict", "No verdict provided.")
+        findings = verification_output.get("findings", [])
+
+        if not findings:
+            return f"The verifier's overall verdict is '{verdict}', but no specific findings were listed."
+
+        # 精心设计的英文格式，能最好地引导Refiner LLM的注意力
+        formatted_str = f"The verifier's verdict is '{verdict}'. You MUST address the following specific issues:\n"
+        for i, finding in enumerate(findings):
+            formatted_str += f"\nIssue #{i+1}:\n"
+            # 使用 .get() 方法确保即使某些键缺失也不会导致程序崩溃
+            location = finding.get('location', 'Not specified')
+            issue_type = finding.get('issue_type', 'Unknown Type')
+            description = finding.get('description', 'No description provided.')
+            formatted_str += f"- Issue Type: {issue_type}\n"
+            formatted_str += f"- Location in Text: \"{location}\"\n"
+            formatted_str += f"- Detailed Description: {description}\n"
+        return formatted_str
+
+    async def __call__(self, instruction: str = "Fix all errors and improve the rigor of the solution.", context: str = "") -> str:
+        """
+        # 执行完整的验证-修正流程。
+        # @param instruction: 一个高层次的指令，描述了修正的最终目标（例如，"让解决方案更易于理解"）。
+        # @param context: 需要被验证和修正的初始解决方案文本。
+        # @return: 一个经过修正的解决方案字符串；如果原始方案正确或修正失败，则返回原始方案。
+        """
+        # 遵循项目中的日志/打印惯例，增加可观察性
+        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+            print("=" * 60)
+            print("\n🚀 Executing high-level operator: VerifyAndRefine")
+            print("--- Step 1: Verifying the provided solution ---")
+
+        # 1. 调用内部验证器，获取结构化的字典输出以供程序化决策
+        try:
+            # 这里使用高质量的英文Prompt来调用内部的Verifier
+            verification_output = await self._internal_verifier(
+                instruction="Perform a comprehensive verification of the provided solution for mathematical rigor and logical correctness. Identify all critical errors and justification gaps.",
+                context=context
+            )
+        except Exception as e:
+            logger.error(f"Internal Verifier step in VerifyAndRefine failed: {e}", exc_info=True)
+            # 如果验证步骤本身就失败了，无法继续，返回原始上下文是最安全的选择
+            return context
+
+        # 健壮性检查：确保我们得到了有效的结果
+        if not verification_output or 'verdict' not in verification_output:
+            logger.warning("Verification step did not return a valid result. Returning the original solution.")
+            return context
+
+        verdict = verification_output.get('verdict', '').lower()
+        findings = verification_output.get('findings', [])
+        
+        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+            print(f"Verifier Verdict: {verdict.upper()}")
+
+        # 2. 核心决策逻辑：基于验证结果决定下一步行动
+        if verdict == 'correct' and not findings:
+            if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+                print("--- Solution is correct. No refinement needed. ---")
+            # 解决方案已经很好了，直接返回原始版本
+            return context
+
+        # 如果代码执行到这里，意味着需要进行修正
+        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+            print("--- Step 2: Refining the solution based on feedback ---")
+
+        # 3. 准备调用修正器 (Refiner)
+        # 使用辅助方法将结构化反馈转换为高质量的英文文本
+        feedback_for_refiner = self._format_feedback_for_prompt(verification_output)
+
+        # 组合指令：将用户传入的顶层目标与具体的修正要求结合，形成一个强大的英文Prompt
+        refinement_instruction = f"""Your high-level goal is: "{instruction}"
+
+To achieve this, you MUST improve the original solution by addressing ALL of the following issues identified by a rigorous verifier:
+---
+{feedback_for_refiner}
+---
+"""
+        # 4. 调用内部修正器
+        try:
+            refinement_output = await self._internal_refiner(
+                instruction=refinement_instruction,
+                context=context,
+                verification_feedback=feedback_for_refiner # 尽管指令中已包含，但保留此参数以符合Refiner的原始接口
+            )
+        except Exception as e:
+            logger.error(f"Internal Refiner step in VerifyAndRefine failed: {e}", exc_info=True)
+            return context # 修正步骤失败，安全地返回原始方案
+
+        # 5. 安全地提取结果并返回
+        # 使用 .get() 提供一个回退值，如果refinement_output为空或没有'refined_solution'键，
+        # 就安全地返回原始的context，确保工作流不会中断。
+        refined_solution = refinement_output.get('refined_solution', context)
+        
+        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+             if refined_solution != context:
+                 print("--- Refinement complete. Returning improved solution. ---")
+             else:
+                 print("--- Refinement step did not produce a new solution. Returning original. ---")
+        
+        return refined_solution

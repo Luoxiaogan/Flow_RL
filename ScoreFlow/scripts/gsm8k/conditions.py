@@ -29,9 +29,4 @@ This domain tests multi-step mathematical reasoning through word problems requir
 **QUESTION:**
 [Complete word problem text]
 
-**ANSWER:(in the testing of the workflow, this will not be provided to the workflow)**
-[answer text]
----
-```
-Multiple problems follow the same structure if provided.
 '''

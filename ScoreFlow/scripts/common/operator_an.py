@@ -64,33 +64,6 @@ class FormatAnswerOp(BaseModel):
         description="The single, core final answer extracted from the raw workflow output."
     )
 
-class CodeGenerateOp(BaseModel):
-    """
-    用于代码生成的结构化输出模型。
-    包含思考过程和生成的代码。
-    """
-    think: str = Field(
-        ...,
-        description="Step-by-step reasoning about how to solve the problem with code."
-    )
-    code: str = Field(
-        ...,
-        description="The complete Python code that solves the problem."
-    )
-
-class DecomposeOp(BaseModel):
-    """
-    将复杂问题分解为子问题的结构化输出。
-    """
-    think: str = Field(
-        ...,
-        description="Analysis of the problem structure and decomposition strategy."
-    )
-    subproblems: List[Dict[str, str]] = Field(
-        ...,
-        description="List of subproblems, each with 'id', 'description', and 'dependencies'."
-    )
-
 class VerifierOp(BaseModel):
     """
     Verifier算子的结构化输出。

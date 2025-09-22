@@ -8,6 +8,10 @@ import logging
 from loguru import logger as loguru_logger
 import traceback
 import yaml
+import os
+import time
+import threading
+import signal
 from pathlib import Path
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -111,6 +115,9 @@ if SILENT:
 app = Flask(__name__)
 CORS(app)  # 允许跨域请求
 
+# 全局状态管理
+shutdown_in_progress = False
+
 # 全局配置（从config.yaml读取）
 SERVER_CONFIG = {
     'host': service_config.get('host', '0.0.0.0'),
@@ -138,12 +145,58 @@ def health_check():
         'version': '1.0.0'
     })
 
+@app.route('/prepare_restart', methods=['POST'])
+def prepare_restart():
+    """接收API代理的重启通知 - 优雅关闭"""
+    global shutdown_in_progress
+
+    logger.info("="*50)
+    logger.info("收到API代理重启通知，准备优雅关闭...")
+
+    # 1. 设置关闭标志，新请求将收到503响应
+    shutdown_in_progress = True
+    logger.info("✅ 已设置shutdown标志，新请求将收到503响应")
+
+    # 2. 查看当前活跃请求数，记录正在执行的任务
+    limiter = get_limiter()
+    if limiter:
+        status = limiter.get_status()
+        active_count = status['concurrency']['active_requests']
+        if active_count > 0:
+            logger.info(f"ℹ️ 当前有 {active_count} 个请求正在执行")
+            active_tasks = status.get('active_tasks', [])
+            for task in active_tasks:
+                logger.info(f"  - 任务{task['id']} ({task['benchmark']}): 已运行 {task['duration']}秒")
+            logger.info("这些正在执行的任务将在1秒后被强制中断")
+        else:
+            logger.info("✓ 当前没有活跃请求")
+
+    logger.info("立即重启...")
+    logger.info("="*50)
+
+    # 3. 写重启标志文件，让外部bash脚本处理进程终止
+    restart_flag_file = "/tmp/scoreflow_restart_requested"
+    try:
+        with open(restart_flag_file, 'w') as f:
+            f.write(f"{os.getpid()}\n{time.time()}")  # 进程ID和时间戳
+        logger.info(f"✅ 重启信号已写入: {restart_flag_file}")
+    except Exception as e:
+        logger.error(f"写入重启信号失败: {e}")
+
+    logger.info("⏰ 等待外部监控脚本终止进程...")
+    logger.info("="*50)
+
+    return jsonify({
+        'status': 'shutting_down',
+        'message': 'Restart signal sent to external monitoring script'
+    })
+
 @app.route('/compute_score', methods=['POST'])
 @with_concurrency_limit('data_source')
 def compute_score_endpoint():
     """
     计算reward分数的API端点
-    
+
     请求格式:
     {
         "data_source": "gsm8k",
@@ -154,7 +207,7 @@ def compute_score_endpoint():
             "data_path": "path/to/data.jsonl"
         }
     }
-    
+
     响应格式:
     {
         "success": true,
@@ -162,6 +215,13 @@ def compute_score_endpoint():
         "message": "Score computed successfully"
     }
     """
+    # 检查是否正在关闭
+    if shutdown_in_progress:
+        return jsonify({
+            'success': False,
+            'error': 'Server is shutting down for restart'
+        }), 503  # Service Unavailable
+
     try:
         # 获取请求数据
         data = request.get_json()
@@ -188,7 +248,7 @@ def compute_score_endpoint():
         
         # 调用计算函数
         score = compute_score(data_source, solution_str, ground_truth, extra_info)
-        
+
         return jsonify({
             'success': True,
             'score': float(score),

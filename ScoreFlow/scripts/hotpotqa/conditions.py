@@ -27,23 +27,4 @@ This domain tests multi-hop reasoning capability by requiring information synthe
 ---
 **CONTEXT DOCUMENTS:**
 
-Document 1: [Title]
-[paragraph of sentences]
-
-Document 2: [Title]
-[paragraph of sentences]
-...
-
-**QUESTION:**
-[question requiring multi-hop reasoning]
-
-**ANSWER:(in the testing of the workflow, this will not be provided to the workflow)**
-[answer]
-
-**SUPPORTING FACTS:(in the testing of the workflow, this will not be provided to the workflow)**
-[supporting_facts]
----
-```
-Multiple problems follow the same structure if provided.
-```
 '''

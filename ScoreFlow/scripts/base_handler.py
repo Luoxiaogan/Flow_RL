@@ -69,6 +69,18 @@ class BenchmarkHandler(abc.ABC):
         :return: 一个拼接好的字符串，包含所有问题。
         """
         pass
+    
+    @abc.abstractmethod
+    def get_prompt_text_example(self, indices: List[int]) -> str:
+        """
+        【必须被子类实现】
+        根据问题索引列表，生成用于构建 Prompt 的问题描述文本。
+        每个数据集的 "问题" 格式不同，因此需要具体实现。
+        
+        :param indices: 用于生成prompt的问题索引列表。
+        :return: 一个拼接好的字符串，包含所有问题。
+        """
+        pass
 
     @abc.abstractmethod
     def get_prompt_text_workflow_generation(self, indices: List[int]) -> str:
@@ -125,10 +137,9 @@ class BenchmarkHandler(abc.ABC):
            并修改执行器代码来传递这个参数。
         """
         try:
-            conditions_module = importlib.import_module(f"ScoreFlow.scripts.{self.benchmark_name}.conditions")
-            common_module = importlib.import_module(f"ScoreFlow.scripts.common.conditions")
-            python_start = getattr(common_module, "PYTHON_START", "")
-            python_end = getattr(common_module, "PYTHON_END", "")
+            conditions_module = importlib.import_module(f"ScoreFlow.scripts.common.conditions")
+            python_start = getattr(conditions_module, "PYTHON_START", "")
+            python_end = getattr(conditions_module, "PYTHON_END", "")
         except (ModuleNotFoundError, AttributeError) as e:
             raise ImportError(f"无法为 benchmark '{self.benchmark_name}' 加载代码模板: {e}")
 

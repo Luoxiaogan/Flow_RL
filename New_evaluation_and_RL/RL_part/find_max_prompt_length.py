@@ -25,10 +25,10 @@ def format_prompt(messages):
 
 def main():
     # 硬编码路径
-    tokenizer_path = sys.argv[1] if len(sys.argv) > 1 else "/nas/ganluo/Flow_RL/llama_factory_qwen3_thinking_lora/Merged_weight/Qwen3-8B/new_0910"
-    parquet_path = "/nas/ganluo/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train.parquet"
+    tokenizer_path = "/nas/models/Qwen3-8B"
+    parquet_path = "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0922_RL_002_5_and4_operator_5_domain_more_data/train.parquet"
     
-    filter_length = 3330
+    filter_length = 333000
     
     print(f"Tokenizer路径: {tokenizer_path}")
     print(f"Parquet路径: {parquet_path}")
@@ -38,7 +38,8 @@ def main():
     print("加载tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(
         tokenizer_path,
-        trust_remote_code=True
+        trust_remote_code=True,
+        use_fast=False
     )
     
     # 读取parquet
@@ -110,21 +111,21 @@ def main():
         bar = "█" * int(percentage / 2)  # 简单的进度条
         print(f"  <= {bucket:5d}: {count:6d} ({percentage:5.1f}%) {bar}")
     
-    print("\n" + "="*50)
-    print(f"🔍 开始过滤：仅保留 prompt token 长度 ≤ {filter_length} 的样本")
+    # print("\n" + "="*50)
+    # print(f"🔍 开始过滤：仅保留 prompt token 长度 ≤ {filter_length} 的样本")
     
-    # 构造一个布尔 mask
-    keep_mask = [l <= filter_length for l in token_lengths]
-    filtered_df = df[keep_mask].copy().reset_index(drop=True)
+    # # 构造一个布尔 mask
+    # keep_mask = [l <= filter_length for l in token_lengths]
+    # filtered_df = df[keep_mask].copy().reset_index(drop=True)
     
-    # 写出
-    out_path = parquet_path.replace(".parquet", f"_le{filter_length}.parquet")
-    filtered_df.to_parquet(out_path, index=False)
+    # # 写出
+    # out_path = parquet_path.replace(".parquet", f"_le{filter_length}.parquet")
+    # filtered_df.to_parquet(out_path, index=False)
     
-    print(f"  过滤前样本数: {len(df)}")
-    print(f"  过滤后样本数: {len(filtered_df)}")
-    print(f"  已写出文件: {out_path}")
-    print("="*50)
+    # print(f"  过滤前样本数: {len(df)}")
+    # print(f"  过滤后样本数: {len(filtered_df)}")
+    # print(f"  已写出文件: {out_path}")
+    # print("="*50)
 
 
 if __name__ == "__main__":

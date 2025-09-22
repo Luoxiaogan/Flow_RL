@@ -568,68 +568,112 @@ TEXT AFTER CODE BLOCKS: Not found in this output
         Returns:
             平均分数 (0.0-1.0)
         """
+        # 执行前检查服务器是否正在关闭
+        try:
+            # 尝试导入并检查shutdown状态
+            import sys
+            if 'scoreflow_reward_server' in sys.modules:
+                from scoreflow_reward_server import shutdown_in_progress
+                if shutdown_in_progress:
+                    logger.info("🚫 检测到服务器关闭信号，终止workflow批次执行")
+                    return 0.0
+        except (ImportError, AttributeError):
+            pass  # 如果无法检查，继续执行
+
         total_start_time = time.time()
-        if self.debug_enabled:
-            self._start_time = total_start_time
-            self._record_timeline_event("execution_start", -1, {
-                "total_test_cases": len(self.test_cases),
-                "dataset_path": str(dataset_path)
-            })
 
         # 1. 并行执行所有test cases，每个使用独立日志文件
         tasks = []
+        task_to_index = {}  # 映射task到test_case_index
         for test_case_index in self.test_cases:
-            if self.debug_enabled:
-                self._record_timeline_event("test_case_queued", test_case_index, {
-                    "queue_position": len(tasks)
-                })
-            task = self._execute_without_logging(
+            task = asyncio.create_task(self._execute_without_logging(
                 calculator, workflow_code, test_case_index, dataset_path
-            )
+            ))
             tasks.append(task)
-        
-        # 并行执行所有任务
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+            task_to_index[task] = test_case_index
+
+        # 使用asyncio.wait设置批次超时
+        try:
+            done, pending = await asyncio.wait(
+                tasks,
+                timeout=calculator.batch_timeout,
+                return_when=asyncio.ALL_COMPLETED
+            )
+
+            # 如果有未完成的任务，说明触发了批次超时
+            if pending:
+                logger.info(f"🌟🌟🌟🌟🌟 Workflow批次执行超时！")
+                logger.info(f"   超时限制: {calculator.batch_timeout}秒")
+                logger.info(f"   已完成: {len(done)}/{len(tasks)} test cases")
+                logger.info(f"   未完成: {len(pending)} test cases")
+
+                # 取消未完成的任务
+                for task in pending:
+                    task.cancel()
+                    test_case_idx = task_to_index[task]
+                    logger.info(f"   ❌ 取消test case {test_case_idx}")
+
+                # 等待被取消的任务完成清理
+                await asyncio.gather(*pending, return_exceptions=True)
+
+            # 收集所有结果（包括已完成和被取消的）
+            results = []
+            for task in tasks:
+                if task in done:
+                    try:
+                        result = task.result()
+                        results.append(result)
+                    except Exception as e:
+                        # 处理任务执行中的异常
+                        test_case_idx = task_to_index[task]
+                        results.append({
+                            "test_case": test_case_idx,
+                            "success": False,
+                            "score": 0.0,
+                            "duration": 0.0,
+                            "error": f"Task exception: {str(e)}",
+                            "timestamp": datetime.now().isoformat()
+                        })
+                else:
+                    # 被取消的任务
+                    test_case_idx = task_to_index[task]
+                    results.append({
+                        "test_case": test_case_idx,
+                        "success": False,
+                        "score": 0.0,
+                        "duration": 0.0,
+                        "error": f"Cancelled due to batch timeout ({calculator.batch_timeout}s)",
+                        "timestamp": datetime.now().isoformat()
+                    })
+
+        except Exception as e:
+            # 处理其他异常
+            logger.info(f"❌ 批次执行出现异常: {e}")
+            results = []
+            for i, test_case_index in enumerate(self.test_cases):
+                results.append({
+                    "test_case": test_case_index,
+                    "success": False,
+                    "score": 0.0,
+                    "duration": 0.0,
+                    "error": str(e),
+                    "timestamp": datetime.now().isoformat()
+                })
         
         # 2. 安全收集所有结果到内存
         all_scores = []
         valid_results = []
-        
+
         async with self.results_lock:
-            for i, result in enumerate(results):
-                test_case_index = self.test_cases[i]
-                
-                if isinstance(result, Exception):
-                    # 处理异常情况
-                    logger.info(f"❌ Test Case {test_case_index} 执行异常: {result}")
-                    error_result = {
-                        "test_case": test_case_index,
-                        "success": False,
-                        "score": 0.0,
-                        "duration": 0.0,
-                        "error": self._sanitize_error(str(result)),
-                        "timestamp": datetime.now().isoformat()
-                    }
-                    valid_results.append(error_result)
-                    all_scores.append(0.0)
-                elif isinstance(result, dict):
-                    # 处理正常结果
+            # 结果已经在上面收集完成，直接使用
+            for result in results:
+                if isinstance(result, dict):
                     valid_results.append(result)
                     all_scores.append(result.get('score', 0.0))
                 else:
-                    # 处理未知格式
-                    logger.info(f"⚠️ Test Case {test_case_index} 返回未知格式: {type(result)}")
-                    unknown_result = {
-                        "test_case": test_case_index,
-                        "success": False,
-                        "score": 0.0,
-                        "duration": 0.0,
-                        "error": f"Unknown result type: {type(result)}",
-                        "timestamp": datetime.now().isoformat()
-                    }
-                    valid_results.append(unknown_result)
-                    all_scores.append(0.0)
-            
+                    # 不应该发生，因为我们在上面已经处理了所有情况
+                    logger.info(f"⚠️ 未预期的结果格式: {type(result)}")
+
             # 将所有结果添加到collector
             self.results_collector.extend(valid_results)
         
@@ -646,20 +690,32 @@ TEXT AFTER CODE BLOCKS: Not found in this output
         """无日志执行 - 使用上下文局部重定向"""
         start_time = time.time()
 
-        if self.debug_enabled:
-            self._record_timeline_event("test_case_start", test_case_index, {
-                "start_time": datetime.now().isoformat()
-            })
+        # 单个test case执行前检查服务器是否正在关闭
+        try:
+            import sys
+            if 'scoreflow_reward_server' in sys.modules:
+                from scoreflow_reward_server import shutdown_in_progress
+                if shutdown_in_progress:
+                    logger.info(f"🚫 检测到服务器关闭信号，终止test case {test_case_index}执行")
+                    return {
+                        "test_case": test_case_index,
+                        "success": False,
+                        "score": 0.0,
+                        "duration": 0.0,
+                        "error": "Server shutdown requested",
+                        "timestamp": datetime.now().isoformat()
+                    }
+        except (ImportError, AttributeError):
+            pass  # 如果无法检查，继续执行
 
         try:
             calculator._current_workflow_dir = self.workflow_dir
-            calculator._current_test_case = test_case_index  # 传递当前test case给calculator
-            
+
             # 临时禁用MetaGPT的流式日志输出
             import metagpt.logs as metagpt_logs
             original_llm_stream_log = metagpt_logs._llm_stream_log
             metagpt_logs._llm_stream_log = lambda msg: None  # 静音LLM流式输出
-            
+
             try:
                 score = await calculator.compute_score_for_testcase(
                     workflow_code, self.data_source, test_case_index, dataset_path
@@ -677,9 +733,15 @@ TEXT AFTER CODE BLOCKS: Not found in this output
 
             if hasattr(calculator, '_current_workflow_dir'):
                 delattr(calculator, '_current_workflow_dir')
-            if hasattr(calculator, '_current_test_case'):
-                delattr(calculator, '_current_test_case')
-                
+
+        except asyncio.TimeoutError as e:
+            # 专门处理超时异常
+            logger.info(f"🌟🌟🌟🌟🌟 Test case {test_case_index} 执行超时！")
+            logger.info(f"   超时限制: {calculator.timeout}秒")
+            logger.info(f"   Benchmark: {self.data_source}")
+            success = False
+            error_msg = f"Execution timeout after {calculator.timeout}s"
+            score = 0.0
         except Exception as e:
             success = False
             error_msg = self._sanitize_error(str(e))
@@ -892,7 +954,8 @@ class ScoreFlowRewardCalculator:
             scoreflow_config = config.get('services', {}).get('scoreflow_reward', {})
             self.reward_config = {
                 'timeout': scoreflow_config.get('timeout', 300),
-                'client_http_timeout': scoreflow_config.get('client_http_timeout', 600),  # 新增：HTTP客户端超时
+                'workflow_testcases_timeout': scoreflow_config.get('workflow_testcases_timeout', 180),  # 新增：批次执行总超时
+                'client_http_timeout': scoreflow_config.get('client_http_timeout', 600),  # HTTP客户端超时
                 'test_cases_per_task': 3,
                 'max_concurrent': 5
             }
@@ -925,6 +988,7 @@ class ScoreFlowRewardCalculator:
         
         # 设置超时和并发限制
         self.timeout = self.reward_config.get('timeout', 300)
+        self.batch_timeout = self.reward_config.get('workflow_testcases_timeout', 180)  # 批次执行总超时
         self.client_http_timeout = self.reward_config.get('client_http_timeout', 600)  # HTTP客户端超时
         self.max_concurrent = self.reward_config.get('max_concurrent', 5)
         # handler缓存
@@ -1237,20 +1301,11 @@ class ScoreFlowRewardCalculator:
             return str(execution_result)
             
         except asyncio.TimeoutError:
-            logger.info(f"MetaGPT workflow execution timed out for {benchmark_name}")
-
-            # 保存超时信息用于debug
-            if workflow_dir and hasattr(self, '_current_test_case'):
-                debug_info["execution_end"] = datetime.now().isoformat()
-                debug_info["success"] = False
-                debug_info["error"] = "TimeoutError"
-                debug_info["error_message"] = "Workflow execution timed out"
-
-                trace_file = workflow_dir / "metagpt_traces" / f"test_case_{test_case_index}_trace.json"
-                if trace_file.parent.exists():
-                    with open(trace_file, 'w', encoding='utf-8') as f:
-                        json.dump(debug_info, f, ensure_ascii=False, indent=2)
-
+            logger.info(f"🌟🌟🌟🌟🌟 单个workflow执行超时！")
+            logger.info(f"   Benchmark: {benchmark_name}")
+            logger.info(f"   Test case: {test_case_index}")
+            logger.info(f"   Timeout值: {self.timeout}秒")
+            logger.info(f"   Workflow ID: {workflow_id}")
             return "Error: Workflow execution timed out"
 
         except Exception as e:
@@ -1272,13 +1327,24 @@ class ScoreFlowRewardCalculator:
 
             return f"Error: {str(e)}"
     
-    async def compute_score_for_testcase(self, workflow_code: str, benchmark_name: str, 
+    async def compute_score_for_testcase(self, workflow_code: str, benchmark_name: str,
                                         test_case_index: int, dataset_path: str) -> float:
         """
         在单个test case上计算分数
         使用MetaGPT执行并使用handler的judge方法验证
         """
         try:
+            # 在最深层执行前也检查服务器是否正在关闭
+            try:
+                import sys
+                if 'scoreflow_reward_server' in sys.modules:
+                    from scoreflow_reward_server import shutdown_in_progress
+                    if shutdown_in_progress:
+                        logger.info(f"🚫 检测到服务器关闭信号，跳过test case {test_case_index}的score计算")
+                        return 0.0
+            except (ImportError, AttributeError):
+                pass  # 如果无法检查，继续执行
+
             # 加载handler
             handler = self._load_benchmark_handler(benchmark_name, dataset_path)
             if not handler:
@@ -1416,13 +1482,13 @@ def get_calculator():
 def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_info: Dict) -> float:
     """
     计算单个solution的reward分数(符合VERL接口规范)
-    
+
     Args:
         data_source: benchmark名称, 如 'gsm8k', 'high_level_math_aime2024'
         solution_str: LLM生成的包含workflow的response
         ground_truth: ground truth信息(通常是"default")
         extra_info: 包含test_cases, data_path等额外信息
-    
+
     Returns:
         float: reward分数 (0.0 到 1.0)
     """

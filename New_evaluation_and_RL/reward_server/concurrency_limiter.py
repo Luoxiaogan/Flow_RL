@@ -237,10 +237,22 @@ def with_concurrency_limit(identifier_param: str = 'data_source'):
         def wrapper(*args, **kwargs):
             limiter = get_limiter()
             
+            # 首先检查服务器是否正在关闭（优先级最高的检查）
+            try:
+                from scoreflow_reward_server import shutdown_in_progress
+                if shutdown_in_progress:
+                    logger.info(f"🚫 服务器正在关闭，立即拒绝新请求")
+                    return jsonify({
+                        'success': False,
+                        'error': 'Server is shutting down for restart'
+                    }), 503
+            except ImportError:
+                pass  # 如果无法导入，继续执行
+
             # 如果没有限制器，直接执行
             if not limiter:
                 return func(*args, **kwargs)
-            
+
             # 尝试从请求中提取标识符
             identifier = "unknown"
             try:
@@ -249,7 +261,7 @@ def with_concurrency_limit(identifier_param: str = 'data_source'):
                     identifier = request.json[identifier_param]
             except:
                 pass
-            
+
             # 尝试获取执行权限
             task_id = limiter.acquire(identifier)
             
@@ -262,6 +274,19 @@ def with_concurrency_limit(identifier_param: str = 'data_source'):
                     'message': f'请求排队超时（{limiter.queue_timeout}秒），服务器繁忙，请稍后重试'
                 }), 503  # Service Unavailable
             
+            # 再次检查服务器是否正在关闭（获取权限后的二次确认）
+            try:
+                from scoreflow_reward_server import shutdown_in_progress
+                if shutdown_in_progress:
+                    logger.info(f"🚫 服务器正在关闭，拒绝执行任务 {task_id} ({identifier})")
+                    limiter.release(task_id, False)
+                    return jsonify({
+                        'success': False,
+                        'error': 'Server is shutting down for restart'
+                    }), 503
+            except ImportError:
+                pass  # 如果无法导入，继续执行
+
             # 执行实际函数
             success = True
             try:

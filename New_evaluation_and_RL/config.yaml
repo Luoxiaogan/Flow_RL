@@ -10,6 +10,8 @@
 # project_root: "/nas/ganluo/Flow_RL"
 project_root: "D:/temp/Flow_RL"
 # project_root: "/nas/ganluo/Flow_RL"
+project_root: "/nas/ganluo/Flow_RL"
+# /Users/luogan/Code/workflow_generation/Flow_RL_RIGHT
 
 api_metagpt:
   temperature: 0.9
@@ -46,11 +48,11 @@ services:
     enabled: true
     host: "0.0.0.0"
     port: 7788
-    timeout: 900           # workflow执行超时：80分钟（4800秒）
-    max_concurrent_requests: 10     # 最大并发请求数（同时处理的请求数量限制）
-    request_queue_timeout: 900     # 请求排队超时时间：80分钟（4800秒）
-    client_http_timeout: 900        # 客户端HTTP连接超时：80分钟（4800秒）
-    debug: false          # 控制是否保存debug日志文件到debug_logs/目录
+    timeout: 600           # workflow执行超时：80分钟（4800秒）
+    max_concurrent_requests: 24     # 最大并发请求数（同时处理的请求数量限制）
+    request_queue_timeout: 600     # 请求排队超时时间：80分钟（4800秒）
+    client_http_timeout: 420        # 客户端HTTP连接超时：80分钟（4800秒）
+    debug: false            # 控制是否保存debug日志文件到debug_logs/目录
     silent: true           # 控制终端输出详细程度：true=静默模式(只显示关键信息)，false=详细输出
     flask_debug: false      # false: 生产模式（单进程），true: 调试模式（双进程+自动重载）
     workspace: "New_evaluation_and_RL/workspace"  # workflow执行日志保存目录 (相对于project_root)

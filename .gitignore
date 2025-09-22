@@ -52,7 +52,7 @@ evaluation_workflow/workspace/
 evaluation_workflow/services/logs/
 New_evaluation_and_RL/workspace/
 New_evaluation_and_RL/logs/
-New_evaluation_and_RL/parquet_and_jsonl_data/
+# New_evaluation_and_RL/parquet_and_jsonl_data/
 New_evaluation_and_RL/evaluation/*.log
 New_evaluation_and_RL/reward_server/New_evaluation_and_RL/workspace
 New_evaluation_and_RL/config.yaml
@@ -93,24 +93,9 @@ llama_factory_qwen3_thinking_lora/local_save/*.zip
 llama_factory_qwen3_thinking_lora/local_save/*.jsonl
 rl_out/
 llama_factory_qwen3_thinking_lora/Merged_weight/
-New_evaluation_and_RL/RL_part/wandb_data_save/
-New_evaluation_and_RL/config.yaml
-ScoreFlow\benchmark_mapping.jsonl
-New_evaluation_and_RL/model_evaluation/results
 
-
-Test_FILE/workspace_DROP_6_operator_QWEN3/
-Test_FILE/workspace_GSM8K_6_operator_QWEN3/
-Test_FILE/workspace_HUMANEVAL_4_operator_QWEN3/
-Test_FILE/workspace_HUMANEVAL+++++_6_operator_QWEN3_new/
-Test_FILE/workspace_HUMANEVAL+++++_444_operator_QWEN3_new/
-Test_FILE/workspace_MBPP_6_operator_QWEN3/
-Test_FILE/workspace_MBPP+++++_6_operator_QWEN3_new/
-Test_FILE/workspace_MBPP+++++_444_operator_QWEN3_new/
+New_evaluation_and_RL/RL_part/wandb_data_save
 Test_FILE/*.zip
-
+*.zip
 data_qwen-max-latest/
 data_qwen_3_max_preview/
-*.zip
-
-Test_FILE/workspace*/

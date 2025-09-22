@@ -22,22 +22,22 @@ This domain tests code generation capability by requiring implementation of Pyth
 3. Generate clean Python code with correct function definition
 4. Return code directly (missing imports will be auto-added during verification)
 
-#### Input Format
-```
----
-**FUNCTION SIGNATURE AND SPECIFICATION:**
-[Complete function signature with docstring containing problem description and examples]
+**Common Pitfalls:**
+- Misunderstanding the problem from incomplete reading of docstring
+- Missing edge cases that are shown in examples but not explicitly stated
+- Type errors (returning int when float is expected or vice versa)
+- Off-by-one errors in sequences or ranges
+- Not handling the base cases in recursive problems correctly
+- Over-complicating simple problems
 
-**ENTRY POINT:**
-Function name: [exact function name to implement]
+**HumanEval-Specific Considerations:**
+- **Docstring is King:** The docstring contains ALL the specification - read it completely
+- **Examples are Test Cases:** The examples in docstring often become the test cases
+- **Function Signature Given:** The exact function name and parameters are provided
+- **Check Function Format:** Tests are wrapped in `check(candidate)` where candidate is your function
+- **FUNCTION SIGNATURE AND SPECIFICATION ARE THE FUNCTION NAME**
+- **REMEMBER THE NECESSARY IMPORT**: for example, `import math`
 
-**TEST CASES:(in the testing of the workflow, this will not be provided to the workflow)**
-[test cases for the function]
-
-**REFERENCE ANSWER(code):(in the testing of the workflow, this will not be provided to the workflow)**
-[reference solution code]
----
-```
-Multiple problems follow the same structure if provided.
-```
+### Understanding Operator Return Types (MUST READ!)
+**ALL operators (Generate, Revise, Summarize, Ensemble) ALWAYS return STRINGS, never structured data!**
 '''
