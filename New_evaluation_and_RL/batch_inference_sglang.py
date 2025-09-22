@@ -25,7 +25,7 @@ INPUT_JSONL = "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/
 OUTPUT_JSONL = "/nas/ganluo/Flow_RL/New_evaluation_and_RL/test_IMO_0922_QZH_with_responses.jsonl"
 
 # Request configuration
-API_ENDPOINT = f"http://{HOST}:{PORT}/chat/completions"
+API_ENDPOINT = f"http://{HOST}:{PORT}/generate"  # 使用SGLang原生端点
 REQUEST_TIMEOUT = 120  # seconds
 MAX_RETRIES = 3
 RETRY_DELAY = 2  # seconds
@@ -41,12 +41,25 @@ async def make_request(session: aiohttp.ClientSession, messages: List[Dict[str, 
     Make a single request to sglang server
     向sglang服务器发送单个请求
     """
+    # 将messages转换为SGLang原生格式的文本
+    text_parts = []
+    for msg in messages:
+        if msg["role"] == "system":
+            text_parts.append(f"<|im_start|>system\n{msg['content']}<|im_end|>")
+        elif msg["role"] == "user":
+            text_parts.append(f"<|im_start|>user\n{msg['content']}<|im_end|>")
+    # 添加assistant标记以开始生成
+    text_parts.append("<|im_start|>assistant\n")
+
+    text = "\n".join(text_parts)
+
+    # 使用SGLang原生的generate端点格式
     payload = {
-        "model": MODEL_NAME,
-        "messages": messages,
-        "temperature": TEMPERATURE,
-        "max_tokens": MAX_TOKENS,
-        "stream": False  # Set to False for batch processing
+        "text": text,
+        "sampling_params": {
+            "temperature": TEMPERATURE,
+            "max_new_tokens": MAX_TOKENS
+        }
     }
 
     for attempt in range(MAX_RETRIES):
@@ -119,14 +132,59 @@ def extract_assistant_content(response: Dict[str, Any]) -> Optional[str]:
     从API响应中提取assistant回复内容
     """
     try:
-        if "choices" in response and len(response["choices"]) > 0:
-            message = response["choices"][0].get("message", {})
-            if message.get("role") == "assistant":
-                return message.get("content", "")
+        # SGLang generate端点直接返回生成的文本
+        if "text" in response:
+            # 响应包含完整的生成文本
+            generated_text = response["text"]
+            # 如果有多个输出，取第一个
+            if isinstance(generated_text, list):
+                generated_text = generated_text[0] if generated_text else ""
+
+            # 清理输出，移除结束标记
+            if "<|im_end|>" in generated_text:
+                generated_text = generated_text.split("<|im_end|>")[0]
+
+            # 移除可能的开头和结尾空白
+            generated_text = generated_text.strip()
+
+            return generated_text
         return None
     except Exception as e:
         print(f"提取响应内容失败: {e}")
         return None
+
+
+async def check_server_health() -> bool:
+    """
+    Check if SGLang server is healthy
+    检查SGLang服务器是否健康运行
+    """
+    try:
+        async with aiohttp.ClientSession() as session:
+            # 尝试访问模型信息端点
+            async with session.get(f"http://{HOST}:{PORT}/get_model_info", timeout=aiohttp.ClientTimeout(total=5)) as resp:
+                if resp.status == 200:
+                    model_info = await resp.json()
+                    print(f"✅ SGLang服务器运行正常")
+                    print(f"   模型信息: {model_info.get('model_path', 'unknown')}")
+                    return True
+            # 如果get_model_info失败，尝试health端点
+            async with session.get(f"http://{HOST}:{PORT}/health", timeout=aiohttp.ClientTimeout(total=5)) as resp:
+                if resp.status == 200:
+                    print("✅ SGLang服务器运行正常")
+                    return True
+    except aiohttp.ClientConnectorError as e:
+        print(f"❌ 无法连接到SGLang服务器 {HOST}:{PORT}")
+        print(f"   错误: {e}")
+        print(f"   请确认服务器已启动:")
+        print(f"   python -m sglang.launch_server --model-path <path> --host 0.0.0.0 --port {PORT}")
+        return False
+    except Exception as e:
+        print(f"❌ 服务器健康检查失败: {e}")
+        return False
+
+    print(f"⚠️ SGLang服务器可能未正确响应")
+    return False
 
 
 async def main():
@@ -143,6 +201,13 @@ async def main():
     print("="*60)
     print()
 
+    # 检查服务器健康状态
+    print("正在检查SGLang服务器状态...")
+    if not await check_server_health():
+        print("\n❌ 服务器未运行或无法访问，请先启动服务器")
+        sys.exit(1)
+    print()
+
     # Load input data
     print("正在读取输入文件...")
     input_path = Path(INPUT_JSONL)
@@ -153,8 +218,11 @@ async def main():
     data_lines = []
     with open(input_path, 'r', encoding='utf-8') as f:
         for line_num, line in enumerate(f, 1):
+            line = line.strip()  # 去除首尾空白
+            if not line:  # 跳过空行
+                continue
             try:
-                data = json.loads(line.strip())
+                data = json.loads(line)
                 data_lines.append((line_num - 1, data))
             except json.JSONDecodeError as e:
                 print(f"警告: 第 {line_num} 行JSON解析失败: {e}")
