@@ -106,20 +106,72 @@ class IMOTrainingDataGenerator:
                     operator_inits[op] = getattr(common_conditions, "ensemble_init", "")
                 elif op == 'verifier':
                     # Verifier is IMO-specific, get from IMO conditions if available
-                    operator_descriptions[op] = """**Verifier: VALIDATE mathematical rigor**
-- **Signature:** `await self.verifier(instruction: str = "", context: str = "") -> Dict[str, Any]`
-- **Purpose:** Performs rigorous mathematical verification of solutions, checking logical correctness, proof validity, and completeness
-- **Returns:** Dictionary with 'verdict' (valid/invalid/partial) and 'findings' (detailed analysis)
-- **Use Cases:** Validating proof steps, checking mathematical rigor, identifying logical gaps"""
+                    operator_descriptions[op] = """**Verifier: RIGOROUS MATHEMATICAL VALIDATION**
+
+**Overview**
+Acts as an IMO-level judge, performing meticulous verification of mathematical solutions. Identifies errors and logical gaps without attempting to solve.
+
+**Signature**
+`await self.verifier(instruction: str = "", context: str = "") -> Dict[str, Any]`
+
+**Parameters**
+- `instruction`: Optional verification focus (e.g., "Check algebraic steps")
+- `context`: Solution text to verify
+
+**Returns**
+- `verdict`: "valid" | "invalid" | "partial"
+- `findings`: Detailed list of issues found
+
+**Quick Examples**
+```python
+# Basic verification
+verification = await self.verifier(context=solution)
+if verification['verdict'] == 'invalid':
+    # Solution has critical errors
+
+# Focused verification
+check = await self.verifier(
+    instruction="Verify limit conditions",
+    context=proof
+)
+```"""
                     operator_inits[op] = "self.verifier = operator.Verifier(self.llm, self.problem_text)"
                 elif op == 'refiner':
                     # Refiner is IMO-specific
-                    operator_descriptions[op] = """**Refiner: IMPROVE based on feedback**
-- **Signature:** `await self.refiner(instruction: str = "", context: str = "", verification_feedback: str = "") -> Dict[str, str]`
-- **Purpose:** Iteratively improves solutions based on verification feedback, addressing logical gaps and strengthening proofs
-- **Parameters:** Takes original solution context and verification feedback
-- **Returns:** Dictionary with 'analysis' (improvement strategy) and 'refined_solution' (enhanced solution)
-- **Use Cases:** Fixing identified errors, filling proof gaps, enhancing mathematical rigor"""
+                    operator_descriptions[op] = """**Refiner: INTELLIGENT SOLUTION IMPROVEMENT**
+
+**Overview**
+Takes verification feedback and systematically fixes identified issues, producing an improved solution with enhanced mathematical rigor.
+
+**Signature**
+`await self.refiner(instruction: str = "", context: str = "", verification_feedback: str = "") -> Dict[str, str]`
+
+**Parameters**
+- `instruction`: Optional refinement strategy
+- `context`: Original solution to improve
+- `verification_feedback`: Verifier output (as string)
+
+**Returns**
+- `analysis`: Description of improvements made
+- `refined_solution`: Complete improved solution
+
+**Quick Examples**
+```python
+# Standard refinement after verification
+if verification['verdict'] != 'valid':
+    refined = await self.refiner(
+        context=solution,
+        verification_feedback=str(verification)
+    )
+    final = refined['refined_solution']
+
+# Targeted refinement
+refined = await self.refiner(
+    instruction="Fix algebraic errors",
+    context=solution,
+    verification_feedback=str(check)
+)
+```"""
                     operator_inits[op] = "self.refiner = operator.Refiner(self.llm, self.problem_text)"
 
             # Get TASK_PROMPT from IMO conditions
