@@ -15,7 +15,7 @@ import sys
 
 # 
 
-# python -m sglang.launch_server       --model-path /nas/ganluo/Flow_RL/rl_out/checkpoints_0921_20250921_031524/global_step_100/actor_merged       --host 0.0.0.0       --port 30000       --base-gpu-id 0       --mem-fraction-static 0.85
+# python -m sglang.launch_server       --model-path /nas/ganluo/Flow_RL/rl_out/checkpoints_0921_20250921_031524/global_step_100/actor_hf_official       --host 0.0.0.0       --port 30000       --base-gpu-id 0       --mem-fraction-static 0.85
 
 # Hardcoded parameters
 HOST = "localhost"
