@@ -42,6 +42,22 @@ class ImoHandler(BenchmarkHandler):
         except (KeyError, IndexError) as e:
             raise ValueError(f"Error extracting problems from IMO data: {e}")
 
+    def get_prompt_text_example(self, indices: List[int]) -> str:
+        """
+        Extract problems from IMO data and format them with Markdown separators
+        for VERL training data generation (RL_RIGHT format).
+
+        This method is used by generate_verl_training_data.py and its variants.
+
+        Format:
+        ---
+        **QUESTION:**
+        [question text with mathematical notation]
+        ---
+        """
+        # For IMO, use the same format as get_prompt_text
+        return self.get_prompt_text(indices)
+
     def get_prompt_text_workflow_generation(self, indices: List[int]) -> str:
         """
         Extract problems from IMO data and format them with Markdown separators

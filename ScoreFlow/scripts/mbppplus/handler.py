@@ -134,7 +134,58 @@ class MbppplusHandler(BenchmarkHandler):
             
         except Exception as e:
             raise ValueError(f"Error extracting problem from MBPP+ data: {e}")
-    
+    def get_prompt_text_example(self, indices: List[int]) -> str:
+        """
+        从 MBPP 数据中提取编程任务描述，并格式化为清晰的文本用于生成工作流。
+        
+        格式:
+        ---
+        **TASK:**
+        [task description]
+        
+        **TEST CASES:**
+        [test case 1]
+        [test case 2]
+        ...
+        ---
+        
+        (如果提供多个索引，则重复此结构)
+        """
+        try:
+            problems = [self._get_problem_by_index(i) for i in indices]
+            formatted_problems = []
+            
+            for problem in problems:
+                # 提取任务描述和测试用例
+                task_description = problem.get('text', problem.get('question', ''))
+                test_cases = problem.get('test_list', [])
+                
+                # 格式化测试用例
+                test_cases_text = "**TEST CASES(FOR YOU TO KNOW THE FUNCTION NAME):**\n"
+                i=0
+                if test_cases:
+                    for test_case in test_cases:
+                        if i<=2:
+                            test_cases_text += f"{test_case}\n"
+                            i=i+1
+                        elif i==3:
+                            test_cases_text += "IN THE TESTING, THERE IS MORE\n"
+                else:
+                    test_cases_text += "No test cases provided.\n"
+                
+                # 组合任务描述和测试用例
+                formatted_problem = f"""---
+**TASK:**
+{task_description}
+
+**TEST CASES:(for you to know the function name and expected input types, testing of the workflow, this WILL be provided to the workflow, since it is essential for understanding the function name)**
+{test_cases_text.strip()}
+---"""
+                formatted_problems.append(formatted_problem)
+            
+            return "\n\n".join(formatted_problems)
+        except (KeyError, IndexError) as e:
+            raise ValueError(f"从MBPPPlus数据中提取问题时出错: {e}")    
     def _extract_function_signature(self, code: str) -> str:
         """
         从代码中提取函数签名（函数定义行）。

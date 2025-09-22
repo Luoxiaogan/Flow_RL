@@ -10,7 +10,7 @@
 # project_root: "/nas/ganluo/Flow_RL"
 project_root: "D:/temp/Flow_RL"
 # project_root: "/nas/ganluo/Flow_RL"
-project_root: "/nas/ganluo/Flow_RL"
+# project_root: "/nas/ganluo/Flow_RL"
 # /Users/luogan/Code/workflow_generation/Flow_RL_RIGHT
 
 api_metagpt:
