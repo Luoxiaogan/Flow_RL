@@ -55,22 +55,81 @@ def merge_fsdp_checkpoint(fsdp_path, output_path):
 
     print(f"合并完成，共 {len(merged_state_dict)} 个参数")
 
-    # 保存合并的权重
-    output_file = output_path / "pytorch_model.bin"
-    print(f"保存到 {output_file}...")
-    # torch.save(merged_state_dict, output_file)
-    from safetensors.torch import save_file
-    from safetensors.torch import save_file
-    # 保存合并的权重
-    output_file = output_path / "model.safetensors"
-    print(f"保存到 {output_file} ...")
-    save_file(
-        {k: v.contiguous().clone() for k, v in merged_state_dict.items()},
-        output_file
-    )
-    print(f"权重文件大小: {output_file.stat().st_size / 1024**3:.2f} GB")
+    # 处理张量，确保它们可以被safetensors保存
+    print("处理张量以确保兼容性...")
+    processed_state_dict = {}
 
-    print(f"权重文件大小: {output_file.stat().st_size / 1024**3:.2f} GB")
+    for key, tensor in merged_state_dict.items():
+        try:
+            # 确保张量在CPU上
+            if hasattr(tensor, 'device') and tensor.device.type != 'cpu':
+                tensor = tensor.cpu()
+
+            # 检查是否是meta张量或无效张量
+            if hasattr(tensor, 'device') and tensor.device.type == 'meta':
+                print(f"    跳过meta张量: {key}")
+                continue
+
+            # 尝试访问数据以确保张量有效
+            try:
+                # 创建新张量以确保有有效的存储
+                if hasattr(tensor, 'data'):
+                    # 使用detach和clone确保创建新的存储
+                    new_tensor = tensor.detach().clone()
+                    # 确保张量是连续的
+                    if not new_tensor.is_contiguous():
+                        new_tensor = new_tensor.contiguous()
+                    processed_state_dict[key] = new_tensor
+                else:
+                    processed_state_dict[key] = tensor
+            except RuntimeError as e:
+                print(f"    警告: 无法处理张量 {key}: {e}")
+                # 尝试通过numpy转换重建张量
+                try:
+                    numpy_array = tensor.numpy()
+                    processed_state_dict[key] = torch.from_numpy(numpy_array.copy())
+                except:
+                    print(f"    错误: 完全跳过张量 {key}")
+                    continue
+
+        except Exception as e:
+            print(f"    处理张量 {key} 时出错: {e}")
+            continue
+
+    print(f"处理完成，共 {len(processed_state_dict)} 个有效参数")
+
+    # 同时保存pytorch格式和safetensors格式
+
+    # 保存pytorch格式
+    pytorch_file = output_path / "pytorch_model.bin"
+    print(f"保存PyTorch格式到 {pytorch_file}...")
+    torch.save(processed_state_dict, pytorch_file)
+    print(f"PyTorch文件大小: {pytorch_file.stat().st_size / 1024**3:.2f} GB")
+
+    # 保存safetensors格式
+    try:
+        from safetensors.torch import save_file
+        safetensors_file = output_path / "model.safetensors"
+        print(f"保存SafeTensors格式到 {safetensors_file}...")
+
+        # 再次确保所有张量都是有效的
+        final_dict = {}
+        for k, v in processed_state_dict.items():
+            if torch.is_tensor(v):
+                # 确保张量在CPU上并且是连续的
+                final_dict[k] = v.cpu().contiguous()
+            else:
+                final_dict[k] = v
+
+        save_file(final_dict, safetensors_file)
+        print(f"SafeTensors文件大小: {safetensors_file.stat().st_size / 1024**3:.2f} GB")
+    except ImportError:
+        print("警告: safetensors未安装，跳过safetensors格式保存")
+        print("可以通过 'pip install safetensors' 安装")
+    except Exception as e:
+        print(f"保存safetensors时出错: {e}")
+        print("但PyTorch格式已成功保存，可以正常使用")
+
     print("完成！")
 
     return str(output_path)
