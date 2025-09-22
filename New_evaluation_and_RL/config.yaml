@@ -11,6 +11,7 @@
 project_root: "D:/temp/Flow_RL"
 # project_root: "/nas/ganluo/Flow_RL"
 # project_root: "/nas/ganluo/Flow_RL"
+# /nas/ganluo/Flow_RL/Processed_dataset
 # /Users/luogan/Code/workflow_generation/Flow_RL_RIGHT
 
 api_metagpt:
