@@ -58,6 +58,7 @@ def load_configs():
                     # 添加模型参数的默认值
                     if 'model' not in api:
                         api['model'] = 'qwen-turbo'  # 默认模型
+                    print(api['model'])
                     if 'temperature' not in api:
                         api['temperature'] = 0.9     # 默认温度
                     if 'max_tokens' not in api:

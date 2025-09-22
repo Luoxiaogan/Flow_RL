@@ -1,7 +1,10 @@
 # common/operator_an.py
 
+from __future__ import annotations
 from typing import Any, Dict, List, Union
-from pydantic import BaseModel, Field
+import json
+import re
+from pydantic import BaseModel, Field, validator
 
 # 注意：`Summarize` 算子将复用 `GenerateOp`，因为它也只返回一个单一的文本块，
 # 所以我们不需要为它定义一个独立的Pydantic模型。
@@ -63,6 +66,105 @@ class FormatAnswerOp(BaseModel):
         ...,  # <-- 核心修改：设为必需字段
         description="The single, core final answer extracted from the raw workflow output."
     )
+
+class CodeGenerateOp(BaseModel):
+    """
+    用于代码生成的结构化输出模型。
+    包含思考过程和生成的代码。
+    """
+    think: str = Field(
+        ...,
+        description="Step-by-step reasoning about how to solve the problem with code."
+    )
+    code: str = Field(
+        ...,
+        description="The complete Python code that solves the problem."
+    )
+
+
+# ---------- 子问题结构 ----------
+class Subproblem(BaseModel):
+    id: str
+    description: str
+    dependencies: str = ""
+# ---------- LLM 返回的根结构 ----------
+class DecomposeOp(BaseModel):
+    think: str
+    subproblems: List[Subproblem]
+    # ---------- 鲁棒解析器 ----------
+    @validator("subproblems", pre=True, allow_reuse=True)
+    def _coerce_subproblems(cls, v: Any) -> List[Subproblem]:
+        """
+        把 LLM 可能返回的 5 种形态都兜住：
+        1. 已经是 List[dict]           -> 直接过
+        2. JSON 字符串                 -> 解析后过
+        3. 被 ```json ``` 包裹         -> 先剥壳再解析
+        4. 含未转义控制字符            -> 清洗后再解析
+        5. 彻底坏掉                   -> 返回空列表，保证流程不断
+        """
+        # 情况 1
+        if isinstance(v, list):
+            return v
+
+        # 其余情况全部转成字符串
+        s = str(v).strip()
+
+        # === 剥壳 ===
+        # 去掉 ```json ... ``` 或 ``` ... ```
+        s = re.sub(r'^```(?:json)?\s*\n', '', s)
+        s = re.sub(r'\n```$', '', s)
+
+        # === 清洗 ===
+        # 1) 把真实的控制符 (换行 / tab / 回车 / \x00-\x1F / \x7F) 换成空格
+        s = re.sub(r'[\x00-\x1F\x7F]', ' ', s)
+
+        # 2) 把“反斜杠 + 非 u” 转义成双反斜杠，避免非法转义
+        #    \\n -> \\\\n，但 \\u0041 不动
+        s = re.sub(r'\\(?!u[0-9a-fA-F]{4})', r'\\\\', s)
+
+        # === 抠出第一个 JSON array ===
+        m = re.search(r'\[[\s\S]*\]', s)
+        if not m:
+            return []
+
+        raw_array = m.group(0)
+
+        try:
+            data = json.loads(raw_array)
+            if not isinstance(data, list):
+                return []
+            return data
+        except Exception as e:
+            # 兜底：打印日志后返回空列表
+            print(f"[DecomposeOp] 解析失败，返回空列表：{e}")
+            return []
+
+
+# ---------- 方便外部直接拿 dict ----------
+class DecomposeOpDict(BaseModel):
+    think: str
+    subproblems: List[Dict[str, Any]]
+
+    @classmethod
+    def from_decompose_op(cls, op: DecomposeOp) -> "DecomposeOpDict":
+        return cls(
+            think=op.think,
+            subproblems=[sub.dict() for sub in op.subproblems],
+        )
+
+
+# class DecomposeOp(BaseModel):
+#     """
+#     将复杂问题分解为子问题的结构化输出。
+#     """
+#     think: str = Field(
+#         ...,
+#         description="Analysis of the problem structure and decomposition strategy."
+#     )
+#     subproblems: List[Dict[str, str]] = Field(
+#         ...,
+#         description="List of subproblems, each with 'id', 'description', and 'dependencies'."
+#     )
 
 class VerifierOp(BaseModel):
     """

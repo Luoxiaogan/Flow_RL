@@ -71,7 +71,8 @@
       "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/github_key\" git push origin new_luogan)",
       "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/github_key\" git pull origin new_luogan)",
       "Bash(git stash:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

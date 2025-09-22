@@ -1,0 +1,10 @@
+{
+  "data_source": "drop",
+  "operators_group": "ensemble_generate_programmer_revise_summarize",
+  "total": 5,
+  "successful": 5,
+  "failed": 0,
+  "success_rate": 1.0,
+  "average_score": 0.8800000000000001,
+  "timestamp": "2025-09-23T01:18:54.106951"
+}

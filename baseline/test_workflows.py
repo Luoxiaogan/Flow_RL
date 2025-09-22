@@ -73,7 +73,7 @@ class WorkflowEvaluator:
 
     def _load_benchmark_mapping(self) -> Dict[str, Dict]:
         """Load benchmark mapping from ScoreFlow/benchmark_mapping.jsonl"""
-        mapping_file = Path("../ScoreFlow/benchmark_mapping.jsonl")
+        mapping_file = Path("../ScoreFlow/bm_local.jsonl")
         benchmark_map = {}
 
         if not mapping_file.exists():
