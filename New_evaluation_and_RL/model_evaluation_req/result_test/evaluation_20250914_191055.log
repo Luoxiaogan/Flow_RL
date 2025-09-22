@@ -1,0 +1,18 @@
+2025-09-14 19:10:55,278 - __main__ - INFO - 开始统一模型评估
+2025-09-14 19:10:55,278 - __main__ - INFO - 配置文件: ..\configs\models_config.yaml
+2025-09-14 19:10:55,278 - __main__ - INFO - 测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 19:10:55,278 - __main__ - INFO - 输出目录: ..\result_test
+2025-09-14 19:10:55,278 - __main__ - INFO - 模型数量: 1
+2025-09-14 19:10:55,278 - core.utils.score_collector - INFO - ScoreCollector: 使用同步HTTP模式（requests）
+2025-09-14 19:10:55,286 - core.utils.report_generator - INFO - 报告输出目录: ..\result_test
+2025-09-14 19:10:55,295 - core.evaluators.unified_batch_evaluator - INFO - UnifiedBatchEvaluator 初始化完成
+2025-09-14 19:10:55,295 - core.evaluators.unified_batch_evaluator - INFO -   测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 19:10:55,295 - core.evaluators.unified_batch_evaluator - INFO -   输出目录: ..\result_test
+2025-09-14 19:10:55,295 - core.evaluators.unified_batch_evaluator - INFO -   批次大小: 8
+2025-09-14 19:10:55,295 - core.evaluators.unified_batch_evaluator - INFO -   最大样本: 6
+2025-09-14 19:10:55,295 - core.evaluators.unified_batch_evaluator - INFO - 开始评估 1 个模型
+2025-09-14 19:10:55,295 - core.evaluators.unified_batch_evaluator - INFO - 验证模型配置...
+2025-09-14 19:10:55,306 - core.utils.config_validator - INFO - Configuration passed schema validation
+2025-09-14 19:10:55,306 - core.evaluators.unified_batch_evaluator - INFO - 检查 Reward Server...
+2025-09-14 19:10:55,307 - core.utils.reward_server_checker - INFO - 检查 Reward Server: http://localhost:7788/health
+2025-09-14 19:10:59,398 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001E4850A3320>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /health

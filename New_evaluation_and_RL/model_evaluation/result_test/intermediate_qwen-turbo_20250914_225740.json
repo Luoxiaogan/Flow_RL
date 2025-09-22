@@ -1,0 +1,82 @@
+{
+  "model": {
+    "name": "qwen-turbo",
+    "type": "api",
+    "api_endpoints": [
+      "http://localhost:5059"
+    ],
+    "api_keys": [
+      ""
+    ],
+    "model": "qwen-turbo",
+    "api_type": "openai",
+    "max_retries": 1,
+    "timeout": 1200,
+    "max_concurrency": 15,
+    "generation_params": {
+      "max_new_tokens": 4096,
+      "temperature": 1,
+      "top_p": 0.9
+    }
+  },
+  "timestamp": "2025-09-14T22:57:40.158806",
+  "total_samples": 5,
+  "evaluation_results": {
+    "total": 5,
+    "successful": 5,
+    "failed": 0,
+    "mean_score": 0.13947826086956522,
+    "max_score": 0.46,
+    "min_score": 0.0,
+    "std_score": 0.2012386971546829
+  },
+  "benchmark_scores": {
+    "gsm8k": {
+      "num_samples": 1,
+      "num_successful": 1,
+      "mean_score": 0.0,
+      "max_score": 0.0,
+      "min_score": 0.0,
+      "std_score": 0.0,
+      "success_rate": 1.0
+    },
+    "simpleqa": {
+      "num_samples": 1,
+      "num_successful": 1,
+      "mean_score": 0.02,
+      "max_score": 0.02,
+      "min_score": 0.02,
+      "std_score": 0.0,
+      "success_rate": 1.0
+    },
+    "mbppplus": {
+      "num_samples": 1,
+      "num_successful": 1,
+      "mean_score": 0.46,
+      "max_score": 0.46,
+      "min_score": 0.46,
+      "std_score": 0.0,
+      "success_rate": 1.0
+    },
+    "humanevalplus": {
+      "num_samples": 1,
+      "num_successful": 1,
+      "mean_score": 0.0,
+      "max_score": 0.0,
+      "min_score": 0.0,
+      "std_score": 0.0,
+      "success_rate": 1.0
+    },
+    "aime2025": {
+      "num_samples": 1,
+      "num_successful": 1,
+      "mean_score": 0.21739130434782608,
+      "max_score": 0.21739130434782608,
+      "min_score": 0.21739130434782608,
+      "std_score": 0.0,
+      "success_rate": 1.0
+    }
+  },
+  "overall_score": 0.13947826086956522,
+  "success_rate": 1.0
+}

@@ -126,8 +126,8 @@ limiter = init_limiter(
     max_concurrent=SERVER_CONFIG['max_concurrent_requests'],
     queue_timeout=SERVER_CONFIG['request_queue_timeout']
 )
-logger.info(f"并发控制已启用: 最大并发数={SERVER_CONFIG['max_concurrent_requests']}, "
-           f"排队超时={SERVER_CONFIG['request_queue_timeout']}秒")
+# logger.info(f"并发控制已启用: 最大并发数={SERVER_CONFIG['max_concurrent_requests']}, "
+#            f"排队超时={SERVER_CONFIG['request_queue_timeout']}秒")
 
 @app.route('/health', methods=['GET'])
 def health_check():

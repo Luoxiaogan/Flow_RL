@@ -5,8 +5,10 @@ import os
 import aiohttp
 import asyncio
 import logging
+import time
 from typing import List, Dict, Any, Optional
 from tqdm.asyncio import tqdm
+from .realtime_data_collector import RealtimeDataCollector
 
 logger = logging.getLogger(__name__)
 
@@ -15,21 +17,37 @@ class ScoreCollector:
     Collects evaluation scores from reward server
     """
     
-    def __init__(self, server_url: str = 'http://localhost:8899'):
+    def __init__(self, server_url: str = 'http://localhost:8899',
+                 enable_realtime_collection: bool = False,
+                 collection_output_dir: str = "evaluation_data",
+                 checkpoint_interval: int = 10):
         """
         Initialize score collector
-        
+
         Args:
             server_url: URL of the reward server
+            enable_realtime_collection: Enable realtime data collection
+            collection_output_dir: Directory for realtime data collection
+            checkpoint_interval: Save checkpoint every N records
         """
         self.server_url = server_url
         self.compute_endpoint = f"{server_url}/compute_score"
         self._clear_proxy_settings()
-        
+
         # Statistics
         self.total_requests = 0
         self.successful_requests = 0
         self.failed_requests = 0
+
+        # Realtime data collector
+        self.enable_realtime_collection = enable_realtime_collection
+        self.data_collector = None
+        if enable_realtime_collection:
+            self.data_collector = RealtimeDataCollector(
+                output_dir=collection_output_dir,
+                checkpoint_interval=checkpoint_interval
+            )
+            logger.info(f"实时数据采集已启用: {collection_output_dir}")
     
     def _clear_proxy_settings(self):
         """
@@ -61,7 +79,7 @@ class ScoreCollector:
             self._clear_proxy_settings()
             
             # Create session with longer timeout for workflow execution
-            timeout = aiohttp.ClientTimeout(total=300)  # 5 minutes
+            timeout = aiohttp.ClientTimeout(total=1200)  # 5 minutes
             connector = aiohttp.TCPConnector(force_close=True)
             
             async with aiohttp.ClientSession(
@@ -94,27 +112,51 @@ class ScoreCollector:
             logger.error(f"请求失败: {e}")
             return {'success': False, 'error': str(e), 'score': 0.0}
     
-    async def batch_evaluate(self, test_samples: List[Dict], 
+    async def batch_evaluate(self, test_samples: List[Dict],
                            solutions: List[str],
-                           batch_size: int = 8,
-                           model_name: str = None) -> List[Dict]:
+                           batch_size: int = 2,
+                           model_name: str = None,
+                           skip_processed: bool = True) -> List[Dict]:
         """
         Evaluate multiple samples with concurrency control
-        
+
         Args:
             test_samples: List of test samples
             solutions: List of generated solutions
             batch_size: Maximum concurrent requests
             model_name: Optional model name for logging
-            
+            skip_processed: Skip already processed samples when using realtime collection
+
         Returns:
             List of evaluation results
         """
         if len(test_samples) != len(solutions):
             raise ValueError(f"样本数 ({len(test_samples)}) 与解决方案数 ({len(solutions)}) 不匹配")
-        
+
+        # Filter out already processed samples if realtime collection is enabled
+        if self.enable_realtime_collection and skip_processed:
+            unprocessed_indices = []
+            for i, sample in enumerate(test_samples):
+                if not self.data_collector.is_sample_processed(sample):
+                    unprocessed_indices.append(i)
+
+            if len(unprocessed_indices) < len(test_samples):
+                logger.info(f"跳过已处理样本: {len(test_samples) - len(unprocessed_indices)}/{len(test_samples)}")
+
+                # Filter samples and solutions
+                test_samples = [test_samples[i] for i in unprocessed_indices]
+                solutions = [solutions[i] for i in unprocessed_indices]
+
+                if not test_samples:
+                    logger.info("所有样本已处理完成")
+                    return []
+
         model_label = f"[{model_name}] " if model_name else ""
         logger.info(f"{model_label}开始批量评估 {len(test_samples)} 个样本 (并发数: {batch_size})")
+
+        # Mark evaluation as incomplete for recovery
+        if self.enable_realtime_collection:
+            await self.data_collector.mark_incomplete()
         
         # Prepare all request data
         all_requests = []
@@ -138,29 +180,45 @@ class ScoreCollector:
         # Process with concurrency control
         results = []
         semaphore = asyncio.Semaphore(batch_size)
-        
-        async def process_with_semaphore(request_data, index):
+        latencies = []  # Track request latencies
+
+        async def process_with_semaphore(request_data, index, sample, solution):
             """Process single request with semaphore control"""
             if request_data is None:
-                return {'success': False, 'error': 'No solution generated', 'score': 0.0, 'index': index}
-            
-            async with semaphore:
-                result = await self.compute_score(request_data)
-                result['index'] = index  # Add index for reordering
-                return result
-        
+                result = {'success': False, 'error': 'No solution generated', 'score': 0.0, 'index': index}
+                latency = 0
+            else:
+                async with semaphore:
+                    start_time = time.time()
+                    result = await self.compute_score(request_data)
+                    latency = time.time() - start_time
+                    result['index'] = index  # Add index for reordering
+
+            # Record to realtime collector if enabled
+            if self.enable_realtime_collection:
+                await self.data_collector.record_evaluation(
+                    sample=sample,
+                    model_name=model_name or 'unknown',
+                    solution=solution or '',
+                    result=result,
+                    latency=latency
+                )
+
+            return result, latency
+
         # Create tasks for all requests
         tasks = [
-            process_with_semaphore(req, i) 
-            for i, req in enumerate(all_requests)
+            process_with_semaphore(req, i, sample, solution)
+            for i, (req, sample, solution) in enumerate(zip(all_requests, test_samples, solutions))
         ]
-        
+
         # Process with progress bar
         desc = f"{model_label}评估进度"
         results_with_idx = []
         for task in tqdm.as_completed(tasks, desc=desc, total=len(tasks)):
-            result = await task
+            result, latency = await task
             results_with_idx.append(result)
+            latencies.append(latency)
         
         # Reorder results to match input order
         ordered_results = sorted(results_with_idx, key=lambda x: x['index'])
@@ -169,7 +227,12 @@ class ScoreCollector:
         
         # Log statistics
         self._log_statistics(ordered_results, model_name)
-        
+
+        # Mark evaluation as complete if realtime collection is enabled
+        if self.enable_realtime_collection:
+            await self.data_collector.mark_complete()
+            logger.info(f"实时数据采集完成: {self.data_collector.get_statistics()}")
+
         return ordered_results
     
     def _log_statistics(self, results: List[Dict], model_name: str = None):

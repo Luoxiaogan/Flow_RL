@@ -22,13 +22,32 @@ reward_server:
 # ================================
 evaluation:
   # Batch size for processing
-  batch_size: 8
-  
+  batch_size: 1
+
   # Output directory for reports
   output_dir: "./evaluation_reports"
-  
+
   # Save intermediate results after each model
   save_intermediate: true
+
+  # ================================
+  # REALTIME DATA COLLECTION / 实时数据采集
+  # ================================
+  # Enable realtime data collection with checkpoint recovery
+  # 启用实时数据采集和断点续测功能
+  enable_realtime_collection: true  # Set to true to enable / 设为true启用
+
+  # Directory for realtime collection data files
+  # 实时采集数据文件的存储目录
+  collection_output_dir: "./evaluation_data"
+
+  # Save checkpoint every N records (for recovery)
+  # 每N条记录保存一次检查点（用于恢复）
+  checkpoint_interval: 1
+
+  # Skip already processed samples when resuming
+  # 恢复时跳过已处理的样本
+  skip_processed: true
 
 # ================================
 # MODELS TO EVALUATE / 待评估的模型列表
@@ -59,22 +78,53 @@ models:
   # -----------------------------------------------------------------------------
   # API MODELS / API模型示例
   # -----------------------------------------------------------------------------
-  - name: "qwen-turbo"
+  - name: "qwen-plus"
     type: "api"
-    api_endpoints:
-      - "http://localhost:5059"  # 使用正确的API代理端口
+    api_endpoints: 
+      - "http://localhost:5059"  # 修改为 http，不是 https
     api_keys:
       - ""
     model: "qwen-turbo"
     api_type: "openai"
-    max_retries: 1
-    timeout: 600
-    max_concurrency: 15  # 并发请求数，根据API速率限制调整
+    max_retries: 3
+    timeout: 1200
+    max_concurrency: 40  # 并发请求数，根据API速率限制调整
     generation_params:
       max_new_tokens: 4096
       temperature: 1
       top_p: 0.9
 
+  - name: "qwen-max"
+    type: "api"
+    api_endpoints: 
+      - "http://localhost:5059"  # 修改为 http，不是 https
+    api_keys:
+      - ""
+    model: "qwen-turbo"
+    api_type: "openai"
+    max_retries: 1
+    timeout: 1200
+    max_concurrency: 40  # 并发请求数，根据API速率限制调整
+    generation_params:
+      max_new_tokens: 4096
+      temperature: 1
+      top_p: 0.9
+
+  - name: "qwen-turbo"
+    type: "api"
+    api_endpoints: 
+      - "http://localhost:5059"  # 修改为 http，不是 https
+    api_keys:
+      - ""
+    model: "qwen-turbo"
+    api_type: "openai"
+    max_retries: 1
+    timeout: 1200
+    max_concurrency: 40  # 并发请求数，根据API速率限制调整
+    generation_params:
+      max_new_tokens: 4096
+      temperature: 1
+      top_p: 0.9
   # # Example 2: Multiple API endpoints for load balancing
   # - name: "Qwen-API"
   #   type: "api"

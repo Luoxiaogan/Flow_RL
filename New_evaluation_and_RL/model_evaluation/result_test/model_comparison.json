@@ -1,51 +1,78 @@
 {
-  "timestamp": "2025-09-14T13:04:21.873221",
-  "num_models": 1,
+  "timestamp": "2025-09-14T23:15:08.217176",
+  "num_models": 3,
   "models": [
     {
-      "name": "qwen-turbo",
+      "name": "qwen-plus",
       "path": "",
-      "overall_score": 0.68,
-      "success_rate": 0.2,
-      "total_samples": 5,
+      "overall_score": 0.46,
+      "success_rate": 1.0,
+      "total_samples": 2,
       "benchmark_scores": {
         "gsm8k": {
           "num_samples": 1,
           "num_successful": 1,
-          "mean_score": 0.68,
-          "max_score": 0.68,
-          "min_score": 0.68,
+          "mean_score": 0.9,
+          "max_score": 0.9,
+          "min_score": 0.9,
           "std_score": 0.0,
           "success_rate": 1.0
         },
         "simpleqa": {
           "num_samples": 1,
-          "num_successful": 0,
-          "mean_score": 0.0,
-          "max_score": 0.0,
-          "min_score": 0.0,
+          "num_successful": 1,
+          "mean_score": 0.02,
+          "max_score": 0.02,
+          "min_score": 0.02,
           "std_score": 0.0,
-          "success_rate": 0.0
-        },
-        "mbppplus": {
+          "success_rate": 1.0
+        }
+      }
+    },
+    {
+      "name": "qwen-max",
+      "path": "",
+      "overall_score": 0.46,
+      "success_rate": 1.0,
+      "total_samples": 2,
+      "benchmark_scores": {
+        "gsm8k": {
           "num_samples": 1,
-          "num_successful": 0,
-          "mean_score": 0.0,
-          "max_score": 0.0,
-          "min_score": 0.0,
+          "num_successful": 1,
+          "mean_score": 0.88,
+          "max_score": 0.88,
+          "min_score": 0.88,
           "std_score": 0.0,
-          "success_rate": 0.0
+          "success_rate": 1.0
         },
-        "humanevalplus": {
+        "simpleqa": {
           "num_samples": 1,
-          "num_successful": 0,
+          "num_successful": 1,
+          "mean_score": 0.04,
+          "max_score": 0.04,
+          "min_score": 0.04,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        }
+      }
+    },
+    {
+      "name": "qwen-turbo",
+      "path": "",
+      "overall_score": 0.0,
+      "success_rate": 0.5,
+      "total_samples": 2,
+      "benchmark_scores": {
+        "gsm8k": {
+          "num_samples": 1,
+          "num_successful": 1,
           "mean_score": 0.0,
           "max_score": 0.0,
           "min_score": 0.0,
           "std_score": 0.0,
-          "success_rate": 0.0
+          "success_rate": 1.0
         },
-        "aime2025": {
+        "simpleqa": {
           "num_samples": 1,
           "num_successful": 0,
           "mean_score": 0.0,
@@ -60,12 +87,15 @@
   "benchmark_comparison": {
     "simpleqa": [
       {
-        "model": "qwen-turbo",
-        "score": 0.0,
-        "success_rate": 0.0
-      }
-    ],
-    "mbppplus": [
+        "model": "qwen-plus",
+        "score": 0.02,
+        "success_rate": 1.0
+      },
+      {
+        "model": "qwen-max",
+        "score": 0.04,
+        "success_rate": 1.0
+      },
       {
         "model": "qwen-turbo",
         "score": 0.0,
@@ -74,31 +104,29 @@
     ],
     "gsm8k": [
       {
-        "model": "qwen-turbo",
-        "score": 0.68,
+        "model": "qwen-plus",
+        "score": 0.9,
         "success_rate": 1.0
-      }
-    ],
-    "aime2025": [
+      },
+      {
+        "model": "qwen-max",
+        "score": 0.88,
+        "success_rate": 1.0
+      },
       {
         "model": "qwen-turbo",
         "score": 0.0,
-        "success_rate": 0.0
-      }
-    ],
-    "humanevalplus": [
-      {
-        "model": "qwen-turbo",
-        "score": 0.0,
-        "success_rate": 0.0
+        "success_rate": 1.0
       }
     ]
   },
   "rankings": {
     "by_overall_score": [
+      "qwen-plus",
+      "qwen-max",
       "qwen-turbo"
     ],
-    "best_model": "qwen-turbo",
+    "best_model": "qwen-plus",
     "worst_model": "qwen-turbo"
   }
 }

@@ -27,7 +27,7 @@ class UnifiedBatchEvaluator:
     def __init__(self, config: Dict[str, Any]):
         """
         Initialize unified batch evaluator
-        
+
         Args:
             config: Configuration dictionary containing:
                 - test_data_path: Path to test data JSONL file
@@ -36,6 +36,8 @@ class UnifiedBatchEvaluator:
                 - eval_batch_size: Batch size for evaluation
                 - max_samples: Maximum samples to evaluate
                 - save_intermediate: Save results after each model
+                - enable_realtime_collection: Enable realtime data collection
+                - collection_output_dir: Directory for realtime data collection
         """
         self.test_data_path = Path(config.get('test_data_path'))
         self.reward_server_url = config.get('reward_server_url', 'http://localhost:8899')
@@ -43,13 +45,24 @@ class UnifiedBatchEvaluator:
         self.eval_batch_size = config.get('eval_batch_size', 8)
         self.max_samples = config.get('max_samples', None)
         self.save_intermediate = config.get('save_intermediate', True)
-        
+
+        # Realtime collection settings
+        self.enable_realtime_collection = config.get('enable_realtime_collection', False)
+        self.collection_output_dir = config.get('collection_output_dir', 'evaluation_data')
+        self.checkpoint_interval = config.get('checkpoint_interval', 10)
+        self.skip_processed = config.get('skip_processed', True)
+
         # Create output directory
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Initialize components
         self.server_checker = RewardServerChecker(self.reward_server_url)
-        self.score_collector = ScoreCollector(self.reward_server_url)
+        self.score_collector = ScoreCollector(
+            self.reward_server_url,
+            enable_realtime_collection=self.enable_realtime_collection,
+            collection_output_dir=self.collection_output_dir,
+            checkpoint_interval=self.checkpoint_interval
+        )
         self.report_generator = ReportGenerator(self.output_dir)
         
         # Storage
@@ -61,6 +74,9 @@ class UnifiedBatchEvaluator:
         logger.info(f"  输出目录: {self.output_dir}")
         logger.info(f"  批次大小: {self.eval_batch_size}")
         logger.info(f"  最大样本: {self.max_samples or '全部'}")
+        if self.enable_realtime_collection:
+            logger.info(f"  实时数据采集: 启用")
+            logger.info(f"  采集目录: {self.collection_output_dir}")
     
     async def evaluate_models(self, model_configs: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
@@ -183,17 +199,24 @@ class UnifiedBatchEvaluator:
         
         # Summary
         self._print_summary(successful_models, failed_models, total_time)
-        
+
+        # Export realtime collection summary if enabled
+        if self.enable_realtime_collection and self.score_collector.data_collector:
+            summary_file = self.output_dir / f"realtime_summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            await self.score_collector.data_collector.export_summary(str(summary_file))
+            logger.info(f"实时采集数据汇总已导出: {summary_file}")
+
         # Clean up any remaining resources
         await self._cleanup_resources()
-        
+
         return {
             'model_reports': self.model_reports,
             'comparison': comparison,
             'successful_models': successful_models,
             'failed_models': failed_models,
             'total_time': total_time,
-            'output_dir': str(self.output_dir)
+            'output_dir': str(self.output_dir),
+            'realtime_collection_enabled': self.enable_realtime_collection
         }
     
     async def _cleanup_resources(self):
@@ -251,57 +274,47 @@ class UnifiedBatchEvaluator:
                 
                 # Create semaphore for concurrency control
                 semaphore = asyncio.Semaphore(max_concurrency)
-                
-                async def generate_with_semaphore(sample, index):
+
+                async def generate_with_semaphore(sample, index, pbar):
                     """Generate solution with semaphore control"""
                     async with semaphore:
                         try:
                             # Get generation parameters
                             gen_params = model_config.get('generation_params', {})
-                            
+
                             # Generate solution
                             solution = await model.generate_solution(sample, **gen_params)
 
+                            # Update progress bar after completion
+                            pbar.update(1)
+
                             return index, solution
-                            
+
                         except Exception as e:
                             logger.warning(f"[{model_name}] 样本 {index} 生成失败: {e}")
+                            pbar.update(1)  # Still update progress for failed items
                             return index, ""  # Empty solution for failed generation
-                
-                # Process in batches for progress display, but concurrent within batch
-                batch_size = self.eval_batch_size
-                total_batches = (len(self.test_samples) + batch_size - 1) // batch_size
-                
+
                 # Initialize progress bar
-                pbar = tqdm(total=len(self.test_samples), 
+                pbar = tqdm(total=len(self.test_samples),
                            desc=f"[{model_name}] 生成",
                            unit="样本")
-                
-                for batch_idx in range(0, len(self.test_samples), batch_size):
-                    batch = self.test_samples[batch_idx:batch_idx + batch_size]
-                    
-                    # Create concurrent tasks for the batch
-                    tasks = [
-                        generate_with_semaphore(sample, batch_idx + i)
-                        for i, sample in enumerate(batch)
-                    ]
-                    
-                    # Execute all tasks concurrently
-                    batch_results = await asyncio.gather(*tasks)
-                    
-                    # Sort results by index to maintain order
-                    batch_results.sort(key=lambda x: x[0])
-                    batch_solutions = [result[1] for result in batch_results]
-                    
-                    solutions.extend(batch_solutions)
-                    
-                    # Update progress bar
-                    pbar.update(len(batch))
-                    
-                    # Brief pause between batches for API models to respect rate limits
-                    if model_config.get('type') == 'api' and batch_idx + batch_size < len(self.test_samples):
-                        await asyncio.sleep(0.05)  # Reduced from 0.1 to 0.05 for better throughput
-                
+
+                # Create all tasks at once (no batching)
+                logger.info(f"[{model_name}] 创建 {len(self.test_samples)} 个并发任务...")
+                tasks = [
+                    generate_with_semaphore(sample, i, pbar)
+                    for i, sample in enumerate(self.test_samples)
+                ]
+
+                # Execute all tasks concurrently (controlled by semaphore)
+                logger.info(f"[{model_name}] 开始并发执行，最大并发数: {max_concurrency}")
+                all_results = await asyncio.gather(*tasks)
+
+                # Sort results by index to maintain order
+                all_results.sort(key=lambda x: x[0])
+                solutions = [result[1] for result in all_results]
+
                 pbar.close()
                 
                 # Evaluate solutions

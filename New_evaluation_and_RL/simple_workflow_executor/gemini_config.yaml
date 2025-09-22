@@ -1,0 +1,26 @@
+# Gemini API配置
+llm:
+  api_type: openai  # 使用OpenAI兼容接口
+  base_url: http://39.96.211.155:8000/proxy/api/openai/v1
+  api_key: 8cf060f9e1f444858609730176542253
+  model: gemini-2.5-pro
+  max_tokens: 2000
+  temperature: 0.7
+
+# 路径配置
+paths:
+  project_root: D:/temp/Flow_RL
+  scoreflow_handlers: .  # ScoreFlow在project_root根目录
+  metagpt_root: metagpt_root
+  processed_dataset: Processed_dataset
+
+# 执行配置
+execution:
+  timeout: 180  # 超时时间（秒）
+  silent: false  # 是否静默模式
+  debug: false  # 是否开启调试
+
+# IMO数据配置
+imo:
+  dataset_path: Processed_dataset/imo_test.jsonl
+  handler_path: ScoreFlow/scripts/imo

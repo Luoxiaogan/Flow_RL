@@ -40,13 +40,13 @@ models:
   # -----------------------------------------------------------------------------
   # 注意：只支持精确匹配，确保评估准确性
   
-  - name: "RL-Training-Step-100"
-    type: "jsonl"
-    jsonl_path: "../val_logs/20241212_150000/100.jsonl"
+  # - name: "RL-Training-Step-100"
+  #   type: "jsonl"
+  #   jsonl_path: "../val_logs/20241212_150000/100.jsonl"
   
-  - name: "RL-Training-Step-500"
-    type: "jsonl"
-    jsonl_path: "../val_logs/20241212_150000/500.jsonl"
+  # - name: "RL-Training-Step-500"
+  #   type: "jsonl"
+  #   jsonl_path: "../val_logs/20241212_150000/500.jsonl"
   
   # # 多文件合并示例 - 可以合并多个步数的输出
   # - name: "RL-Training-Combined"

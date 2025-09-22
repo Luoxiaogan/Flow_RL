@@ -1,6 +1,6 @@
 {
     "python.analysis.autoImportCompletions": true,
-    "workbench.editor.enablePreview": false,
+    "workbench.editor.enablePreview": true,
     "cursorpyright.analysis.autoImportCompletions": true,
     "editor.wordWrap": "on",
     // "terminal.integrated.env.osx": {

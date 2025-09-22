@@ -194,11 +194,11 @@ with open('summary.json', 'r') as f:
 if __name__ == "__main__":
     # 根据你的 URL 提取的信息
     entity = "luogan_little_wolf-peking-university"
-    project = "qwen3_rl_sfter_sft"
-    run_id = "2379rfhe"
+    project = "qwen3_rl_0917_old_ckpt"
+    run_id = "7uqork2s"
 
-    base_dir = "New_evaluation_and_RL/RL_part/wandb_data_save/"
-    add = "0905_RL_first_win"
+    base_dir = "wandb_data_save/"
+    add = "qwen3_rl_0917_old_ckpt"
 
     # wandb api: 6d73f146a264e1dd556fc16529a88c3871ec4af3
     # wandb api: 6d73f146a264e1dd556fc16529a88c3871ec4af3

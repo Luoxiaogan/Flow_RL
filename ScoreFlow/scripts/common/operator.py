@@ -1,8 +1,7 @@
 # common/operator.py
 
 import os
-import sys
-import ast
+import platform
 import asyncio
 import traceback
 import logging
@@ -22,6 +21,9 @@ from .operator_an import (
     VerifierOp,
     RefinerOp
 )
+
+# Import the lightweight executor at module level to avoid re-importing in subprocess
+from .code_executor import run_code as execute_code
 
 logger = logging.getLogger(__name__)
 
@@ -238,71 +240,9 @@ so notice that here in the <result></result> **is not the index, but the content
         response = await self._fill_node(EnsembleOp, prompt, mode="xml_fill")
         return response["result"]      
 
-def check_code_safety(code: str, disallowed_imports: list) -> tuple:
-    """使用AST解析检查代码安全性"""
-    try:
-        tree = ast.parse(code)
-        for node in ast.walk(tree):
-            # 检查 import 语句
-            if isinstance(node, ast.Import):
-                for alias in node.names:
-                    if any(alias.name.startswith(lib) for lib in disallowed_imports):
-                        return False, f"Prohibited import: {alias.name}"
-            # 检查 from ... import 语句
-            elif isinstance(node, ast.ImportFrom):
-                if node.module and any(node.module.startswith(lib) for lib in disallowed_imports):
-                    return False, f"Prohibited import: {node.module}"
-            # 检查 __import__ 调用
-            elif isinstance(node, ast.Call):
-                if isinstance(node.func, ast.Name) and node.func.id == '__import__':
-                    return False, "Dynamic import detected"
-    except SyntaxError as e:
-        return False, f"Syntax error: {e}"
-    return True, None
+# Code execution functions have been moved to code_executor.py
+# to minimize imports when using ProcessPoolExecutor
 
-def run_code(code: str, timeout: int = 30):
-    """
-    Execute Python code safely in an isolated namespace.
-    
-    Args:
-        code: Python code string to execute
-        timeout: Maximum execution time (handled by caller)
-    
-    Returns:
-        Tuple[str, str]: (status, result/error_message)
-    """
-    try:
-        # Create isolated namespace
-        global_namespace = {}
-        
-        # Prohibited imports for safety
-        disallowed_imports = [
-            "os", "sys", "subprocess", "multiprocessing",
-            "matplotlib", "seaborn", "plotly", "bokeh", "ggplot",
-            "pylab", "tkinter", "PyQt5", "wx", "pyglet"
-        ]
-        
-        # AST安全检查
-        is_safe, error_msg = check_code_safety(code, disallowed_imports)
-        if not is_safe:
-            logger.info(f"Code safety check failed: {error_msg}")
-            return "Error", error_msg
-        
-        # Execute code
-        exec(code, global_namespace)
-        
-        # Look for 'solve' function
-        if 'solve' in global_namespace and callable(global_namespace['solve']):
-            result = global_namespace['solve']()
-            return "Success", str(result)
-        else:
-            return "Error", "Function 'solve' not found"
-            
-    except Exception as e:
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        tb_str = traceback.format_exception(exc_type, exc_value, exc_traceback)
-        return "Error", f"Execution error: {str(e)}\n{''.join(tb_str)}"
-    
 class Programmer(Operator):
     """
     核心算子：编程。
@@ -412,20 +352,35 @@ def solve():
     async def _exec_code(self, code: str, timeout: int = 30) -> tuple:
         """异步执行代码并处理超时"""
         loop = asyncio.get_running_loop()
-        
-        with concurrent.futures.ProcessPoolExecutor(max_workers=1) as executor:
-            try:
-                # 提交执行任务到进程池
-                future = loop.run_in_executor(executor, run_code, code)
-                # 等待完成或超时
-                result = await asyncio.wait_for(future, timeout=timeout)
-                return result
-            except asyncio.TimeoutError:
-                # 超时处理
-                executor.shutdown(wait=False, cancel_futures=True)
-                return "Error", f"Code execution timed out after {timeout} seconds"
-            except Exception as e:
-                return "Error", f"Unexpected error: {str(e)}"
+
+        # Windows平台使用线程池，避免多进程问题
+        if platform.system() == 'Windows':
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                try:
+                    # 提交执行任务到线程池
+                    future = loop.run_in_executor(executor, execute_code, code)
+                    # 等待完成或超时
+                    result = await asyncio.wait_for(future, timeout=timeout)
+                    return result
+                except asyncio.TimeoutError:
+                    return "Error", f"Code execution timed out after {timeout} seconds"
+                except Exception as e:
+                    return "Error", f"Unexpected error: {str(e)}"
+        else:
+            # Unix/Linux/Mac使用进程池，更好的隔离性
+            with concurrent.futures.ProcessPoolExecutor(max_workers=1) as executor:
+                try:
+                    # 提交执行任务到进程池
+                    future = loop.run_in_executor(executor, execute_code, code)
+                    # 等待完成或超时
+                    result = await asyncio.wait_for(future, timeout=timeout)
+                    return result
+                except asyncio.TimeoutError:
+                    # 超时处理
+                    executor.shutdown(wait=False, cancel_futures=True)
+                    return "Error", f"Code execution timed out after {timeout} seconds"
+                except Exception as e:
+                    return "Error", f"Unexpected error: {str(e)}"
             
 class Decompose(Operator):
     """

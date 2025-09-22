@@ -64,15 +64,21 @@ def prepare_evaluation_config(config):
         'reward_server_url': config['reward_server']['url'],
         'eval_batch_size': config['evaluation']['batch_size'],
         'output_dir': config['evaluation']['output_dir'],
-        'save_intermediate': config['evaluation'].get('save_intermediate', True)
+        'save_intermediate': config['evaluation'].get('save_intermediate', True),
+
+        # Realtime data collection settings / 实时数据采集设置
+        'enable_realtime_collection': config['evaluation'].get('enable_realtime_collection', False),
+        'collection_output_dir': config['evaluation'].get('collection_output_dir', './evaluation_data'),
+        'checkpoint_interval': config['evaluation'].get('checkpoint_interval', 10),
+        'skip_processed': config['evaluation'].get('skip_processed', True)
     }
-    
+
     # Resolve relative paths
     if not Path(eval_config['test_data_path']).is_absolute():
         eval_config['test_data_path'] = str(
             Path(__file__).parent / eval_config['test_data_path']
         )
-    
+
     return eval_config
 
 def filter_models(models, model_filter):
@@ -146,6 +152,15 @@ async def main(args):
     logger.info(f"测试数据: {test_data_path}")
     logger.info(f"输出目录: {output_dir}")
     logger.info(f"模型数量: {len(models)}")
+
+    # Log realtime collection status / 记录实时采集状态
+    if eval_config.get('enable_realtime_collection'):
+        logger.info(f"实时数据采集: 已启用")
+        logger.info(f"  采集目录: {eval_config['collection_output_dir']}")
+        logger.info(f"  检查点间隔: {eval_config['checkpoint_interval']} 条记录")
+        logger.info(f"  断点续测: {'启用' if eval_config['skip_processed'] else '禁用'}")
+    else:
+        logger.info(f"实时数据采集: 未启用")
     
     # Print model list
     print("\n待评估模型:")

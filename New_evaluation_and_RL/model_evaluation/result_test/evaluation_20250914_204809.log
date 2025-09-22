@@ -1,0 +1,84 @@
+2025-09-14 20:48:09,750 - __main__ - INFO - 开始统一模型评估
+2025-09-14 20:48:09,753 - __main__ - INFO - 配置文件: ..\configs\models_config.yaml
+2025-09-14 20:48:09,753 - __main__ - INFO - 测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 20:48:09,753 - __main__ - INFO - 输出目录: ..\result_test
+2025-09-14 20:48:09,753 - __main__ - INFO - 模型数量: 1
+2025-09-14 20:48:09,753 - core.utils.report_generator - INFO - 报告输出目录: ..\result_test
+2025-09-14 20:48:09,753 - core.evaluators.unified_batch_evaluator - INFO - UnifiedBatchEvaluator 初始化完成
+2025-09-14 20:48:09,753 - core.evaluators.unified_batch_evaluator - INFO -   测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 20:48:09,753 - core.evaluators.unified_batch_evaluator - INFO -   输出目录: ..\result_test
+2025-09-14 20:48:09,753 - core.evaluators.unified_batch_evaluator - INFO -   批次大小: 2
+2025-09-14 20:48:09,758 - core.evaluators.unified_batch_evaluator - INFO -   最大样本: 6
+2025-09-14 20:48:09,758 - core.evaluators.unified_batch_evaluator - INFO - 开始评估 1 个模型
+2025-09-14 20:48:09,758 - core.evaluators.unified_batch_evaluator - INFO - 验证模型配置...
+2025-09-14 20:48:09,767 - core.utils.config_validator - WARNING - Configuration validation found 1 error(s)
+2025-09-14 20:48:09,768 - core.utils.config_validator - WARNING -   - Schema validation error: 1200 is greater than the maximum of 600 at models.0.timeout
+2025-09-14 20:48:09,768 - core.evaluators.unified_batch_evaluator - WARNING - 配置验证发现 1 个警告
+2025-09-14 20:48:09,768 - core.evaluators.unified_batch_evaluator - WARNING -   - Schema validation error: 1200 is greater than the maximum of 600 at models.0.timeout
+2025-09-14 20:48:09,768 - core.evaluators.unified_batch_evaluator - INFO - 检查 Reward Server...
+2025-09-14 20:48:09,768 - core.utils.reward_server_checker - INFO - 检查 Reward Server: http://localhost:7788/health
+2025-09-14 20:48:10,038 - core.utils.reward_server_checker - INFO - ✓ Reward Server 正常运行: {'service': 'scoreflow_reward_server', 'status': 'healthy', 'version': '1.0.0'}
+2025-09-14 20:48:10,038 - core.evaluators.unified_batch_evaluator - INFO - 加载测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 20:48:10,084 - core.evaluators.unified_batch_evaluator - INFO - 限制评估样本数: 6
+2025-09-14 20:48:10,084 - core.evaluators.unified_batch_evaluator - INFO - 加载了 6 个测试样本
+2025-09-14 20:48:10,084 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-14 20:48:10,084 - core.evaluators.unified_batch_evaluator - INFO - 评估模型 1/1: qwen-turbo
+2025-09-14 20:48:10,084 - core.evaluators.unified_batch_evaluator - INFO - 模型类型: api
+2025-09-14 20:48:10,084 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-14 20:48:10,084 - core.utils.model_factory - INFO - 创建模型接口: qwen-turbo (类型: api)
+2025-09-14 20:48:10,084 - core.interfaces.api_model_interface - INFO - [qwen-turbo] 初始化API模型
+2025-09-14 20:48:10,084 - core.interfaces.api_model_interface - INFO -   模型: qwen-turbo
+2025-09-14 20:48:10,084 - core.interfaces.api_model_interface - INFO -   API类型: openai
+2025-09-14 20:48:10,084 - core.interfaces.api_model_interface - INFO -   端点数量: 1
+2025-09-14 20:48:10,089 - core.utils.api_connection_pool - INFO - Created new API session: openai
+2025-09-14 20:48:13,068 - core.interfaces.api_model_interface - INFO - ✓ [qwen-turbo] API连接成功
+2025-09-14 20:48:13,068 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo] 生成解决方案...
+2025-09-14 20:48:13,069 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo] 使用并发数: 15
+2025-09-14 20:48:45,943 - core.interfaces.api_model_interface - WARNING - [qwen-turbo] API请求失败 (尝试 1/1): API error 502: {"error": {"message": "连接错误: - HTTPSConnectionPool(host='dashscope.aliyuncs.com', port=443): Max retries exceeded with url: /compatible-mode/v1/chat/completions (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))", "type": "ConnectionError", "details": "请检查API密钥和网络连接"}}
+2025-09-14 20:48:45,943 - core.evaluators.unified_batch_evaluator - WARNING - [qwen-turbo] 样本 4 生成失败: [qwen-turbo] API请求失败: API error 502: {"error": {"message": "连接错误: - HTTPSConnectionPool(host='dashscope.aliyuncs.com', port=443): Max retries exceeded with url: /compatible-mode/v1/chat/completions (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))", "type": "ConnectionError", "details": "请检查API密钥和网络连接"}}
+2025-09-14 20:48:53,159 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo] 计算评估分数...
+2025-09-14 20:48:53,159 - core.utils.score_collector - INFO - [qwen-turbo] 开始批量评估 6 个样本 (并发数: 2)
+2025-09-14 20:58:26,659 - core.utils.score_collector - INFO - [qwen-turbo] 评估统计:
+2025-09-14 20:58:26,659 - core.utils.score_collector - INFO -   总数: 6
+2025-09-14 20:58:26,659 - core.utils.score_collector - INFO -   成功: 5 (83.3%)
+2025-09-14 20:58:26,659 - core.utils.score_collector - INFO -   失败: 1 (16.7%)
+2025-09-14 20:58:26,661 - core.utils.score_collector - INFO -   平均分数: 0.368
+2025-09-14 20:58:26,661 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo] 生成评估报告...
+2025-09-14 20:58:26,661 - core.utils.report_generator - INFO - 生成模型评估报告: qwen-turbo
+2025-09-14 20:58:26,696 - core.interfaces.api_model_interface - INFO - [qwen-turbo] API统计:
+2025-09-14 20:58:26,696 - core.interfaces.api_model_interface - INFO -   总请求: 7
+2025-09-14 20:58:26,696 - core.interfaces.api_model_interface - INFO -   成功: 6
+2025-09-14 20:58:26,696 - core.interfaces.api_model_interface - INFO -   失败: 1
+2025-09-14 20:58:26,696 - core.interfaces.api_model_interface - INFO -   成功率: 85.7%
+2025-09-14 20:58:26,696 - core.evaluators.unified_batch_evaluator - INFO - ✓ 模型 qwen-turbo 评估完成
+2025-09-14 20:58:26,696 - core.evaluators.unified_batch_evaluator - INFO -   总体分数: 36.77%
+2025-09-14 20:58:26,696 - core.evaluators.unified_batch_evaluator - INFO -   成功率: 83.33%
+2025-09-14 20:58:26,702 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-14 20:58:26,702 - core.evaluators.unified_batch_evaluator - INFO - 生成对比报告...
+2025-09-14 20:58:26,702 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-14 20:58:26,702 - core.utils.report_generator - INFO - 生成 1 个模型的对比报告
+2025-09-14 20:58:26,702 - core.utils.report_generator - INFO - 对比报告 JSON 已保存: ..\result_test\model_comparison.json
+2025-09-14 20:58:26,702 - core.utils.report_generator - INFO - 对比报告 Markdown 已保存: ..\result_test\model_comparison.md
+2025-09-14 20:58:27,911 - core.utils.report_generator - INFO - 对比图表已生成: ..\result_test\charts
+2025-09-14 20:58:27,945 - core.utils.report_generator - INFO - 详细结果 CSV 已保存: ..\result_test\detailed_results.csv
+2025-09-14 20:58:27,945 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-14 20:58:27,945 - core.evaluators.unified_batch_evaluator - INFO - 评估总结
+2025-09-14 20:58:27,945 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-14 20:58:27,945 - core.evaluators.unified_batch_evaluator - INFO - 总耗时: 618.2 秒
+2025-09-14 20:58:27,945 - core.evaluators.unified_batch_evaluator - INFO - 成功评估: 1 个模型
+2025-09-14 20:58:27,945 - core.evaluators.unified_batch_evaluator - INFO - 失败: 0 个模型
+2025-09-14 20:58:27,945 - core.evaluators.unified_batch_evaluator - INFO - 
+成功的模型:
+2025-09-14 20:58:27,950 - core.evaluators.unified_batch_evaluator - INFO -   ✓ qwen-turbo: 36.77%
+2025-09-14 20:58:27,950 - core.evaluators.unified_batch_evaluator - INFO - 
+报告已保存至: ..\result_test
+2025-09-14 20:58:27,950 - core.evaluators.unified_batch_evaluator - INFO -   - 模型报告: ..\result_test/model_*.json
+2025-09-14 20:58:27,950 - core.evaluators.unified_batch_evaluator - INFO -   - 对比报告: ..\result_test/model_comparison.json
+2025-09-14 20:58:27,950 - core.evaluators.unified_batch_evaluator - INFO -   - 图表: ..\result_test/charts/
+2025-09-14 20:58:27,950 - core.evaluators.unified_batch_evaluator - INFO - 清理资源...
+2025-09-14 20:58:27,950 - core.utils.api_connection_pool - INFO - Closed API session: openai
+2025-09-14 20:58:27,950 - core.utils.api_connection_pool - INFO - All API sessions cleaned up
+2025-09-14 20:58:27,950 - core.evaluators.unified_batch_evaluator - INFO - 资源清理完成
