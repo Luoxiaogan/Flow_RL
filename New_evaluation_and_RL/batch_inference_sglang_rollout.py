@@ -21,9 +21,9 @@ import sys
 HOST = "localhost"
 PORT = 30000
 BATCH_SIZE = 20
-ROLLOUT = 10  # 每个输入生成的响应数量
+ROLLOUT = 7  # 每个输入生成的响应数量
 INPUT_JSONL = "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/test_IMO_0922_QZH.jsonl"
-OUTPUT_JSONL = "/nas/ganluo/Flow_RL/New_evaluation_and_RL/test_IMO_0922_QZH_with_responses_rollout.jsonl"  # 修改输出文件名以区分
+OUTPUT_JSONL = f"/nas/ganluo/Flow_RL/New_evaluation_and_RL/test_IMO_0922_QZH_with_responses_rollout={ROLLOUT}.jsonl"  # 修改输出文件名以区分
 
 # Request configuration
 API_ENDPOINT = f"http://{HOST}:{PORT}/generate"  # 使用SGLang原生端点
