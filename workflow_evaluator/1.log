@@ -636,7 +636,7 @@ simpleqa:
 imo:
   - ensemble_generate_refiner_verifier: 6 条
 
-处理后的数据已保存至: results_test_10/raw/processed_data.jsonl
+处理后的数据已保存至: results_all_g/raw/processed_data.jsonl
 
 [步骤 2/5] 检查Reward Server
 ----------------------------------------
@@ -660,42 +660,2618 @@ imo:
       共 5 个测试
       执行批次 1/1
 
-执行测试: 9e4455e51f9e
+执行测试: bdb99517a82c
   - 原始文件行号: 1
   - Data Source: math500
   - Operators: decompose_ensemble_generate_revise_summarize
   - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
   - 测试用例数量: 5
-{'data_source': 'math500', 'solution_str': '<think>\n</think>\n\n```python\n# --- DO NOT IMPORT HERE ---\nclass Workflow:\n    def __init__(self, config, problem) -> None:\n        # --- DO NOT MODIFY THIS SECTION ---\n        self.config = config\n        self.problem_text = problem\n        self.llm = create(config)\n        \n        self.generate = operator.Generate(self.llm, self.problem_text)\n        self.revise = operator.Revise(self.llm, self.problem_text)\n        self.summarize = operator.Summarize(self.llm, self.problem_text)\n        self.ensemble = operator.Ensemble(self.llm, self.problem_text)\n        self.decompose = operator.Decompose(self.llm, self.problem_text)\n\n    async def run_workflow(self):\n        """\n        Implement the core problem-solving logic here.\n        Remember: \n        - Use detailed, comprehensive instructions\n        - Dynamic instruction construction is powerful\n        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]\n        """\n        import asyncio\n\n        # Step 1: Extract all numerical values and expressions\n        extraction_instruction = (\n            "Identify all numerical values, expressions, and mathematical symbols in the problem. "\n            "Focus on complex fractions, imaginary numbers, and any arithmetic operations. "\n            "Provide the results in a structured format for further analysis."\n        )\n        extracted_info = await self.generate(instruction=extraction_instruction, context=self.problem_text)\n\n        # Step 2: Analyze the problem and solve step by step\n        analysis_instruction = (\n            f"Given the extracted information: {extracted_info}, "\n            "analyze the problem step by step. Break down the original calculation into its components. "\n            "First, correct the error in the calculation by properly handling the sign. "\n            "Then, perform the division of complex numbers using the formula (a + bi)/(c + di) = [(ac + bd)/(c^2 + d^2)] + [(bc - ad)/(c^2 + d^2)]i. "\n            "Show all intermediate steps clearly and compute the final result as a complex number in the form a + bi."\n        )\n        solution = await self.generate(instruction=analysis_instruction, context=self.problem_text)\n\n        # Step 3: Verify the solution using an alternative method\n        verification_instruction = (\n            f"Using the solution: {solution}, verify the result by substituting the values back into the original equation. "\n            "Check whether the computed result matches the expected outcome when the original calculation is performed correctly. "\n            "If there are discrepancies, identify and correct them."\n        )\n        verification = await self.generate(instruction=verification_instruction, context=self.problem_text)\n\n        # Step 4: Ensemble decision to select the best answer\n        ensemble_instruction = (\n            "Compare the solution and verification results. "\n            "Select the most accurate and consistent result based on the problem-solving process. "\n            "Ensure that the final answer is precise and formatted correctly."\n        )\n        final_answer = await self.ensemble(instruction=ensemble_instruction, contexts=[solution, verification])\n\n        return final_answer\n```', 'ground_truth': 'default', 'extra_info': {'raw_data': 349, 'example_indices': [349], 'test_cases': [327, 57, 12, 379, 140], 'data_path': '/home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl'}}
 
-执行测试: 6d3e713d13ae
+执行测试: 1ba4bd6afa1c
   - 原始文件行号: 39
   - Data Source: math500
   - Operators: decompose_ensemble_generate_revise_summarize
   - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
   - 测试用例数量: 5
-{'data_source': 'math500', 'solution_str': '<think>\n</think>\n\n```python\n# --- DO NOT IMPORT HERE ---\nclass Workflow:\n    def __init__(self, config, problem) -> None:\n        # --- DO NOT MODIFY THIS SECTION ---\n        self.config = config\n        self.problem_text = problem\n        self.llm = create(config)\n        \n        self.generate = operator.Generate(self.llm, self.problem_text)\n        self.revise = operator.Revise(self.llm, self.problem_text)\n        self.summarize = operator.Summarize(self.llm, self.problem_text)\n        self.ensemble = operator.Ensemble(self.llm, self.problem_text)\n        self.decompose = operator.Decompose(self.llm, self.problem_text)\n\n    async def run_workflow(self):\n        """\n        Implement the core problem-solving logic here.\n        Remember: \n        - Use detailed, comprehensive instructions\n        - Dynamic instruction construction is powerful\n        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]\n        """\n        import asyncio\n\n        # Step 1: Extract all mathematical expressions, equations, and specific values from the problem\n        extraction_instruction = (\n            "Analyze the problem and extract all mathematical equations, expressions, and numerical values. "\n            "Include any relevant information about asymptotes, intercepts, or conditions mentioned in the problem. "\n            "Ensure that the extracted information is complete and ready for further analysis."\n        )\n        extracted_info = await self.generate(instruction=extraction_instruction, context=self.problem_text)\n\n        # Step 2: Decompose the problem into manageable subproblems\n        decomposition_instruction = (\n            "Given the extracted information, break down the problem into smaller, independent subproblems. "\n            "Each subproblem should focus on a specific aspect of the problem, such as finding vertical asymptotes, "\n            "horizontal asymptotes, or calculating specific values. Provide clear descriptions for each subproblem "\n            "and indicate any dependencies between them."\n        )\n        decomposition = await self.decompose(instruction=decomposition_instruction, context=extracted_info)\n\n        # Step 3: Solve each subproblem independently\n        subproblem_solutions = await asyncio.gather(\n            self.generate(\n                instruction=(\n                    "Solve the subproblem: Find the vertical asymptotes of the function. "\n                    "Use the fact that vertical asymptotes occur where the denominator equals zero. "\n                    "Solve the quadratic equation x^2 - 5x - 14 = 0 to find the values of x."\n                ),\n                context=decomposition[0]["description"]\n            ),\n            self.generate(\n                instruction=(\n                    "Solve the subproblem: Find the horizontal asymptote of the function. "\n                    "For rational functions, the horizontal asymptote depends on the degrees of the numerator and denominator. "\n                    "Since the degrees are equal, the horizontal asymptote is the ratio of the leading coefficients."\n                ),\n                context=decomposition[1]["description"]\n            ),\n            self.generate(\n                instruction=(\n                    "Solve the subproblem: Calculate the sum of the roots and the horizontal asymptote. "\n                    "Add the roots of the quadratic equation (a + b) and the horizontal asymptote (c), then compute their sum."\n                ),\n                context=decomposition[2]["description"]\n            )\n        )\n\n        # Step 4: Summarize and refine the solutions\n        refinement_instruction = (\n            "Review the solutions for each subproblem. Ensure that the solutions are accurate, consistent, and complete. "\n            "If necessary, revise any errors or ambiguities in the solutions."\n        )\n        refined_solutions = await asyncio.gather(\n            self.revise(instruction=refinement_instruction, context=subproblem_solutions[0]),\n            self.revise(instruction=refinement_instruction, context=subproblem_solutions[1]),\n            self.revise(instruction=refinement_instruction, context=subproblem_solutions[2])\n        )\n\n        # Step 5: Ensemble decision to finalize the result\n        ensemble_instruction = (\n            "Evaluate the refined solutions and select the final result. Ensure that the final result is the sum of "\n            "the vertical asymptotes (a + b) and the horizontal asymptote (c). Provide the final answer in a clear format."\n        )\n        final_answer = await self.ensemble(\n            instruction=ensemble_instruction,\n            contexts=[refined_solutions[0], refined_solutions[1], refined_solutions[2]]\n        )\n\n        return final_answer\n```', 'ground_truth': 'default', 'extra_info': {'raw_data': 47, 'example_indices': [47], 'test_cases': [125, 114, 71, 377, 52], 'data_path': '/home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl'}}
 
-执行测试: ce61837157e2
+执行测试: d4b6e020e7c4
   - 原始文件行号: 166
   - Data Source: math500
   - Operators: decompose_ensemble_generate_revise_summarize
   - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
   - 测试用例数量: 5
-{'data_source': 'math500', 'solution_str': '<think>\n</think>\n\n```python\n# --- DO NOT IMPORT HERE ---\nclass Workflow:\n    def __init__(self, config, problem) -> None:\n        # --- DO NOT MODIFY THIS SECTION ---\n        self.config = config\n        self.problem_text = problem\n        self.llm = create(config)\n        \n        self.generate = operator.Generate(self.llm, self.problem_text)\n        self.revise = operator.Revise(self.llm, self.problem_text)\n        self.summarize = operator.Summarize(self.llm, self.problem_text)\n        self.ensemble = operator.Ensemble(self.llm, self.problem_text)\n        self.decompose = operator.Decompose(self.llm, self.problem_text)\n\n    async def run_workflow(self):\n        """\n        Implement the core problem-solving logic here.\n        Remember: \n        - Use detailed, comprehensive instructions\n        - Dynamic instruction construction is powerful\n        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]\n        """\n        import asyncio\n\n        # Step 1: Generate a detailed understanding of the problem\n        understanding_instruction = (\n            "Carefully analyze the provided problem statement and identify all key elements, including: "\n            "geometric figures, angles, relationships, and any given measurements or properties. "\n            "Determine what needs to be solved and what information is provided."\n        )\n        problem_understanding = await self.generate(instruction=understanding_instruction, context=self.problem_text)\n\n        # Step 2: Decompose the problem into subproblems\n        decomposition_instruction = (\n            "Break down the problem into smaller, manageable subproblems. Each subproblem should focus on a specific aspect "\n            "of the problem, such as identifying known angles, calculating unknown angles, or applying geometric theorems. "\n            "Ensure that the subproblems are logically connected and can be solved sequentially."\n        )\n        decomposition = await self.decompose(instruction=decomposition_instruction, context=problem_understanding)\n\n        # Step 3: Solve each subproblem in parallel\n        # Extract subproblem descriptions for dynamic instruction construction\n        subproblem_descriptions = [subproblem["description"] for subproblem in decomposition]\n        dependencies = [subproblem["dependencies"] for subproblem in decomposition]\n\n        # Prepare detailed instructions for each subproblem\n        subproblem_instructions = []\n        for subproblem_id, description in enumerate(subproblem_descriptions):\n            instruction = (\n                f"Solve the following subproblem: {description}. "\n                f"Use the provided problem context and any relevant geometric theorems. "\n                f"Provide the solution in a clear and precise manner, specifying any angles or relationships."\n            )\n            subproblem_instructions.append(instruction)\n\n        # Execute all subproblems in parallel\n        subproblem_solutions = await asyncio.gather(\n            *[self.generate(instruction=inst, context=self.problem_text) for inst in subproblem_instructions]\n        )\n\n        # Step 4: Ensemble the solutions to determine the final answer\n        ensemble_instruction = (\n            "Evaluate the solutions to the subproblems and select the most accurate and complete one. "\n            "Ensure that the final answer correctly addresses the original problem, including all necessary details such as the measure of α in degrees."\n        )\n        final_answer = await self.ensemble(instruction=ensemble_instruction, contexts=subproblem_solutions)\n\n        return final_answer\n```', 'ground_truth': 'default', 'extra_info': {'raw_data': 100, 'example_indices': [100], 'test_cases': [346, 379, 279, 44, 302], 'data_path': '/home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl'}}
 
-执行测试: c83605224cc7
+执行测试: 00a04fe58b1d
   - 原始文件行号: 182
   - Data Source: math500
   - Operators: decompose_ensemble_generate_revise_summarize
   - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
   - 测试用例数量: 5
-{'data_source': 'math500', 'solution_str': '<think>\n</think>\n\n```python\n# --- DO NOT IMPORT HERE ---\nclass Workflow:\n    def __init__(self, config, problem) -> None:\n        # --- DO NOT MODIFY THIS SECTION ---\n        self.config = config\n        self.problem_text = problem\n        self.llm = create(config)\n        \n        self.generate = operator.Generate(self.llm, self.problem_text)\n        self.revise = operator.Revise(self.llm, self.problem_text)\n        self.summarize = operator.Summarize(self.llm, self.problem_text)\n        self.ensemble = operator.Ensemble(self.llm, self.problem_text)\n        self.decompose = operator.Decompose(self.llm, self.problem_text)\n\n    async def run_workflow(self):\n        """\n        Implement the core problem-solving logic here.\n        Remember: \n        - Use detailed, comprehensive instructions\n        - Dynamic instruction construction is powerful\n        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]\n        """\n        import asyncio\n\n        # Step 1: Extract all mathematical expressions and numerical values\n        extraction_instruction = (\n            "Extract all mathematical expressions, numbers, and symbols present in the problem. "\n            "Include any potential solution pathways or intermediate steps implied by the problem. "\n            "Ensure that the extracted information is precise and ready for subsequent operations."\n        )\n        extracted_info = await self.generate(instruction=extraction_instruction, context=self.problem_text)\n\n        # Step 2: Decompose the problem into subproblems\n        decomposition_instruction = (\n            f"Based on the extracted information: {extracted_info}, "\n            "break the problem into manageable subproblems. Each subproblem should have a clear description "\n            "and specify any dependencies between them. Ensure that the decomposition covers all aspects of the problem "\n            "and is systematic in nature."\n        )\n        decomposition = await self.decompose(instruction=decomposition_instruction, context=self.problem_text)\n\n        # Step 3: Generate solutions for each subproblem\n        subproblem_solutions = []\n        for subproblem in decomposition:\n            subproblem_id = subproblem["id"]\n            subproblem_description = subproblem["description"]\n            subproblem_dependencies = subproblem["dependencies"]\n\n            # Generate solution for this subproblem\n            solution_instruction = (\n                f"Solve the subproblem: {subproblem_description}. "\n                "Provide a clear, step-by-step reasoning process and ensure that the solution is accurate. "\n                "If there are dependencies (e.g., other subproblems), explicitly state how they relate to this one."\n            )\n            solution = await self.generate(instruction=solution_instruction, context=self.problem_text)\n            subproblem_solutions.append((subproblem_id, solution))\n\n        # Step 4: Compare or ensemble the solutions\n        ensemble_instruction = (\n            "Evaluate the solutions generated for each subproblem. Compare their reasoning, accuracy, and completeness. "\n            "If there are discrepancies between the solutions, identify which one is more reliable or provides a better explanation. "\n            "If the solutions are consistent, summarize them into a single, coherent answer that solves the original problem."\n        )\n        final_solution = await self.ensemble(\n            instruction=ensemble_instruction,\n            contexts=[solution for _, solution in subproblem_solutions]\n        )\n\n        return final_solution\n```', 'ground_truth': 'default', 'extra_info': {'raw_data': 23, 'example_indices': [23], 'test_cases': [216, 16, 15, 47, 111], 'data_path': '/home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl'}}
 
-执行测试: 6ce08cb136a6
+执行测试: 0fe47faf75d8
   - 原始文件行号: 250
   - Data Source: math500
   - Operators: decompose_ensemble_generate_revise_summarize
   - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
   - 测试用例数量: 5
-{'data_source': 'math500', 'solution_str': '<think>\n</think>\n\n```python\n# --- DO NOT IMPORT HERE ---\nclass Workflow:\n    def __init__(self, config, problem) -> None:\n        # --- DO NOT MODIFY THIS SECTION ---\n        self.config = config\n        self.problem_text = problem\n        self.llm = create(config)\n        \n        self.generate = operator.Generate(self.llm, self.problem_text)\n        self.revise = operator.Revise(self.llm, self.problem_text)\n        self.summarize = operator.Summarize(self.llm, self.problem_text)\n        self.ensemble = operator.Ensemble(self.llm, self.problem_text)\n        self.decompose = operator.Decompose(self.llm, self.problem_text)\n\n    async def run_workflow(self):\n        """\n        Implement the core problem-solving logic here.\n        Remember: \n        - Use detailed, comprehensive instructions\n        - Dynamic instruction construction is powerful\n        - All operators expect (instruction: str, context: str) except Ensemble which takes contexts: List[str]\n        """\n        import asyncio\n\n        # Step 1: Extract all numerical values and key information\n        extraction_instruction = (\n            "Extract all numerical values, categories, and relationships in the problem text. "\n            "Identify the initial number of books on each shelf, the types of books, and the number of books removed. "\n            "Ensure that the extracted information is accurate and structured for further use."\n        )\n        extracted_info = await self.generate(instruction=extraction_instruction, context=self.problem_text)\n\n        # Step 2: Calculate the remaining books on each shelf\n        calc_instruction = (\n            f"Based on the extracted information: {extracted_info}, "\n            "calculate the number of books remaining on each shelf after two books are removed from each shelf. "\n            "Provide a clear breakdown of the calculations for each shelf."\n        )\n        remaining_books = await self.generate(instruction=calc_instruction, context=self.problem_text)\n\n        # Step 3: Determine the total number of remaining books\n        total_remaining_instruction = (\n            f"Based on the extracted information: {extracted_info}, "\n            "and the calculated remaining books: {remaining_books}, "\n            "compute the total number of remaining books across all shelves. "\n            "Ensure the result is a single number representing the total."\n        )\n        total_remaining = await self.generate(instruction=total_remaining_instruction, context=self.problem_text)\n\n        # Step 4: Calculate the fraction of math books\n        fraction_instruction = (\n            f"Based on the extracted information: {extracted_info}, "\n            "and the calculated remaining books: {remaining_books}, "\n            "determine the fraction of the remaining books that are math books. "\n            "Express the answer as a common fraction (numerator/denominator) and simplify if possible."\n        )\n        fraction_result = await self.generate(instruction=fraction_instruction, context=self.problem_text)\n\n        # Step 5: Summarize the final answer\n        summary_instruction = (\n            f"Based on the following information: {fraction_result}, "\n            "summarize the final answer in a concise and clear manner. "\n            "Ensure that the summary includes the fraction of math books and any relevant context."\n        )\n        final_summary = await self.summarize(instruction=summary_instruction, context=fraction_result)\n\n        return final_summary\n```', 'ground_truth': 'default', 'extra_info': {'raw_data': 101, 'example_indices': [101], 'test_cases': [119, 258, 308, 13, 287], 'data_path': '/home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl'}}
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.20
+      批次完成: 成功 5/5
+      ✓ math500/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [2/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: c8f838a39198
+  - 原始文件行号: 49
+  - Data Source: math500
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+
+执行测试: cdfe1cc4838b
+  - 原始文件行号: 81
+  - Data Source: math500
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+
+执行测试: 7234d8e78741
+  - 原始文件行号: 143
+  - Data Source: math500
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+
+执行测试: 6815e7402afe
+  - 原始文件行号: 172
+  - Data Source: math500
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+
+执行测试: e13f60441507
+  - 原始文件行号: 195
+  - Data Source: math500
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.40
+      批次完成: 成功 5/5
+      ✓ math500/ensemble_generate_revise_summarize 组结果已保存
+
+  [3/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 49a34c79edcf
+  - 原始文件行号: 64
+  - Data Source: math500
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+
+执行测试: c43a3ced33bf
+  - 原始文件行号: 79
+  - Data Source: math500
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+
+执行测试: e90654ea0bfe
+  - 原始文件行号: 95
+  - Data Source: math500
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+
+执行测试: c22ccb39cca4
+  - 原始文件行号: 162
+  - Data Source: math500
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+
+执行测试: 60cfec2c2ac1
+  - 原始文件行号: 251
+  - Data Source: math500
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.80
+      批次完成: 成功 5/5
+      ✓ math500/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [4/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 33c9079b70f6
+  - 原始文件行号: 100
+  - Data Source: math500
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+
+执行测试: 453cacaec533
+  - 原始文件行号: 107
+  - Data Source: math500
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+
+执行测试: 0e27a5c06e17
+  - 原始文件行号: 209
+  - Data Source: math500
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+
+执行测试: f2175d2b81c9
+  - 原始文件行号: 236
+  - Data Source: math500
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+
+执行测试: 3dbf55047671
+  - 原始文件行号: 260
+  - Data Source: math500
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/math500/new_data.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.60
+      批次完成: 成功 5/5
+      ✓ math500/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[2/14] Data Source: drop
+共 20 个workflow
+========================================
+
+  [1/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: dbd4fe5d8a03
+  - 原始文件行号: 2
+  - Data Source: drop
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 7d6796b7b892
+  - 原始文件行号: 31
+  - Data Source: drop
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: a6446a4ef1c6
+  - 原始文件行号: 58
+  - Data Source: drop
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: c1302132489e
+  - 原始文件行号: 215
+  - Data Source: drop
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 46e8de8c4e70
+  - 原始文件行号: 228
+  - Data Source: drop
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+      批次完成: 成功 5/5
+      ✓ drop/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [2/4] Operators: decompose_ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 06b147790f3d
+  - 原始文件行号: 3
+  - Data Source: drop
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 7ef1eee7d39e
+  - 原始文件行号: 14
+  - Data Source: drop
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 56f07e648c45
+  - 原始文件行号: 106
+  - Data Source: drop
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: dde5c1888363
+  - 原始文件行号: 124
+  - Data Source: drop
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: c73ece634a6c
+  - 原始文件行号: 248
+  - Data Source: drop
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ drop/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [3/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: ad001136dd66
+  - 原始文件行号: 12
+  - Data Source: drop
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 7cb6ddd645a9
+  - 原始文件行号: 28
+  - Data Source: drop
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 40715a2a92f7
+  - 原始文件行号: 76
+  - Data Source: drop
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: fbe8170bc822
+  - 原始文件行号: 150
+  - Data Source: drop
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: c01f4d22cd4b
+  - 原始文件行号: 202
+  - Data Source: drop
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ drop/ensemble_generate_revise_summarize 组结果已保存
+
+  [4/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: b2dcf7411fc3
+  - 原始文件行号: 19
+  - Data Source: drop
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: c657027d2674
+  - 原始文件行号: 66
+  - Data Source: drop
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 7febda6db34e
+  - 原始文件行号: 159
+  - Data Source: drop
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 1f9cd2f64835
+  - 原始文件行号: 173
+  - Data Source: drop
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 1d9d3b3ad6ef
+  - 原始文件行号: 177
+  - Data Source: drop
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/drop/validation.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.80
+      批次完成: 成功 5/5
+      ✓ drop/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[3/14] Data Source: humaneval
+共 20 个workflow
+========================================
+
+  [1/4] Operators: decompose_ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: bb5f3a490b95
+  - 原始文件行号: 4
+  - Data Source: humaneval
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 2a4f5c5bd0dc
+  - 原始文件行号: 59
+  - Data Source: humaneval
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: a36da36d50ad
+  - 原始文件行号: 130
+  - Data Source: humaneval
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 7cf464849c71
+  - 原始文件行号: 142
+  - Data Source: humaneval
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: b6f494ed206f
+  - 原始文件行号: 257
+  - Data Source: humaneval
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ humaneval/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [2/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: ff59b3468b8a
+  - 原始文件行号: 8
+  - Data Source: humaneval
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 1ca43a621c9c
+  - 原始文件行号: 36
+  - Data Source: humaneval
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 5bd85ae76bee
+  - 原始文件行号: 96
+  - Data Source: humaneval
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: e4dbc9be6cf2
+  - 原始文件行号: 132
+  - Data Source: humaneval
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 85914353ad02
+  - 原始文件行号: 229
+  - Data Source: humaneval
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.40
+      批次完成: 成功 5/5
+      ✓ humaneval/ensemble_generate_revise_summarize 组结果已保存
+
+  [3/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 1246fef69259
+  - 原始文件行号: 38
+  - Data Source: humaneval
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 9546bc158b7b
+  - 原始文件行号: 170
+  - Data Source: humaneval
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 83c3a32808b3
+  - 原始文件行号: 217
+  - Data Source: humaneval
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 5e9588ee58c5
+  - 原始文件行号: 231
+  - Data Source: humaneval
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 3b95e4f2c3ec
+  - 原始文件行号: 239
+  - Data Source: humaneval
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.40
+      批次完成: 成功 5/5
+      ✓ humaneval/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [4/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 564999326af8
+  - 原始文件行号: 69
+  - Data Source: humaneval
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 971abd35ce48
+  - 原始文件行号: 89
+  - Data Source: humaneval
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: f99fc0d2d67b
+  - 原始文件行号: 129
+  - Data Source: humaneval
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 296762d202c9
+  - 原始文件行号: 207
+  - Data Source: humaneval
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: b51ec15ca6b8
+  - 原始文件行号: 242
+  - Data Source: humaneval
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/human_eval/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.60
+      批次完成: 成功 5/5
+      ✓ humaneval/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[4/14] Data Source: gsm8k
+共 20 个workflow
+========================================
+
+  [1/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 602c94999a60
+  - 原始文件行号: 5
+  - Data Source: gsm8k
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 2876e07b2fa1
+  - 原始文件行号: 60
+  - Data Source: gsm8k
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 9f63e38da9a5
+  - 原始文件行号: 113
+  - Data Source: gsm8k
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: ba2771965bd1
+  - 原始文件行号: 119
+  - Data Source: gsm8k
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: e882462c258c
+  - 原始文件行号: 254
+  - Data Source: gsm8k
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+      批次完成: 成功 5/5
+      ✓ gsm8k/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [2/4] Operators: decompose_ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: cc5df9dc1eba
+  - 原始文件行号: 20
+  - Data Source: gsm8k
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 840ce83df83b
+  - 原始文件行号: 84
+  - Data Source: gsm8k
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 5fa52854c064
+  - 原始文件行号: 118
+  - Data Source: gsm8k
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: f27e644fb67b
+  - 原始文件行号: 224
+  - Data Source: gsm8k
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 8b07b2683b59
+  - 原始文件行号: 238
+  - Data Source: gsm8k
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ gsm8k/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [3/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: a65c674e1b41
+  - 原始文件行号: 37
+  - Data Source: gsm8k
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 481781de7861
+  - 原始文件行号: 50
+  - Data Source: gsm8k
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: be88c7978063
+  - 原始文件行号: 136
+  - Data Source: gsm8k
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: e80082dc59f7
+  - 原始文件行号: 185
+  - Data Source: gsm8k
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: dac9d27ac73b
+  - 原始文件行号: 226
+  - Data Source: gsm8k
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ gsm8k/ensemble_generate_revise_summarize 组结果已保存
+
+  [4/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 1fb5a6b13989
+  - 原始文件行号: 40
+  - Data Source: gsm8k
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 1631e24180b8
+  - 原始文件行号: 98
+  - Data Source: gsm8k
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: ec0dae1b1d8b
+  - 原始文件行号: 148
+  - Data Source: gsm8k
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: a3c742cc0fee
+  - 原始文件行号: 178
+  - Data Source: gsm8k
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 4a26e3cd3f1d
+  - 原始文件行号: 246
+  - Data Source: gsm8k
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/gsm8k/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ gsm8k/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[5/14] Data Source: mbppplus
+共 20 个workflow
+========================================
+
+  [1/4] Operators: decompose_ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 464a80e77a2d
+  - 原始文件行号: 6
+  - Data Source: mbppplus
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 52a5c4d1f520
+  - 原始文件行号: 57
+  - Data Source: mbppplus
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 9f718775c81a
+  - 原始文件行号: 97
+  - Data Source: mbppplus
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 93eed3f03b52
+  - 原始文件行号: 200
+  - Data Source: mbppplus
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: b03763098e24
+  - 原始文件行号: 245
+  - Data Source: mbppplus
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.20
+      批次完成: 成功 5/5
+      ✓ mbppplus/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [2/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 82219d183ae9
+  - 原始文件行号: 13
+  - Data Source: mbppplus
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 523db300be9f
+  - 原始文件行号: 155
+  - Data Source: mbppplus
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 270b2c9b19e3
+  - 原始文件行号: 158
+  - Data Source: mbppplus
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 67ab034955b2
+  - 原始文件行号: 181
+  - Data Source: mbppplus
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 1624391ea1c9
+  - 原始文件行号: 256
+  - Data Source: mbppplus
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.20
+      批次完成: 成功 5/5
+      ✓ mbppplus/ensemble_generate_revise_summarize 组结果已保存
+
+  [3/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 0554c8983331
+  - 原始文件行号: 16
+  - Data Source: mbppplus
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 550080a7ac35
+  - 原始文件行号: 41
+  - Data Source: mbppplus
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: c90bd027a0ee
+  - 原始文件行号: 55
+  - Data Source: mbppplus
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 343502f66476
+  - 原始文件行号: 71
+  - Data Source: mbppplus
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: a9a55ebe4cb8
+  - 原始文件行号: 121
+  - Data Source: mbppplus
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.40
+      批次完成: 成功 5/5
+      ✓ mbppplus/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [4/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 66acc6af687b
+  - 原始文件行号: 47
+  - Data Source: mbppplus
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: f2f36b2bbec9
+  - 原始文件行号: 62
+  - Data Source: mbppplus
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 29410f6eed73
+  - 原始文件行号: 74
+  - Data Source: mbppplus
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 99f38c0cfefb
+  - 原始文件行号: 160
+  - Data Source: mbppplus
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 1f60d5b281fb
+  - 原始文件行号: 210
+  - Data Source: mbppplus
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbppplus/mbppplus_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.20
+      批次完成: 成功 5/5
+      ✓ mbppplus/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[6/14] Data Source: mbpp
+共 20 个workflow
+========================================
+
+  [1/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: d0155a0c8af0
+  - 原始文件行号: 7
+  - Data Source: mbpp
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 674a01e66c68
+  - 原始文件行号: 52
+  - Data Source: mbpp
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 96717efccb55
+  - 原始文件行号: 93
+  - Data Source: mbpp
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: e9b8278f8e7f
+  - 原始文件行号: 103
+  - Data Source: mbpp
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: cf2eb8509ba9
+  - 原始文件行号: 135
+  - Data Source: mbpp
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.00
+      批次完成: 成功 5/5
+      ✓ mbpp/ensemble_generate_revise_summarize 组结果已保存
+
+  [2/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 09414419e2b4
+  - 原始文件行号: 17
+  - Data Source: mbpp
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: f188a262a12e
+  - 原始文件行号: 141
+  - Data Source: mbpp
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 43aa1fd41887
+  - 原始文件行号: 149
+  - Data Source: mbpp
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 658b87c0732e
+  - 原始文件行号: 167
+  - Data Source: mbpp
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: fb6839f7126c
+  - 原始文件行号: 211
+  - Data Source: mbpp
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+      批次完成: 成功 5/5
+      ✓ mbpp/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [3/4] Operators: decompose_ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 17dcf265744a
+  - 原始文件行号: 32
+  - Data Source: mbpp
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: b2a41c363864
+  - 原始文件行号: 112
+  - Data Source: mbpp
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 8b222bb98bba
+  - 原始文件行号: 156
+  - Data Source: mbpp
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: d6edb0ef36d9
+  - 原始文件行号: 188
+  - Data Source: mbpp
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 934387c57273
+  - 原始文件行号: 235
+  - Data Source: mbpp
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.20
+      批次完成: 成功 5/5
+      ✓ mbpp/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [4/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 1da0d488e376
+  - 原始文件行号: 77
+  - Data Source: mbpp
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 32dd67de2fee
+  - 原始文件行号: 123
+  - Data Source: mbpp
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 84aaaa9fd2f6
+  - 原始文件行号: 175
+  - Data Source: mbpp
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: fd616ffd4794
+  - 原始文件行号: 225
+  - Data Source: mbpp
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 740ace180cee
+  - 原始文件行号: 244
+  - Data Source: mbpp
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mbpp/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+      批次完成: 成功 5/5
+      ✓ mbpp/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[7/14] Data Source: hotpotqa
+共 20 个workflow
+========================================
+
+  [1/4] Operators: decompose_ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 932e527b314c
+  - 原始文件行号: 9
+  - Data Source: hotpotqa
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 6dd7385ea5e4
+  - 原始文件行号: 85
+  - Data Source: hotpotqa
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 1ebc2df30ab5
+  - 原始文件行号: 116
+  - Data Source: hotpotqa
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 62bb495da4a6
+  - 原始文件行号: 144
+  - Data Source: hotpotqa
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: aec85ba04bec
+  - 原始文件行号: 230
+  - Data Source: hotpotqa
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ hotpotqa/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [2/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: e744ecdde84e
+  - 原始文件行号: 25
+  - Data Source: hotpotqa
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 5a94becf07bd
+  - 原始文件行号: 33
+  - Data Source: hotpotqa
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 67b787c297f9
+  - 原始文件行号: 117
+  - Data Source: hotpotqa
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 266ef326c0e3
+  - 原始文件行号: 169
+  - Data Source: hotpotqa
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: e816e9159f94
+  - 原始文件行号: 176
+  - Data Source: hotpotqa
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.60
+      批次完成: 成功 5/5
+      ✓ hotpotqa/ensemble_generate_revise_summarize 组结果已保存
+
+  [3/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 3eec7411cfa8
+  - 原始文件行号: 43
+  - Data Source: hotpotqa
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 2c94fb2a05a2
+  - 原始文件行号: 75
+  - Data Source: hotpotqa
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 212ff8f97d91
+  - 原始文件行号: 146
+  - Data Source: hotpotqa
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 34f869eb3744
+  - 原始文件行号: 204
+  - Data Source: hotpotqa
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: f854faffa316
+  - 原始文件行号: 234
+  - Data Source: hotpotqa
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ hotpotqa/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [4/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 6c7f0565c259
+  - 原始文件行号: 86
+  - Data Source: hotpotqa
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: f93d95d023b7
+  - 原始文件行号: 208
+  - Data Source: hotpotqa
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: d78320749899
+  - 原始文件行号: 243
+  - Data Source: hotpotqa
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: cea1243db6a3
+  - 原始文件行号: 252
+  - Data Source: hotpotqa
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+
+执行测试: 3e4c5872f9f7
+  - 原始文件行号: 255
+  - Data Source: hotpotqa
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/hotpotqa/validation.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ hotpotqa/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[8/14] Data Source: aime2024
+共 20 个workflow
+========================================
+
+  [1/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 26375106dfdc
+  - 原始文件行号: 10
+  - Data Source: aime2024
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: e812d37e23ba
+  - 原始文件行号: 22
+  - Data Source: aime2024
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 7acb1b71e5bf
+  - 原始文件行号: 82
+  - Data Source: aime2024
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 60e07afd17f4
+  - 原始文件行号: 164
+  - Data Source: aime2024
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: eef1556fa923
+  - 原始文件行号: 216
+  - Data Source: aime2024
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.20
+      批次完成: 成功 5/5
+      ✓ aime2024/ensemble_generate_revise_summarize 组结果已保存
+
+  [2/4] Operators: decompose_ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: c91cfaebcaa0
+  - 原始文件行号: 35
+  - Data Source: aime2024
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 482889dc677a
+  - 原始文件行号: 111
+  - Data Source: aime2024
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: ffc1c67271bc
+  - 原始文件行号: 145
+  - Data Source: aime2024
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 398f3af00fdd
+  - 原始文件行号: 180
+  - Data Source: aime2024
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 73de4f50d1bd
+  - 原始文件行号: 184
+  - Data Source: aime2024
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+      批次完成: 成功 5/5
+      ✓ aime2024/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [3/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 9cbda5ebdc37
+  - 原始文件行号: 70
+  - Data Source: aime2024
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: e1edb6cee78a
+  - 原始文件行号: 114
+  - Data Source: aime2024
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 6ef37d902b4b
+  - 原始文件行号: 137
+  - Data Source: aime2024
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 189df09b1614
+  - 原始文件行号: 168
+  - Data Source: aime2024
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 13ffa3776ec7
+  - 原始文件行号: 192
+  - Data Source: aime2024
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.20
+      批次完成: 成功 5/5
+      ✓ aime2024/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [4/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: a5633642a0b5
+  - 原始文件行号: 78
+  - Data Source: aime2024
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: efd8ab3948b3
+  - 原始文件行号: 108
+  - Data Source: aime2024
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: ee6b38cee3c5
+  - 原始文件行号: 203
+  - Data Source: aime2024
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 81174ca6eb56
+  - 原始文件行号: 222
+  - Data Source: aime2024
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: ad2b657204c3
+  - 原始文件行号: 259
+  - Data Source: aime2024
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2024/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.20
+      批次完成: 成功 5/5
+      ✓ aime2024/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[9/14] Data Source: aime2025
+共 20 个workflow
+========================================
+
+  [1/4] Operators: decompose_ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 04978b5dfd77
+  - 原始文件行号: 11
+  - Data Source: aime2025
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 85bc95af9bb8
+  - 原始文件行号: 105
+  - Data Source: aime2025
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: d5172c989967
+  - 原始文件行号: 154
+  - Data Source: aime2025
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 7b6f8e489bec
+  - 原始文件行号: 219
+  - Data Source: aime2025
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 225c186bccb2
+  - 原始文件行号: 253
+  - Data Source: aime2025
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.40
+      批次完成: 成功 5/5
+      ✓ aime2025/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [2/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 189f75b9a65f
+  - 原始文件行号: 54
+  - Data Source: aime2025
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 1b657ebcb1f9
+  - 原始文件行号: 163
+  - Data Source: aime2025
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 17efd74bcadd
+  - 原始文件行号: 194
+  - Data Source: aime2025
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 1765fbb93427
+  - 原始文件行号: 205
+  - Data Source: aime2025
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: d1b04c72c540
+  - 原始文件行号: 233
+  - Data Source: aime2025
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.20
+      批次完成: 成功 5/5
+      ✓ aime2025/ensemble_generate_revise_summarize 组结果已保存
+
+  [3/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 68c6ce9f0dad
+  - 原始文件行号: 56
+  - Data Source: aime2025
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 97da83c20f3a
+  - 原始文件行号: 68
+  - Data Source: aime2025
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 45df623c3205
+  - 原始文件行号: 92
+  - Data Source: aime2025
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 2da46b6e31b9
+  - 原始文件行号: 128
+  - Data Source: aime2025
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: be29b9ec3cef
+  - 原始文件行号: 247
+  - Data Source: aime2025
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.40
+      批次完成: 成功 5/5
+      ✓ aime2025/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [4/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: de279e91ffd8
+  - 原始文件行号: 110
+  - Data Source: aime2025
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 9696b6a2856f
+  - 原始文件行号: 126
+  - Data Source: aime2025
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 8a278e59365a
+  - 原始文件行号: 165
+  - Data Source: aime2025
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 6f26b162dbb2
+  - 原始文件行号: 179
+  - Data Source: aime2025
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 828a7e579fc5
+  - 原始文件行号: 212
+  - Data Source: aime2025
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/high_level_math/aime2025/test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.40
+      批次完成: 成功 5/5
+      ✓ aime2025/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[10/14] Data Source: mgsmbn
+共 20 个workflow
+========================================
+
+  [1/4] Operators: decompose_ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 5f0a7cce0ab4
+  - 原始文件行号: 15
+  - Data Source: mgsmbn
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: edb290178c4a
+  - 原始文件行号: 23
+  - Data Source: mgsmbn
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: d1c833800688
+  - 原始文件行号: 29
+  - Data Source: mgsmbn
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: bbbbd9b244c8
+  - 原始文件行号: 140
+  - Data Source: mgsmbn
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 94a6eb4da149
+  - 原始文件行号: 198
+  - Data Source: mgsmbn
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ mgsmbn/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [2/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 37268b129c56
+  - 原始文件行号: 21
+  - Data Source: mgsmbn
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 2f573d7a69d5
+  - 原始文件行号: 42
+  - Data Source: mgsmbn
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 5beb6494c0e1
+  - 原始文件行号: 87
+  - Data Source: mgsmbn
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 5c1161a41221
+  - 原始文件行号: 151
+  - Data Source: mgsmbn
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: a244240e30dc
+  - 原始文件行号: 186
+  - Data Source: mgsmbn
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ mgsmbn/ensemble_generate_revise_summarize 组结果已保存
+
+  [3/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 4c53ab8d72da
+  - 原始文件行号: 63
+  - Data Source: mgsmbn
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: c715e9ab3520
+  - 原始文件行号: 80
+  - Data Source: mgsmbn
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 979aab06c51f
+  - 原始文件行号: 152
+  - Data Source: mgsmbn
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 0e51bb9a96da
+  - 原始文件行号: 153
+  - Data Source: mgsmbn
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 788e54d10ace
+  - 原始文件行号: 227
+  - Data Source: mgsmbn
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ mgsmbn/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [4/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: f40bee240965
+  - 原始文件行号: 91
+  - Data Source: mgsmbn
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: be4cad414d8e
+  - 原始文件行号: 120
+  - Data Source: mgsmbn
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 0cbaa91fb054
+  - 原始文件行号: 157
+  - Data Source: mgsmbn
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 3d4ca9d18446
+  - 原始文件行号: 174
+  - Data Source: mgsmbn
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: aa07b16ab534
+  - 原始文件行号: 199
+  - Data Source: mgsmbn
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmbn/mgsm_bn_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+      批次完成: 成功 5/5
+      ✓ mgsmbn/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[11/14] Data Source: humanevalplus
+共 20 个workflow
+========================================
+
+  [1/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 2161e7eb1733
+  - 原始文件行号: 18
+  - Data Source: humanevalplus
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: d6aa14b4f37c
+  - 原始文件行号: 88
+  - Data Source: humanevalplus
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: ba6c74e18fbc
+  - 原始文件行号: 101
+  - Data Source: humanevalplus
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: c7c5ebe9613b
+  - 原始文件行号: 104
+  - Data Source: humanevalplus
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 4186dc151779
+  - 原始文件行号: 213
+  - Data Source: humanevalplus
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.80
+      批次完成: 成功 5/5
+      ✓ humanevalplus/ensemble_generate_revise_summarize 组结果已保存
+
+  [2/4] Operators: decompose_ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: e78213ec73df
+  - 原始文件行号: 26
+  - Data Source: humanevalplus
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 797c9deaf6fa
+  - 原始文件行号: 83
+  - Data Source: humanevalplus
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 0e855bfcbe2e
+  - 原始文件行号: 127
+  - Data Source: humanevalplus
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: de0f613e340d
+  - 原始文件行号: 161
+  - Data Source: humanevalplus
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: dce7185e0ca9
+  - 原始文件行号: 189
+  - Data Source: humanevalplus
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+      批次完成: 成功 5/5
+      ✓ humanevalplus/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [3/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 8645e0009fe3
+  - 原始文件行号: 46
+  - Data Source: humanevalplus
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: cecfe5b4bd40
+  - 原始文件行号: 67
+  - Data Source: humanevalplus
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 312c1968b99c
+  - 原始文件行号: 73
+  - Data Source: humanevalplus
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: d4272a2fd7f4
+  - 原始文件行号: 201
+  - Data Source: humanevalplus
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 65e839a91570
+  - 原始文件行号: 237
+  - Data Source: humanevalplus
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.40
+      批次完成: 成功 5/5
+      ✓ humanevalplus/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [4/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: b9720aeecfc7
+  - 原始文件行号: 138
+  - Data Source: humanevalplus
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 0d259387d620
+  - 原始文件行号: 183
+  - Data Source: humanevalplus
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 54497451fa11
+  - 原始文件行号: 187
+  - Data Source: humanevalplus
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: d488ae9bb561
+  - 原始文件行号: 206
+  - Data Source: humanevalplus
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: eb88985d1de0
+  - 原始文件行号: 218
+  - Data Source: humanevalplus
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/humanevalplus/humanevalplus_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.60
+      批次完成: 成功 5/5
+      ✓ humanevalplus/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[12/14] Data Source: mgsmde
+共 20 个workflow
+========================================
+
+  [1/4] Operators: decompose_ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: afe4617c767f
+  - 原始文件行号: 24
+  - Data Source: mgsmde
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: e15ab4852bdc
+  - 原始文件行号: 109
+  - Data Source: mgsmde
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: cfef214346e6
+  - 原始文件行号: 133
+  - Data Source: mgsmde
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 53a8a9120f76
+  - 原始文件行号: 220
+  - Data Source: mgsmde
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: bb7a81f14349
+  - 原始文件行号: 223
+  - Data Source: mgsmde
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+      批次完成: 成功 5/5
+      ✓ mgsmde/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [2/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 353d5e64ae1e
+  - 原始文件行号: 30
+  - Data Source: mgsmde
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 1dda260e8979
+  - 原始文件行号: 44
+  - Data Source: mgsmde
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: b61bfe58ca6c
+  - 原始文件行号: 61
+  - Data Source: mgsmde
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: aeae7dd1f923
+  - 原始文件行号: 171
+  - Data Source: mgsmde
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 555e50fa2f17
+  - 原始文件行号: 241
+  - Data Source: mgsmde
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.80
+      批次完成: 成功 5/5
+      ✓ mgsmde/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [3/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: cb7af4f1ae2d
+  - 原始文件行号: 45
+  - Data Source: mgsmde
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 8c5ccd960e26
+  - 原始文件行号: 90
+  - Data Source: mgsmde
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 13e69a4d24be
+  - 原始文件行号: 102
+  - Data Source: mgsmde
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 0049aed04638
+  - 原始文件行号: 249
+  - Data Source: mgsmde
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 262af4439a86
+  - 原始文件行号: 258
+  - Data Source: mgsmde
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.60
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+      批次完成: 成功 5/5
+      ✓ mgsmde/ensemble_generate_revise_summarize 组结果已保存
+
+  [4/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 84dd1cca1252
+  - 原始文件行号: 72
+  - Data Source: mgsmde
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 5bf8ab906588
+  - 原始文件行号: 139
+  - Data Source: mgsmde
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 59115cf6e345
+  - 原始文件行号: 190
+  - Data Source: mgsmde
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: c4c09c71625c
+  - 原始文件行号: 193
+  - Data Source: mgsmde
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 05fd98167d8e
+  - 原始文件行号: 240
+  - Data Source: mgsmde
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/mgsmde/mgsm_de_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 0.80
+  ✓ 执行成功，得分: 1.00
+  ✓ 执行成功，得分: 1.00
+      批次完成: 成功 5/5
+      ✓ mgsmde/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[13/14] Data Source: simpleqa
+共 20 个workflow
+========================================
+
+  [1/4] Operators: decompose_ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: 5ab659bf8a97
+  - 原始文件行号: 27
+  - Data Source: simpleqa
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 7183f0b50c4c
+  - 原始文件行号: 53
+  - Data Source: simpleqa
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: a24980c9d57e
+  - 原始文件行号: 94
+  - Data Source: simpleqa
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: e2effac51108
+  - 原始文件行号: 131
+  - Data Source: simpleqa
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 388021943411
+  - 原始文件行号: 232
+  - Data Source: simpleqa
+  - Operators: decompose_ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+      批次完成: 成功 5/5
+      ✓ simpleqa/decompose_ensemble_generate_revise_summarize 组结果已保存
+
+  [2/4] Operators: decompose_ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: f038709616bb
+  - 原始文件行号: 34
+  - Data Source: simpleqa
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: f8500923560f
+  - 原始文件行号: 48
+  - Data Source: simpleqa
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: d9bc13a4e9c0
+  - 原始文件行号: 65
+  - Data Source: simpleqa
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: fd2777899ccc
+  - 原始文件行号: 122
+  - Data Source: simpleqa
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 177cb22a69d7
+  - 原始文件行号: 191
+  - Data Source: simpleqa
+  - Operators: decompose_ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+      批次完成: 成功 5/5
+      ✓ simpleqa/decompose_ensemble_generate_programmer_revise_summarize 组结果已保存
+
+  [3/4] Operators: ensemble_generate_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: dfee9a81b1aa
+  - 原始文件行号: 51
+  - Data Source: simpleqa
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: ccc3e38ecd70
+  - 原始文件行号: 99
+  - Data Source: simpleqa
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 7da2d23573a5
+  - 原始文件行号: 134
+  - Data Source: simpleqa
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 1a06029c73f5
+  - 原始文件行号: 197
+  - Data Source: simpleqa
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: b47996cd1cdd
+  - 原始文件行号: 221
+  - Data Source: simpleqa
+  - Operators: ensemble_generate_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.40
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.00
+      批次完成: 成功 5/5
+      ✓ simpleqa/ensemble_generate_revise_summarize 组结果已保存
+
+  [4/4] Operators: ensemble_generate_programmer_revise_summarize
+      共 5 个测试
+      执行批次 1/1
+
+执行测试: fb28bdda4f9d
+  - 原始文件行号: 115
+  - Data Source: simpleqa
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: ad531eb2bd86
+  - 原始文件行号: 125
+  - Data Source: simpleqa
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 333208f6b2ad
+  - 原始文件行号: 147
+  - Data Source: simpleqa
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: a8fc265d1b64
+  - 原始文件行号: 196
+  - Data Source: simpleqa
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+
+执行测试: 397e44e950d7
+  - 原始文件行号: 214
+  - Data Source: simpleqa
+  - Operators: ensemble_generate_programmer_revise_summarize
+  - 测试数据路径: /home/lg/workflow_tooluse/Flow_RL_luogan/Processed_dataset/simpleqa/simpleqa_test.jsonl
+  - 测试用例数量: 5
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.20
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.40
+      批次完成: 成功 5/5
+      ✓ simpleqa/ensemble_generate_programmer_revise_summarize 组结果已保存
+
+========================================
+[14/14] Data Source: imo
+共 6 个workflow
+========================================
+
+  [1/1] Operators: ensemble_generate_refiner_verifier
+      共 6 个测试
+      执行批次 1/1
+
+执行测试: 90be2eb8f7cc
+  - 原始文件行号: 261
+  - Data Source: imo
+  - Operators: ensemble_generate_refiner_verifier
+  警告: 未找到imo的映射，使用默认配置
+
+执行测试: 53cd1ed957fa
+  - 原始文件行号: 262
+  - Data Source: imo
+  - Operators: ensemble_generate_refiner_verifier
+  警告: 未找到imo的映射，使用默认配置
+
+执行测试: 6aa1175e166b
+  - 原始文件行号: 263
+  - Data Source: imo
+  - Operators: ensemble_generate_refiner_verifier
+  警告: 未找到imo的映射，使用默认配置
+
+执行测试: 7ae21caba0ec
+  - 原始文件行号: 264
+  - Data Source: imo
+  - Operators: ensemble_generate_refiner_verifier
+  警告: 未找到imo的映射，使用默认配置
+
+执行测试: 49a8ec939828
+  - 原始文件行号: 265
+  - Data Source: imo
+  - Operators: ensemble_generate_refiner_verifier
+  警告: 未找到imo的映射，使用默认配置
+
+执行测试: 6ccb602737d3
+  - 原始文件行号: 266
+  - Data Source: imo
+  - Operators: ensemble_generate_refiner_verifier
+  警告: 未找到imo的映射，使用默认配置
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+  ✓ 执行成功，得分: 0.00
+      批次完成: 成功 6/6
+      ✓ imo/ensemble_generate_refiner_verifier 组结果已保存
+
+============================================================
+执行统计
+============================================================
+总执行数: 266
+成功数: 266
+失败数: 0
+成功率: 100.0%
+
+执行时间统计:
+  - 平均: 56.19秒
+  - 最短: 0.19秒
+  - 最长: 180.27秒
+
+[步骤 4/5] 分析测试结果
+----------------------------------------
+加载了 266 条测试结果
+  ✓ 结果包含完整的输入信息和workflow代码
+  ✓ 结果包含原始文件行号
+统计结果已保存至: results_all_g/summaries/statistics
+
+============================================================
+结果分析摘要
+============================================================
+
+整体统计:
+  - 总测试数: 266
+  - 成功: 266
+  - 失败: 0
+  - 成功率: 100.0%
+  - 平均分数: 0.553
+
+按Data Source统计:
+
+  simpleqa:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.120
+
+  aime2024:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.150
+
+  humanevalplus:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.710
+
+  math500:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.600
+
+  aime2025:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.260
+
+  imo:
+    - 测试数: 6
+    - 成功率: 100.0%
+    - 平均分: 0.000
+
+  humaneval:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.670
+
+  mgsmde:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.800
+
+  hotpotqa:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.860
+
+  gsm8k:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.890
+
+  mgsmbn:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.870
+
+  mbpp:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.350
+
+  drop:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.780
+
+  mbppplus:
+    - 测试数: 20
+    - 成功率: 100.0%
+    - 平均分: 0.290
+
+最佳表现组合 (按平均分):
+  1. hotpotqa + ensemble_generate_programmer_revise_summarize
+     分数: 1.000, 成功率: 100.0%
+  2. drop + ensemble_generate_revise_summarize
+     分数: 1.000, 成功率: 100.0%
+  3. gsm8k + ensemble_generate_programmer_revise_summarize
+     分数: 0.960, 成功率: 100.0%
+
+[步骤 5/5] 生成测试报告
+----------------------------------------
+报告已保存至: results_all_g/summaries/complete_analysis.md

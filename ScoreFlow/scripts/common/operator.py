@@ -204,7 +204,11 @@ class Ensemble(Operator):
     核心算子：决策。
     根据指令，从多个候选项中选择或融合。
     """
-    async def __call__(self, instruction: str = "", contexts_list: List[str] = []) -> str:
+    async def __call__(self, instruction: str = "", contexts_list: List[str] = [], contexts=None) -> str:
+         # 参数兼容处理：contexts 和 contexts_list 等价       
+        if contexts is not None:
+            contexts_list = contexts
+
         # 检查SILENT模式环境变量
         if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
             print("=" * 60)

@@ -10,6 +10,7 @@ import json
 import yaml
 import requests
 import time
+import random
 import threading
 import signal
 import itertools
@@ -106,6 +107,7 @@ proxy_config, API_POOL = load_configs()
 HOST = proxy_config.get('host', 'localhost')
 PORT = proxy_config.get('port', 5059)
 DEBUG_MODE = proxy_config.get('debug', False)
+# DEBUG_MODE=True
 # 注意：rate_per_second和max_concurrency现在从API池配置中读取
 
 # 速率和并发限制器
@@ -387,8 +389,9 @@ def proxy_request(path):
             modified_body = json.dumps(body_json, ensure_ascii=False).encode('utf-8')
 
             if DEBUG_MODE:
-                print(f"请求体 (JSON格式，已注入参数):")
-                print(json.dumps(body_json, indent=2, ensure_ascii=False)[:500])
+                if random.random() < 0.2:
+                    print(f"请求体 (JSON格式，已注入参数):")
+                    print(json.dumps(body_json, indent=2, ensure_ascii=False))
     except Exception as e:
         # 如果解析失败，使用原始请求体
         if DEBUG_MODE:

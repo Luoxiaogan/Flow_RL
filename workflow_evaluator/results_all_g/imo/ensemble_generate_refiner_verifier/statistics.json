@@ -1,0 +1,10 @@
+{
+  "data_source": "imo",
+  "operators_group": "ensemble_generate_refiner_verifier",
+  "total": 6,
+  "successful": 6,
+  "failed": 0,
+  "success_rate": 1.0,
+  "average_score": 0.0,
+  "timestamp": "2025-09-23T22:32:24.619787"
+}

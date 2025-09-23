@@ -1,0 +1,42 @@
+✓ 已设置NO_PROXY='localhost,127.0.0.1,0.0.0.0,*.local'
+  localhost请求将绕过所有代理
+==========================================
+启动 MetaGPT API 代理服务 (独立速率限制版本)
+==========================================
+配置文件:
+  - 主配置: /home/lg/workflow_tooluse/Flow_RL_luogan/New_evaluation_and_RL/config.yaml
+  - API池配置: /home/lg/workflow_tooluse/Flow_RL_luogan/New_evaluation_and_RL/metagpt_api_key_proxy/api_pool_config.yaml
+日志文件: /home/lg/workflow_tooluse/Flow_RL_luogan/New_evaluation_and_RL/logs/api_proxy_pool_20250923_212010.log
+
+服务配置:
+  - 端口: 5059
+API数量: 1
+总吞吐量: 15.0 req/s
+  API #1 (***nrmN): 15.0req/s, 并发600
+  - 负载均衡: Round-Robin (每个API独立限流)
+  - 模式: 正常模式 (仅显示进度条和错误)
+
+正在启动代理服务器...
+按 Ctrl+C 停止服务
+==========================================
+
+gpt-4o-mini-2024-07-18
+✅ 加载API池配置: /home/lg/workflow_tooluse/Flow_RL_luogan/New_evaluation_and_RL/metagpt_api_key_proxy/api_pool_config.yaml
+   发现 1 个API endpoints
+   总吞吐量: 15.0 req/s
+============================================================
+API代理服务启动中 (独立速率限制版本)
+监听地址: localhost:5059
+API池大小: 1 个endpoints
+  API #1 (***nrmN): 15.0req/s, 并发600
+负载均衡策略: Round-Robin (每个API独立限流)
+总吞吐量: 15.0 req/s
+模式: 正常模式 (仅显示进度和错误)
+============================================================
+
+API请求: 完成0/总0 |                                                                                                             | ?req/s []
+🚀 Flask服务器启动在 localhost:5059
+按 Ctrl+C 停止服务
+
+ * Serving Flask app 'api_key_proxy_pool'
+ * Debug mode: off

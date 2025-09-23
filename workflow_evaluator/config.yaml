@@ -44,7 +44,7 @@ io:
   default_input_file: 'test_IMO_0922_QZH_with_responses.jsonl'
 
   # 输出目录配置
-  output_dir: './results_test_10'
+  output_dir: './results_all_g'
 
   # 文件格式
   save_format: 'jsonl'  # jsonl or json

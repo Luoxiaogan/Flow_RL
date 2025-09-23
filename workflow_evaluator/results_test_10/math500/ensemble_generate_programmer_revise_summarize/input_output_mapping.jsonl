@@ -1,5 +1,0 @@
-{"line_number": 64, "test_id": "3e9b5dbae760", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
-{"line_number": 79, "test_id": "96c9e288e00c", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.6, "error": null}
-{"line_number": 95, "test_id": "41209039d86b", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
-{"line_number": 162, "test_id": "1ee786a4edec", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
-{"line_number": 251, "test_id": "ecd2ae7d8d49", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.6, "error": null}

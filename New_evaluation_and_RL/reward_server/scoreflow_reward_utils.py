@@ -169,6 +169,9 @@ class WorkflowExecutionManager:
         self.results_collector = []
         self.results_lock = asyncio.Lock()
 
+        # 存储workflow执行结果的字典 {test_case_index: workflow_result}
+        self.workflow_results = {}
+
         # Debug增强功能
         self.debug_enabled = debug_enabled
         if self.debug_enabled:
@@ -682,7 +685,11 @@ TEXT AFTER CODE BLOCKS: Not found in this output
 
         # 4. 串行写入汇总文件（避免I/O冲突）
         final_score = self._finalize_and_save_summary(total_duration)
-        
+
+        # 5. 清理calculator的workflow_results属性（批次执行完成后）
+        if hasattr(calculator, 'workflow_results'):
+            delattr(calculator, 'workflow_results')
+
         return final_score
     
     async def _execute_without_logging(self, calculator, workflow_code: str,
@@ -710,6 +717,8 @@ TEXT AFTER CODE BLOCKS: Not found in this output
 
         try:
             calculator._current_workflow_dir = self.workflow_dir
+            # 传递workflow_results字典给calculator，以便保存执行结果
+            calculator.workflow_results = self.workflow_results
 
             # 临时禁用MetaGPT的流式日志输出
             import metagpt.logs as metagpt_logs
@@ -733,6 +742,7 @@ TEXT AFTER CODE BLOCKS: Not found in this output
 
             if hasattr(calculator, '_current_workflow_dir'):
                 delattr(calculator, '_current_workflow_dir')
+            # 注意：不要在这里删除workflow_results，因为其他并行任务可能还需要使用
 
         except asyncio.TimeoutError as e:
             # 专门处理超时异常
@@ -776,13 +786,19 @@ TEXT AFTER CODE BLOCKS: Not found in this output
                 "success": success
             })
 
+        # 获取该test case对应的workflow执行结果
+        workflow_result = ""
+        if hasattr(self, 'workflow_results'):
+            workflow_result = self.workflow_results.get(test_case_index, "")
+
         result_record = {
             "test_case": test_case_index,
             "success": success,
             "score": score,
             "duration": duration,
             "error": error_msg,
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
+            "workflow_result": json.dumps(workflow_result, ensure_ascii=False)  # 以JSON格式保存结果
         }
 
         return result_record
@@ -824,9 +840,9 @@ TEXT AFTER CODE BLOCKS: Not found in this output
     def _save_results_csv_safe(self):
         """串行安全地保存results.csv, 避免并发I/O冲突"""
         csv_file = self.workflow_dir / "results.csv"
-        
-        # 准备CSV表头
-        headers = ["test_case", "success", "score", "duration", "error", "timestamp"]
+
+        # 准备CSV表头，添加workflow_result列
+        headers = ["test_case", "success", "score", "duration", "error", "timestamp", "workflow_result"]
         
         try:
             with open(csv_file, 'w', newline='', encoding='utf-8') as f:
@@ -845,7 +861,8 @@ TEXT AFTER CODE BLOCKS: Not found in this output
                         'score': result.get('score', 0.0),
                         'duration': result.get('duration', 0.0),
                         'error': self._sanitize_error(result.get('error', '')),
-                        'timestamp': result.get('timestamp', '')
+                        'timestamp': result.get('timestamp', ''),
+                        'workflow_result': result.get('workflow_result', '{}')  # 默认空JSON对象
                     }
                     writer.writerow(csv_row)
             
@@ -1355,10 +1372,38 @@ class ScoreFlowRewardCalculator:
             verification_data = handler.get_verification_data(test_case_index)
             # 获取当前的workflow目录（如果在WorkflowExecutionManager上下文中）
             workflow_dir = getattr(self, '_current_workflow_dir', None)
-            # 执行workflow并获取结果和token统计
-            result = await self.execute_workflow_metagpt(
-                workflow_code, benchmark_name, test_case_index, dataset_path, workflow_dir
-            )
+
+            # 使用try-except确保result总能被捕获
+            result = None
+            try:
+                # 执行workflow并获取结果和token统计
+                result = await self.execute_workflow_metagpt(
+                    workflow_code, benchmark_name, test_case_index, dataset_path, workflow_dir
+                )
+            except Exception as exec_error:
+                # 如果execute_workflow_metagpt抛出未捕获的异常，记录错误
+                error_msg = f"Unexpected error in execute_workflow_metagpt: {str(exec_error)}"
+                logger.info(f"❌ {error_msg}")
+                result = f"Error: {error_msg}"
+
+                # 保存错误堆栈用于debug
+                if workflow_dir:
+                    error_trace = {
+                        "error_type": "UnexpectedExecutionError",
+                        "error_message": str(exec_error),
+                        "error_traceback": traceback.format_exc(),
+                        "test_case_index": test_case_index,
+                        "timestamp": datetime.now().isoformat()
+                    }
+                    error_file = workflow_dir / "metagpt_traces" / f"test_case_{test_case_index}_unexpected_error.json"
+                    if error_file.parent.exists():
+                        with open(error_file, 'w', encoding='utf-8') as f:
+                            json.dump(error_trace, f, ensure_ascii=False, indent=2)
+
+            # 保存workflow执行结果供后续使用（无论成功还是失败）
+            if hasattr(self, 'workflow_results'):
+                # 确保result不为None
+                self.workflow_results[test_case_index] = result if result is not None else "Error: No result captured"
             
             # 保存judge前的信息用于debug
             judge_debug = {}
@@ -1370,12 +1415,18 @@ class ScoreFlowRewardCalculator:
                     "judge_start": datetime.now().isoformat()
                 }
 
-            # 检查judge是否是协程函数
-            import inspect
-            if inspect.iscoroutinefunction(handler.judge):
-                is_correct = await handler.judge(result, verification_data)
+            # 检查result是否是错误信息
+            if result and isinstance(result, str) and result.startswith("Error:"):
+                # 如果执行出错，直接判定为失败
+                is_correct = False
+                logger.info(f"❌ Execution error detected: {result[:100]}")
             else:
-                is_correct = handler.judge(result, verification_data)
+                # 检查judge是否是协程函数
+                import inspect
+                if inspect.iscoroutinefunction(handler.judge):
+                    is_correct = await handler.judge(result, verification_data)
+                else:
+                    is_correct = handler.judge(result, verification_data)
 
             # 保存judge结果用于debug
             if workflow_dir and hasattr(self, '_current_test_case'):
