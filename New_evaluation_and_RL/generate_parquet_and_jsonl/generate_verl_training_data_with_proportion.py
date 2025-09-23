@@ -375,6 +375,8 @@ class VerlTrainingDataGeneratorWithProportion:
         # Build system prompt
         system_content = templates['system_prompt_rl_right'].replace('{operators_init}', dynamic_init_code)
 
+        add_fix = "\nThe domain problem instances example above is for helping you to understand to domain. Your generated Python workflow must be robust enough to work for any problem instance within the described domain.\n"
+
         # Build user prompt
         user_content = (
             templates['task_prompt'] +
@@ -383,6 +385,7 @@ class VerlTrainingDataGeneratorWithProportion:
             templates['user_prompt_part_2_rl_right'].replace('{operators_init}', dynamic_init_code) +
             templates['user_prompt_part_3_rl_right'] +
             problem_text +
+            add_fix +
             templates['user_prompt_part_4_rl_right']
         )
 
@@ -510,7 +513,8 @@ class VerlTrainingDataGeneratorWithProportion:
                         # Select random examples for prompt
                         example_indices = random.sample(range(total_data_size),
                                                        min(num_examples, total_data_size))
-                        main_idx = example_indices[0]
+                        # main_idx = example_indices[0]
+                        main_idx = random.sample(range(total_data_size), min(2, total_data_size)) # 2个
 
                         # Construct prompt with specific operators
                         messages, _ = self._construct_prompt(

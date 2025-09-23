@@ -5,13 +5,25 @@
 api_pool:
 
   - target_url: "https://api.openai-proxy.org/v1"
-    target_api_key: "sk-vn8SgqS78wiQ6yVSFsKtJ122vMrzywlBxDertnI4d41PnrmN"  # ali内网
-    rate_per_second: 15.0      # 该API的独立速率限制（请求/秒）
+    target_api_key: "sk-vn8SgqS78wiQ6yVSFsKtJ122vMrzywlBxDertnI4d41PnrmN"  # QZH
+    rate_per_second: 20.0      # 该API的独立速率限制（请求/秒）
     max_concurrency: 600       # 该API的独立并发限制
     # 模型参数配置（会覆盖请求中的相应参数）
     model: "gpt-4o-mini-2024-07-18"        # 强制使用的模型名称
     temperature: 0.2           # 生成温度（0-2，越高越随机）
     max_tokens: 4096         # 最大生成token数
+
+  
+  - target_url: "https://api.openai-proxy.org/v1"
+    target_api_key: "sk-XE68NRJ3ud42t3b5seZXl0M1cr2LGxHTCmVGPPtbadEaofRz"  # LG
+    rate_per_second: 20.0      # 该API的独立速率限制（请求/秒）
+    max_concurrency: 600       # 该API的独立并发限制
+    # 模型参数配置（会覆盖请求中的相应参数）
+    model: "gpt-4o-mini-2024-07-18"        # 强制使用的模型名称
+    temperature: 0.2           # 生成温度（0-2，越高越随机）
+    max_tokens: 4096         # 最大生成token数
+
+
   # API #1 - ali内网
   # - target_url: "http://39.96.211.155:8000/proxy/api/openai/v1"
   #   target_api_key: "8cf060f9e1f444858609730176542253"  # ali内网
