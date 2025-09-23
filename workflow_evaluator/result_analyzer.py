@@ -50,8 +50,8 @@ class ResultAnalyzer:
                 for line in f:
                     results.append(json.loads(line))
         else:
-            # 递归加载所有test_results.jsonl文件
-            for result_file in self.results_dir.rglob('test_results.jsonl'):
+            # 递归加载所有test_results_with_input.jsonl文件（新格式）
+            for result_file in self.results_dir.rglob('test_results_with_input.jsonl'):
                 with open(result_file, 'r', encoding='utf-8') as f:
                     for line in f:
                         try:
@@ -59,8 +59,25 @@ class ResultAnalyzer:
                         except json.JSONDecodeError:
                             continue
 
+            # 如果没有新格式文件，尝试加载旧格式
+            if not results:
+                for result_file in self.results_dir.rglob('test_results.jsonl'):
+                    with open(result_file, 'r', encoding='utf-8') as f:
+                        for line in f:
+                            try:
+                                results.append(json.loads(line))
+                            except json.JSONDecodeError:
+                                continue
+
         self.all_results = results
         print(f"加载了 {len(results)} 条测试结果")
+
+        # 显示是否包含输入信息
+        if results and 'input' in results[0] and 'workflow_code' in results[0]['input']:
+            print("  ✓ 结果包含完整的输入信息和workflow代码")
+        if results and 'line_number' in results[0]:
+            print("  ✓ 结果包含原始文件行号")
+
         return results
 
     def analyze_by_data_source(self) -> Dict[str, Dict]:

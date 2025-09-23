@@ -1,0 +1,10 @@
+{
+    "id": "drop_198_0",
+    "benchmark": "drop",
+    "data_indices": [
+        200,
+        17
+    ],
+    "dataset_path": "../Processed_dataset/drop/train_random_500.jsonl",
+    "generation_timestamp": 1757430997.788544
+}

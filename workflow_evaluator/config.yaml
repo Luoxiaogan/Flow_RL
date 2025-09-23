@@ -24,7 +24,6 @@ test:
     - mbpp
     - humaneval
     - drop
-    - math500
     - mbppplus
     - humanevalplus
     - simpleqa
@@ -34,7 +33,7 @@ test:
     - mgsmde
 
   # 测试用例配置
-  num_test_cases: 10  # 每个workflow测试的样本数量
+  num_test_cases: 5  # 每个workflow测试的样本数量
   random_seed: 42  # 随机种子，确保可重复性
   benchmark_mapping_file: '../benchmark_mapping_test.jsonl'  # benchmark映射文件路径
 

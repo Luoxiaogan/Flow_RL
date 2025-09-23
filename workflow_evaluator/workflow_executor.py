@@ -132,7 +132,7 @@ class WorkflowExecutor:
             准备好的请求数据
         """
         # 提取必要信息
-        workflow_code = test_record.get('input', {}).get('workflow_code', '')
+        workflow_code = test_record.get('input', {}).get('response', '')
         data_source = test_record.get('data_source', '')
 
         # 获取原始的extra_info（如果有的话）
@@ -159,7 +159,7 @@ class WorkflowExecutor:
             # 如果没有映射，使用原始的extra_info
             extra_info = original_extra_info
             print(f"  警告: 未找到{benchmark}的映射，使用默认配置")
-
+        
         # 构建请求数据
         request_data = {
             'data_source': benchmark,
@@ -167,6 +167,7 @@ class WorkflowExecutor:
             'ground_truth': 'default',
             'extra_info': extra_info
         }
+        # print(request_data)
 
         return request_data
 
@@ -182,16 +183,29 @@ class WorkflowExecutor:
             执行结果
         """
         test_id = test_record.get('test_id', 'unknown')
+        line_number = test_record.get('line_number', None)
+
         print(f"\n执行测试: {test_id}")
+        if line_number:
+            print(f"  - 原始文件行号: {line_number}")
         print(f"  - Data Source: {test_record.get('data_source')}")
         print(f"  - Operators: {test_record.get('operators_group')}")
 
         start_time = time.time()
         result = {
             'test_id': test_id,
+            'line_number': line_number,  # 保留原始文件行号
+            'source_file': test_record.get('source_file'),  # 保留源文件路径
             'timestamp': datetime.now().isoformat(),
             'data_source': test_record.get('data_source'),
             'operators_group': test_record.get('operators_group'),
+            'input': {  # 保存完整的输入信息
+                'workflow_code': test_record.get('input', {}).get('workflow_code', ''),
+                'prompt': test_record.get('input', {}).get('prompt', ''),
+                'benchmark': test_record.get('input', {}).get('benchmark', ''),
+                'extra_info': test_record.get('input', {}).get('extra_info', {})
+            },
+            'metadata': test_record.get('metadata', {}),  # 保留元数据
             'success': False,
             'score': 0.0,
             'execution_time': 0,
@@ -363,16 +377,31 @@ class WorkflowExecutor:
         category_dir = output_dir / data_source / operators_group
         category_dir.mkdir(parents=True, exist_ok=True)
 
-        # 保存测试结果
-        result_file = category_dir / 'test_results.jsonl'
+        # 保存测试结果（包含完整输入输出）
+        result_file = category_dir / 'test_results_with_input.jsonl'
         with open(result_file, 'a', encoding='utf-8') as f:
             for result in results:
                 f.write(json.dumps(result, ensure_ascii=False) + '\n')
 
-        # 保存失败案例
+        # 创建输入输出映射文件（简化版，便于快速查看对应关系）
+        mapping_file = category_dir / 'input_output_mapping.jsonl'
+        with open(mapping_file, 'a', encoding='utf-8') as f:
+            for result in results:
+                mapping_record = {
+                    'line_number': result.get('line_number'),
+                    'test_id': result.get('test_id'),
+                    'source_file': result.get('source_file'),
+                    'workflow_code_snippet': result.get('input', {}).get('workflow_code', '')[:200] + '...',  # 前200字符
+                    'success': result.get('success'),
+                    'score': result.get('score'),
+                    'error': result.get('error')
+                }
+                f.write(json.dumps(mapping_record, ensure_ascii=False) + '\n')
+
+        # 保存失败案例（包含完整输入）
         failed_results = [r for r in results if not r.get('success', False)]
         if failed_results:
-            failed_file = category_dir / 'failed_cases.jsonl'
+            failed_file = category_dir / 'failed_cases_with_input.jsonl'
             with open(failed_file, 'a', encoding='utf-8') as f:
                 for result in failed_results:
                     f.write(json.dumps(result, ensure_ascii=False) + '\n')
@@ -427,27 +456,58 @@ class WorkflowExecutor:
             category_dir = output_dir / data_source / operators_group
             category_dir.mkdir(parents=True, exist_ok=True)
 
-            # 保存到对应分类目录
-            result_file = category_dir / 'test_results.jsonl'
+            # 保存完整结果（包含输入）
+            result_file = category_dir / 'test_results_with_input.jsonl'
             with open(result_file, 'a', encoding='utf-8') as f:
                 f.write(json.dumps(result, ensure_ascii=False) + '\n')
 
-            # 如果是失败的案例，也保存到failed_cases.jsonl
+            # 保存输入输出映射（简化版）
+            mapping_file = category_dir / 'input_output_mapping.jsonl'
+            with open(mapping_file, 'a', encoding='utf-8') as f:
+                mapping_record = {
+                    'line_number': result.get('line_number'),
+                    'test_id': result.get('test_id'),
+                    'source_file': result.get('source_file'),
+                    'workflow_code_snippet': result.get('input', {}).get('workflow_code', '')[:200] + '...',
+                    'success': result.get('success'),
+                    'score': result.get('score'),
+                    'error': result.get('error')
+                }
+                f.write(json.dumps(mapping_record, ensure_ascii=False) + '\n')
+
+            # 如果是失败的案例，保存到failed_cases_with_input.jsonl
             if not result.get('success', False):
-                failed_file = category_dir / 'failed_cases.jsonl'
+                failed_file = category_dir / 'failed_cases_with_input.jsonl'
                 with open(failed_file, 'a', encoding='utf-8') as f:
                     f.write(json.dumps(result, ensure_ascii=False) + '\n')
 
-        # 保存完整结果到raw目录
+        # 保存完整结果到raw目录（包含所有信息）
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        raw_file = output_dir / 'raw' / f'execution_results_{timestamp}.jsonl'
+        raw_file = output_dir / 'raw' / f'execution_results_complete_{timestamp}.jsonl'
         raw_file.parent.mkdir(parents=True, exist_ok=True)
 
         with open(raw_file, 'w', encoding='utf-8') as f:
             for result in results:
                 f.write(json.dumps(result, ensure_ascii=False) + '\n')
 
+        # 创建索引文件，记录行号和test_id的对应关系
+        index_file = output_dir / 'raw' / f'result_index_{timestamp}.jsonl'
+        with open(index_file, 'w', encoding='utf-8') as f:
+            for result in results:
+                index_record = {
+                    'line_number': result.get('line_number'),
+                    'test_id': result.get('test_id'),
+                    'data_source': result.get('data_source'),
+                    'operators_group': result.get('operators_group'),
+                    'success': result.get('success'),
+                    'score': result.get('score')
+                }
+                f.write(json.dumps(index_record, ensure_ascii=False) + '\n')
+
         print(f"\n结果已保存至: {output_dir}")
+        print(f"  - 完整结果: test_results_with_input.jsonl")
+        print(f"  - 映射关系: input_output_mapping.jsonl")
+        print(f"  - 索引文件: raw/result_index_{timestamp}.jsonl")
 
     def print_statistics(self):
         """打印执行统计信息"""

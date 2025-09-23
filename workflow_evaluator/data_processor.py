@@ -58,46 +58,6 @@ class DataProcessor:
         print(f"  成功加载 {len(records)} 条记录")
         return records
 
-    def extract_workflow_code(self, record: Dict) -> Optional[str]:
-        """
-        从记录中提取workflow代码
-
-        Args:
-            record: 数据记录
-
-        Returns:
-            提取的workflow代码，如果提取失败返回None
-        """
-        try:
-            # 从response字段中提取
-            if 'response' in record:
-                response = record['response']
-
-                # 如果response是字典，获取content字段
-                if isinstance(response, dict):
-                    content = response.get('content', '')
-                else:
-                    content = str(response)
-
-                # 提取```python和```之间的代码
-                code_pattern = r'```python\s*(.*?)```'
-                matches = re.findall(code_pattern, content, re.DOTALL)
-
-                if matches:
-                    # 返回最后一个匹配的代码块（通常是最完整的）
-                    return matches[-1].strip()
-
-                # 如果没有找到代码块，尝试查找class Workflow
-                if 'class Workflow' in content:
-                    # 提取从class Workflow开始到文件结束的内容
-                    start_idx = content.find('class Workflow')
-                    return content[start_idx:].strip()
-
-            return None
-
-        except Exception as e:
-            print(f"  提取workflow代码失败: {e}")
-            return None
 
     def classify_record(self, record: Dict) -> Tuple[str, str]:
         """
@@ -146,37 +106,32 @@ class DataProcessor:
         hash_obj = hashlib.md5(key_info.encode())
         return hash_obj.hexdigest()[:12]
 
-    def process_record(self, record: Dict) -> Optional[Dict]:
+    def process_record(self, record: Dict, line_number: Optional[int] = None) -> Optional[Dict]:
         """
         处理单条记录
 
         Args:
             record: 原始数据记录
+            line_number: 记录在原始文件中的行号
 
         Returns:
             处理后的记录，如果处理失败返回None
         """
         try:
-            # 提取workflow代码
-            workflow_code = self.extract_workflow_code(record)
-            if not workflow_code:
-                print(f"  警告: 无法提取workflow代码")
-                self.error_count += 1
-                return None
-
             # 分类
             data_source, operators_group = self.classify_record(record)
 
             # 构建处理后的记录
             processed_record = {
                 'test_id': self.generate_test_id(record),
+                'line_number': line_number,  # 添加原始文件行号
                 'timestamp': datetime.now().isoformat(),
                 'data_source': data_source,
                 'operators_group': operators_group,
                 'original_operators_list': record.get('operators_group', []),
                 'input': {
                     'prompt': record.get('prompt', ''),
-                    'workflow_code': workflow_code,
+                    'response': record.get('response', '').get('content',''),  # 保留原始response
                     'benchmark': record.get('benchmark', ''),
                     'extra_info': record.get('extra_info', {})
                 },
@@ -239,8 +194,9 @@ class DataProcessor:
                     print(f"  跳过: 不符合过滤条件")
                     continue
 
-            processed = self.process_record(record)
+            processed = self.process_record(record, line_number=idx)  # 传递行号
             if processed:
+                processed['source_file'] = file_path  # 添加源文件路径
                 processed_records.append(processed)
 
         # 打印统计信息
