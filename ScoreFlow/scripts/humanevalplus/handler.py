@@ -18,44 +18,7 @@ class HumanevalplusHandler(BenchmarkHandler):
     
     处理增强版代码生成任务，包含比原始HumanEval多80倍的测试用例。
     """
-    def get_prompt_text_example(self, indices: List[int]) -> str:
-        """
-        从 HumanEval 数据中提取函数签名和文档字符串，并格式化为清晰的文本用于生成工作流。
-        
-        格式:
-        ---
-        **FUNCTION SIGNATURE AND SPECIFICATION:**
-        [prompt with docstring]
-        
-        **ENTRY POINT:**
-        Function name: [entry_point]
-        ---
-        
-        (如果提供多个索引，则重复此结构)
-        """
-        try:
-            problems = [self._get_problem_by_index(i) for i in indices]
-            formatted_problems = []
-            
-            for problem in problems:
-                # 提取prompt（包含函数签名和docstring）和entry point
-                prompt = problem.get('prompt', problem.get('question', ''))
-                entry_point = problem.get('entry_point', '')
-                
-                # 组合问题
-                formatted_problem = f"""---
-**FUNCTION SIGNATURE AND SPECIFICATION:**
-{prompt}
-
-**ENTRY POINT:**
-Function name: {entry_point}
----"""
-                formatted_problems.append(formatted_problem)
-            
-            return "\n\n".join(formatted_problems)
-        except (KeyError, IndexError) as e:
-            raise ValueError(f"从HumanEvalPlus数据中提取问题时出错: {e}")
- 
+    
     def get_prompt_text_workflow_generation(self, indices: List[int]) -> str:
         """
         从HumanEval+数据中提取函数签名和规范，格式化为清晰的文本。
@@ -278,7 +241,7 @@ Function name: {entry_point}
             ast.parse(fixed_code)
             return fixed_code
         except SyntaxError as e:
-            print(f"Warning: Code has syntax errors after indentation fix: {e}")
+            # print(f"Warning: Code has syntax errors after indentation fix: {e}")
             return code
     
     def _extract_code_from_response(self, response: str) -> str:
@@ -385,37 +348,56 @@ Function name: {entry_point}
         import numpy as np
         from typing import List, Dict, Tuple, Any, Optional
         
+        import typing
+        
         exec_globals = {
+            # 基础内建
             '__builtins__': builtins,
-            'math': math,
-            're': re,
+
+            # 常用标准库（整模块）
+            'math'      : math,
+            're'        : re,
             'collections': collections,
-            'itertools': itertools,
-            'functools': functools,
-            'string': string,
-            'datetime': datetime,
-            'random': random,
-            'heapq': heapq,
-            'bisect': bisect,
-            'copy': copy,
-            'np': np,
-            'numpy': np,
-            'Counter': collections.Counter,
-            'defaultdict': collections.defaultdict,
-            'deque': collections.deque,
-            'OrderedDict': collections.OrderedDict,
-            'List': List,
-            'Dict': Dict,
-            'Tuple': Tuple,
-            'Any': Any,
-            'Optional': Optional,
+            'itertools' : itertools,
+            'functools' : functools,
+            'string'    : string,
+            'datetime'  : datetime,
+            'random'    : random,
+            'heapq'     : heapq,
+            'bisect'    : bisect,
+            'copy'      : copy,
+            'json'      : __import__('json'),
+            'sys'       : __import__('sys'),
+
+            # collections 高频类（裸写可用）
+            'Counter'      : collections.Counter,
+            'defaultdict'  : collections.defaultdict,
+            'deque'        : collections.deque,
+            'OrderedDict'  : collections.OrderedDict,
+            'namedtuple'   : collections.namedtuple,
+            'ChainMap'     : collections.ChainMap,
+
+            # typing 裸写常用
+            'List'       : typing.List,
+            'Tuple'      : typing.Tuple,
+            'Dict'       : typing.Dict,
+            'Set'        : typing.Set,
+            'FrozenSet'  : typing.FrozenSet,
+            'Optional'   : typing.Optional,
+            'Union'      : typing.Union,
+            'Any'        : typing.Any,
+            'Callable'   : typing.Callable,
+            'Iterable'   : typing.Iterable,
+            'Iterator'   : typing.Iterator,
+            'Sequence'   : typing.Sequence,
+            'Mapping'    : typing.Mapping,
         }
         
         try:
             # 预处理代码
             code = self._preprocess_code_with_imports(code)
             
-            print(f"[HumanEval+] Executing code:\n{code[:200]}...")
+            # print(f"[HumanEval+] Executing code:\n{code[:200]}...")
             
             # 执行生成的代码
             exec(code, exec_globals)
@@ -452,7 +434,7 @@ Function name: {entry_point}
         评判模型输出是否正确解决HumanEval+问题。
         """
         if not model_output or not ground_truth_data:
-            print("[HumanEval+] Missing model output or ground truth data")
+            # print("[HumanEval+] Missing model output or ground truth data")
             return False
         
         # 提取代码
@@ -464,17 +446,17 @@ Function name: {entry_point}
         test_code = ground_truth_data.get('test', '')
         
         if not entry_point:
-            print(f"[HumanEval+] Missing entry_point in ground truth data")
+            # print(f"[HumanEval+] Missing entry_point in ground truth data")
             return False
         
         if not test_code:
-            print(f"[HumanEval+] Missing test code in ground truth data")
+            # print(f"[HumanEval+] Missing test code in ground truth data")
             return False
         
         # 执行验证
         passed, error_msg = self._execute_code_with_tests(generated_code, test_code, entry_point)
         
-        if not passed:
-            print(f"[HumanEval+] Tests failed: {error_msg[:300]}...")
+        # if not passed:
+        #     print(f"[HumanEval+] Tests failed: {error_msg[:300]}...")
             
         return passed

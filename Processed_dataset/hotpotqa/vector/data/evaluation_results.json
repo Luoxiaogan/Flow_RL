@@ -1,0 +1,1819 @@
+{
+  "aggregate": {
+    "total_samples": 50,
+    "avg_title_recall": 0.82,
+    "avg_title_precision": 0.09608747721670052,
+    "avg_title_f1": 0.17112359997580082,
+    "avg_sentence_recall": 0.7433333333333333,
+    "perfect_title_recall": 0.64,
+    "by_type": {
+      "bridge": {
+        "count": 41,
+        "avg_title_recall": 0.8170731707317073,
+        "avg_title_f1": 0.17045561516290927
+      },
+      "comparison": {
+        "count": 9,
+        "avg_title_recall": 0.8333333333333334,
+        "avg_title_f1": 0.17416664190119568
+      }
+    }
+  },
+  "detailed_metrics": [
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.09090909090909091,
+      "title_f1": 0.16666666666666669,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Julie Delpy",
+        "Songali",
+        "Julianne Moore",
+        "Hannibal (film)",
+        "Russian Ark",
+        "Jennifer Weiner",
+        "Nine Months",
+        "Donna Gigliotti",
+        "Suburbicon",
+        "Pitch Perfect (film series)",
+        "Wash West",
+        "Mortal Thoughts",
+        "Anna Camp",
+        "Courtney Love filmography",
+        "Her (film)",
+        "Heather Langenkamp",
+        "Renée Asherson",
+        "Far from Heaven",
+        "Octavia Spencer",
+        "Charlize Theron filmography",
+        "Jolin Tsai filmography",
+        "The Hours (novel)"
+      ],
+      "ground_truth_titles": [
+        "Julianne Moore",
+        "The Hours (novel)"
+      ],
+      "matched_titles": [
+        "Julianne Moore",
+        "The Hours (novel)"
+      ],
+      "question_type": "bridge",
+      "question": "What role did Julianne Moore play in the 2002 Oscar winning movie?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.16666666666666666,
+      "title_f1": 0.2857142857142857,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Caleb Southern",
+        "Ben Folds and WASO Live in Perth",
+        "Ben Folds Five (album)",
+        "List of songs recorded by TVXQ",
+        "Where's Summer B.?",
+        "Brick (song)",
+        "Speed Graphic (EP)",
+        "Nic Offer",
+        "Ben Folds",
+        "Josh Schuberth",
+        "Shut Up and Listen to Majosha",
+        "Boxing (song)"
+      ],
+      "ground_truth_titles": [
+        "Ben Folds",
+        "Nic Offer"
+      ],
+      "matched_titles": [
+        "Ben Folds",
+        "Nic Offer"
+      ],
+      "question_type": "comparison",
+      "question": "Ben Folds and Nic Offer are both considered to be which type of artists?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.047619047619047616,
+      "title_f1": 0.08695652173913042,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "A Prairie Home Companion",
+        "Spectrum News Buffalo",
+        "Chelsea Lately",
+        "Spectrum News Rochester",
+        "Spliced (TV series)",
+        "GSN Live",
+        "Larry Mendte",
+        "Chelsea (TV series)",
+        "Media in New York's Capital District",
+        "The Stephanie Miller Show",
+        "68th Tony Awards",
+        "Victory Sports One",
+        "KAND",
+        "Today in New York",
+        "Kahan Tum Chalay Gye",
+        "The Alan Colmes Show",
+        "TV on the Radio",
+        "Ed Randall",
+        "Pirate Master",
+        "El Ardiente Secreto",
+        "Coke Time with Eddie Fisher"
+      ],
+      "ground_truth_titles": [
+        "TV on the Radio",
+        "Days of the New"
+      ],
+      "matched_titles": [
+        "TV on the Radio"
+      ],
+      "question_type": "comparison",
+      "question": "Are both Days of the New and TV on the Radio from New York?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.1111111111111111,
+      "title_f1": 0.19999999999999998,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Musée des Arts décoratifs, Strasbourg",
+        "Pont de la Concorde (Paris)",
+        "Battle Monument (West Point)",
+        "Paris (1994 TV series)",
+        "Janne Kyttanen",
+        "Pont de Grenelle",
+        "Boulevard Solitude",
+        "Roissy-en-France",
+        "Daniel Morgan Monument",
+        "Fort Gibson",
+        "Musée Henri-Mathieu",
+        "Gonçalo Mabunda",
+        "Kritios Boy",
+        "Gundestrup cauldron",
+        "Replicas of the Statue of Liberty",
+        "Giuseppe Verdi Monument",
+        "Musée de Radio France",
+        "Listing of the works of the Maître de Laz"
+      ],
+      "ground_truth_titles": [
+        "Pont de Grenelle",
+        "Replicas of the Statue of Liberty"
+      ],
+      "matched_titles": [
+        "Pont de Grenelle",
+        "Replicas of the Statue of Liberty"
+      ],
+      "question_type": "bridge",
+      "question": "What is the name of the statue whose replica have been created in many landmarks world-wide such as near Pont de Grenelle in Paris?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.09090909090909091,
+      "title_f1": 0.16666666666666669,
+      "sentence_recall": 0.6666666666666666,
+      "retrieved_titles": [
+        "This Is the End",
+        "Laura Dern",
+        "Burn Country",
+        "X-Men: Dark Phoenix",
+        "Silver Streak (film)",
+        "Revenge of the Stepford Wives",
+        "Dead at 17",
+        "Northern Lights (1997 film)",
+        "The Bye Bye Man",
+        "Until the End of the World",
+        "Independence Day (1983 film)",
+        "Two Sisters from Boston",
+        "Heavenly Creatures",
+        "Anna Camp",
+        "Souvenir (2016 film)",
+        "Barbara Niven",
+        "Red (2010 film)",
+        "They Shoot Horses, Don't They? (film)",
+        "Nancy Drew (2007 film)",
+        "Syriana",
+        "A Kiss for Corliss",
+        "List of Amy Adams performances"
+      ],
+      "ground_truth_titles": [
+        "Dead at 17",
+        "Barbara Niven"
+      ],
+      "matched_titles": [
+        "Dead at 17",
+        "Barbara Niven"
+      ],
+      "question_type": "bridge",
+      "question": "The actress that played the leading role in the independent film \"A Perfect Ending\" also stars with John Bregar in a 2008 film directed by who?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.11764705882352941,
+      "title_f1": 0.21052631578947367,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Larry Mendte",
+        "Jakob Ragaz",
+        "Tropicana Casino &amp; Resort Atlantic City",
+        "MGM Grand Atlantic City",
+        "Wonderful Wonderful (Johnny Mathis album)",
+        "Johnny Mathis: Wonderful, Wonderful!",
+        "Phillip Boykin",
+        "Lynn Ahrens",
+        "Pizza Land",
+        "Zumanity",
+        "Borgata",
+        "Caesars Atlantic City",
+        "TEN Atlantic City",
+        "Warm (Johnny Mathis album)",
+        "Johnny Mnemonic (film)",
+        "Steve Wynn",
+        "The Atlantic Club Casino Hotel"
+      ],
+      "ground_truth_titles": [
+        "Johnny Mathis: Wonderful, Wonderful!",
+        "Tropicana Casino &amp; Resort Atlantic City"
+      ],
+      "matched_titles": [
+        "Johnny Mathis: Wonderful, Wonderful!",
+        "Tropicana Casino &amp; Resort Atlantic City"
+      ],
+      "question_type": "bridge",
+      "question": "Johnny Mathis: Wonderful Wonderful aired at what luxury hotel, casino and spa resort located in Atlantic City, New Jersey?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.11764705882352941,
+      "title_f1": 0.21052631578947367,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "Guardians of the Galaxy Vol. 2",
+        "The 101 Dalmatians Musical",
+        "Starship Highlander",
+        "102 Dalmatians",
+        "One Hundred and One Dalmatians (franchise)",
+        "Universal Soldier (franchise)",
+        "Snoop Dogg's Doggystyle",
+        "101 Dalmatians II: Patch's London Adventure",
+        "One Hundred and One Dalmatians",
+        "Vaniusha The Newcomer",
+        "2004 in film",
+        "Rookies' Diary",
+        "List of films about animals",
+        "G-Force (film)",
+        "Disney's Animated Storybook: 101 Dalmatians",
+        "101 Dalmatians (1996 film)",
+        "Jena Malone"
+      ],
+      "ground_truth_titles": [
+        "G-Force (film)",
+        "101 Dalmatians (1996 film)"
+      ],
+      "matched_titles": [
+        "G-Force (film)",
+        "101 Dalmatians (1996 film)"
+      ],
+      "question_type": "comparison",
+      "question": "What type of movies are 101 Dalmatians and G-Force?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.047619047619047616,
+      "title_f1": 0.08695652173913042,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "Paul Carafotes",
+        "Flushed Away",
+        "Otis B. Thayer",
+        "Kevin Spacey",
+        "Joe Howard (actor)",
+        "M'fundo Morrison",
+        "Jeremy (film)",
+        "Diary of a Wimpy Kid: Dog Days (film)",
+        "Branko Tomović",
+        "War Horse (film)",
+        "George Clooney",
+        "An Ideal Husband (1999 film)",
+        "Damon Dark",
+        "Dennis Courtney",
+        "The Reader (2008 film)",
+        "Christopher Knights",
+        "Jeremy Renner",
+        "Barry Humphries",
+        "Zachary Throne",
+        "Diary of a Wimpy Kid (film)",
+        "Jeremy Theobald"
+      ],
+      "ground_truth_titles": [
+        "Robby Benson",
+        "Jeremy (film)"
+      ],
+      "matched_titles": [
+        "Jeremy (film)"
+      ],
+      "question_type": "bridge",
+      "question": "What other notable role did the star actor from Jeremy perform? "
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.1111111111111111,
+      "title_f1": 0.19999999999999998,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "2003 SANFL Grand Final",
+        "2008 SANFL Grand Final",
+        "2000 AFL Grand Final",
+        "Newcastle Jets FC Reserves",
+        "2010 SANFL Grand Final",
+        "1975 VFL Grand Final",
+        "1996 AFL Grand Final",
+        "1960 Night Series Cup",
+        "1945 VFL Grand Final",
+        "2005 SANFL Grand Final",
+        "2000 SANFL Grand Final",
+        "2007 SANFL Grand Final",
+        "2009 SANFL Grand Final",
+        "West Adelaide Football Club",
+        "1909 VFL Grand Final",
+        "Adelaide Comets FC",
+        "2004 SANFL Grand Final",
+        "2001 SANFL Grand Final"
+      ],
+      "ground_truth_titles": [
+        "2003 SANFL Grand Final",
+        "West Adelaide Football Club"
+      ],
+      "matched_titles": [
+        "2003 SANFL Grand Final",
+        "West Adelaide Football Club"
+      ],
+      "question_type": "bridge",
+      "question": "The 2003 South Australian National Football League Grand Final saw the Central District Bulldogs defeat a football club whose home base is currently known as what?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.125,
+      "title_f1": 0.2222222222222222,
+      "sentence_recall": 0.6666666666666666,
+      "retrieved_titles": [
+        "Macbeth (opera)",
+        "Mark Delavan",
+        "Il furioso all'isola di San Domingo",
+        "De Mi Alma Latina",
+        "The Love for Three Oranges",
+        "Repertoire of Plácido Domingo",
+        "Capriccio (opera)",
+        "Antonietta Marini-Rainieri",
+        "Pepita Embil",
+        "Plácido Domingo Ferrer",
+        "Plácido Domingo",
+        "Cavalleria rusticana (1982 film)",
+        "At the Boar's Head",
+        "I Capuleti e i Montecchi",
+        "The Enchanted Island (opera)",
+        "Songs (2012 Plácido Domingo album)"
+      ],
+      "ground_truth_titles": [
+        "Macbeth (opera)",
+        "Repertoire of Plácido Domingo"
+      ],
+      "matched_titles": [
+        "Macbeth (opera)",
+        "Repertoire of Plácido Domingo"
+      ],
+      "question_type": "bridge",
+      "question": "Repertoire of Plácido Domingo appeared in an opera written by whom which was based on a play by William Shakespeare?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.08695652173913043,
+      "title_f1": 0.16,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Pulandian District",
+        "Avedøre",
+        "Middlesbrough",
+        "Trakai",
+        "Āne",
+        "Sun Peaks, British Columbia",
+        "Santa María del Oro, Nayarit",
+        "Cathedral of Jesus Saviour of the World, Rrëshen",
+        "Haimen, Guangdong",
+        "Stevns Municipality",
+        "Manyeleti Game Reserve",
+        "Wentzville, Missouri",
+        "Albania",
+        "Timanfaya National Park",
+        "Almoharín",
+        "La Yesca",
+        "Beaconsfield, Victoria",
+        "Jackie Chan Hill",
+        "United Kingdom",
+        "Techimantia",
+        "Sundarbag",
+        "Port Macquarie",
+        "Fidenza"
+      ],
+      "ground_truth_titles": [
+        "Cathedral of Jesus Saviour of the World, Rrëshen",
+        "Albania"
+      ],
+      "matched_titles": [
+        "Cathedral of Jesus Saviour of the World, Rrëshen",
+        "Albania"
+      ],
+      "question_type": "bridge",
+      "question": "the municipality of Mirditë is in a country that had how many inhabitants in 2016 ?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.045454545454545456,
+      "title_f1": 0.08333333333333334,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "The Harmon",
+        "SNCI Tower",
+        "Muddy Creek Forks Historic District",
+        "One Raffles Link",
+        "Flatiron Building",
+        "First National Bank of Mason City",
+        "Sandwich–Marseilles Manufacturing Building",
+        "Bennington, Idaho",
+        "List of tallest buildings in Indonesia",
+        "Corus Quay",
+        "U.S. Bank Tower (Los Angeles)",
+        "Hyperion Tower",
+        "Cumberland Estates",
+        "Five Penn Center",
+        "Blair Historic District",
+        "Private housing estates in Hong Kong",
+        "112 Tryon Plaza",
+        "Three Nationwide Plaza",
+        "Pioneer Implement Company",
+        "List of tallest buildings in Corpus Christi",
+        "Hamilton Brothers Building",
+        "City Building (series)"
+      ],
+      "ground_truth_titles": [
+        "CityCenter",
+        "The Harmon"
+      ],
+      "matched_titles": [
+        "The Harmon"
+      ],
+      "question_type": "bridge",
+      "question": "What company started the urban complex development that included the highrise building, The Harmon?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.047619047619047616,
+      "title_f1": 0.08695652173913042,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "Joe Engle",
+        "Akie Kotabe",
+        "Zachary Leader",
+        "Mike Vickers",
+        "Tom Wu",
+        "Jeff Sampson",
+        "British people",
+        "Scunthorpe Telegraph",
+        "Joe Ford (footballer)",
+        "John Michael McDonagh",
+        "Australian referendum, 1937",
+        "Philip Francis Little",
+        "Wesley Silcox",
+        "Bill Pounds",
+        "British Nationality (Hong Kong) Selection Scheme",
+        "Stephen Boreham",
+        "Demography of the United Kingdom",
+        "Nigel Loring (surgeon)",
+        "Harold Holt",
+        "G. S. Street",
+        "John Leverett"
+      ],
+      "ground_truth_titles": [
+        "British people",
+        "Alistair Grant"
+      ],
+      "matched_titles": [
+        "British people"
+      ],
+      "question_type": "bridge",
+      "question": "Born on 6 March 1937, this man was also a citizen of the United Kingdom."
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.18181818181818182,
+      "title_f1": 0.3076923076923077,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "The Green Hornet (Hong Kong film)",
+        "The Green Hornet (TV series)",
+        "Kaisay Tum Se Kahoon",
+        "The Green Hornet (2011 film)",
+        "The Brown Hornet",
+        "Kato (producer)",
+        "Kato (The Green Hornet)",
+        "Green Hornet",
+        "Van Williams",
+        "Cyndee San Luis",
+        "Keye Luke"
+      ],
+      "ground_truth_titles": [
+        "Kato (The Green Hornet)",
+        "The Green Hornet (TV series)"
+      ],
+      "matched_titles": [
+        "The Green Hornet (TV series)",
+        "Kato (The Green Hornet)"
+      ],
+      "question_type": "bridge",
+      "question": "In the television series Green Hornet, which actor played the role of Kato?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.1,
+      "title_f1": 0.18181818181818182,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "Katie Landers",
+        "Izara Aishah",
+        "List of Brooklyn Nine-Nine episodes",
+        "Diego Salvador Martinez Hernandez De La Cruz",
+        "Once Upon a Time (season 5)",
+        "The Holy Sisters of the Gaga Dada",
+        "Lionel Luthor",
+        "Emilie de Ravin",
+        "Tiz Zaqyah",
+        "Steven Universe",
+        "Arianna Hernandez",
+        "Belle (Once Upon a Time)",
+        "True North (Once Upon a Time)",
+        "Beverly Marshall",
+        "Mary Margaret Blanchard",
+        "List of Once Upon a Time episodes",
+        "Zelena (Once Upon a Time)",
+        "Jordan Ridgeway",
+        "Lolly Allen",
+        "List of Neighbours characters (2007)"
+      ],
+      "ground_truth_titles": [
+        "Once Upon a Time (season 5)",
+        "Zelena (Once Upon a Time)"
+      ],
+      "matched_titles": [
+        "Once Upon a Time (season 5)",
+        "Zelena (Once Upon a Time)"
+      ],
+      "question_type": "bridge",
+      "question": "When was the female character that on June 9, 2015 was promoted to a series regular first introduced on \"Once Upon a Time\"?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.1,
+      "title_f1": 0.18181818181818182,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "L Brands",
+        "Americana Manhasset",
+        "Los Ingobernables",
+        "BrandAlley",
+        "General Mills",
+        "Vífilfell",
+        "Hardy Diagnostics",
+        "Annie Morton",
+        "Ariella Fashion House",
+        "Avianca El Salvador",
+        "Enagás",
+        "Georgia (coffee)",
+        "Estée Lauder Companies",
+        "The Shops at Columbus Circle",
+        "Trovata",
+        "Señorita México",
+        "Birks Group",
+        "La Senza",
+        "Yue Yuen Industrial Holdings",
+        "Liquid Assets Paint &amp; Pigment Company"
+      ],
+      "ground_truth_titles": [
+        "L Brands",
+        "La Senza"
+      ],
+      "matched_titles": [
+        "L Brands",
+        "La Senza"
+      ],
+      "question_type": "bridge",
+      "question": "The La Senza brand is currently owned by a fashion retailer based in what Ohio city?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.14285714285714285,
+      "title_f1": 0.25,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Gasherbrum III",
+        "Langtang Ri",
+        "Nazir Sabir",
+        "Chiradzulu Mountain",
+        "Morne Diablotins",
+        "Gasherbrum II",
+        "Gasherbrum I",
+        "South Asia",
+        "Geography of the Czech Republic",
+        "Karakoram",
+        "Kala pahar",
+        "Rongme Ngatra",
+        "Baltoro Kangri",
+        "Burji La"
+      ],
+      "ground_truth_titles": [
+        "Gasherbrum II",
+        "Langtang Ri"
+      ],
+      "matched_titles": [
+        "Gasherbrum II",
+        "Langtang Ri"
+      ],
+      "question_type": "comparison",
+      "question": "Which mountain is taller, Gasherbrum II or Langtang Ri?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.1,
+      "title_f1": 0.18181818181818182,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Cunninghamia",
+        "Agabus (beetle)",
+        "Pittosporum",
+        "Thecostele",
+        "Argyrochosma",
+        "Chilopsis",
+        "Mesembryanthemum nodiflorum",
+        "Chiranthodendron",
+        "Xanthosoma",
+        "Oligoryzomys fulvescens",
+        "Eimeria",
+        "Cyrtandra (plant)",
+        "Taningia",
+        "Osmunda",
+        "Bupleurum",
+        "Stereopsis (fungus)",
+        "Agdistis cappadociensis",
+        "List of Utricularia species",
+        "Pseudopontia",
+        "Tibouchina"
+      ],
+      "ground_truth_titles": [
+        "Cunninghamia",
+        "Chilopsis"
+      ],
+      "matched_titles": [
+        "Cunninghamia",
+        "Chilopsis"
+      ],
+      "question_type": "comparison",
+      "question": "Does the genus Cunninghamia or Chilopsis contain only one species?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.15384615384615385,
+      "title_f1": 0.2666666666666667,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Common Era",
+        "Emperor Jimmu",
+        "Lunar calendar",
+        "Qin Shi Huang",
+        "Borana calendar",
+        "Japanese imperial year",
+        "Luoxia Hong",
+        "Calendar date",
+        "Imperial House of Japan",
+        "Emperor of Japan",
+        "Japan–United States relations",
+        "Calendar year",
+        "Higher education in Japan"
+      ],
+      "ground_truth_titles": [
+        "Emperor Jimmu",
+        "Japanese imperial year"
+      ],
+      "matched_titles": [
+        "Emperor Jimmu",
+        "Japanese imperial year"
+      ],
+      "question_type": "bridge",
+      "question": "What does the unique calendar system in Japan, who the first Emperor of Japan created, emphasize?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.15384615384615385,
+      "title_f1": 0.2666666666666667,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Boght Corners, New York",
+        "New York State Route 9R",
+        "Northern State Parkway",
+        "Yonkers Avenue",
+        "New York State Route 118",
+        "Mosholu Parkway",
+        "New York State Route 418",
+        "Bethpage State Parkway",
+        "New York State Route 9N",
+        "New York State Route 9G",
+        "New York State Route 9B",
+        "Prospect Mountain Veterans Memorial Highway",
+        "New York State Route 56"
+      ],
+      "ground_truth_titles": [
+        "Boght Corners, New York",
+        "New York State Route 9R"
+      ],
+      "matched_titles": [
+        "Boght Corners, New York",
+        "New York State Route 9R"
+      ],
+      "question_type": "bridge",
+      "question": "New York State Route 9R rejoins its parent in a hamlet located  in what New York County?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.1,
+      "title_f1": 0.18181818181818182,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Brad Budde",
+        "Frank Jackson (American football)",
+        "Ted Greene (American football)",
+        "Lonnie Perrin",
+        "Tommy Nobis",
+        "Terry Jackson (running back)",
+        "Casey Fitzgerald",
+        "Bennington, Idaho",
+        "Joe Garten",
+        "Dallas Texans (NFL)",
+        "Dave Jennings (American football)",
+        "Bud Abell",
+        "Charley Diamond",
+        "Mike DeMark",
+        "Case Keenum",
+        "Kansas City Chiefs",
+        "Cotton Davidson",
+        "Jimmy Robinson",
+        "History of the Kansas City Chiefs",
+        "Jamele Mason"
+      ],
+      "ground_truth_titles": [
+        "Kansas City Chiefs",
+        "Brad Budde"
+      ],
+      "matched_titles": [
+        "Kansas City Chiefs",
+        "Brad Budde"
+      ],
+      "question_type": "bridge",
+      "question": "Brad Budde played professionally for a team in the NFL that was founded in 1960 as the Dallas Texans by who?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.05555555555555555,
+      "title_f1": 0.09999999999999999,
+      "sentence_recall": 0.3333333333333333,
+      "retrieved_titles": [
+        "Vinalhaven, Maine",
+        "Fiske O'Hara",
+        "Alfred, Maine",
+        "Doniphan County, Kansas",
+        "Charles C. Deam",
+        "Len Marlow",
+        "Bangor, Maine",
+        "Jacqueline M. Arroyo",
+        "Lauderhill, Florida",
+        "Tomi Ameobi",
+        "Knox County, Maine",
+        "Paul Teutul Jr.",
+        "Dover, New Hampshire",
+        "Kate McGarry",
+        "Stephen King",
+        "Khalid Khannouchi",
+        "Mark O'Connor",
+        "Bowdoinham, Maine"
+      ],
+      "ground_truth_titles": [
+        "Fiske O'Hara",
+        "Rockland, Maine"
+      ],
+      "matched_titles": [
+        "Fiske O'Hara"
+      ],
+      "question_type": "bridge",
+      "question": "Fiske O'Hara was born in what city Knox County, Maine, that had a population of 2,297 as of the 2010 census?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.10526315789473684,
+      "title_f1": 0.1904761904761905,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Ode to My Father",
+        "The Deal (2015 film)",
+        "The Swindlers (2017 film)",
+        "A Violent Prosecutor",
+        "Jang Hoon",
+        "Park Sung-woong",
+        "King and the Clown",
+        "Fatal Intuition",
+        "Rookies' Diary",
+        "New World (2013 film)",
+        "Always (2011 film)",
+        "A Taxi Driver",
+        "The Boys Who Cried Wolf",
+        "As One (film)",
+        "Deep Trap",
+        "Por Baazar",
+        "Guns &amp; Talks",
+        "R-Point",
+        "Hwang Jung-min"
+      ],
+      "ground_truth_titles": [
+        "The Deal (2015 film)",
+        "Park Sung-woong"
+      ],
+      "matched_titles": [
+        "The Deal (2015 film)",
+        "Park Sung-woong"
+      ],
+      "question_type": "bridge",
+      "question": "WHAT WAS THE NAME OF THE BOOK MADE INTO THE 2015 SOUTH KOREAN CRIME THRILLER, THE DEAL, DIRECTED BY SON YONG-HO AND FEATURING SOUTH KOREAN ACTOR PARK SUNG-WOONG (BORN JANUARY 9, 1973) AS A SERIAL KILLER?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.125,
+      "title_f1": 0.2222222222222222,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Lost Someone",
+        "White Horse (Laid Back song)",
+        "Damion Hall",
+        "Footsteps in the Dark",
+        "Promised Land (Elvis Presley album)",
+        "Martha and the Vandellas discography",
+        "Game Don't Wait",
+        "The Midnighters",
+        "Rock and Roll Music",
+        "No Money Down (Chuck Berry song)",
+        "Marvin Gaye discography",
+        "What's So Different?",
+        "My Love (Lionel Richie song)",
+        "Nate Butler",
+        "Chuck Berry's Golden Decade",
+        "Chuck Berry House"
+      ],
+      "ground_truth_titles": [
+        "Rock and Roll Music",
+        "Chuck Berry House"
+      ],
+      "matched_titles": [
+        "Rock and Roll Music",
+        "Chuck Berry House"
+      ],
+      "question_type": "bridge",
+      "question": "Chuck Berry House was where the 1957 hit single that reached what ranking on the R&B singles chart was composed?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.09523809523809523,
+      "title_f1": 0.17391304347826084,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "Tyler Bunch",
+        "Teen Titans (2005 video game)",
+        "Lego Atlantis: The Movie",
+        "High School Musical 2: Work This Out!",
+        "Rockstar Advanced Game Engine",
+        "Red Dead",
+        "Blue and Gray (board game)",
+        "List of accolades received by Grand Theft Auto V",
+        "Toon (role-playing game)",
+        "Controversies surrounding Grand Theft Auto V",
+        "Dark Tower (game)",
+        "Double Dragon (Neo-Geo)",
+        "Red Dead Redemption",
+        "History (band)",
+        "Haven: City of Violence",
+        "The Venture Bros.",
+        "The Beatles: Rock Band",
+        "List of Grand Theft Auto V characters",
+        "Rock 'n' Roller Coaster Starring Aerosmith",
+        "Peter Jackson",
+        "Markus Feehily"
+      ],
+      "ground_truth_titles": [
+        "Tyler Bunch",
+        "Red Dead Redemption"
+      ],
+      "matched_titles": [
+        "Tyler Bunch",
+        "Red Dead Redemption"
+      ],
+      "question_type": "bridge",
+      "question": "Which Western action-adventure video game by Rockstar did Tyler Bunch act for?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.11764705882352941,
+      "title_f1": 0.21052631578947367,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Mira Nair",
+        "Cinema of Pakistan",
+        "Imran Khan (Pakistani actor)",
+        "The Namesake (film)",
+        "Laaj",
+        "Mohammad Imran Pratapgarhi",
+        "Salim-Javed",
+        "Pashto cinema",
+        "Zindagi Kitni Haseen Hay",
+        "Farida Jalal",
+        "Jaane Tu... Ya Jaane Na",
+        "Cinema of Asia",
+        "Dobara Phir Se",
+        "Cinema of Bangladesh",
+        "Salaam Bombay!",
+        "Imran Khan (Indian actor)",
+        "Pyar Ki Kahani"
+      ],
+      "ground_truth_titles": [
+        "Pashto cinema",
+        "Imran Khan (Pakistani actor)"
+      ],
+      "matched_titles": [
+        "Pashto cinema",
+        "Imran Khan (Pakistani actor)"
+      ],
+      "question_type": "bridge",
+      "question": "Imran Khan has worked in what type of films refering to the Pashto Language film industry?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.1111111111111111,
+      "title_f1": 0.19999999999999998,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Fighting Cock Society",
+        "In These Times",
+        "Motography",
+        "Chicago (magazine)",
+        "Billboard Radio Monitor",
+        "MetroSource",
+        "Index Magazine",
+        "Adventist Review",
+        "L'Anarchie",
+        "Multinational Monitor",
+        "Snoecks",
+        "Portland Monthly",
+        "Genre (magazine)",
+        "Magazine",
+        "WSJ.",
+        "Mark Peterson (photographer)",
+        "Bill Pounds",
+        "Gold Coast (magazine)"
+      ],
+      "ground_truth_titles": [
+        "Chicago (magazine)",
+        "MetroSource"
+      ],
+      "matched_titles": [
+        "Chicago (magazine)",
+        "MetroSource"
+      ],
+      "question_type": "comparison",
+      "question": "Between MetroSource and Chicago, which magazine is published more frequently?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.047619047619047616,
+      "title_f1": 0.08695652173913042,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "Katarina Ivanovska",
+        "Kay Panabaker",
+        "Chriselle Lim",
+        "Kaori Hamura",
+        "Wendy and Lucy",
+        "Damia Farooq",
+        "Gioconda Vessichelli",
+        "India's Magic Star",
+        "Nickelodeon Australian Kids' Choice Awards 2007",
+        "Giada in Paradise",
+        "Mamie Gummer",
+        "Wendy's",
+        "Rosie O'Donnell",
+        "Wengie",
+        "Carolyn Zane",
+        "Amy Berg (writer)",
+        "Sunny Leone",
+        "Kelly Reichardt",
+        "Mona Scott-Young",
+        "KickRaux",
+        "Shermaine Santiago"
+      ],
+      "ground_truth_titles": [
+        "YouTube Rewind",
+        "Wengie"
+      ],
+      "matched_titles": [
+        "Wengie"
+      ],
+      "question_type": "bridge",
+      "question": "Wendy Ayche was featured in 2016 in an annual production created by Youtube and what other organization?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.047619047619047616,
+      "title_f1": 0.08695652173913042,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "B. J. Porter",
+        "David Spade",
+        "Stuart Charno",
+        "Not Another B Movie",
+        "Brian Thompson",
+        "Colin Campbell (director)",
+        "James Vallo",
+        "Benjamin Stoloff",
+        "Starr Manning",
+        "Anthony Herrera",
+        "Lyle Talbot",
+        "Sam Huntington",
+        "George C. Scott",
+        "Hugh A. Robertson",
+        "Harrison Ford",
+        "Eddie Dew",
+        "My Brother (2006 film)",
+        "The Private Eyes (1976 film)",
+        "Richard Benjamin",
+        "B. D. Wong",
+        "Sylvain Marcel"
+      ],
+      "ground_truth_titles": [
+        "Not Another B Movie",
+        "Joe Estevez"
+      ],
+      "matched_titles": [
+        "Not Another B Movie"
+      ],
+      "question_type": "bridge",
+      "question": "What is the birthdate of this American actor, director, and producer, who starred in Not Another B Movie?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.2,
+      "title_f1": 0.33333333333333337,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Ferdinand Anton Ernst Porsche",
+        "Guggenheim Partners",
+        "New York Shipbuilding Corporation",
+        "Edgar Kaiser Sr.",
+        "Kaiser Shipyards",
+        "Harry Koch (businessman)",
+        "John Roach &amp; Sons",
+        "Kaiser Ventures",
+        "Edgar Kaiser Jr.",
+        "Henry J. Kaiser"
+      ],
+      "ground_truth_titles": [
+        "Kaiser Ventures",
+        "Henry J. Kaiser"
+      ],
+      "matched_titles": [
+        "Kaiser Ventures",
+        "Henry J. Kaiser"
+      ],
+      "question_type": "bridge",
+      "question": "Kaiser Ventures corporation was founded by an American industrialist who became known as the father of modern American shipbuilding?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.05263157894736842,
+      "title_f1": 0.09523809523809525,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "Rejang script",
+        "Nâzım Hikmet",
+        "Subbalakshmi",
+        "Mehmed Ali Pasha (marshal)",
+        "Yakutian Laika",
+        "Do Lafzon Ki Kahani (TV series)",
+        "Almarwani",
+        "Jógvan á Lakjuni",
+        "Hamid Reza Sadr",
+        "Kadıköy, Yalova",
+        "Alaeddin Pasha (vizier)",
+        "Mazanderani language",
+        "Kings of Convenience",
+        "Jackie Chan Hill",
+        "Drudkh",
+        "International Nazim Hikmet Poetry Award",
+        "Pekka Markkanen",
+        "Snohomish people",
+        "Teriya Magar"
+      ],
+      "ground_truth_titles": [
+        "Nâzım Hikmet",
+        "Lavinia Greenlaw"
+      ],
+      "matched_titles": [
+        "Nâzım Hikmet"
+      ],
+      "question_type": "comparison",
+      "question": "What do Lavinia Greenlaw and Nâzım Hikmet have in common?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.09090909090909091,
+      "title_f1": 0.16666666666666669,
+      "sentence_recall": 0.6666666666666666,
+      "retrieved_titles": [
+        "Wagle Ki Duniya",
+        "Aagadu (soundtrack)",
+        "Gita Dey",
+        "Victor Heerman",
+        "Hania Amir",
+        "Sheila Sim",
+        "Ava DuVernay",
+        "Kathryn Bigelow",
+        "Aaina (1993 film)",
+        "Eleanor Coppola",
+        "Aag (1948 film)",
+        "Crank: High Voltage",
+        "Ottavio Alessi",
+        "Arati Ankalikar-Tikekar",
+        "Break of Hearts",
+        "Pamela Chopra",
+        "Debashree Roy filmography",
+        "Dana Blankstein",
+        "Sue Grafton",
+        "Emayatzy Corinealdi",
+        "Diane Ladd",
+        "Ayako Wakao"
+      ],
+      "ground_truth_titles": [
+        "Pamela Chopra",
+        "Aaina (1993 film)"
+      ],
+      "matched_titles": [
+        "Pamela Chopra",
+        "Aaina (1993 film)"
+      ],
+      "question_type": "bridge",
+      "question": "What was the job title of the wife of the director of the film \"Aaina?\""
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.08695652173913043,
+      "title_f1": 0.16,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Monster (2003 film)",
+        "Fernando Meirelles",
+        "Jack Hofsiss",
+        "Sela Ward",
+        "The Star Maker (1995 film)",
+        "Four Walls (film)",
+        "74th Academy Awards",
+        "John Malkovich filmography",
+        "Donna Gigliotti",
+        "William Wyler",
+        "Kristina Davis",
+        "Atomic Blonde",
+        "Nick Cordero",
+        "List of James Earl Jones performances",
+        "Funny Face",
+        "The Happiest Millionaire",
+        "Charlize Theron filmography",
+        "Jeremy Renner",
+        "Jolin Tsai filmography",
+        "Hotel Noir",
+        "Magnificent Obsession (1935 film)",
+        "Victoria Clark",
+        "Lauren Bacall"
+      ],
+      "ground_truth_titles": [
+        "Monster (2003 film)",
+        "Charlize Theron filmography"
+      ],
+      "matched_titles": [
+        "Monster (2003 film)",
+        "Charlize Theron filmography"
+      ],
+      "question_type": "bridge",
+      "question": "Who played Selby Wall in the film that Charlize Theron won an Academy Award for?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.045454545454545456,
+      "title_f1": 0.08333333333333334,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "She (Stiltskin album)",
+        "Sheila Browne",
+        "Deborah Lurie",
+        "Alison Goldfrapp",
+        "James Taylor Quartet",
+        "Jenny Bae",
+        "Heavier Than Metal",
+        "Jena Malone",
+        "List of songs recorded by Goldfrapp",
+        "Dad Rocks!",
+        "Bill Caswell",
+        "Big Pig",
+        "Sörskogen",
+        "John Clifford Heed",
+        "Shani Gandhi",
+        "Berlin (band)",
+        "The Butcher and the Butterfly",
+        "Marin Mazzie",
+        "Hall &amp; Oates",
+        "Marilyn McIntyre",
+        "Alice Gerrard",
+        "The Lion King (soundtrack)"
+      ],
+      "ground_truth_titles": [
+        "Michael Monroe",
+        "Alison Goldfrapp"
+      ],
+      "matched_titles": [
+        "Alison Goldfrapp"
+      ],
+      "question_type": "comparison",
+      "question": "Who can play more instruments, Michael Monroe or Alison Goldfrapp?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.13333333333333333,
+      "title_f1": 0.23529411764705882,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Carl Clauberg",
+        "Monowitz concentration camp",
+        "Erich Zoddel",
+        "Eintrachthütte concentration camp",
+        "Jasenovac concentration camp",
+        "Birkenau (disambiguation)",
+        "Majdanek concentration camp",
+        "Gerstein Report",
+        "Redl-Zipf",
+        "Auschwitz concentration camp",
+        "Esterwegen concentration camp",
+        "SS command of Auschwitz concentration camp",
+        "Herzogenbusch concentration camp",
+        "Reinhard Heydrich",
+        "Rudolf Höss"
+      ],
+      "ground_truth_titles": [
+        "Gerstein Report",
+        "Rudolf Höss"
+      ],
+      "matched_titles": [
+        "Gerstein Report",
+        "Rudolf Höss"
+      ],
+      "question_type": "bridge",
+      "question": "Who conducted the negotiations  with the owners and the longest serving commandant of Auschwitz concentration and extermination camp?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.06666666666666667,
+      "title_f1": 0.11764705882352941,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "46th Test Group",
+        "413th Flight Test Group",
+        "VMF-111",
+        "70th Fighter Squadron",
+        "No. 40 Wing RAF",
+        "West Fort Hood",
+        "Commander Regional Forces (United Kingdom)",
+        "415th Flight Test Flight",
+        "370th Flight Test Squadron",
+        "List of U.S. Air Force Test Pilot School alumni",
+        "3rd Weather Squadron",
+        "10th Flight Test Squadron",
+        "413th Flight Test Squadron",
+        "420th Flight Test Flight",
+        "38th Reconnaissance Squadron (disambiguation)"
+      ],
+      "ground_truth_titles": [
+        "413th Flight Test Group",
+        "Robins Air Force Base"
+      ],
+      "matched_titles": [
+        "413th Flight Test Group"
+      ],
+      "question_type": "bridge",
+      "question": "Who was the base where the 413th Flight Test Group is stationed named after?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.045454545454545456,
+      "title_f1": 0.08333333333333334,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "Edward Ullman",
+        "Joseph Iannuzzi",
+        "Tom Reilly (author)",
+        "Gus Williams (musician)",
+        "Benjamin Stoloff",
+        "Fritz Odemar",
+        "John Martin (judge)",
+        "Michel Sikyea",
+        "Paul Matte",
+        "Gerald Sim",
+        "Alberic II, Count of Dammartin",
+        "Simon, Count of Ponthieu",
+        "Jeremiah Burton",
+        "Józef Mackiewicz",
+        "Harry the Kid",
+        "Daniel Glattauer",
+        "Rita Sangalli",
+        "Henry C. Groseclose",
+        "Berthold Ullman",
+        "Alexander Lipsky",
+        "Samuel Bowers",
+        "Ludwig Dessoir"
+      ],
+      "ground_truth_titles": [
+        "Berthold Ullman",
+        "Vatican City"
+      ],
+      "matched_titles": [
+        "Berthold Ullman"
+      ],
+      "question_type": "bridge",
+      "question": "Berthold Louis Ullman died in a country that is approximately how many acres?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.09523809523809523,
+      "title_f1": 0.17391304347826084,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "Buster Parnell",
+        "Roger Carel",
+        "Javier Frana",
+        "Kato (producer)",
+        "Henri Larrivée",
+        "Colin Campbell (director)",
+        "Freeman Williams",
+        "Jose Tafoya",
+        "Tomi Ameobi",
+        "Branko Tomović",
+        "1996 Abierto Mexicano de Tenis – Doubles",
+        "1996 Nottingham Open – Singles",
+        "Alex Kruz",
+        "Sherwood Stewart",
+        "Wolfgang Porsche",
+        "Manny Villafana",
+        "Prince Hermann Friedrich of Leiningen",
+        "Julius Kahn (inventor)",
+        "Rose Porter",
+        "KickRaux",
+        "List of Neighbours characters (2007)"
+      ],
+      "ground_truth_titles": [
+        "Javier Frana",
+        "Sherwood Stewart"
+      ],
+      "matched_titles": [
+        "Javier Frana",
+        "Sherwood Stewart"
+      ],
+      "question_type": "comparison",
+      "question": "Who was born first, Javier Frana or Sherwood Stewart?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.05,
+      "title_f1": 0.09090909090909091,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "Malmö Arena",
+        "Lorsch codex",
+        "Westgate Las Vegas Resort &amp; Casino",
+        "Āne",
+        "Pacific Bell",
+        "Solar4America Ice",
+        "Sun Peaks, British Columbia",
+        "Carpenter, Colorado",
+        "Pollux Rock",
+        "Four Seasons Resort Bora Bora",
+        "Days of Wonder",
+        "Rossiya Airlines",
+        "WestAir Commuter Airlines",
+        "Resort Municipality, Prince Edward Island",
+        "Wynn Las Vegas",
+        "Smith Rocks",
+        "Rainbow Lodge",
+        "Temagami-Lorrain Mine",
+        "Red Rock Casino, Resort &amp; Spa",
+        "Igor Naming Agency"
+      ],
+      "ground_truth_titles": [
+        "Igor Naming Agency",
+        "Aria Resort and Casino"
+      ],
+      "matched_titles": [
+        "Igor Naming Agency"
+      ],
+      "question_type": "bridge",
+      "question": "Igor Naming Agency named a resort located where?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.05263157894736842,
+      "title_f1": 0.09523809523809525,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "Here We Go Round the Mulberry Bush",
+        "Kingsley Amis",
+        "Ismail Ahmedani",
+        "The War Against the Assholes",
+        "Here We Go Round the Mulberry Bush (disambiguation)",
+        "The Wheels on the Bus",
+        "George Melville Baker",
+        "Christopher Mitchell (actor)",
+        "Michael Moorcock",
+        "Pierre Martory",
+        "Roy Holder",
+        "Here We Go Round the Mulberry Bush (film)",
+        "Clive Donner",
+        "H. G. Wells",
+        "Here We Go Round the Mulberry Bush (Traffic song)",
+        "William Henry Oliphant Smeaton",
+        "Michael Finnegan (song)",
+        "Nicholas Whittaker",
+        "Black Blade (song)"
+      ],
+      "ground_truth_titles": [
+        "Here We Go Round the Mulberry Bush (film)",
+        "Hunter Davies"
+      ],
+      "matched_titles": [
+        "Here We Go Round the Mulberry Bush (film)"
+      ],
+      "question_type": "bridge",
+      "question": "When was the British author who wrote the novel on which \"Here We Go Round the Mulberry Bush\" was based born? "
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.058823529411764705,
+      "title_f1": 0.10526315789473684,
+      "sentence_recall": 0.6666666666666666,
+      "retrieved_titles": [
+        "Musée des Arts décoratifs, Strasbourg",
+        "Garden of Cultivation",
+        "Berlin Peace Column",
+        "Medici Vase",
+        "Whirligig",
+        "National Botanic Garden of Israel",
+        "Spring Hill Nurseries",
+        "Chapel of St Mary and St Nathalan",
+        "Pioneer Women's Memorial Garden (Adelaide)",
+        "Wind chime",
+        "Matthiola incana",
+        "Rupertswood",
+        "Alice River, Queensland",
+        "Waterloo Vase",
+        "Borghese Vase",
+        "Garden ornament",
+        "Physic garden"
+      ],
+      "ground_truth_titles": [
+        "Waterloo Vase",
+        "Buckingham Palace"
+      ],
+      "matched_titles": [
+        "Waterloo Vase"
+      ],
+      "question_type": "bridge",
+      "question": "The Waterloo Vase has been used as a garden ornament at whose residence and administrative headquarters?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.05263157894736842,
+      "title_f1": 0.09523809523809525,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "Aleksandar Zorić",
+        "Dean Blais",
+        "Dmitry Shevchenko (fencer)",
+        "Marc Rosset",
+        "Abhinav Bindra",
+        "Andreas Trautmann",
+        "2013 Monaco Grand Prix",
+        "Carlos González (baseball)",
+        "Viacheslav Zhukov",
+        "Jamie Dwyer",
+        "Broome Pinniger",
+        "Mansoor Ahmed",
+        "Mark Pavelich",
+        "Niklas Sundström",
+        "Bill Ashenfelter",
+        "Richard Gasquet career statistics",
+        "Liam de Young",
+        "Nathan Cohen (rower)",
+        "Robert Hammond"
+      ],
+      "ground_truth_titles": [
+        "Miracle on Ice",
+        "Mark Pavelich"
+      ],
+      "matched_titles": [
+        "Mark Pavelich"
+      ],
+      "question_type": "bridge",
+      "question": "Where did Mark Pavelich win Gold in 1980?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.13333333333333333,
+      "title_f1": 0.23529411764705882,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Jakob Ragaz",
+        "Canada's grand railway hotels",
+        "Occidental Hotel",
+        "1954 FIFA World Cup",
+        "Langham Hotel, London",
+        "Dom-Hotel",
+        "Dixie Walesbilt Hotel",
+        "Sixt",
+        "Key Lime Cove",
+        "Constant Girard",
+        "Tourism in Switzerland",
+        "Mauthausen-Gusen concentration camp",
+        "Memorigin",
+        "Trump International Hotel Las Vegas",
+        "Mount Pleasant House (New Hampshire)"
+      ],
+      "ground_truth_titles": [
+        "Jakob Ragaz",
+        "Tourism in Switzerland"
+      ],
+      "matched_titles": [
+        "Jakob Ragaz",
+        "Tourism in Switzerland"
+      ],
+      "question_type": "bridge",
+      "question": "Which two Swiss attractions were the cause of the \"grand hotels\" in which Jakob Ragaz worked on? "
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.043478260869565216,
+      "title_f1": 0.08,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "List of people influenced by Selena",
+        "Mike Phelps",
+        "Louis Vasquez",
+        "Freeman Williams",
+        "Barton Childs",
+        "Tony Holm",
+        "Randal Malone",
+        "Joseph R. Tanner",
+        "Andy Kennedy (basketball)",
+        "Brian Cuban",
+        "Len Marlow",
+        "Damon Stoudamire",
+        "Mookie Blaylock",
+        "Derrick Hamilton (basketball)",
+        "Jesse Bushyhead",
+        "Karl Malone",
+        "Jimmy Dan Conner",
+        "George T. Johnson",
+        "Julius Kahn (inventor)",
+        "Craig Virgin",
+        "Dionciel Armstrong",
+        "Lula J. Davis",
+        "Larry Friend"
+      ],
+      "ground_truth_titles": [
+        "Randal Malone",
+        "Owensboro, Kentucky"
+      ],
+      "matched_titles": [
+        "Randal Malone"
+      ],
+      "question_type": "bridge",
+      "question": "How close to Louisville was Randal Malone born?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.11764705882352941,
+      "title_f1": 0.21052631578947367,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Primeval Whirl",
+        "Hurricane: Category 5",
+        "List of Kings Island attractions",
+        "Riverview Park (Iowa)",
+        "Millennium Force",
+        "Possessed (roller coaster)",
+        "Holiday World &amp; Splashin' Safari",
+        "Paxtang Park",
+        "Enchanted Forest (Rhode Island)",
+        "Excalibur (Valleyfair)",
+        "The Voyage (roller coaster)",
+        "Paultons Park",
+        "Hades 360",
+        "Blue Streak (Conneaut Lake)",
+        "El Toro (Six Flags Great Adventure)",
+        "Hair Raiser",
+        "Wooden roller coaster"
+      ],
+      "ground_truth_titles": [
+        "The Voyage (roller coaster)",
+        "Holiday World &amp; Splashin' Safari"
+      ],
+      "matched_titles": [
+        "The Voyage (roller coaster)",
+        "Holiday World &amp; Splashin' Safari"
+      ],
+      "question_type": "bridge",
+      "question": "The Voyage is a wooden roller coaster located at a theme park divided into how many sections ?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.10526315789473684,
+      "title_f1": 0.1904761904761905,
+      "sentence_recall": 0.5,
+      "retrieved_titles": [
+        "She (Stiltskin album)",
+        "Talking Heads",
+        "Spiral Scratch (EP)",
+        "Neon Boys",
+        "Velvet Revolver",
+        "Howard Devoto",
+        "The Badgeman",
+        "Sonia Dada",
+        "Buzzcocks",
+        "Palms (album)",
+        "The Replacements (band)",
+        "The Hellacopters discography",
+        "Slaughter &amp; The Dogs",
+        "Magazine (band)",
+        "Jerky Versions of the Dream",
+        "Ed Roland",
+        "Area 12 (band)",
+        "Jay Joyce",
+        "John Tempesta"
+      ],
+      "ground_truth_titles": [
+        "Buzzcocks",
+        "Jerky Versions of the Dream"
+      ],
+      "matched_titles": [
+        "Buzzcocks",
+        "Jerky Versions of the Dream"
+      ],
+      "question_type": "bridge",
+      "question": "Where is the English punk rock band which Howard Devoto is the original singer of formed"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.05555555555555555,
+      "title_f1": 0.09999999999999999,
+      "sentence_recall": 0.6666666666666666,
+      "retrieved_titles": [
+        "Storm Damage",
+        "Home and Away: Revenge",
+        "The True Meaning of Smekday",
+        "Superman Returns",
+        "Heather Stevens",
+        "Back Home (novel)",
+        "Lea Thompson",
+        "Laura Marano",
+        "Back Home Again (song)",
+        "Antoinette Byron",
+        "Béatrice Picard",
+        "Rita May (actress)",
+        "Amy Mizzi",
+        "Michelle Magorian",
+        "A Home of Our Own",
+        "Catherine O'Hara",
+        "Vanessa Lengies",
+        "Alin Sumarwata"
+      ],
+      "ground_truth_titles": [
+        "Back Home (novel)",
+        "Hayley Mills"
+      ],
+      "matched_titles": [
+        "Back Home (novel)"
+      ],
+      "question_type": "bridge",
+      "question": "Back Home is a children's historical novel adapted into a TV drama starring what English actress born in 1946?"
+    },
+    {
+      "title_recall": 0.5,
+      "title_precision": 0.05,
+      "title_f1": 0.09090909090909091,
+      "sentence_recall": 0.0,
+      "retrieved_titles": [
+        "Sheila Browne",
+        "Monica Lynn",
+        "Mary Jo Levinger",
+        "Kevin Franklin",
+        "Sandra Pizzarello",
+        "Jennifer Weiner",
+        "Indriati Iskak",
+        "Rodney Benson",
+        "Ann Lewis (musician)",
+        "Sheila Blumstein",
+        "Andrea Berlin",
+        "Elizabeth Blackburn",
+        "Maya Harris",
+        "Sylvie Le Bon-de Beauvoir",
+        "Sara Berry",
+        "Patricia S. Cowings",
+        "JoAnne Stubbe",
+        "Sandra Stotsky",
+        "Marilyn McIntyre",
+        "Sandra Eades"
+      ],
+      "ground_truth_titles": [
+        "Sandra Pizzarello",
+        "Doctorate"
+      ],
+      "matched_titles": [
+        "Sandra Pizzarello"
+      ],
+      "question_type": "bridge",
+      "question": "What organization does Sandra Pizzarello and Doctorate have in common?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.18181818181818182,
+      "title_f1": 0.3076923076923077,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Boiga kraepelini",
+        "Karl Kraepelin",
+        "Tokummia katalepsis",
+        "Solifugae",
+        "Scorpion",
+        "Caraboctonidae",
+        "Kritios Boy",
+        "Bermuda night heron",
+        "Vices &amp; Virtues Tour",
+        "There Was an Old Lady Who Swallowed a Fly",
+        "Teddy Roosevelt Terrier"
+      ],
+      "ground_truth_titles": [
+        "Scorpion",
+        "Karl Kraepelin"
+      ],
+      "matched_titles": [
+        "Scorpion",
+        "Karl Kraepelin"
+      ],
+      "question_type": "bridge",
+      "question": "How many legs does the animal, in which Karl Kraepelin discusses in \"Scorpiones und Pedipalpi,\" have?"
+    },
+    {
+      "title_recall": 1.0,
+      "title_precision": 0.14285714285714285,
+      "title_f1": 0.25,
+      "sentence_recall": 1.0,
+      "retrieved_titles": [
+        "Sammy Ameobi",
+        "James Harris (cricketer, born 1990)",
+        "Sarat Pujari",
+        "Newcastle upon Tyne",
+        "Philadelphia English",
+        "Languages of Italy",
+        "Tomi Ameobi",
+        "Mike Vickers",
+        "Giuseppe Tominz",
+        "Wesley Silcox",
+        "West Saxon dialect",
+        "Milancy Khongstia",
+        "Lucidio Sentimenti",
+        "Irpinian dialect"
+      ],
+      "ground_truth_titles": [
+        "Newcastle upon Tyne",
+        "Tomi Ameobi"
+      ],
+      "matched_titles": [
+        "Newcastle upon Tyne",
+        "Tomi Ameobi"
+      ],
+      "question_type": "bridge",
+      "question": "What is the nickname of the regional dialect from the city from which the English Footballer Tomi Ameobi was born in?"
+    }
+  ]
+}

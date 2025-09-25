@@ -11,10 +11,10 @@ Usage Examples:
 ==============
 1. Use benchmark_mapping_test.jsonl with proportion support:
    python generate_verl_training_data_with_proportion.py \
-       --benchmark-mapping ../../ScoreFlow/benchmark_mapping_test.jsonl \
-       --output-dir ./proportion_data \
-       --train-num 1000 \
-       --test-num 200
+       --benchmark-mapping /Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/ScoreFlow/HOT.jsonl \
+       --output-dir ./proportion_data_HOT \
+       --train-num 1 \
+       --test-num 20
 
 2. Generate with specific benchmarks:
    python generate_verl_training_data_with_proportion.py \
@@ -284,7 +284,7 @@ class VerlTrainingDataGeneratorWithProportion:
             # Available operators
             available_operators = [
                 'ScGenerate', 'ScRevise', 'ScEnsemble', 'ScSummarize',
-                'ScProgrammer', 'ScDecompose', 'ScVerifyAndRefine',
+                'ScProgrammer', 'ScDecompose', 'ScVerifyAndRefine', 'ScVectorSearch',
             ]
 
             # Load operator descriptions and init codes
@@ -300,6 +300,7 @@ class VerlTrainingDataGeneratorWithProportion:
                 'ScProgrammer': 'programmer',
                 'ScDecompose': 'decompose',
                 'ScVerifyAndRefine': 'verifyandrefine',
+                'ScVectorSearch': 'vectorsearch',
             }
 
             for op_class in available_operators:

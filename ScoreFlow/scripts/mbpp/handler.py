@@ -100,67 +100,10 @@ class MbppHandler(BenchmarkHandler):
                 answer = problem.get('answer', '')
 
                 # 格式化测试用例
-                test_cases_text = "**TEST CASES(FOR YOU TO KNOW THE FUNCTION NAME):**\n"
-                i=0
+                test_cases_text = "**TEST CASES:**\n"
                 if test_cases:
                     for test_case in test_cases:
-                        if i<=1:
-                            test_cases_text += f"{test_case}\n"
-                            i=i+1
-                        elif i==2:
-                            test_cases_text += "IN THE TESTING, THERE IS MORE TEST CASES\n"
-                else:
-                    test_cases_text += "No test cases provided.\n"
-                
-                # 组合任务描述和测试用例
-                formatted_problem = f"""---
-**TASK:**
-{task_description}
-
-{test_cases_text.strip()}
----"""
-                formatted_problems.append(formatted_problem)
-            
-            return "\n\n".join(formatted_problems)
-        except (KeyError, IndexError) as e:
-            raise ValueError(f"从MBPP数据中提取问题时出错: {e}")
-    
-    def get_prompt_text_example(self, indices: List[int]) -> str:
-        """
-        从 MBPP 数据中提取编程任务描述，并格式化为清晰的文本用于生成工作流。
-        
-        格式:
-        ---
-        **TASK:**
-        [task description]
-        
-        **TEST CASES:**
-        [test case 1]
-        [test case 2]
-        ...
-        ---
-        
-        (如果提供多个索引，则重复此结构)
-        """
-        try:
-            problems = [self._get_problem_by_index(i) for i in indices]
-            formatted_problems = []
-            
-            for problem in problems:
-                # 提取任务描述和测试用例
-                task_description = problem.get('text', problem.get('question', ''))
-                test_cases = problem.get('test_list', [])
-                
-                # 格式化测试用例
-                test_cases_text = "**TEST CASES(FOR YOU TO KNOW THE FUNCTION NAME):**\n"
-                i=0
-                if test_cases:
-                    for test_case in test_cases:
-                        if i<=2:
-                            test_cases_text += f"{test_case}\n"
-                            i=i+1
-                        elif i==3:
-                            test_cases_text += "IN THE TESTING, THERE IS MORE\n"
+                        test_cases_text += f"{test_case}\n"
                 else:
                     test_cases_text += "No test cases provided.\n"
                 
@@ -193,10 +136,9 @@ class MbppHandler(BenchmarkHandler):
         """
         # 创建一个执行环境，包含必要的内置函数
         # 注意：assert 是关键字，会在 exec 中自动可用，不需要也不能显式传递
+
         import builtins
-        
-        # 预导入常用的标准库模块，以防生成的代码忘记import
-        # 这些是MBPP中常用的模块
+        import typing          # 新增
         import math
         import re
         import collections
@@ -208,38 +150,67 @@ class MbppHandler(BenchmarkHandler):
         import heapq
         import bisect
         import copy
-        
+        import json
+        import sys
+        import os            # MBPP 里偶尔用到 os.path / os.listdir
+        import operator      # MBPP 有些题用 operator.add 之类
+
         exec_globals = {
             '__builtins__': builtins,
-            # 预先提供常用模块，以防代码忘记import
-            'math': math,
-            're': re,
+
+            # 常用整模块
+            'math'       : math,
+            're'         : re,
             'collections': collections,
-            'itertools': itertools,
-            'functools': functools,
-            'string': string,
-            'datetime': datetime,
-            'random': random,
-            'heapq': heapq,
-            'bisect': bisect,
-            'copy': copy,
-            # 也支持from X import Y的常用情况
-            'Counter': collections.Counter,
-            'defaultdict': collections.defaultdict,
-            'deque': collections.deque,
-            'OrderedDict': collections.OrderedDict,
-            'chain': itertools.chain,
-            'combinations': itertools.combinations,
-            'permutations': itertools.permutations,
-            'product': itertools.product,
-            'reduce': functools.reduce,
+            'itertools'  : itertools,
+            'functools'  : functools,
+            'string'     : string,
+            'datetime'   : datetime,
+            'random'     : random,
+            'heapq'      : heapq,
+            'bisect'     : bisect,
+            'copy'       : copy,
+            'json'       : json,
+            'sys'        : sys,
+            'os'         : os,
+            'operator'   : operator,
+
+            # collections / itertools / functools 高频直接名字
+            'Counter'      : collections.Counter,
+            'defaultdict'  : collections.defaultdict,
+            'deque'        : collections.deque,
+            'OrderedDict'  : collections.OrderedDict,
+            'namedtuple'   : collections.namedtuple,
+            'chain'        : itertools.chain,
+            'combinations' : itertools.combinations,
+            'permutations' : itertools.permutations,
+            'product'      : itertools.product,
+            'cycle'        : itertools.cycle,
+            'groupby'      : itertools.groupby,
+            'reduce'       : functools.reduce,
+            'lru_cache'    : functools.lru_cache,
+            'partial'      : functools.partial,
+
+            # typing 裸写
+            'List'  : typing.List,
+            'Tuple' : typing.Tuple,
+            'Dict'  : typing.Dict,
+            'Set'   : typing.Set,
+            'Optional': typing.Optional,
+            'Union'   : typing.Union,
+            'Any'     : typing.Any,
+            'Callable': typing.Callable,
+            'Iterable': typing.Iterable,
+            'Iterator': typing.Iterator,
+            'Sequence': typing.Sequence,
+            'Mapping' : typing.Mapping,
         }
         
         try:
             # 预处理代码，自动添加可能缺失的import
             code = self._preprocess_code_with_imports(code)
 
-            print(f"[MBPP]🚀: 生成的code是:\n{code}")
+            # print(f"[MBPP]🚀: 生成的code是:\n{code}")
             
             # 首先执行测试前置代码（如果有）
             if test_setup:
@@ -253,7 +224,7 @@ class MbppHandler(BenchmarkHandler):
             failed_tests = []
             
             for i, test_case in enumerate(test_cases):
-                print(f"[MBPP]🚀: 测试用例:\n{test_case}")
+                # print(f"[MBPP]🚀: 测试用例:\n{test_case}")
                 try:
                     # 捕获stdout用于调试
                     with contextlib.redirect_stdout(StringIO()):
@@ -261,10 +232,10 @@ class MbppHandler(BenchmarkHandler):
                     passed_tests += 1
                 except AssertionError as e:
                     failed_tests.append(f"Test {i+1} failed: {test_case}")
-                    print(f"[MBPP]🚀: 测试用例失败:\n{test_case}")
+                    # print(f"[MBPP]🚀: 测试用例失败:\n{test_case}")
                 except Exception as e:
                     failed_tests.append(f"Test {i+1} error: {test_case} - {str(e)}")
-                    print(f"[MBPP]🚀: 测试用例错误:\n{test_case} - {str(e)}")
+                    # print(f"[MBPP]🚀: 测试用例错误:\n{test_case} - {str(e)}")
 
             if failed_tests:
                 return False, f"Passed {passed_tests}/{len(test_cases)} tests. Failed: {'; '.join(failed_tests)}"
@@ -364,7 +335,7 @@ class MbppHandler(BenchmarkHandler):
             return fixed_code
         except SyntaxError as e:
             # 如果还有语法错误，返回原始代码并记录警告
-            print(f"Warning: Code has syntax errors after indentation fix: {e}")
+            # print(f"Warning: Code has syntax errors after indentation fix: {e}")
             return code
     
     def _extract_code_from_response(self, response: str) -> str:
@@ -471,7 +442,7 @@ class MbppHandler(BenchmarkHandler):
             
             if not test_cases:
                 # 如果没有测试用例，回退到LLM判断
-                print("[MBPP] Warning: No test cases found, falling back to LLM judge")
+                # print("[MBPP] Warning: No test cases found, falling back to LLM judge")
                 return await self.llm_judge(model_output, ground_truth_data)
             
             # 执行代码并运行测试
@@ -481,10 +452,10 @@ class MbppHandler(BenchmarkHandler):
                 test_setup
             )
             
-            print(f"Code execution result: {message}")
+            # print(f"Code execution result: {message}")
             return passed
             
         except Exception as e:
-            print(f"Error in MBPP judge: {e}")
+            # print(f"Error in MBPP judge: {e}")
             # 如果执行失败，认为答案错误
             return False

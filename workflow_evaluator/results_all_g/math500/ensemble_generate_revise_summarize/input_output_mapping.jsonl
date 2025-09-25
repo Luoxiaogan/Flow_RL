@@ -3,3 +3,13 @@
 {"line_number": 143, "test_id": "7234d8e78741", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.4, "error": null}
 {"line_number": 172, "test_id": "6815e7402afe", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.4, "error": null}
 {"line_number": 195, "test_id": "e13f60441507", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.8, "error": null}
+{"line_number": 49, "test_id": "0ffc9bd133cd", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 81, "test_id": "eee3cf78360b", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 143, "test_id": "63619503cf6d", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 172, "test_id": "f699b2c9fd4b", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 195, "test_id": "83b24fda3020", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 49, "test_id": "bb3b0e791469", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 81, "test_id": "8c3575f503c7", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 143, "test_id": "7ee812ffa5d5", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 172, "test_id": "c32cec6a56de", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 195, "test_id": "2f82224e6df4", "source_file": "../baseline/test_IMO_0922_QZH_with_responses.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}

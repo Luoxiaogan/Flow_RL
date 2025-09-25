@@ -98,4 +98,4 @@ New_evaluation_and_RL/RL_part/wandb_data_save
 Test_FILE/*.zip
 *.zip
 data_qwen-max-latest/
-data_qwen_3_max_preview/
+data_qwen_3_max_preview/Processed_dataset/hotpotqa/vector/db/chroma_db/chroma.sqlite3

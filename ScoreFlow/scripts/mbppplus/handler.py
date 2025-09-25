@@ -120,12 +120,17 @@ class MbppplusHandler(BenchmarkHandler):
                 
                 # 构建格式化的问题
                 formatted_problem = f"""---
-**TASK DESCRIPTION:**
+**TASK DESCRIPTION:(THE PROBLEM YOU SHOULD SOLVE BY WRITING THE PYTHON CODE USING THE FUNCTION SIGNATURE BELOW)**
 {task_description}
 
-**FUNCTION SIGNATURE:**
+**FUNCTION SIGNATURE(THE OUTPUT SOLUTION OF PYTHON CODE SHOULD IN THIS FUNCTION NAME):**
 ```python
 {function_signature}
+```
+
+**BASIC TEST CASES:**
+```python
+{test_cases_text.strip()}
 ```
 ---"""
                 formatted_problems.append(formatted_problem)
@@ -134,58 +139,7 @@ class MbppplusHandler(BenchmarkHandler):
             
         except Exception as e:
             raise ValueError(f"Error extracting problem from MBPP+ data: {e}")
-    def get_prompt_text_example(self, indices: List[int]) -> str:
-        """
-        从 MBPP 数据中提取编程任务描述，并格式化为清晰的文本用于生成工作流。
-        
-        格式:
-        ---
-        **TASK:**
-        [task description]
-        
-        **TEST CASES:**
-        [test case 1]
-        [test case 2]
-        ...
-        ---
-        
-        (如果提供多个索引，则重复此结构)
-        """
-        try:
-            problems = [self._get_problem_by_index(i) for i in indices]
-            formatted_problems = []
-            
-            for problem in problems:
-                # 提取任务描述和测试用例
-                task_description = problem.get('text', problem.get('question', ''))
-                test_cases = problem.get('test_list', [])
-                
-                # 格式化测试用例
-                test_cases_text = "**TEST CASES(FOR YOU TO KNOW THE FUNCTION NAME):**\n"
-                i=0
-                if test_cases:
-                    for test_case in test_cases:
-                        if i<=2:
-                            test_cases_text += f"{test_case}\n"
-                            i=i+1
-                        elif i==3:
-                            test_cases_text += "IN THE TESTING, THERE IS MORE\n"
-                else:
-                    test_cases_text += "No test cases provided.\n"
-                
-                # 组合任务描述和测试用例
-                formatted_problem = f"""---
-**TASK:**
-{task_description}
-
-**TEST CASES:(for you to know the function name and expected input types, testing of the workflow, this WILL be provided to the workflow, since it is essential for understanding the function name)**
-{test_cases_text.strip()}
----"""
-                formatted_problems.append(formatted_problem)
-            
-            return "\n\n".join(formatted_problems)
-        except (KeyError, IndexError) as e:
-            raise ValueError(f"从MBPPPlus数据中提取问题时出错: {e}")    
+    
     def _extract_function_signature(self, code: str) -> str:
         """
         从代码中提取函数签名（函数定义行）。
@@ -237,8 +191,9 @@ class MbppplusHandler(BenchmarkHandler):
         准备执行环境，预导入常用模块。
         """
         import builtins
+        import typing          # 新增
         import math
-        import re as regex_module
+        import re
         import collections
         import itertools
         import functools
@@ -248,36 +203,60 @@ class MbppplusHandler(BenchmarkHandler):
         import heapq
         import bisect
         import copy
-        import numpy as np
-        from typing import List, Dict, Tuple, Any, Optional, Set
-        
+        import json
+        import sys
+        import os            # MBPP 里偶尔用到 os.path / os.listdir
+        import operator      # MBPP 有些题用 operator.add 之类
+
         return {
             '__builtins__': builtins,
-            'math': math,
-            're': regex_module,
+
+            # 常用整模块
+            'math'       : math,
+            're'         : re,
             'collections': collections,
-            'itertools': itertools,
-            'functools': functools,
-            'string': string,
-            'datetime': datetime,
-            'random': random,
-            'heapq': heapq,
-            'bisect': bisect,
-            'copy': copy,
-            'np': np,
-            'numpy': np,
-            # 添加collections的常用类
-            'Counter': collections.Counter,
-            'defaultdict': collections.defaultdict,
-            'deque': collections.deque,
-            'OrderedDict': collections.OrderedDict,
-            # 添加类型提示
-            'List': List,
-            'Dict': Dict,
-            'Tuple': Tuple,
-            'Set': Set,
-            'Any': Any,
-            'Optional': Optional,
+            'itertools'  : itertools,
+            'functools'  : functools,
+            'string'     : string,
+            'datetime'   : datetime,
+            'random'     : random,
+            'heapq'      : heapq,
+            'bisect'     : bisect,
+            'copy'       : copy,
+            'json'       : json,
+            'sys'        : sys,
+            'os'         : os,
+            'operator'   : operator,
+
+            # collections / itertools / functools 高频直接名字
+            'Counter'      : collections.Counter,
+            'defaultdict'  : collections.defaultdict,
+            'deque'        : collections.deque,
+            'OrderedDict'  : collections.OrderedDict,
+            'namedtuple'   : collections.namedtuple,
+            'chain'        : itertools.chain,
+            'combinations' : itertools.combinations,
+            'permutations' : itertools.permutations,
+            'product'      : itertools.product,
+            'cycle'        : itertools.cycle,
+            'groupby'      : itertools.groupby,
+            'reduce'       : functools.reduce,
+            'lru_cache'    : functools.lru_cache,
+            'partial'      : functools.partial,
+
+            # typing 裸写
+            'List'  : typing.List,
+            'Tuple' : typing.Tuple,
+            'Dict'  : typing.Dict,
+            'Set'   : typing.Set,
+            'Optional': typing.Optional,
+            'Union'   : typing.Union,
+            'Any'     : typing.Any,
+            'Callable': typing.Callable,
+            'Iterable': typing.Iterable,
+            'Iterator': typing.Iterator,
+            'Sequence': typing.Sequence,
+            'Mapping' : typing.Mapping,
         }
     
     def _execute_basic_tests(self, code: str, test_cases: List[str]) -> tuple[bool, str]:
@@ -414,7 +393,7 @@ class MbppplusHandler(BenchmarkHandler):
         4. 只有所有测试都通过才返回True
         """
         if not model_output or not ground_truth_data:
-            print("[MBPP+] Missing model output or ground truth data")
+            # print("[MBPP+] Missing model output or ground truth data")
             return False
         
         # 转换输出为字符串并提取代码
@@ -422,7 +401,7 @@ class MbppplusHandler(BenchmarkHandler):
         generated_code = self._extract_code_from_response(output_str)
         
         if not generated_code:
-            print("[MBPP+] No code found in model output")
+            # print("[MBPP+] No code found in model output")
             return False
         
         # 获取测试组件
@@ -432,16 +411,16 @@ class MbppplusHandler(BenchmarkHandler):
         
         # 步骤1：运行基础测试用例
         if test_cases:
-            print(f"[MBPP+] Running {len(test_cases)} basic test cases...")
+            # print(f"[MBPP+] Running {len(test_cases)} basic test cases...")
             passed, error_msg = self._execute_basic_tests(generated_code, test_cases)
             if not passed:
-                print(f"[MBPP+] Basic tests failed: {error_msg}")
+                # print(f"[MBPP+] Basic tests failed: {error_msg}")
                 return False
-            print("[MBPP+] Basic tests passed ✓")
+            # print("[MBPP+] Basic tests passed ✓")
         
         # 步骤2：运行扩展测试套件
         if extended_test:
-            print("[MBPP+] Running extended test suite...")
+            # print("[MBPP+] Running extended test suite...")
             
             # 从参考代码中提取函数名，并替换测试代码中的函数调用
             reference_code = ground_truth_data.get('code', '')
@@ -468,9 +447,9 @@ class MbppplusHandler(BenchmarkHandler):
             )
             
             if not passed:
-                print(f"[MBPP+] Extended tests failed: {error_msg}")
+                # print(f"[MBPP+] Extended tests failed: {error_msg}")
                 return False
-            print("[MBPP+] Extended tests passed ✓")
+            # print("[MBPP+] Extended tests passed ✓")
         
-        print("[MBPP+] All tests passed successfully! ✅")
+        # print("[MBPP+] All tests passed successfully! ✅")
         return True

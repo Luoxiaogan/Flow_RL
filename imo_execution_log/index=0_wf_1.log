@@ -1,0 +1,2 @@
+2025-09-24 01:33:42.331 | INFO     | metagpt.const:get_metagpt_package_root:21 - Package root set to /Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/Test_FILE
+2025-09-24 01:33:44,394 - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"

@@ -1,0 +1,54 @@
+{
+  "total_samples": 1500,
+  "unique_documents": 14566,
+  "total_document_occurrences": 14925,
+  "avg_doc_length": 546.3384594260607,
+  "avg_sentences_per_doc": 4.097075381024303,
+  "max_doc_length": 8268,
+  "min_doc_length": 35,
+  "max_appearances": 5,
+  "min_appearances": 1,
+  "avg_appearances": 1.0246464369078676,
+  "most_frequent_documents": [
+    {
+      "title": "Williams sisters",
+      "count": 5
+    },
+    {
+      "title": "Donald Duck",
+      "count": 4
+    },
+    {
+      "title": "Eureka, Nunavut",
+      "count": 4
+    },
+    {
+      "title": "Augustine of Canterbury",
+      "count": 4
+    },
+    {
+      "title": "Despoina",
+      "count": 4
+    },
+    {
+      "title": "Wale Adebanwi",
+      "count": 4
+    },
+    {
+      "title": "Lionel Luthor",
+      "count": 3
+    },
+    {
+      "title": "Hawaii State Legislature",
+      "count": 3
+    },
+    {
+      "title": "The Itchy &amp; Scratchy Show",
+      "count": 3
+    },
+    {
+      "title": "Colomac Mine",
+      "count": 3
+    }
+  ]
+}

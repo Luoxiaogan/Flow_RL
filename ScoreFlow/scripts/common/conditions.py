@@ -193,6 +193,107 @@ final_solution = await self.verify_and_refine(
 return final_solution
 ```'''
 
+vectorsearch = '''
+# VectorSearch Operator Usage Guide
+
+## Overview
+
+The VectorSearch operator is a powerful RAG (Retrieval-Augmented Generation) component designed for the ScoreFlow workflow system. It enables dynamic document retrieval from a pre-built ChromaDB vector database, specifically optimized for multi-hop reasoning tasks in the HotpotQA dataset. This operator replaces static context documents with intelligent, query-based retrieval, significantly improving the flexibility and scalability of question-answering workflows.
+
+## Usage in Workflows
+
+The VectorSearch operator can be called asynchronously within your workflow's `run_workflow` method:
+
+```python
+async def run_workflow(self):
+    # Retrieve relevant documents
+    retrieved_docs = await self.vector_search(
+        instruction="Find information about specific entities",
+        context="Previous analysis or query refinement",
+        top_k=5  # Optional: override default document count
+    )
+
+    # Use retrieved information in subsequent operations
+    answer = await self.generate(
+        instruction="Answer based on retrieved information",
+        context=retrieved_docs
+    )
+```
+
+## Parameters
+
+- **instruction** (str): The search query or guidance for retrieval
+- **context** (str): Additional context to refine the search
+- **top_k** (int, optional): Number of documents to retrieve (overrides config defaults)
+
+## Output Format
+
+The operator returns formatted text containing:
+
+1. **Relevant Documents**: Full documents matching the query
+2. **Relevant Passages**: Specific sentences with high relevance
+3. **Metadata**: Information about retrieval counts and sources
+
+Example output structure:
+```
+**Retrieved Information:**
+
+📄 **Relevant Documents:**
+[1. Document Title]
+Document content...
+
+🔍 **Relevant Passages:**
+[From: Source Title]
+Specific relevant sentence...
+
+---
+*Retrieved 6 relevant items*
+```
+
+## Advanced Features
+
+### Hybrid Retrieval
+The operator performs both document-level and sentence-level retrieval, combining broad context with precise information extraction.
+
+### Query Processing
+Queries are intelligently processed by combining instruction and context, with fallback to the original problem text if needed.
+
+### Error Handling
+If the database connection fails, the operator returns an error message without crashing the workflow, allowing for graceful degradation.
+
+## Best Practices
+
+1. **Query Specificity**: Provide clear, specific instructions for better retrieval accuracy
+2. **Iterative Refinement**: Use multiple retrieval steps for complex multi-hop questions
+3. **Context Utilization**: Leverage previous retrieval results as context for subsequent searches
+4. **Resource Management**: Adjust top_k parameter based on the complexity of the question
+
+## Integration Example
+
+For multi-hop reasoning in HotpotQA:
+
+```python
+# First hop: Retrieve initial entity information
+first_docs = await self.vector_search(
+    instruction="Find information about the primary entity",
+    context=question
+)
+
+# Second hop: Retrieve connecting information
+second_docs = await self.vector_search(
+    instruction="Find relationships and connections",
+    context=first_docs
+)
+
+# Synthesize final answer
+final_answer = await self.generate(
+    instruction="Synthesize answer from all retrieved information",
+    context=f"{first_docs}\n{second_docs}"
+)
+```
+This approach enables sophisticated multi-step reasoning while maintaining efficiency through targeted retrieval.
+'''
+
 generate_init = '''self.generate = operator.Generate(self.llm, self.problem_text)'''
 revise_init = '''self.revise = operator.Revise(self.llm, self.problem_text)'''
 summarize_init = '''self.summarize = operator.Summarize(self.llm, self.problem_text)'''
@@ -200,6 +301,7 @@ ensemble_init = '''self.ensemble = operator.Ensemble(self.llm, self.problem_text
 programmer_init = '''self.programmer = operator.Programmer(self.llm, self.problem_text)'''
 decompose_init = '''self.decompose = operator.Decompose(self.llm, self.problem_text)'''
 verifyandrefine_init = '''self.verify_and_refine = operator.VerifyAndRefine(self.llm, self.problem_text)'''
+vectorsearch_init = '''self.vector_search = operator.VectorSearch(self.llm, self.problem_text)'''
 
 
 USER_PROMPT_PART_2_RL_RIGHT = '''

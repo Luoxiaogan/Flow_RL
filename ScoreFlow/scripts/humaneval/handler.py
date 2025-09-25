@@ -1,6 +1,7 @@
 ## 2. HumanEvalHandler (handler.py)
 
 from typing import List, Dict, Any
+import typing
 import re
 import ast
 import traceback
@@ -101,45 +102,7 @@ Function name: {entry_point}
             
             return "\n\n".join(formatted_problems)
         except (KeyError, IndexError) as e:
-            raise ValueError(f"从HumanEval数据中提取问题时出错: {e}")
-    
-    def get_prompt_text_example(self, indices: List[int]) -> str:
-        """
-        从 HumanEval 数据中提取函数签名和文档字符串，并格式化为清晰的文本用于生成工作流。
-        
-        格式:
-        ---
-        **FUNCTION SIGNATURE AND SPECIFICATION:**
-        [prompt with docstring]
-        
-        **ENTRY POINT:**
-        Function name: [entry_point]
-        ---
-        
-        (如果提供多个索引，则重复此结构)
-        """
-        try:
-            problems = [self._get_problem_by_index(i) for i in indices]
-            formatted_problems = []
-            
-            for problem in problems:
-                # 提取prompt（包含函数签名和docstring）和entry point
-                prompt = problem.get('prompt', problem.get('question', ''))
-                entry_point = problem.get('entry_point', '')
-                
-                # 组合问题
-                formatted_problem = f"""---
-**FUNCTION SIGNATURE AND SPECIFICATION:**
-{prompt}
-
-**ENTRY POINT:**
-Function name: {entry_point}
----"""
-                formatted_problems.append(formatted_problem)
-            
-            return "\n\n".join(formatted_problems)
-        except (KeyError, IndexError) as e:
-            raise ValueError(f"从HumanEval数据中提取问题时出错: {e}")
+            raise ValueError(f"从HumanEval数据中, 提取问题时出错: {e}")
 
     def get_verification_data(self, index: int) -> Dict[str, Any]:
         """
@@ -174,24 +137,49 @@ Function name: {entry_point}
         import heapq
         import bisect
         import copy
+        import typing
         
         exec_globals = {
+            # 基础内建
             '__builtins__': builtins,
-            'math': math,
-            're': re,
+
+            # 常用标准库（整模块）
+            'math'      : math,
+            're'        : re,
             'collections': collections,
-            'itertools': itertools,
-            'functools': functools,
-            'string': string,
-            'datetime': datetime,
-            'random': random,
-            'heapq': heapq,
-            'bisect': bisect,
-            'copy': copy,
-            'Counter': collections.Counter,
-            'defaultdict': collections.defaultdict,
-            'deque': collections.deque,
-            'OrderedDict': collections.OrderedDict,
+            'itertools' : itertools,
+            'functools' : functools,
+            'string'    : string,
+            'datetime'  : datetime,
+            'random'    : random,
+            'heapq'     : heapq,
+            'bisect'    : bisect,
+            'copy'      : copy,
+            'json'      : __import__('json'),
+            'sys'       : __import__('sys'),
+
+            # collections 高频类（裸写可用）
+            'Counter'      : collections.Counter,
+            'defaultdict'  : collections.defaultdict,
+            'deque'        : collections.deque,
+            'OrderedDict'  : collections.OrderedDict,
+            'namedtuple'   : collections.namedtuple,
+            'ChainMap'     : collections.ChainMap,
+
+            # typing 裸写常用
+            'List'       : typing.List,
+            'Tuple'      : typing.Tuple,
+            'Dict'       : typing.Dict,
+            'Set'        : typing.Set,
+            'FrozenSet'  : typing.FrozenSet,
+            'Optional'   : typing.Optional,
+            'Union'      : typing.Union,
+            'Any'        : typing.Any,
+            'Callable'   : typing.Callable,
+            'Iterable'   : typing.Iterable,
+            'Iterator'   : typing.Iterator,
+            'Sequence'   : typing.Sequence,
+            'Mapping'    : typing.Mapping,
         }
         
         try:
@@ -304,7 +292,7 @@ Function name: {entry_point}
             return fixed_code
         except SyntaxError as e:
             # 如果还有语法错误，返回原始代码并记录警告
-            print(f"Warning: Code has syntax errors after indentation fix: {e}")
+            # print(f"Warning: Code has syntax errors after indentation fix: {e}")
             return code
     
     def _extract_code_from_response(self, response: str) -> str:
@@ -421,7 +409,7 @@ Function name: {entry_point}
             
             if not test_code:
                 # 如果没有测试代码，回退到LLM判断
-                print("[Human_Eval] Warning: No test code found (neither 'test' nor 'test_list'), falling back to LLM judge")
+                # print("[Human_Eval] Warning: No test code found (neither 'test' nor 'test_list'), falling back to LLM judge")
                 return await self.llm_judge(model_output, ground_truth_data)
             
             if not entry_point:
@@ -432,7 +420,7 @@ Function name: {entry_point}
                 if match:
                     entry_point = match.group(1)
                 else:
-                    print("Warning: No entry_point found, falling back to LLM judge")
+                    # print("Warning: No entry_point found, falling back to LLM judge")
                     return await self.llm_judge(model_output, ground_truth_data)
             
             # 执行代码并运行测试

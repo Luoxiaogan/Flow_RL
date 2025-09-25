@@ -21,24 +21,31 @@ os.chdir('/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE')
 # ========================================
 
 # Workflow文件路径
-WORKFLOW_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/New_evaluation_and_RL/workspace/drop/workflow_20250818_220019_h3ty23/workflow.py"
+WORKFLOW_PATH = "/Users/luogan/Code/workflow_generation/select_MBPP.py"
 
 # Benchmark名称（可以从workflow路径自动推断）
-BENCHMARK = "drop"  # gsm8k, mbpp, drop, etc.
+BENCHMARK = "mbpp"  # gsm8k, mbpp, drop, etc.
 
 # 数据集路径
-DATASET_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset/drop/train.jsonl"
+DATASET_PATH = "/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/Processed_dataset/mbpp/test.jsonl"
 
 # 测试数据的索引
-TEST_INDEX = 5
+TEST_INDEX = 400
 
 # LLM配置
 LLM_CONFIG = {
         "provider": "openai",
-        "model": "qwen3-4b",
+        "model": "qwen-turbo",
         "api_key": "sk-0040331ac2d442b6b813304a807d88cd",
         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
     }
+
+# LLM_CONFIG = {
+#         "provider": "openai",
+#         "model": "gpt-4o-mini-2024-07-18",
+#         "api_key": "sk-XE68NRJ3ud42t3b5seZXl0M1cr2LGxHTCmVGPPtbadEaofRz",
+#         "base_url": "https://api.openai-proxy.org/v1"
+#     }
 
 # 工作流执行超时（秒）
 WORKFLOW_TIMEOUT = 360

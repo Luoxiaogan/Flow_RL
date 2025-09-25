@@ -20,17 +20,17 @@ test:
 
   # 数据源配置
   data_sources:
-    - gsm8k
+    # - gsm8k
     - mbpp
-    - humaneval
-    - drop
-    - mbppplus
-    - humanevalplus
-    - simpleqa
-    - mgsmbn
-    - aime2024
-    - aime2025
-    - mgsmde
+    # - humaneval
+    # - drop
+    # - mbppplus
+    # - humanevalplus
+    # - simpleqa
+    # - mgsmbn
+    # - aime2024
+    # - aime2025
+    # - mgsmde
 
   # 测试用例配置
   num_test_cases: 5  # 每个workflow测试的样本数量
@@ -41,10 +41,10 @@ test:
 io:
   # 输入文件配置
   input_dir: '../baseline'
-  default_input_file: 'test_IMO_0922_QZH_with_responses.jsonl'
+  default_input_file: 'test_with_responses_rollout=1_MBPP.jsonl' #/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/New_evaluation_and_RL/generate_parquet_and_jsonl/proportion_data_0923/test_with_responses_rollout=1_MBPP.jsonl
 
   # 输出目录配置
-  output_dir: './results_all_g'
+  output_dir: './results_all_mbpp'
 
   # 文件格式
   save_format: 'jsonl'  # jsonl or json

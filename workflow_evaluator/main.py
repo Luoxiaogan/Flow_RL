@@ -200,7 +200,7 @@ def main():
 
     parser.add_argument(
         '--input',
-        default='../baseline/test_IMO_0922_QZH_with_responses.jsonl',
+        default='/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT',
         help='输入JSONL文件路径'
     )
 

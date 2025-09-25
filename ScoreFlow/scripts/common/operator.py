@@ -20,7 +20,8 @@ from .operator_an import (
     DecomposeOp,
     FormatAnswerOp,
     VerifierOp,
-    RefinerOp
+    RefinerOp,
+    VectorSearchOp
 )
 
 logger = logging.getLogger(__name__)
@@ -204,11 +205,7 @@ class Ensemble(Operator):
     核心算子：决策。
     根据指令，从多个候选项中选择或融合。
     """
-    async def __call__(self, instruction: str = "", contexts_list: List[str] = [], contexts=None) -> str:
-         # 参数兼容处理：contexts 和 contexts_list 等价       
-        if contexts is not None:
-            contexts_list = contexts
-
+    async def __call__(self, instruction: str = "", contexts_list: List[str] = []) -> str:
         # 检查SILENT模式环境变量
         if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
             print("=" * 60)
@@ -666,3 +663,278 @@ From Step 1, we have established... Now, to proceed further... [detailed justifi
             "analysis": response.get("analysis", ""),
             "refined_solution": response.get("refined_solution", "")
         }
+
+
+class VectorSearch(Operator):
+    """
+    核心算子：向量检索 (Vector Search)
+    使用RAG系统从HotpotQA向量数据库中检索相关文档。
+    为workflow提供基于向量相似度的信息检索能力。
+    """
+
+    def __init__(self, llm, problem_text: str = "", db_config: Dict = None):
+        """
+        Initialize VectorSearch operator with RAG system.
+
+        Args:
+            llm: Language model instance
+            problem_text: Original problem text
+            db_config: Optional database configuration override
+        """
+        super().__init__(llm, problem_text)
+
+        # Load configuration from db.config file
+        self.config = self._load_config()
+
+        # Override with custom config if provided
+        if db_config:
+            self.config.update(db_config)
+
+        # Initialize ChromaDB
+        self._init_chromadb()
+
+    def _load_config(self) -> Dict:
+        """Load configuration from db.config file"""
+        import os
+        from pathlib import Path
+
+        config = {}
+        config_file = Path(__file__).parent / "db.config"
+
+        if config_file.exists():
+            with open(config_file, 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        if '=' in line:
+                            key, value = line.split('=', 1)
+                            key = key.strip()
+                            value = value.strip()
+
+                            # Convert values to appropriate types
+                            if key == 'DOC_TOP_K' or key == 'SENT_TOP_K':
+                                config[key.lower()] = int(value)
+                            elif key == 'HYBRID_MODE':
+                                config[key.lower()] = value.lower() == 'true'
+                            else:
+                                config[key.lower()] = value
+        else:
+            # Default configuration if db.config doesn't exist
+            config = {
+                'db_path': '/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/Processed_dataset/hotpotqa/vector/db/chroma_db',
+                'model_path': '/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/Processed_dataset/hotpotqa/vector/models/all-MiniLM-L6-v2',
+                'doc_top_k': 3,
+                'sent_top_k': 5,
+                'hybrid_mode': True
+            }
+
+        return config
+
+    def _init_chromadb(self):
+        """Initialize ChromaDB connection and collections"""
+        try:
+            import chromadb
+            from chromadb.utils import embedding_functions
+
+            # Initialize ChromaDB client
+            self.client = chromadb.PersistentClient(path=self.config['db_path'])
+
+            # Initialize embedding function with local model
+            if os.path.exists(self.config['model_path']):
+                self.embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
+                    model_name=self.config['model_path']
+                )
+            else:
+                # Fallback to default model name if local model not found
+                self.embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
+                    model_name="all-MiniLM-L6-v2"
+                )
+
+            # Get collections
+            self.doc_collection = self.client.get_collection("documents")
+            self.sent_collection = self.client.get_collection("sentences")
+
+            if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+                print(f"✅ 成功连接到向量数据库")
+                print(f"   文档数: {self.doc_collection.count()}")
+                print(f"   句子数: {self.sent_collection.count()}")
+
+        except Exception as e:
+            if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+                print(f"⚠️ 向量数据库初始化失败: {e}")
+                print(f"   尝试路径: {self.config['db_path']}")
+            # Initialize as None if connection fails
+            self.doc_collection = None
+            self.sent_collection = None
+
+    async def __call__(self, instruction: str = "", context: str = "", top_k: int = None) -> str:
+        """
+        Execute vector search based on instruction and context.
+
+        Args:
+            instruction: Search instruction or query enhancement guidance
+            context: Previous context to consider for search
+            top_k: Optional override for number of documents to retrieve
+
+        Returns:
+            Formatted string containing retrieved documents and context
+        """
+        # Check SILENT mode
+        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+            print("=" * 60)
+            print("\n🚀 执行 operator: VectorSearch")
+
+        # Check if database is initialized
+        if not self.doc_collection or not self.sent_collection:
+            return "Error: Vector database not initialized. Please check database path and configuration."
+
+        # Use provided top_k or default from config
+        doc_k = top_k or self.config['doc_top_k']
+        sent_k = self.config['sent_top_k']
+
+        # Step 1: Process and enhance query
+        processed_query = await self._process_query(instruction, context)
+
+        # Step 2: Perform hybrid retrieval
+        retrieved_data = self._hybrid_retrieval(processed_query, doc_k, sent_k)
+
+        # Step 3: Format context for output
+        formatted_context = self._format_context(retrieved_data)
+
+        # For operator output, return just the formatted context as string
+        return formatted_context
+
+    async def _process_query(self, instruction: str, context: str) -> str:
+        """
+        Process and enhance the query using LLM.
+
+        Args:
+            instruction: Original instruction
+            context: Previous context
+
+        Returns:
+            Enhanced query string
+        """
+        # Simple processing - combine instruction and context
+        if instruction and context:
+            return f"{instruction} {context}"
+        elif instruction:
+            return instruction
+        elif context:
+            return context[:200]  # Use first 200 chars of context
+        else:
+            # Use problem text as fallback
+            return self.problem_text[:200] if self.problem_text else "general information"
+
+    def _hybrid_retrieval(self, query: str, doc_k: int, sent_k: int) -> Dict:
+        """
+        Perform hybrid document and sentence level retrieval.
+
+        Args:
+            query: Processed query string
+            doc_k: Number of documents to retrieve
+            sent_k: Number of sentences to retrieve
+
+        Returns:
+            Dictionary with retrieved documents and scores
+        """
+        retrieved_data = {
+            'documents': [],
+            'scores': []
+        }
+
+        try:
+            # Document-level retrieval
+            if self.config.get('hybrid_mode', True):
+                doc_results = self.doc_collection.query(
+                    query_texts=[query],
+                    n_results=doc_k
+                )
+
+                # Process document results
+                for i, (doc_id, doc_text, metadata, distance) in enumerate(zip(
+                    doc_results['ids'][0],
+                    doc_results['documents'][0],
+                    doc_results['metadatas'][0],
+                    doc_results['distances'][0]
+                )):
+                    retrieved_data['documents'].append({
+                        'doc_id': doc_id,
+                        'title': metadata.get('title', 'Unknown'),
+                        'text': doc_text[:500],  # Limit text length
+                        'type': 'document',
+                        'rank': i + 1
+                    })
+                    retrieved_data['scores'].append(float(distance))
+
+            # Sentence-level retrieval
+            sent_results = self.sent_collection.query(
+                query_texts=[query],
+                n_results=sent_k
+            )
+
+            # Process sentence results
+            for i, (sent_id, sent_text, metadata, distance) in enumerate(zip(
+                sent_results['ids'][0],
+                sent_results['documents'][0],
+                sent_results['metadatas'][0],
+                sent_results['distances'][0]
+            )):
+                # Add only top sentences
+                if i < 3:  # Limit to top 3 sentences
+                    retrieved_data['documents'].append({
+                        'doc_id': sent_id,
+                        'title': metadata.get('title', 'Unknown'),
+                        'text': sent_text,
+                        'type': 'sentence',
+                        'sentence_id': metadata.get('sentence_id', -1),
+                        'rank': i + 1
+                    })
+                    retrieved_data['scores'].append(float(distance))
+
+        except Exception as e:
+            if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+                print(f"⚠️ 检索过程出错: {e}")
+
+        return retrieved_data
+
+    def _format_context(self, retrieved_data: Dict) -> str:
+        """
+        Format retrieved documents into a readable context string.
+
+        Args:
+            retrieved_data: Dictionary with documents and scores
+
+        Returns:
+            Formatted context string
+        """
+        if not retrieved_data['documents']:
+            return "No relevant documents found."
+
+        formatted_parts = []
+        formatted_parts.append("**Retrieved Information:**\n")
+
+        # Group by document vs sentence
+        doc_items = [d for d in retrieved_data['documents'] if d.get('type') == 'document']
+        sent_items = [d for d in retrieved_data['documents'] if d.get('type') == 'sentence']
+
+        # Format document-level results
+        if doc_items:
+            formatted_parts.append("📄 **Relevant Documents:**")
+            for doc in doc_items:
+                formatted_parts.append(f"\n[{doc['rank']}. {doc['title']}]")
+                formatted_parts.append(f"{doc['text']}")
+                formatted_parts.append("")
+
+        # Format sentence-level results
+        if sent_items:
+            formatted_parts.append("\n🔍 **Relevant Passages:**")
+            for sent in sent_items:
+                formatted_parts.append(f"\n[From: {sent['title']}]")
+                formatted_parts.append(f"{sent['text']}")
+                formatted_parts.append("")
+
+        # Add metadata summary
+        formatted_parts.append(f"\n---\n*Retrieved {len(retrieved_data['documents'])} relevant items*")
+
+        return "\n".join(formatted_parts)

@@ -599,14 +599,14 @@ TEXT AFTER CODE BLOCKS: Not found in this output
         try:
             done, pending = await asyncio.wait(
                 tasks,
-                timeout=calculator.batch_timeout,
+                timeout=600,
                 return_when=asyncio.ALL_COMPLETED
             )
 
             # 如果有未完成的任务，说明触发了批次超时
             if pending:
                 logger.info(f"🌟🌟🌟🌟🌟 Workflow批次执行超时！")
-                logger.info(f"   超时限制: {calculator.batch_timeout}秒")
+                logger.info(f"   超时限制: 600秒")
                 logger.info(f"   已完成: {len(done)}/{len(tasks)} test cases")
                 logger.info(f"   未完成: {len(pending)} test cases")
 

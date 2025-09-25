@@ -23,4 +23,21 @@ This domain tests reading comprehension requiring discrete operations over text.
 4. Execute operations carefully (don't miss any instances)
 5. Format answer appropriately (number only, date format, exact text span)
 
+#### Input Format
+```
+---
+**PASSAGE:**
+[Dense factual passage, often about sports, history, or demographics]
+
+**QUESTION:**
+[Question requiring discrete reasoning over the passage]
+
+**ANSWER:(in the testing of the workflow, this will not be provided to the workflow)**
+[answer text]
+
+**ALL ANSWERS:(in the testing of the workflow, this will not be provided to the workflow; sometimes there are multiple answers, but the verification is that if you find one correct answer, you are right)**
+[all_answers text]
+---
+```
+Multiple problems follow the same structure if provided.
 '''

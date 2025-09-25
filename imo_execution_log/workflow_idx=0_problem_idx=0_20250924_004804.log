@@ -1,0 +1,2 @@
+2025-09-24 00:48:05.864 | INFO     | metagpt.const:get_metagpt_package_root:21 - Package root set to /Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/Test_FILE
+2025-09-24 00:49:10.493 | WARNING  | tenacity.after:log_it:44 - Finished call to 'metagpt.provider.openai_api.OpenAILLM.acompletion_text' after 62.391(s), this was the 1st time calling it.

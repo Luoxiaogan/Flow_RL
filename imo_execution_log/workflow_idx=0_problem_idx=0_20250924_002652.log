@@ -1,0 +1,42 @@
+============================================================
+IMO Workflow 测试工具
+============================================================
+📋 Workflow索引: 0
+📋 问题索引: 0
+📄 响应文件: imo_test_with_responses_rollout=1.jsonl
+📄 问题文件: imo_problems.jsonl
+⏱️  超时设置: 360秒
+📁 日志目录: /Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/imo_execution_log
+------------------------------------------------------------
+📖 加载问题文本...
+
+❌ 执行出错: Invalid \escape: line 1 column 151 (char 150)
+Traceback (most recent call last):
+  File "/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/test_workflow_IMO.py", line 73, in load_problem
+    data = json.loads(line.strip())
+  File "/opt/anaconda3/envs/workflow/lib/python3.10/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "/opt/anaconda3/envs/workflow/lib/python3.10/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/opt/anaconda3/envs/workflow/lib/python3.10/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+json.decoder.JSONDecodeError: Invalid \escape: line 1 column 149 (char 148)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/test_workflow_IMO.py", line 171, in test_workflow
+    problem_text = load_problem(problem_index)
+  File "/Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/test_workflow_IMO.py", line 82, in load_problem
+    data = json.loads(fixed_line)
+  File "/opt/anaconda3/envs/workflow/lib/python3.10/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "/opt/anaconda3/envs/workflow/lib/python3.10/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/opt/anaconda3/envs/workflow/lib/python3.10/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+json.decoder.JSONDecodeError: Invalid \escape: line 1 column 151 (char 150)
+
+============================================================
+测试完成
+============================================================
