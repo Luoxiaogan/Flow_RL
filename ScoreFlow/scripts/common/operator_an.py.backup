@@ -197,25 +197,3 @@ class RefinerOp(BaseModel):
         ...,
         description="The improved solution that addresses all identified issues from the verification process."
     )
-
-class VectorSearchOp(BaseModel):
-    """
-    VectorSearch算子的结构化输出。
-    用于RAG系统的向量检索操作，返回相关文档和格式化的上下文。
-    """
-    processed_query: str = Field(
-        ...,
-        description="The processed and enhanced query used for vector search."
-    )
-    retrieved_documents: List[Dict[str, Any]] = Field(
-        ...,
-        description="List of retrieved documents with metadata including title, text, and relevance information."
-    )
-    relevance_scores: List[float] = Field(
-        ...,
-        description="Relevance scores for each retrieved document (lower is better for distance metrics)."
-    )
-    formatted_context: str = Field(
-        ...,
-        description="Formatted context combining all retrieved documents for downstream use."
-    )

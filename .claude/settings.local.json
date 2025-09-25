@@ -71,7 +71,22 @@
       "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/github_key\" git push origin new_luogan)",
       "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/github_key\" git pull origin new_luogan)",
       "Bash(git stash:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Read(//Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/ScoreFlow/scripts/common/**)",
+      "Read(//Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/New_evaluation_and_RL/generate_parquet_and_jsonl/**)",
+      "Read(//Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/ScoreFlow/**)",
+      "Read(//Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/New_evaluation_and_RL/RL_part/**)",
+      "Read(//Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/New_evaluation_and_RL/parquet_and_jsonl_data/**)",
+      "Read(//Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/New_evaluation_and_RL/servers_and_proxy/**)",
+      "Read(//Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/New_evaluation_and_RL/metagpt_api_key_proxy/**)",
+      "Read(//Users/luogan/Code/workflow_generation/Flow_RL_RIGHT/**)",
+      "Bash(python3:*)",
+      "Read(//opt/anaconda3/envs/workflow/lib/python3.10/site-packages/metagpt/actions/**)",
+      "Read(//opt/anaconda3/envs/workflow/lib/python3.10/site-packages/metagpt/**)",
+      "Bash(pip install:*)",
+      "Bash(timeout 600 python 02_build_vector_db.py)",
+      "Read(//Users/luogan/.cache/**)",
+      "Bash(HF_HUB_OFFLINE=1 python 02_build_vector_db.py)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

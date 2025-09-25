@@ -27,7 +27,7 @@ services:
     # target_api_key: "sk-2df74af0570a42059c10a3f24de1b9df"  # ali-qzh
     rate_per_second: 4      # 每秒分发请求数（支持小数，如0.2表示5秒一个请求）
     max_concurrency: 70     # 最大并发请求数（同时处理的请求数量限制）
-    debug: false            # true: 显示所有请求详情, false: 仅显示进度条和错误
+    debug: true            # true: 显示所有请求详情, false: 仅显示进度条和错误
     
   evaluation_api_proxy:  # 评估模型使用的API代理（新增）
     enabled: true
