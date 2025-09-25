@@ -1,3 +1,10 @@
+# python generate_verl_training_data_with_proportion.py --benchmark-mapping ../../ScoreFlow/benchmark_mapping_test.jsonl --output-dir ./proportion_data_0923 --train-num 1 --test-num 20 
+
+# python generate_verl_training_data_with_proportion.py --benchmark-mapping ../../ScoreFlow/benchmark_mapping_test_code.jsonl --output-dir ./proportion_data_code_0924 --train-num 1 --test-num 20 
+
+# python generate_verl_training_data_with_proportion.py --benchmark-mapping ../../ScoreFlow/benchmark_mapping_test_code_self_consistency.jsonl --output-dir ./proportion_data_code_0924_consistency --train-num 1 --test-num 20 
+
+
 """
 VERL Training Data Generator with Proportion Support
 支持operators_groups和proportion比例分配的VERL训练数据生成器
@@ -284,7 +291,7 @@ class VerlTrainingDataGeneratorWithProportion:
             # Available operators
             available_operators = [
                 'ScGenerate', 'ScRevise', 'ScEnsemble', 'ScSummarize',
-                'ScProgrammer', 'ScDecompose', 'ScVerifyAndRefine',
+                'ScProgrammer', 'ScDecompose', 'ScVerifyAndRefine', 'ScSelfConsistency'
             ]
 
             # Load operator descriptions and init codes
@@ -300,6 +307,7 @@ class VerlTrainingDataGeneratorWithProportion:
                 'ScProgrammer': 'programmer',
                 'ScDecompose': 'decompose',
                 'ScVerifyAndRefine': 'verifyandrefine',
+                'ScSelfConsistency': 'selfconsistency'
             }
 
             for op_class in available_operators:
@@ -513,8 +521,8 @@ class VerlTrainingDataGeneratorWithProportion:
                         # Select random examples for prompt
                         example_indices = random.sample(range(total_data_size),
                                                        min(num_examples, total_data_size))
-                        # main_idx = example_indices[0]
-                        main_idx = random.sample(range(total_data_size), min(2, total_data_size)) # 2个
+                        main_idx = example_indices[0]
+                        # main_idx = random.sample(range(total_data_size), min(3, total_data_size)) # 2个
 
                         # Construct prompt with specific operators
                         messages, _ = self._construct_prompt(

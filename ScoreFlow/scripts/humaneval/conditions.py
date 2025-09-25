@@ -40,4 +40,54 @@ This domain tests code generation capability by requiring implementation of Pyth
 
 ### Understanding Operator Return Types (MUST READ!)
 **ALL operators (Generate, Revise, Summarize, Ensemble) ALWAYS return STRINGS, never structured data!**
+
+The INPUT OF THE PROBLEM TEXT IS LIKE(You are given a partial Python source file that contains: All necessary imports (if any); A complete function signature and its docstring):
+```
+---
+**FUNCTION SIGNATURE AND SPECIFICATION:**
+[prompt with docstring]
+
+**ENTRY POINT:**
+Function name: [entry_point]
+---
+```
+
+The output of the workflow must **only be the body of the function**, i.e. the indented code that should appear immediately after the docstring.
+Do NOT:
+- repeat the `def` line  
+- repeat the docstring  
+- add or repeat any `import` statements  
+- add any other top-level code  
+
+Simply return the function body, already indented (typically 4 spaces).  
+The very first character of your response of the workflow should be either a space or a tab that preserves that indentation.
+
+For example, if the input is:
+```
+---
+**FUNCTION SIGNATURE AND SPECIFICATION:**
+from typing import List
+
+def has_close_elements(numbers: List[float], threshold: float) -> bool:
+    """ Check if in given list of numbers, are any two numbers closer to each other than
+    given threshold.
+    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)
+    False
+    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+    True
+    """
+
+**ENTRY POINT:**
+has_close_elements
+---
+```
+Then the expected output of the workflow is like:
+```python
+    for idx, elem in enumerate(numbers):
+        for idx2, elem2 in enumerate(numbers):
+            if idx != idx2:
+                if abs(elem - elem2) < threshold:
+                    return True
+    return False
+```
 '''

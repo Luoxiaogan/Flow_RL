@@ -241,6 +241,159 @@ so notice that here in the <result></result> **is not the index, but the content
 """
         response = await self._fill_node(EnsembleOp, prompt, mode="xml_fill")
         return response["result"]      
+    
+    
+class SelfConsistency(Operator):
+    """
+    Core Operator: Self-Consistency.
+    Generates multiple solutions independently and selects the most consistent/best answer.
+    Based on the self-consistency prompting technique for improving reasoning reliability.
+    """
+    
+    async def __call__(
+        self, 
+        instruction: str = "", 
+        context: str = "", 
+        num_samples: int = 5
+    ) -> str:
+        """
+        Generate multiple solutions and select the best one through consistency analysis.
+        
+        Args:
+            instruction: The specific instruction for solving the problem
+            context: Context from previous steps
+            num_samples: Number of parallel solutions to generate (default: 5)
+            
+        Returns:
+            The selected best solution as a string
+        """
+        # Check SILENT mode environment variable
+        if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+            print("=" * 60)
+            print(f"\n🚀 Executing operator: SelfConsistency (generating {num_samples} samples)")
+        
+        # Step 1: Generate multiple solutions in parallel
+        solutions = await self._generate_multiple_solutions(
+            instruction, context, num_samples
+        )
+        
+        # If only one solution was successfully generated, return it
+        if len(solutions) == 1:
+            return solutions[0]
+        
+        # Step 2: Use ensemble/selection to choose the best solution
+        best_solution = await self._select_best_solution(solutions, instruction)
+        
+        return best_solution
+    
+    async def _generate_multiple_solutions(
+        self, 
+        instruction: str, 
+        context: str, 
+        num_samples: int
+    ) -> List[str]:
+        """
+        Generate multiple independent solutions in parallel using Generate operator.
+        """
+        # Create Generate operator instance
+        generate_op = Generate(self.llm, self.problem_text)
+        
+        # Create tasks for parallel generation
+        tasks = []
+        for i in range(num_samples):
+            # Each task calls Generate operator
+            task = generate_op(instruction, context)
+            tasks.append(task)
+        
+        # Execute all tasks in parallel
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        # Filter out failed generations
+        valid_solutions = []
+        for i, result in enumerate(results):
+            if isinstance(result, Exception):
+                if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+                    print(f"  ⚠️ Sample {i+1} generation failed: {str(result)}")
+            elif result:
+                valid_solutions.append(result)
+                if os.environ.get('SCOREFLOW_SILENT', 'false').lower() != 'true':
+                    print(f"  ✅ Sample {i+1} generated successfully")
+        
+        if not valid_solutions:
+            raise ValueError("Failed to generate any valid solutions")
+        
+        return valid_solutions
+    
+    async def _select_best_solution(self, solutions: List[str], original_instruction: str) -> str:
+        """
+        Analyze all solutions and select the best one based on consistency and quality.
+        """
+        # Format all solutions for comparison
+        formatted_solutions = ""
+        for i, solution in enumerate(solutions):
+            formatted_solutions += f"""
+<solution index="{i+1}">
+{solution}
+</solution>
+"""
+        
+        selection_prompt = f"""You are an expert evaluator tasked with selecting the BEST solution from multiple attempts at solving the same problem.
+
+**Original Problem:**
+{self.problem_text}
+
+**Problem-Solving Instruction:**
+{original_instruction if original_instruction else "Solve this problem completely and accurately."}
+
+**Multiple Solution Attempts:**
+{formatted_solutions}
+
+**Your Task:**
+Analyze all provided solutions and select the SINGLE BEST one based on the following criteria:
+
+1. **Correctness**: The solution must arrive at the correct answer
+2. **Logical Rigor**: The reasoning should be sound and well-justified
+3. **Completeness**: All necessary steps should be included
+4. **Clarity**: The solution should be clear and easy to follow
+5. **Consistency**: If multiple solutions agree on an answer, that increases confidence
+
+**Analysis Process:**
+1. First, identify what answer each solution arrives at
+2. Check which answers appear most frequently (majority voting)
+3. Among solutions with the most common answer, evaluate which has the best reasoning
+4. If there's significant disagreement, carefully analyze which solution has the most rigorous logic
+
+Your response MUST be in XML format with two fields:
+- **think**: Your detailed analysis of all solutions, including:
+  - What answer each solution gives
+  - Which answers are most common
+  - Quality assessment of reasoning in each
+  - Your selection rationale
+- **result**: The COMPLETE text of the selected best solution (not just its index)
+
+**EXAMPLE FORMAT:**
+<think>
+Solution 1 arrives at answer X with clear step-by-step reasoning...
+Solution 2 also gets X but has a calculation error in step 3...
+Solution 3 gets Y, which appears to be incorrect because...
+Solutions 1, 2, and 4 all agree on X, while 3 and 5 give different answers.
+Among the X answers, Solution 1 has the clearest and most rigorous proof.
+Therefore, I select Solution 1 as the best.
+</think>
+<result>
+[The complete text of the selected solution goes here]
+</result>
+
+**Critical Note:** In the <result> field, you MUST copy the ENTIRE selected solution verbatim, not just a summary or the answer."""
+        
+        # Use Ensemble operator for selection
+        ensemble_op = Ensemble(self.llm, self.problem_text)
+        best_solution = await ensemble_op(
+            instruction=selection_prompt,
+            contexts_list=solutions
+        )
+        
+        return best_solution
 
 def check_code_safety(code: str, disallowed_imports: list) -> tuple:
     """使用AST解析检查代码安全性"""

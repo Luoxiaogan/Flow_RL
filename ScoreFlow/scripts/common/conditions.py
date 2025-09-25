@@ -128,6 +128,84 @@ decompose = '''**Decompose: BREAK DOWN complexity**
 - **Important special note:** Decompose is special: it's output is a structured list of subproblems, which is List[Dict[str, str]]
 '''
 
+selfconsistency = '''**SelfConsistency: generating multiple independent solutions in parallel, then selecting the best one based on consistency and quality analysis.**
+
+#### Overview
+
+The `SelfConsistency` operator enhances solution reliability by generating multiple independent solutions in parallel, then selecting the best one based on consistency and quality analysis. This implements the self-consistency prompting technique, significantly improving accuracy over single-attempt generation.
+
+#### Usage
+
+```python
+result = await self_consistency(
+    instruction="Your specific instruction here",
+    context="Previous context or information"
+)
+```
+
+##### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `instruction` | `str` | `""` | Specific instruction for solving the problem |
+| `context` | `str` | `""` | Context or information from previous workflow steps |
+
+##### Return Value
+
+Returns a string containing the complete best solution selected from multiple generated samples.
+
+#### How It Works
+
+1. **Parallel Generation**: Generates 5 independent solutions simultaneously using the `Generate` operator
+2. **Intelligent Selection**: Analyzes all solutions using the `Ensemble` operator based on:
+   - Answer consistency (majority voting)
+   - Logical correctness
+   - Reasoning quality
+   - Solution completeness
+3. **Output**: Returns the full text of the best solution
+
+#### Example Use Cases
+
+```python
+# Mathematical problem solving
+result = await self_consistency(
+    instruction="Solve this equation step by step",
+    context="Find all real solutions to x^3 - 2x - 5 = 0"
+)
+
+# Logical reasoning
+result = await self_consistency(
+    instruction="Analyze the argument and identify any logical fallacies",
+    context="If it rains, the ground gets wet. The ground is wet. Therefore, it rained."
+)
+
+# Code generation
+result = await self_consistency(
+    instruction="Write an efficient Python function with proper error handling",
+    context="Implement binary search for a sorted array"
+)
+```
+
+#### Best Practices
+
+1. **Clear Instructions**: Provide specific, unambiguous instructions for better consistency
+2. **Complete Context**: Include all relevant information from previous steps
+3. **Problem Types**: Works best for problems with deterministic answers (math, logic, coding)
+
+#### Key Benefits
+
+- **Higher Accuracy**: Reduces errors through consistency checking
+- **Robustness**: Handles LLM variability effectively  
+- **No Additional Latency**: Parallel execution maintains single-generation speed
+- **Quality Selection**: Returns the best reasoned solution, not just the most common answer
+
+#### Notes
+
+- Diversity comes from natural LLM variability across multiple calls
+- The operator respects the SCOREFLOW_SILENT environment variable
+- Automatically handles partial failures (continues if some generations fail)
+- Returns complete solution text, preserving all reasoning steps'''
+
 verifyandrefine = '''**VerifyAndRefine: SELF-CORRECT and rigorously improve a solution**
 
 -   **Signature:** `await self.verify_and_refine(instruction: str, context: str) -> str`
@@ -200,6 +278,7 @@ ensemble_init = '''self.ensemble = operator.Ensemble(self.llm, self.problem_text
 programmer_init = '''self.programmer = operator.Programmer(self.llm, self.problem_text)'''
 decompose_init = '''self.decompose = operator.Decompose(self.llm, self.problem_text)'''
 verifyandrefine_init = '''self.verify_and_refine = operator.VerifyAndRefine(self.llm, self.problem_text)'''
+selfconsistency_init =  '''self.selfconsistency = operator.SelfConsistency(self.llm, self.problem_text)'''
 
 
 USER_PROMPT_PART_2_RL_RIGHT = '''

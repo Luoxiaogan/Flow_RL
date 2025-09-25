@@ -61,6 +61,19 @@ func_name = await self.generate(
 )
 # Now func_name is directly usable: "first_repeated_char"
 ```
+
+You are given a concise natural-language task description and a list of `assert` test cases.  
+Your ONLY job is to output **complete, runnable Python code** that satisfies the description and passes **all** the provided tests.
+
+**IMPORTANT CONSTRAINTS**  
+1. **Function name is dictated by the test cases**:  
+   – If the tests contain `assert foo(x, y) == z`, you MUST define a function named `foo`.  
+2. **No need for extra classes/functions unless implied by tests**.  
+3. **Include all necessary imports at the top**.  
+4. **Return a single code block** wrapped in ```python … ```.  
+5. **No markdown explanations or comments outside the code block**.  
+6. **Indentation must be valid (4-space standard)**.
+
 ---
 **TASK:**
 [Natural language description of the programming task]
@@ -69,10 +82,14 @@ func_name = await self.generate(
 assert function_name(args) == expected_output
 assert function_name(args) == expected_output
 assert function_name(args) == expected_output
-
-**REFERENCE ANSWER(code):(in the testing of the workflow, this will not be provided to the workflow)**
-[reference solution code]
 ---
-```
 
+And the expected output of the workflow is
+**Expected Output Format:**
+```python
+# any required imports
+def <function_name_from_tests>(...):
+    # implementation
+    return ...
+```
 '''

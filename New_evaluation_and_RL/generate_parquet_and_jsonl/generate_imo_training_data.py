@@ -233,6 +233,8 @@ refined = await self.refiner(
 
         # 5. Build system prompt (fill in operators_init)
         system_content = templates['system_prompt_rl_right'].replace('{operators_init}', dynamic_init_code)
+        
+        add_fix = "\nThe domain problem instances example above is for helping you to understand to domain. Your generated Python workflow must be robust enough to work for any problem instance within the described domain.\n"
 
         # 6. Build user prompt (follow the new assembly logic)
         user_content = (
@@ -242,6 +244,7 @@ refined = await self.refiner(
             templates['user_prompt_part_2_rl_right'].replace('{operators_init}', dynamic_init_code) +  # USER_PROMPT_PART_2_RL_RIGHT
             templates['user_prompt_part_3_rl_right'] +  # USER_PROMPT_PART_3_RL_RIGHT
             problem_text +  # Problem text
+            add_fix +
             templates['user_prompt_part_4_rl_right']  # USER_PROMPT_PART_4_RL_RIGHT
         )
 
@@ -461,6 +464,8 @@ def main():
     parser.add_argument('--log-level', type=str, default='INFO',
                        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
                        help='Logging level')
+    
+    #python generate_imo_training_data.py --output_dir ./imo_data_0923 
 
     args = parser.parse_args()
 
