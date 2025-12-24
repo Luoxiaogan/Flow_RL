@@ -46,7 +46,7 @@ RUN pip install torch transformers accelerate deepspeed \
 COPY . /app/
 
 # 设置 PYTHONPATH
-ENV PYTHONPATH=/app:$PYTHONPATH
+ENV PYTHONPATH=/app
 
 # 创建检查点目录
 RUN mkdir -p /app/checkpoints

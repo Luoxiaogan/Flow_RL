@@ -41,4 +41,4 @@ RUN pip install -r requirements.txt
 COPY . /app/
 
 # 设置 PYTHONPATH
-ENV PYTHONPATH=/app:$PYTHONPATH
+ENV PYTHONPATH=/app

@@ -28,7 +28,7 @@ COPY services/reward_server/ /app/services/reward_server/
 COPY config/ /app/config/
 
 # 设置 PYTHONPATH
-ENV PYTHONPATH=/app:$PYTHONPATH
+ENV PYTHONPATH=/app
 
 # 暴露端口
 EXPOSE 7788

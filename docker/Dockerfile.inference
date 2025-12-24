@@ -35,7 +35,7 @@ RUN pip install sglang[all] vllm torch transformers
 COPY config/ /app/config/
 
 # 设置 PYTHONPATH
-ENV PYTHONPATH=/app:$PYTHONPATH
+ENV PYTHONPATH=/app
 
 # 暴露端口
 EXPOSE 30009

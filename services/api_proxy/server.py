@@ -3,6 +3,9 @@ API Proxy Server for New_Flow_RL
 
 基于 FastAPI 的 API 代理服务。
 提供速率限制、负载均衡和请求转发功能。
+
+文档: docs/implementation/api_proxy.md
+测试: docs/testing/api_proxy本地测试和docker测试.md
 """
 
 import os
