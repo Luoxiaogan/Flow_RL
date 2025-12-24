@@ -1,0 +1,162 @@
+version: '3.8'
+
+# New_Flow_RL Docker Compose Configuration
+#
+# 容器列表：
+# - flowrl-proxy: API代理服务 (端口 5059)
+# - flowrl-reward: Reward计算服务 (端口 7788)
+# - flowrl-inference: SGLang推理服务 (端口 30009, GPU 4-7)
+# - flowrl-trainer: VERL RL训练 (GPU 0-3)
+#
+# 使用方法:
+#   docker-compose up -d          # 启动所有服务
+#   docker-compose up proxy reward # 只启动代理和reward服务
+#   docker-compose logs -f reward  # 查看reward服务日志
+
+services:
+  # =============================================================================
+  # API Proxy Service
+  # =============================================================================
+  proxy:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.proxy
+    container_name: flowrl-proxy
+    restart: unless-stopped
+    ports:
+      - "5059:5059"
+    environment:
+      - PROXY_TARGET_URL=${PROXY_TARGET_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}
+      - PROXY_TARGET_API_KEY=${DASHSCOPE_API_KEY}
+      - PROXY_HOST=0.0.0.0
+      - PROXY_PORT=5059
+      - PROXY_RATE_PER_SECOND=10
+      - PROXY_MAX_CONCURRENCY=50
+    volumes:
+      - ../config:/app/config:ro
+      - ../logs:/app/logs
+    networks:
+      - flowrl-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5059/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # =============================================================================
+  # Reward Server
+  # =============================================================================
+  reward:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.reward
+    container_name: flowrl-reward
+    restart: unless-stopped
+    ports:
+      - "7788:7788"
+    environment:
+      - REWARD_MODE=${REWARD_MODE:-simple}
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
+      - API_PROXY_URL=http://proxy:5059
+    volumes:
+      - ../config:/app/config:ro
+      - ../data:/app/data:ro
+      - ../logs:/app/logs
+    depends_on:
+      proxy:
+        condition: service_healthy
+    networks:
+      - flowrl-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7788/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # =============================================================================
+  # Inference Service (SGLang)
+  # =============================================================================
+  inference:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.inference
+    container_name: flowrl-inference
+    restart: unless-stopped
+    ports:
+      - "30009:30009"
+    environment:
+      - CUDA_VISIBLE_DEVICES=4,5,6,7
+      - MODEL_PATH=${MODEL_PATH:-Qwen/Qwen2.5-7B-Instruct}
+      - TENSOR_PARALLEL_SIZE=4
+      - GPU_MEMORY_UTILIZATION=0.9
+    volumes:
+      - ../config:/app/config:ro
+      - ${HF_HOME:-~/.cache/huggingface}:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['4', '5', '6', '7']
+              capabilities: [gpu]
+    shm_size: '32gb'
+    networks:
+      - flowrl-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:30009/health"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 300s
+
+  # =============================================================================
+  # Trainer Service (VERL)
+  # =============================================================================
+  trainer:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.trainer
+    container_name: flowrl-trainer
+    environment:
+      - CUDA_VISIBLE_DEVICES=0,1,2,3
+      - REWARD_SERVER_URL=http://reward:7788
+      - INFERENCE_SERVER_URL=http://inference:30009
+      - WANDB_API_KEY=${WANDB_API_KEY}
+    volumes:
+      - ../:/app
+      - ${HF_HOME:-~/.cache/huggingface}:/root/.cache/huggingface
+      - ../data/checkpoints:/app/checkpoints
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0', '1', '2', '3']
+              capabilities: [gpu]
+    depends_on:
+      reward:
+        condition: service_healthy
+      inference:
+        condition: service_healthy
+    shm_size: '32gb'
+    networks:
+      - flowrl-network
+    stdin_open: true
+    tty: true
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  flowrl-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+# =============================================================================
+# Volumes (Optional)
+# =============================================================================
+volumes:
+  logs:
+  checkpoints:

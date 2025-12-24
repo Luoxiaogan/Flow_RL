@@ -1,0 +1,37 @@
+# Dockerfile for API Proxy Service
+
+FROM python:3.10-slim
+
+# 设置环境变量
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PIP_NO_CACHE_DIR=1
+
+# 安装系统依赖
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制依赖文件
+COPY requirements.txt /app/
+
+# 安装 Python 依赖（只需要轻量级依赖）
+RUN pip install --upgrade pip && \
+    pip install fastapi uvicorn httpx pyyaml
+
+# 复制项目代码
+COPY src/ /app/src/
+COPY services/api_proxy/ /app/services/api_proxy/
+COPY config/ /app/config/
+
+# 设置 PYTHONPATH
+ENV PYTHONPATH=/app:$PYTHONPATH
+
+# 暴露端口
+EXPOSE 5059
+
+# 启动命令
+CMD ["python", "-m", "services.api_proxy.server", "--host", "0.0.0.0", "--port", "5059"]
