@@ -1,0 +1,264 @@
+{
+  "timestamp": "2025-09-14T12:10:34.208317",
+  "num_models": 3,
+  "models": [
+    {
+      "name": "RL-Training-Step-100",
+      "path": "",
+      "overall_score": 0.0,
+      "success_rate": 1.0,
+      "total_samples": 5,
+      "benchmark_scores": {
+        "gsm8k": {
+          "num_samples": 1,
+          "num_successful": 1,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "simpleqa": {
+          "num_samples": 1,
+          "num_successful": 1,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "mbppplus": {
+          "num_samples": 1,
+          "num_successful": 1,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "humanevalplus": {
+          "num_samples": 1,
+          "num_successful": 1,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "aime2025": {
+          "num_samples": 1,
+          "num_successful": 1,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        }
+      }
+    },
+    {
+      "name": "RL-Training-Step-500",
+      "path": "",
+      "overall_score": 0.0,
+      "success_rate": 1.0,
+      "total_samples": 5,
+      "benchmark_scores": {
+        "gsm8k": {
+          "num_samples": 1,
+          "num_successful": 1,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "simpleqa": {
+          "num_samples": 1,
+          "num_successful": 1,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "mbppplus": {
+          "num_samples": 1,
+          "num_successful": 1,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "humanevalplus": {
+          "num_samples": 1,
+          "num_successful": 1,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        },
+        "aime2025": {
+          "num_samples": 1,
+          "num_successful": 1,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 1.0
+        }
+      }
+    },
+    {
+      "name": "qwen-turbo ",
+      "path": "",
+      "overall_score": 0.0,
+      "success_rate": 0.0,
+      "total_samples": 5,
+      "benchmark_scores": {
+        "gsm8k": {
+          "num_samples": 1,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "simpleqa": {
+          "num_samples": 1,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "mbppplus": {
+          "num_samples": 1,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "humanevalplus": {
+          "num_samples": 1,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        },
+        "aime2025": {
+          "num_samples": 1,
+          "num_successful": 0,
+          "mean_score": 0.0,
+          "max_score": 0.0,
+          "min_score": 0.0,
+          "std_score": 0.0,
+          "success_rate": 0.0
+        }
+      }
+    }
+  ],
+  "benchmark_comparison": {
+    "humanevalplus": [
+      {
+        "model": "RL-Training-Step-100",
+        "score": 0.0,
+        "success_rate": 1.0
+      },
+      {
+        "model": "RL-Training-Step-500",
+        "score": 0.0,
+        "success_rate": 1.0
+      },
+      {
+        "model": "qwen-turbo ",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "gsm8k": [
+      {
+        "model": "RL-Training-Step-100",
+        "score": 0.0,
+        "success_rate": 1.0
+      },
+      {
+        "model": "RL-Training-Step-500",
+        "score": 0.0,
+        "success_rate": 1.0
+      },
+      {
+        "model": "qwen-turbo ",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "simpleqa": [
+      {
+        "model": "RL-Training-Step-100",
+        "score": 0.0,
+        "success_rate": 1.0
+      },
+      {
+        "model": "RL-Training-Step-500",
+        "score": 0.0,
+        "success_rate": 1.0
+      },
+      {
+        "model": "qwen-turbo ",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "aime2025": [
+      {
+        "model": "RL-Training-Step-100",
+        "score": 0.0,
+        "success_rate": 1.0
+      },
+      {
+        "model": "RL-Training-Step-500",
+        "score": 0.0,
+        "success_rate": 1.0
+      },
+      {
+        "model": "qwen-turbo ",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ],
+    "mbppplus": [
+      {
+        "model": "RL-Training-Step-100",
+        "score": 0.0,
+        "success_rate": 1.0
+      },
+      {
+        "model": "RL-Training-Step-500",
+        "score": 0.0,
+        "success_rate": 1.0
+      },
+      {
+        "model": "qwen-turbo ",
+        "score": 0.0,
+        "success_rate": 0.0
+      }
+    ]
+  },
+  "rankings": {
+    "by_overall_score": [
+      "RL-Training-Step-100",
+      "RL-Training-Step-500",
+      "qwen-turbo "
+    ],
+    "best_model": "RL-Training-Step-100",
+    "worst_model": "qwen-turbo "
+  }
+}

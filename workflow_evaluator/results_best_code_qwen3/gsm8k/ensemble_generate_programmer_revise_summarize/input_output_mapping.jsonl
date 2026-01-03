@@ -1,0 +1,5 @@
+{"line_number": 8, "test_id": "110983f7095e", "source_file": "../baseline/test_QWEN3_8BBBBB_with_responses_rollout=1.filtered.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 47, "test_id": "2d2ed2c6ff22", "source_file": "../baseline/test_QWEN3_8BBBBB_with_responses_rollout=1.filtered.jsonl", "workflow_code_snippet": "...", "success": false, "score": 0.0, "error": "执行异常: Server disconnected"}
+{"line_number": 55, "test_id": "b579bd6859a2", "source_file": "../baseline/test_QWEN3_8BBBBB_with_responses_rollout=1.filtered.jsonl", "workflow_code_snippet": "...", "success": false, "score": 0.0, "error": "执行异常: Server disconnected"}
+{"line_number": 72, "test_id": "439884e05c50", "source_file": "../baseline/test_QWEN3_8BBBBB_with_responses_rollout=1.filtered.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 75, "test_id": "77ab733b056c", "source_file": "../baseline/test_QWEN3_8BBBBB_with_responses_rollout=1.filtered.jsonl", "workflow_code_snippet": "...", "success": false, "score": 0.0, "error": "执行异常: Server disconnected"}

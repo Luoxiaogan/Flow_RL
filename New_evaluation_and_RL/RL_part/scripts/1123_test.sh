@@ -1,0 +1,62 @@
+export USE_SGLANG=1
+export NCCL_DEBUG=INFO
+export CUDA_VISIBLE_DEVICES=0,1
+export RAY_DISABLE_MEMORY_MONITOR=1
+export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:128,expandable_segments:True"
+export HYDRA_FULL_ERROR=1
+time_stamp=$(date +%Y%m%d_%H%M%S)
+
+# 修改点: data.filter_overlong_prompts_workers 和 data.dataloader_num_workers 建议降为 2 减少CPU开销
+# 关键修复: 添加 trainer.n_gpus_per_node=2 以及 trainer.nnodes=1
+
+python /home/lg/workflow_tooluse/Flow_RL_luogan/verl/verl/trainer/main_ppo.py \
+  data.train_files='["/home/lg/workflow_tooluse/Flow_RL_luogan/New_evaluation_and_RL/parquet_and_jsonl_data/0921_RL_001/train.parquet"]' \
+  data.val_files='["/home/lg/workflow_tooluse/Flow_RL_luogan/New_evaluation_and_RL/parquet_and_jsonl_data/0921_RL_001/test.parquet"]' \
+  data.train_batch_size=8 \
+  data.max_prompt_length=4600 \
+  data.max_response_length=4096 \
+  data.filter_overlong_prompts=true \
+  data.shuffle=true \
+  actor_rollout_ref.model.path=/data/pretrained_models/Qwen2.5-1.5B-Instruct \
+  actor_rollout_ref.model.trust_remote_code=true \
+  actor_rollout_ref.model.enable_gradient_checkpointing=true \
+  actor_rollout_ref.actor.ppo_mini_batch_size=4 \
+  actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=2 \
+  actor_rollout_ref.actor.use_dynamic_bsz=false \
+  actor_rollout_ref.actor.use_kl_loss=true \
+  actor_rollout_ref.actor.kl_loss_coef=0.001 \
+  actor_rollout_ref.actor.kl_loss_type=low_var_kl \
+  actor_rollout_ref.actor.optim.lr=2e-6 \
+  actor_rollout_ref.actor.optim.lr_warmup_steps=-1 \
+  actor_rollout_ref.actor.optim.lr_warmup_steps_ratio=0.05 \
+  actor_rollout_ref.actor.optim.min_lr_ratio=0.1 \
+  actor_rollout_ref.actor.optim.num_cycles=0.5 \
+  actor_rollout_ref.actor.checkpoint.save_contents='["model","extra"]' \
+  actor_rollout_ref.actor.checkpoint.load_contents='["model","extra"]' \
+  ++actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=2 \
+  ++actor_rollout_ref.ref.fsdp_config.param_offload=false \
+  ++actor_rollout_ref.rollout.name=sglang \
+  ++actor_rollout_ref.rollout.gpu_memory_utilization=0.6 \
+  ++actor_rollout_ref.rollout.dtype=bfloat16 \
+  ++actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=2 \
+  ++actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
+  ++actor_rollout_ref.rollout.max_num_seqs=64 \
+  ++actor_rollout_ref.rollout.engine_kwargs.sglang.trust_remote_code=true \
+  algorithm.adv_estimator=grpo \
+  algorithm.use_kl_in_reward=false \
+  +critic.enable=false \
+  reward_model.enable=false \
+  ++reward_model.reward_manager=prime \
+  ++custom_reward_function.path=/home/lg/workflow_tooluse/Flow_RL_luogan/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py \
+  ++custom_reward_function.name=compute_score \
+  ++trainer.validation_data_dir=/home/lg/workflow_tooluse/Flow_RL_luogan/New_evaluation_and_RL/val_logs/1123_001_$time_stamp \
+  trainer.total_epochs=15 \
+  trainer.n_gpus_per_node=2 \
+  trainer.nnodes=1 \
+  trainer.save_freq=100 \
+  trainer.test_freq=5 \
+  trainer.critic_warmup=0 \
+  trainer.project_name=qwen2.5_rl_1123_001_reproduce \
+  trainer.experiment_name=qwen2.5_rl_1123_001_reproduce \
+  trainer.logger='["console","wandb"]' \
+  trainer.default_local_dir=/home/lg/workflow_tooluse/Flow_RL_luogan/rl_out/checkpoints_1123

@@ -1,0 +1,58 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8900,
+    "debug": false,
+    "timeout": 300,
+    "max_workers": 4,
+    "cors_enabled": true
+  },
+  
+  "llm_config": {
+    "upstream": {
+      "provider": "openai",
+      "model": "qwen-turbo",
+      "api_key": "YOUR_API_KEY",
+      "base_url": "YOUR_BASE_URL",
+      "temperature": 0.7
+    },
+    "downstream": {
+      "provider": "openai",
+      "model": "qwen-turbo",
+      "api_key": "YOUR_API_KEY",
+      "base_url": "YOUR_BASE_URL",
+      "temperature": 0.3
+    }
+  },
+  
+  "reward_config": {
+    "test_cases_per_task": 3,
+    "timeout": 30,
+    "max_concurrent": 5,
+    "retry_on_failure": false,
+    "save_debug_logs": true
+  },
+  
+  "task_mapping": {
+    "description": "Task mapping will be loaded from bootcamp_analysis_filtered.jsonl",
+    "file_path": "./bootcamp_analysis_filtered.jsonl"
+  },
+  
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(levelname)s - %(message)s",
+    "file": "internbootcamp_server.log",
+    "max_size": "100MB",
+    "backup_count": 5
+  },
+  
+  "security": {
+    "auth_enabled": false,
+    "api_keys": [],
+    "allowed_ips": [],
+    "rate_limit": {
+      "enabled": false,
+      "requests_per_minute": 60
+    }
+  }
+}

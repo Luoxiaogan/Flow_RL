@@ -1,0 +1,49 @@
+2025-09-13 21:23:39,302 - __main__ - INFO - 开始统一模型评估
+2025-09-13 21:23:39,302 - __main__ - INFO - 配置文件: ..\configs\hierarchical_evaluation_config.yaml
+2025-09-13 21:23:39,303 - __main__ - INFO - 测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-13 21:23:39,303 - __main__ - INFO - 输出目录: result_test
+2025-09-13 21:23:39,303 - __main__ - INFO - 模型数量: 1
+2025-09-13 21:23:39,306 - core.utils.report_generator - INFO - 报告输出目录: result_test
+2025-09-13 21:23:39,306 - core.evaluators.unified_batch_evaluator - INFO - UnifiedBatchEvaluator 初始化完成
+2025-09-13 21:23:39,306 - core.evaluators.unified_batch_evaluator - INFO -   测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-13 21:23:39,307 - core.evaluators.unified_batch_evaluator - INFO -   输出目录: result_test
+2025-09-13 21:23:39,307 - core.evaluators.unified_batch_evaluator - INFO -   批次大小: 8
+2025-09-13 21:23:39,307 - core.evaluators.unified_batch_evaluator - INFO -   最大样本: 100
+2025-09-13 21:23:39,307 - core.evaluators.unified_batch_evaluator - INFO - 开始评估 1 个模型
+2025-09-13 21:23:39,307 - core.evaluators.unified_batch_evaluator - INFO - 验证模型配置...
+2025-09-13 21:23:39,314 - core.utils.config_validator - INFO - Configuration passed schema validation
+2025-09-13 21:23:39,315 - core.evaluators.unified_batch_evaluator - INFO - 检查 Reward Server...
+2025-09-13 21:23:39,316 - core.utils.reward_server_checker - INFO - 检查 Reward Server: http://localhost:7788/health
+2025-09-13 21:23:39,579 - core.utils.reward_server_checker - INFO - ✓ Reward Server 正常运行: {'service': 'scoreflow_reward_server', 'status': 'healthy', 'version': '1.0.0'}
+2025-09-13 21:23:39,580 - core.evaluators.unified_batch_evaluator - INFO - 加载测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-13 21:23:39,618 - core.evaluators.unified_batch_evaluator - INFO - 限制评估样本数: 100
+2025-09-13 21:23:39,618 - core.evaluators.unified_batch_evaluator - INFO - 加载了 100 个测试样本
+2025-09-13 21:23:39,618 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-13 21:23:39,619 - core.evaluators.unified_batch_evaluator - INFO - 评估模型 1/1: QwenMax-API
+2025-09-13 21:23:39,619 - core.evaluators.unified_batch_evaluator - INFO - 模型类型: api
+2025-09-13 21:23:39,619 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-13 21:23:39,621 - core.utils.model_factory - INFO - 创建模型接口: QwenMax-API (类型: api)
+2025-09-13 21:23:39,622 - core.interfaces.api_model_interface - INFO - [QwenMax-API] 初始化API模型
+2025-09-13 21:23:39,622 - core.interfaces.api_model_interface - INFO -   模型: qwen-max
+2025-09-13 21:23:39,622 - core.interfaces.api_model_interface - INFO -   API类型: openai
+2025-09-13 21:23:39,623 - core.interfaces.api_model_interface - INFO -   端点数量: 1
+2025-09-13 21:23:39,623 - core.utils.api_connection_pool - INFO - Created new API session: openai
+2025-09-13 21:23:39,626 - core.interfaces.api_model_interface - WARNING - [QwenMax-API] API请求失败 (尝试 1/3): [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2025-09-13 21:23:41,182 - core.interfaces.api_model_interface - INFO - ✓ [QwenMax-API] API连接成功
+2025-09-13 21:23:41,182 - core.evaluators.unified_batch_evaluator - INFO - [QwenMax-API] 生成解决方案...
+2025-09-13 21:23:41,185 - core.evaluators.unified_batch_evaluator - INFO - [QwenMax-API] 使用并发数: 20
+2025-09-13 21:23:41,200 - core.interfaces.api_model_interface - WARNING - [QwenMax-API] API请求失败 (尝试 1/3): [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2025-09-13 21:23:41,203 - core.interfaces.api_model_interface - WARNING - [QwenMax-API] API请求失败 (尝试 1/3): [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2025-09-13 21:23:41,203 - core.interfaces.api_model_interface - WARNING - [QwenMax-API] API请求失败 (尝试 1/3): [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2025-09-13 21:23:41,203 - core.interfaces.api_model_interface - WARNING - [QwenMax-API] API请求失败 (尝试 1/3): [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2025-09-13 21:23:42,224 - core.interfaces.api_model_interface - WARNING - [QwenMax-API] API请求失败 (尝试 2/3): [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2025-09-13 21:23:42,224 - core.interfaces.api_model_interface - WARNING - [QwenMax-API] API请求失败 (尝试 2/3): [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2025-09-13 21:23:44,233 - core.interfaces.api_model_interface - WARNING - [QwenMax-API] API请求失败 (尝试 3/3): [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2025-09-13 21:23:44,233 - core.evaluators.unified_batch_evaluator - WARNING - [QwenMax-API] 样本 0 生成失败: [QwenMax-API] API请求失败: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2025-09-13 21:24:05,811 - core.utils.resource_manager - WARNING - Exiting context with exception: CancelledError: 
+2025-09-13 21:24:05,811 - core.interfaces.api_model_interface - INFO - [QwenMax-API] API统计:
+2025-09-13 21:24:05,811 - core.interfaces.api_model_interface - INFO -   总请求: 16
+2025-09-13 21:24:05,811 - core.interfaces.api_model_interface - INFO -   成功: 3
+2025-09-13 21:24:05,811 - core.interfaces.api_model_interface - INFO -   失败: 1
+2025-09-13 21:24:05,813 - core.interfaces.api_model_interface - INFO -   成功率: 18.8%

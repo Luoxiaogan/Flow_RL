@@ -1,0 +1,10 @@
+{
+  "data_source": "mgsmde",
+  "operators_group": "ensemble_generate_programmer_revise_summarize",
+  "total": 1,
+  "successful": 1,
+  "failed": 0,
+  "success_rate": 1.0,
+  "average_score": 0.9,
+  "timestamp": "2025-09-24T03:47:30.519132"
+}

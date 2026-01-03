@@ -1,0 +1,5 @@
+{"line_number": 2, "test_id": "07db4d9ad4bd", "source_file": "../baseline/test_with_responses_rollout=1_code.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.88, "error": null}
+{"line_number": 8, "test_id": "7e00987e6480", "source_file": "../baseline/test_with_responses_rollout=1_code.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.82, "error": null}
+{"line_number": 22, "test_id": "5cc05ffe201b", "source_file": "../baseline/test_with_responses_rollout=1_code.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.78, "error": null}
+{"line_number": 29, "test_id": "15d9713f6123", "source_file": "../baseline/test_with_responses_rollout=1_code.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.74, "error": null}
+{"line_number": 31, "test_id": "5e5f215569bb", "source_file": "../baseline/test_with_responses_rollout=1_code.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.72, "error": null}

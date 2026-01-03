@@ -1,0 +1,4 @@
+model,type,overall_score,success_rate,total_samples
+qwen-plus,summary,0.46,1.0,2
+qwen-max,summary,0.46,1.0,2
+qwen-turbo,summary,0.0,0.5,2

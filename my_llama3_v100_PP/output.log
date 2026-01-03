@@ -1,0 +1,149 @@
+nohup: ignoring input
+Starting training on 6 V100 GPUs using DeepSpeed launcher...
+[2025-07-19 22:21:36,437] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 22:21:38,974] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 22:21:39,594] [WARNING] [runner.py:220:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+[2025-07-19 22:21:39,594] [INFO] [runner.py:610:main] cmd = /mnt/mydisk/miniconda3/envs/lg_workflow/bin/python3.10 -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMiwgMywgNCwgNSwgNiwgN119 --master_addr=127.0.0.1 --master_port=29500 --enable_each_rank_log=None /root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py --deepspeed /root/lg/Flow_RL_luogan/my_llama3_v100_PP/configs/deepspeed_config_z3_pp.json --model_name_or_path /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa --dataset_path /root/lg/Flow_RL_luogan/training_data/gsm8k/jsonl1_verified_correct.jsonl --output_dir /mnt/mydisk/luogan/Llama-3-8B-PP-Expert-V100-6gpu --num_train_epochs 3 --per_device_train_batch_size 1 --gradient_accumulation_steps 8 --learning_rate 2e-5 --lr_scheduler_type cosine --warmup_ratio 0.03 --save_steps 100 --logging_steps 1 --report_to none --max_seq_length 1024
+[2025-07-19 22:21:41,596] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 22:21:44,130] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 22:21:44,744] [INFO] [launch.py:146:main] WORLD INFO DICT: {'localhost': [2, 3, 4, 5, 6, 7]}
+[2025-07-19 22:21:44,744] [INFO] [launch.py:152:main] nnodes=1, num_local_procs=6, node_rank=0
+[2025-07-19 22:21:44,744] [INFO] [launch.py:163:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1, 2, 3, 4, 5]})
+[2025-07-19 22:21:44,745] [INFO] [launch.py:164:main] dist_world_size=6
+[2025-07-19 22:21:44,745] [INFO] [launch.py:168:main] Setting CUDA_VISIBLE_DEVICES=2,3,4,5,6,7
+[2025-07-19 22:21:44,745] [INFO] [launch.py:256:main] process 108841 spawned with command: ['/mnt/mydisk/miniconda3/envs/lg_workflow/bin/python3.10', '-u', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py', '--local_rank=0', '--deepspeed', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/configs/deepspeed_config_z3_pp.json', '--model_name_or_path', '/mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa', '--dataset_path', '/root/lg/Flow_RL_luogan/training_data/gsm8k/jsonl1_verified_correct.jsonl', '--output_dir', '/mnt/mydisk/luogan/Llama-3-8B-PP-Expert-V100-6gpu', '--num_train_epochs', '3', '--per_device_train_batch_size', '1', '--gradient_accumulation_steps', '8', '--learning_rate', '2e-5', '--lr_scheduler_type', 'cosine', '--warmup_ratio', '0.03', '--save_steps', '100', '--logging_steps', '1', '--report_to', 'none', '--max_seq_length', '1024']
+[2025-07-19 22:21:44,746] [INFO] [launch.py:256:main] process 108842 spawned with command: ['/mnt/mydisk/miniconda3/envs/lg_workflow/bin/python3.10', '-u', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py', '--local_rank=1', '--deepspeed', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/configs/deepspeed_config_z3_pp.json', '--model_name_or_path', '/mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa', '--dataset_path', '/root/lg/Flow_RL_luogan/training_data/gsm8k/jsonl1_verified_correct.jsonl', '--output_dir', '/mnt/mydisk/luogan/Llama-3-8B-PP-Expert-V100-6gpu', '--num_train_epochs', '3', '--per_device_train_batch_size', '1', '--gradient_accumulation_steps', '8', '--learning_rate', '2e-5', '--lr_scheduler_type', 'cosine', '--warmup_ratio', '0.03', '--save_steps', '100', '--logging_steps', '1', '--report_to', 'none', '--max_seq_length', '1024']
+[2025-07-19 22:21:44,747] [INFO] [launch.py:256:main] process 108843 spawned with command: ['/mnt/mydisk/miniconda3/envs/lg_workflow/bin/python3.10', '-u', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py', '--local_rank=2', '--deepspeed', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/configs/deepspeed_config_z3_pp.json', '--model_name_or_path', '/mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa', '--dataset_path', '/root/lg/Flow_RL_luogan/training_data/gsm8k/jsonl1_verified_correct.jsonl', '--output_dir', '/mnt/mydisk/luogan/Llama-3-8B-PP-Expert-V100-6gpu', '--num_train_epochs', '3', '--per_device_train_batch_size', '1', '--gradient_accumulation_steps', '8', '--learning_rate', '2e-5', '--lr_scheduler_type', 'cosine', '--warmup_ratio', '0.03', '--save_steps', '100', '--logging_steps', '1', '--report_to', 'none', '--max_seq_length', '1024']
+[2025-07-19 22:21:44,747] [INFO] [launch.py:256:main] process 108844 spawned with command: ['/mnt/mydisk/miniconda3/envs/lg_workflow/bin/python3.10', '-u', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py', '--local_rank=3', '--deepspeed', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/configs/deepspeed_config_z3_pp.json', '--model_name_or_path', '/mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa', '--dataset_path', '/root/lg/Flow_RL_luogan/training_data/gsm8k/jsonl1_verified_correct.jsonl', '--output_dir', '/mnt/mydisk/luogan/Llama-3-8B-PP-Expert-V100-6gpu', '--num_train_epochs', '3', '--per_device_train_batch_size', '1', '--gradient_accumulation_steps', '8', '--learning_rate', '2e-5', '--lr_scheduler_type', 'cosine', '--warmup_ratio', '0.03', '--save_steps', '100', '--logging_steps', '1', '--report_to', 'none', '--max_seq_length', '1024']
+[2025-07-19 22:21:44,748] [INFO] [launch.py:256:main] process 108845 spawned with command: ['/mnt/mydisk/miniconda3/envs/lg_workflow/bin/python3.10', '-u', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py', '--local_rank=4', '--deepspeed', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/configs/deepspeed_config_z3_pp.json', '--model_name_or_path', '/mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa', '--dataset_path', '/root/lg/Flow_RL_luogan/training_data/gsm8k/jsonl1_verified_correct.jsonl', '--output_dir', '/mnt/mydisk/luogan/Llama-3-8B-PP-Expert-V100-6gpu', '--num_train_epochs', '3', '--per_device_train_batch_size', '1', '--gradient_accumulation_steps', '8', '--learning_rate', '2e-5', '--lr_scheduler_type', 'cosine', '--warmup_ratio', '0.03', '--save_steps', '100', '--logging_steps', '1', '--report_to', 'none', '--max_seq_length', '1024']
+[2025-07-19 22:21:44,748] [INFO] [launch.py:256:main] process 108846 spawned with command: ['/mnt/mydisk/miniconda3/envs/lg_workflow/bin/python3.10', '-u', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py', '--local_rank=5', '--deepspeed', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/configs/deepspeed_config_z3_pp.json', '--model_name_or_path', '/mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa', '--dataset_path', '/root/lg/Flow_RL_luogan/training_data/gsm8k/jsonl1_verified_correct.jsonl', '--output_dir', '/mnt/mydisk/luogan/Llama-3-8B-PP-Expert-V100-6gpu', '--num_train_epochs', '3', '--per_device_train_batch_size', '1', '--gradient_accumulation_steps', '8', '--learning_rate', '2e-5', '--lr_scheduler_type', 'cosine', '--warmup_ratio', '0.03', '--save_steps', '100', '--logging_steps', '1', '--report_to', 'none', '--max_seq_length', '1024']
+[2025-07-19 22:21:47,052] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 22:21:47,088] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 22:21:47,092] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 22:21:47,174] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 22:21:47,243] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 22:21:47,245] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 22:21:49,679] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 22:21:49,802] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 22:21:49,834] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 22:21:49,847] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 22:21:49,860] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 22:21:49,917] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 22:21:51,275] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-19 22:21:51,402] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-19 22:21:51,432] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-19 22:21:51,432] [INFO] [comm.py:707:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+[2025-07-19 22:21:51,467] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-19 22:21:51,490] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-19 22:21:51,604] [INFO] [comm.py:676:init_distributed] cdb=None
+Loading model CONFIG from /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa...
+Loading model CONFIG from /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa...
+Loading model CONFIG from /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa...
+Loading model CONFIG from /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa...
+Loading model CONFIG from /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa...
+Loading model CONFIG from /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa...
+Initializing model with DeepSpeed...
+[2025-07-19 22:24:00,091] [INFO] [logging.py:107:log_dist] [Rank 0] DeepSpeed info: version=0.17.2, git-hash=unknown, git-branch=unknown
+[2025-07-19 22:24:00,091] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 6
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py", line 109, in <module>
+[rank0]:     train()
+[rank0]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py", line 79, in train
+[rank0]:     model_engine, optimizer, training_dataloader, lr_scheduler = deepspeed.initialize(
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/__init__.py", line 179, in initialize
+[rank0]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 749, in __init__
+[rank0]:     self._configure_train_batch_size()
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 936, in _configure_train_batch_size
+[rank0]:     self._batch_assertion()
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 876, in _batch_assertion
+[rank0]:     assert (train_batch > 0), f"Train batch size: {train_batch} has to be greater than 0"
+[rank0]: TypeError: '>' not supported between instances of 'str' and 'int'
+Initializing model with DeepSpeed...
+[2025-07-19 22:24:00,901] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 6
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py", line 109, in <module>
+[rank1]:     train()
+[rank1]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py", line 79, in train
+[rank1]:     model_engine, optimizer, training_dataloader, lr_scheduler = deepspeed.initialize(
+[rank1]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/__init__.py", line 179, in initialize
+[rank1]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)
+[rank1]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 749, in __init__
+[rank1]:     self._configure_train_batch_size()
+[rank1]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 936, in _configure_train_batch_size
+[rank1]:     self._batch_assertion()
+[rank1]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 876, in _batch_assertion
+[rank1]:     assert (train_batch > 0), f"Train batch size: {train_batch} has to be greater than 0"
+[rank1]: TypeError: '>' not supported between instances of 'str' and 'int'
+Initializing model with DeepSpeed...
+[2025-07-19 22:24:01,022] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 6
+[rank4]: Traceback (most recent call last):
+[rank4]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py", line 109, in <module>
+[rank4]:     train()
+[rank4]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py", line 79, in train
+[rank4]:     model_engine, optimizer, training_dataloader, lr_scheduler = deepspeed.initialize(
+[rank4]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/__init__.py", line 179, in initialize
+[rank4]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)
+[rank4]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 749, in __init__
+[rank4]:     self._configure_train_batch_size()
+[rank4]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 936, in _configure_train_batch_size
+[rank4]:     self._batch_assertion()
+[rank4]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 876, in _batch_assertion
+[rank4]:     assert (train_batch > 0), f"Train batch size: {train_batch} has to be greater than 0"
+[rank4]: TypeError: '>' not supported between instances of 'str' and 'int'
+Initializing model with DeepSpeed...
+[2025-07-19 22:24:01,037] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 6
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py", line 109, in <module>
+[rank3]:     train()
+[rank3]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py", line 79, in train
+[rank3]:     model_engine, optimizer, training_dataloader, lr_scheduler = deepspeed.initialize(
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/__init__.py", line 179, in initialize
+[rank3]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 749, in __init__
+[rank3]:     self._configure_train_batch_size()
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 936, in _configure_train_batch_size
+[rank3]:     self._batch_assertion()
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 876, in _batch_assertion
+[rank3]:     assert (train_batch > 0), f"Train batch size: {train_batch} has to be greater than 0"
+[rank3]: TypeError: '>' not supported between instances of 'str' and 'int'
+Initializing model with DeepSpeed...
+[2025-07-19 22:24:01,077] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 6
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py", line 109, in <module>
+[rank5]:     train()
+[rank5]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py", line 79, in train
+[rank5]:     model_engine, optimizer, training_dataloader, lr_scheduler = deepspeed.initialize(
+[rank5]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/__init__.py", line 179, in initialize
+[rank5]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)
+[rank5]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 749, in __init__
+[rank5]:     self._configure_train_batch_size()
+[rank5]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 936, in _configure_train_batch_size
+[rank5]:     self._batch_assertion()
+[rank5]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 876, in _batch_assertion
+[rank5]:     assert (train_batch > 0), f"Train batch size: {train_batch} has to be greater than 0"
+[rank5]: TypeError: '>' not supported between instances of 'str' and 'int'
+Initializing model with DeepSpeed...
+[2025-07-19 22:24:01,179] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 6
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py", line 109, in <module>
+[rank2]:     train()
+[rank2]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py", line 79, in train
+[rank2]:     model_engine, optimizer, training_dataloader, lr_scheduler = deepspeed.initialize(
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/__init__.py", line 179, in initialize
+[rank2]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 749, in __init__
+[rank2]:     self._configure_train_batch_size()
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 936, in _configure_train_batch_size
+[rank2]:     self._batch_assertion()
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/config.py", line 876, in _batch_assertion
+[rank2]:     assert (train_batch > 0), f"Train batch size: {train_batch} has to be greater than 0"
+[rank2]: TypeError: '>' not supported between instances of 'str' and 'int'
+[rank0]:[W719 22:24:02.985790766 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[2025-07-19 22:24:03,900] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 108841
+[2025-07-19 22:24:03,901] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 108842
+[2025-07-19 22:24:04,306] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 108843
+[2025-07-19 22:24:04,503] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 108844
+[2025-07-19 22:24:04,658] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 108845
+[2025-07-19 22:24:04,795] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 108846
+[2025-07-19 22:24:04,932] [ERROR] [launch.py:325:sigkill_handler] ['/mnt/mydisk/miniconda3/envs/lg_workflow/bin/python3.10', '-u', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/src/train_pp.py', '--local_rank=5', '--deepspeed', '/root/lg/Flow_RL_luogan/my_llama3_v100_PP/configs/deepspeed_config_z3_pp.json', '--model_name_or_path', '/mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa', '--dataset_path', '/root/lg/Flow_RL_luogan/training_data/gsm8k/jsonl1_verified_correct.jsonl', '--output_dir', '/mnt/mydisk/luogan/Llama-3-8B-PP-Expert-V100-6gpu', '--num_train_epochs', '3', '--per_device_train_batch_size', '1', '--gradient_accumulation_steps', '8', '--learning_rate', '2e-5', '--lr_scheduler_type', 'cosine', '--warmup_ratio', '0.03', '--save_steps', '100', '--logging_steps', '1', '--report_to', 'none', '--max_seq_length', '1024'] exits with return code = 1

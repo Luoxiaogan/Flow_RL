@@ -1,0 +1,2 @@
+{"data_source": "test", "data_path": "D:/temp/Flow_RL/test/file1.txt", "extra_info": {"data_path": "D:/temp/Flow_RL/test/file2.txt"}}
+{"data_source": "test2", "data_path": "D:/temp/Flow_RL/another/path.json", "value": 123}

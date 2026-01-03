@@ -1,0 +1,12 @@
+{"time":"2025-09-21T03:18:21.771700441-07:00","level":"INFO","msg":"stream: starting","core version":"0.21.0"}
+{"time":"2025-09-21T03:18:24.010657426-07:00","level":"INFO","msg":"stream: created new stream","id":"ufga1cch"}
+{"time":"2025-09-21T03:18:24.010698114-07:00","level":"INFO","msg":"stream: started","id":"ufga1cch"}
+{"time":"2025-09-21T03:18:24.010720389-07:00","level":"INFO","msg":"writer: Do: started","stream_id":"ufga1cch"}
+{"time":"2025-09-21T03:18:24.010734641-07:00","level":"INFO","msg":"handler: started","stream_id":"ufga1cch"}
+{"time":"2025-09-21T03:18:24.010722593-07:00","level":"INFO","msg":"sender: started","stream_id":"ufga1cch"}
+{"time":"2025-09-21T05:57:25.635654235-07:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.bandw.top/files/luogan_little_wolf-peking-university/qwen3_rl_0920_001_reproduce/ufga1cch/file_stream\": EOF"}
+{"time":"2025-09-21T09:13:57.162784774-07:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.bandw.top/graphql\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)"}
+{"time":"2025-09-21T12:20:54.85452916-07:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.bandw.top/files/luogan_little_wolf-peking-university/qwen3_rl_0920_001_reproduce/ufga1cch/file_stream\": EOF"}
+{"time":"2025-09-21T14:38:43.32532189-07:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.bandw.top/graphql\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)"}
+{"time":"2025-09-21T15:38:43.351442297-07:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.bandw.top/graphql\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)"}
+{"time":"2025-09-21T15:38:52.06613072-07:00","level":"INFO","msg":"api: retrying HTTP error","status":520,"url":"https://api.bandw.top/graphql","body":"error code: 520"}

@@ -1,0 +1,388 @@
+# =====================================================================
+# Qwen3 Thinking模式VERL训练配置 - 完整显式版本
+# =====================================================================
+
+# 继承VERL的默认配置结构（必需，否则会缺少某些字段）
+defaults:
+  - actor@actor_rollout_ref.actor: dp_actor
+  - npu_profile@trainer.npu_profile: npu_profile
+  - data@data: legacy_data
+  - ref@actor_rollout_ref.ref: dp_ref
+  - rollout@actor_rollout_ref.rollout: rollout
+  - critic@critic: dp_critic
+  - reward_model@reward_model: dp_reward_model
+  - _self_
+
+# ---------------------------------------------------------------------
+# 数据配置 - 完整覆盖
+# ---------------------------------------------------------------------
+data:
+  # 数据文件
+  train_files: 
+    - "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0901_test_RL/train.parquet"
+  val_files: 
+    - "/nas/ganluo/Flow_RL/New_evaluation_and_RL/parquet_and_jsonl_data/0901_test_RL/test.parquet"
+  
+  # 批次和序列长度
+  train_batch_size: 16         # 全局批次大小，8个GPU总共处理16个样本，每GPU处理2个
+  max_prompt_length: 8192       # prompt的最大token数，超过将被过滤或报错
+  max_response_length: 16384    # response的最大token数，thinking模式需要更长空间
+
+  # 数据键名映射
+  prompt_key: prompt            # parquet文件中prompt列的名称，必须与数据文件对应
+  response_key: responses        # parquet文件中response列的名称（可选，PPO训练时自动生成）
+  reward_fn_key: data_source    # 标识数据来源的列名（如"gsm8k"），传给reward函数用于选择评测器
+  
+  # 数据处理选项
+  return_raw_input_ids: false   # false=应用tokenizer处理，true=返回原始token序列
+  return_raw_chat: false        # false=应用chat template格式化，true=保持原始对话格式
+  return_full_prompt: false     # false=只返回待生成部分，true=返回完整prompt+response
+  filter_overlong_prompts: true # true=预先过滤超长样本提高效率，false=保留所有样本
+  filter_overlong_prompts_workers: 4  # 过滤时使用的进程数，增大可加速但占用更多CPU
+  truncation: error             # 超长处理策略：error=报错，left/right/middle=截断方向
+  shuffle: true                 # true=随机打乱提高泛化，false=保持数据顺序
+  
+  # 分词器和图像处理
+  tokenizer: null               # null=自动从actor模型路径加载，或指定tokenizer路径
+  image_key: images             # 多模态数据中图像字段的键名（当前未使用）
+  trust_remote_code: true       # true=允许执行tokenizer的自定义代码（Qwen3必需）
+  
+  # 自定义数据集
+  custom_cls:
+    path: /nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/custom_datasets/qwen3_thinking_dataset.py
+    name: Qwen3ThinkingDataset  # 确保thinking模式正确启用的自定义数据集类
+
+# ---------------------------------------------------------------------
+# Actor-Rollout-Reference配置 - 完整覆盖
+# ---------------------------------------------------------------------
+actor_rollout_ref:
+  hybrid_engine: true # 训练用PyTorch，推理用SGLang
+  
+  # 模型配置
+  model:
+    path: /nas/models/Qwen3-8B
+    custom_chat_template: null  # Qwen3不需要自定义template，使用模型自带的chat template
+    torch_dtype: bfloat16
+    use_shm: false
+    external_lib: null
+    override_config: {}
+    enable_gradient_checkpointing: true # 启用梯度检查点，节省显存, 不保存中间激活值，反向传播时重新计算
+    enable_activation_offload: false
+    use_remove_padding: false
+    lora_rank: 0 # 不使用LoRA
+    lora_alpha: 16
+    target_modules: all-linear
+    exclude_modules: null
+    use_liger: false
+    use_fused_kernels: false
+    fused_kernel_options:
+      impl_backend: torch
+    trust_remote_code: true
+  
+  # Actor配置
+  actor:
+    strategy: fsdp              # 分布式策略：fsdp=完全分片数据并行，dp=数据并行
+    
+    # PPO批次设置
+    ppo_mini_batch_size: 64      # PPO梯度更新的批次大小，GRPO里面是GPU数目*rollout数目
+    ppo_micro_batch_size: null  # 已弃用，使用ppo_micro_batch_size_per_gpu代替
+    ppo_micro_batch_size_per_gpu: 2    # 每个GPU前向传播的样本数，用于梯度累积
+    use_dynamic_bsz: false      # false=固定批次大小，true=根据序列长度动态调整
+    ppo_max_token_len_per_gpu: 16384   # 每GPU最大token数，防止OOM
+    ppo_epochs: 1               # PPO在同一批数据上的训练轮数，增大可能过拟合
+    data_loader_seed: null      # 数据加载随机种子，null=每次运行不同
+    shuffle: false              # PPO mini-batch内部是否打乱（通常不需要）
+    ulysses_sequence_parallel_size: 1  # 序列并行度，1=不使用序列并行
+    
+    # 梯度和损失
+    grad_clip: 1.0              # 梯度裁剪阈值，防止梯度爆炸
+    clip_ratio: 0.2             # PPO clip范围，限制策略更新幅度
+    entropy_coeff: 0.0          # 熵正则化系数，0=不鼓励探索（GRPO不需要）
+    use_kl_loss: true           # true=添加KL散度约束，防止策略偏离太远
+    kl_loss_coef: 0.001         # KL散度损失系数，控制约束强度
+    kl_loss_type: low_var_kl    # KL计算方式：low_var_kl=低方差估计
+    use_torch_compile: false    # false=不使用torch.compile优化（实验性功能）
+    
+    # 优化器
+    optim:
+      lr: 2e-6                  # 学习率，RL训练通常比SFT小10倍
+      lr_warmup_steps: -1       # 预热步数，-1=不使用预热
+      lr_warmup_steps_ratio: 0.0   # 预热步数比例，与lr_warmup_steps二选一
+      min_lr_ratio: 0.0         # 最小学习率比例，用于余弦退火
+      num_cycles: 0.5           # 余弦退火周期数
+      warmup_style: constant    # 预热方式：constant=恒定，linear=线性增长
+      total_training_steps: -1  # 总训练步数，-1=自动计算
+      weight_decay: 0.01        # 权重衰减，L2正则化强度
+    
+    # FSDP配置
+    fsdp_config:
+      wrap_policy:
+        min_num_params: 0       # FSDP包装的最小参数量，0=自动
+      param_offload: false      # false=参数保留在GPU，true=卸载到CPU
+      optimizer_offload: false  # false=优化器状态在GPU，true=卸载到CPU
+      fsdp_size: -1             # FSDP组大小，-1=所有GPU
+    
+    # 检查点
+    checkpoint:
+      save_contents: ["model", "extra"]    # 保存内容：model=权重，extra=训练状态
+      load_contents: ["model", "extra"]    # 加载内容，通常与save_contents一致
+  
+  # Rollout配置
+  rollout:
+    name: sglang                # 推理引擎：sglang=高性能，vllm=通用，megatron=大规模
+    mode: sync                  # 执行模式：sync=同步等待，async=异步并行
+    
+    # 采样参数
+    temperature: 0.7            # 采样温度，控制随机性（0=贪婪，1=标准，>1=更随机）
+    top_k: 50                   # Top-K采样，只从概率最高的K个token中选择
+    top_p: 0.95                 # Nucleus采样，累积概率阈值
+    n: 4                        # 每个prompt生成的响应数量，用于对比学习
+    
+    # 序列长度
+    prompt_length: 8192         # 推理时prompt的最大长度（tokens）
+    response_length: 16384      # 推理时生成的最大长度，thinking需要更长
+
+    # vLLM/SGLang参数
+    dtype: bfloat16             # 推理精度，bf16平衡速度和精度
+    gpu_memory_utilization: 0.5 # GPU显存使用率，预留空间给训练
+    ignore_eos: false           # false=遇到EOS停止，true=继续生成到max_length
+    enforce_eager: true         # true=立即执行，false=使用CUDA图优化
+    free_cache_engine: true     # true=推理后释放KV缓存，节省显存
+    load_format: dummy_dtensor  # 模型加载格式，dummy_dtensor用于分布式
+    tensor_model_parallel_size: 1  # 张量并行度=1，无
+    max_num_batched_tokens: 65536   # 批处理的最大token数
+    max_model_len: null         # 模型最大长度，null=使用模型默认值(32768)
+    max_num_seqs: 1024          # 最大并发序列数, 只控制SGLang推理引擎的并发度
+    
+    # 批处理
+    log_prob_micro_batch_size: null        # 已弃用
+    log_prob_micro_batch_size_per_gpu: 2   # 计算log_prob时每GPU的批次大小
+    log_prob_use_dynamic_bsz: false        # false=固定批次，true=动态批次
+    log_prob_max_token_len_per_gpu: 16384  # 计算log_prob时每GPU最大token数
+    
+    # 其他
+    disable_log_stats: true     # true=不记录推理统计，减少开销
+    do_sample: true             # true=采样生成，false=贪婪解码
+    multi_stage_wake_up: false  # false=单阶段启动，true=多阶段唤醒（实验性）
+    
+    # 引擎参数
+    engine_kwargs:
+      vllm:
+        swap_space: null
+        disable_mm_preprocessor_cache: false
+      sglang:
+        attention_backend: null
+        # reasoning_parser: qwen3  # 已禁用：不需要分离thinking内容
+        trust_remote_code: true
+    
+    # 验证参数, 验证集评估时的生成参数
+    # 验证时使用贪婪解码是为了获得确定性结果，便于公平比较不同checkpoint的性能。
+    val_kwargs:
+      top_k: -1
+      top_p: 1.0
+      temperature: 0
+      n: 1
+      do_sample: false
+      response_length: 8192
+    
+    # 多轮对话（如需要）
+    multi_turn:
+      enable: false
+      max_assistant_turns: null
+      tool_config_path: null
+      max_user_turns: null
+      max_parallel_calls: 1
+      max_tool_response_length: 256
+      tool_response_truncate_side: middle
+      interaction_config_path: null
+      completion_callback: null
+      use_inference_chat_template: false
+      tokenization_sanity_check_mode: strict
+      format: hermes
+    
+    calculate_log_probs: false
+    
+    # Agent配置
+    agent:
+      num_workers: 8
+      agent_loop_config_path: null
+      custom_async_server:
+        path: null
+        name: null
+    
+    update_weights_bucket_megabytes: 512
+    
+    # 追踪
+    trace:
+      backend: null
+      token2text: false
+  
+  # Reference模型配置
+  ref:
+    fsdp_config:
+      param_offload: false
+      wrap_policy:
+        min_num_params: 0
+    log_prob_micro_batch_size: null
+    log_prob_micro_batch_size_per_gpu: 2
+    log_prob_use_dynamic_bsz: false
+    log_prob_max_token_len_per_gpu: 16384
+    ulysses_sequence_parallel_size: 1
+    use_torch_compile: false
+
+  # Profiler配置
+  profiler:
+    _target_: verl.utils.profiler.ProfilerConfig
+    discrete: false
+    all_ranks: false
+    ranks: []
+
+# ---------------------------------------------------------------------
+# Critic配置 - 完整覆盖
+# GRPO中：Critic网络 → ❌ 不使用
+# ---------------------------------------------------------------------
+critic:
+  strategy: fsdp
+  # ... 这些配置在GRPO中被忽略
+  
+  # 模型
+  model:
+    path: ${actor_rollout_ref.model.path}
+    enable_gradient_checkpointing: true
+    trust_remote_code: true
+    torch_dtype: bfloat16
+  
+  # 训练
+  ppo_micro_batch_size: null
+  ppo_micro_batch_size_per_gpu: 2
+  use_torch_compile: false
+  use_dynamic_bsz: false
+  ppo_max_token_len_per_gpu: 16384
+  ulysses_sequence_parallel_size: 1
+  
+  # 优化器
+  optim:
+    lr: 5e-7
+    lr_warmup_steps: -1
+    lr_warmup_steps_ratio: 0.0
+    min_lr_ratio: 0.0
+    num_cycles: 0.5
+    warmup_style: constant
+    total_training_steps: -1
+    weight_decay: 0.01
+  
+  # FSDP
+  fsdp_config:
+    wrap_policy:
+      min_num_params: 0
+    param_offload: false
+    optimizer_offload: false
+    fsdp_size: -1
+  
+  # 检查点
+  checkpoint:
+    save_contents: ["model", "extra"]
+    load_contents: ["model", "extra"]
+
+# ---------------------------------------------------------------------
+# 算法配置 - 完整覆盖
+# ---------------------------------------------------------------------
+algorithm:
+  _target_: verl.trainer.config.AlgoConfig
+  
+  gamma: 1.0                    # 折扣因子，1.0=无折扣（适合单步任务）
+  lam: 1.0                      # GAE lambda参数，控制偏差-方差权衡
+  adv_estimator: grpo           # 优势估计方法：grpo=组相对策略优化（无需critic）
+  norm_adv_by_std_in_grpo: true # true=按标准差归一化优势值，稳定训练
+  use_kl_in_reward: false       # false=不在奖励中包含KL惩罚项; GRPO通常设为false
+  kl_penalty: kl                # KL惩罚类型：kl=标准KL散度
+  
+  kl_ctrl: # KL作为独立的损失项, 正则化项，不影响优势计算
+    _target_: verl.trainer.config.KLControlConfig
+    type: fixed                 # KL系数控制：fixed=固定值，adaptive=自适应调整
+    kl_coef: 0.001              # KL散度系数，防止策略偏离过大
+    horizon: 10000              # 自适应调整的时间窗口（fixed时无效）
+    target_kl: 0.1              # 目标KL散度（adaptive时使用）
+  
+  use_pf_ppo: false
+  pf_ppo:
+    _target_: verl.trainer.config.PFPPOConfig
+    reweight_method: pow
+    weight_pow: 2.0
+
+# ---------------------------------------------------------------------
+# 奖励模型配置 - 完整覆盖
+# ---------------------------------------------------------------------
+reward_model:
+  enable: false
+  model:
+    input_tokenizer: ${actor_rollout_ref.model.path}
+    path: null
+    external_lib: null
+    trust_remote_code: false
+    fsdp_config:
+      min_num_params: 0
+      param_offload: false
+  micro_batch_size_per_gpu: 16
+  max_length: null
+  reward_manager: prime
+
+# 自定义奖励函数
+custom_reward_function:
+  path: /nas/ganluo/Flow_RL/New_evaluation_and_RL/RL_part/scoreflow_reward_client.py
+  name: compute_score
+
+# ---------------------------------------------------------------------
+# 训练器配置 - 完整覆盖
+# ---------------------------------------------------------------------
+trainer:
+  balance_batch: true           # true=动态平衡批次分配，优化GPU利用率
+  total_epochs: 15               # 训练轮数，每轮遍历所有数据
+  total_training_steps: null    # 总训练步数，null=根据epochs自动计算
+  profile_steps: null           # 性能分析步数，null=不分析
+  
+  controller_nsight_options:    # 控制器节点的NVIDIA Nsight分析选项
+    trace: "cuda,nvtx,cublas,ucx"  # 追踪的组件
+    cuda-memory-usage: "true"   # 记录CUDA内存使用
+    cuda-graph-trace: "graph"   # CUDA图追踪级别
+  
+  worker_nsight_options:        # 工作节点的Nsight分析选项
+    trace: "cuda,nvtx,cublas,ucx"
+    cuda-memory-usage: "true"
+    cuda-graph-trace: "graph"
+    capture-range: "cudaProfilerApi"   # 捕获范围
+    capture-range-end: null
+    kill: none                  # 分析后的动作
+  
+  project_name: verl_qwen3_thinking    # 项目名称，用于日志和checkpoint组织
+  experiment_name: qwen3_8b_with_thinking  # 实验名称，区分不同运行
+  logger: ["console", "wandb"]           # 日志输出：console=终端，wandb=W&B平台
+  log_val_generations: 0        # 验证时记录的生成样本数，0=不记录
+  rollout_data_dir: null        # rollout数据保存路径，null=不保存
+  validation_data_dir: null     # 验证数据路径，null=使用val_files
+  
+  nnodes: 1                     # 节点数量（机器数）
+  n_gpus_per_node: 8            # 每节点GPU数量
+  save_freq: 100                # checkpoint保存频率（步数）
+  esi_redundant_time: 0         # 弹性调度冗余时间（秒）
+  resume_mode: auto             # 恢复模式：auto=自动从最新，manual=指定路径
+  resume_from_path: null        # 手动恢复的checkpoint路径
+  val_before_train: true        # true=训练前先验证，获取baseline
+  val_only: false               # true=只验证不训练，用于评估
+  test_freq: 5                  # 测试频率（每N个epochs）
+  critic_warmup: 0              # Critic预热步数（GRPO不需要）
+  
+  default_hdfs_dir: null        # HDFS路径（分布式存储）
+  del_local_ckpt_after_load: false # false=加载后保留本地checkpoint
+  default_local_dir: /nas/ganluo/Flow_RL/rl_out/checkpoints  # 本地checkpoint目录
+  max_actor_ckpt_to_keep: null  # 保留的actor checkpoint数量，null=全部保留
+  max_critic_ckpt_to_keep: null # 保留的critic checkpoint数量（GRPO无效）
+  ray_wait_register_center_timeout: 300  # Ray注册中心超时（秒）
+  device: cuda                  # 计算设备：cuda=GPU，cpu=CPU
+
+# ---------------------------------------------------------------------
+# Ray配置 - 完整覆盖
+# ---------------------------------------------------------------------
+ray_init:
+  num_cpus: null
+  timeline_json_file: null

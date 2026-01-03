@@ -1,0 +1,44 @@
+# Example Configuration for Quick Testing
+
+# Test data configuration
+test_data:
+  # Use a small test dataset for quick evaluation
+  path: "../generate_parquet_and_jsonl/test_data.jsonl"
+  max_samples: 20  # Only evaluate 20 samples for quick testing
+
+# Reward server
+reward_server:
+  url: "http://localhost:8899"
+
+# Evaluation settings
+evaluation:
+  batch_size: 4  # Smaller batch size for testing
+  output_dir: "./test_results"
+  generation_params:
+    max_new_tokens: 2048  # Shorter for faster testing
+    temperature: 0.7
+    top_p: 0.9
+
+# Example models for comparison
+models:
+  # Model 1: Base model
+  - name: "Qwen2.5-7B-Base"
+    path: "Qwen/Qwen2.5-7B"
+    type: "huggingface"
+    
+  # Model 2: Instruction-tuned version
+  - name: "Qwen2.5-7B-Instruct"
+    path: "Qwen/Qwen2.5-7B-Instruct"
+    type: "huggingface"
+    
+  # Model 3: Math-specific model
+  - name: "Qwen2.5-Math-7B"
+    path: "Qwen/Qwen2.5-Math-7B-Instruct"
+    type: "huggingface"
+    generation_params:
+      temperature: 0.6  # Lower temperature for math
+
+# Report settings
+report:
+  generate_charts: true
+  save_detailed_csv: true

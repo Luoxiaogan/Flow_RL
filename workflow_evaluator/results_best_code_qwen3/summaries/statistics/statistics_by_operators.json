@@ -1,0 +1,280 @@
+{
+  "decompose_ensemble_generate_revise_summarize": {
+    "total": 20,
+    "successful": 5,
+    "failed": 15,
+    "scores": [
+      0.0,
+      0.94,
+      0.94,
+      0.0,
+      0.0
+    ],
+    "execution_times": [
+      0.0,
+      0.01,
+      0.0,
+      0.01,
+      0.01,
+      0.03,
+      92.13,
+      75.24,
+      0.27,
+      0.03,
+      0.01,
+      0.01,
+      0.0,
+      0.0,
+      0.01,
+      0.0,
+      0.0,
+      0.01,
+      0.0,
+      0.01
+    ],
+    "datasource_breakdown": {
+      "math500": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "gsm8k": {
+        "total": 5,
+        "successful": 5,
+        "scores": [
+          0.0,
+          0.94,
+          0.94,
+          0.0,
+          0.0
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.376
+      },
+      "mbpp": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "drop": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      }
+    },
+    "success_rate": 0.25,
+    "average_score": 0.376,
+    "score_std": 0.5148592040548561,
+    "avg_execution_time": 8.389
+  },
+  "ensemble_generate_revise_summarize": {
+    "total": 20,
+    "successful": 0,
+    "failed": 20,
+    "scores": [],
+    "execution_times": [
+      0.01,
+      0.0,
+      0.01,
+      0.01,
+      0.01,
+      0.01,
+      0.01,
+      0.02,
+      0.02,
+      0.02,
+      0.0,
+      0.01,
+      0.01,
+      0.0,
+      0.01,
+      0.0,
+      0.0,
+      0.0,
+      0.01,
+      0.0
+    ],
+    "datasource_breakdown": {
+      "math500": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "gsm8k": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "mbpp": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "drop": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      }
+    },
+    "success_rate": 0.0,
+    "average_score": 0,
+    "score_std": 0,
+    "avg_execution_time": 0.008
+  },
+  "ensemble_generate_programmer_revise_summarize": {
+    "total": 20,
+    "successful": 2,
+    "failed": 18,
+    "scores": [
+      0.0,
+      0.0
+    ],
+    "execution_times": [
+      0.0,
+      0.01,
+      0.01,
+      0.01,
+      0.01,
+      0.03,
+      25.2,
+      25.2,
+      8.73,
+      25.2,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.01,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.01
+    ],
+    "datasource_breakdown": {
+      "math500": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "gsm8k": {
+        "total": 5,
+        "successful": 2,
+        "scores": [
+          0.0,
+          0.0
+        ],
+        "success_rate": 0.4,
+        "average_score": 0.0
+      },
+      "mbpp": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "drop": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      }
+    },
+    "success_rate": 0.1,
+    "average_score": 0.0,
+    "score_std": 0.0,
+    "avg_execution_time": 4.221
+  },
+  "decompose_ensemble_generate_programmer_revise_summarize": {
+    "total": 20,
+    "successful": 5,
+    "failed": 15,
+    "scores": [
+      0.0,
+      0.88,
+      0.0,
+      0.0,
+      0.98
+    ],
+    "execution_times": [
+      0.01,
+      0.01,
+      0.01,
+      0.01,
+      0.01,
+      1.52,
+      56.75,
+      66.9,
+      1.56,
+      83.3,
+      0.0,
+      0.01,
+      0.0,
+      0.01,
+      0.01,
+      0.01,
+      0.0,
+      0.01,
+      0.0,
+      0.01
+    ],
+    "datasource_breakdown": {
+      "math500": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "gsm8k": {
+        "total": 5,
+        "successful": 5,
+        "scores": [
+          0.0,
+          0.88,
+          0.0,
+          0.0,
+          0.98
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.372
+      },
+      "mbpp": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "drop": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      }
+    },
+    "success_rate": 0.25,
+    "average_score": 0.372,
+    "score_std": 0.5106074813396294,
+    "avg_execution_time": 10.507
+  }
+}

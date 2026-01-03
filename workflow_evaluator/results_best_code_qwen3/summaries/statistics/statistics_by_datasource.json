@@ -1,0 +1,294 @@
+{
+  "math500": {
+    "total": 20,
+    "successful": 0,
+    "failed": 20,
+    "scores": [],
+    "execution_times": [
+      0.0,
+      0.01,
+      0.0,
+      0.01,
+      0.01,
+      0.01,
+      0.0,
+      0.01,
+      0.01,
+      0.01,
+      0.0,
+      0.01,
+      0.01,
+      0.01,
+      0.01,
+      0.01,
+      0.01,
+      0.01,
+      0.01,
+      0.01
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      }
+    },
+    "success_rate": 0.0,
+    "average_score": 0,
+    "score_std": 0,
+    "max_score": 0,
+    "min_score": 0,
+    "avg_execution_time": 0.008,
+    "max_execution_time": 0.01,
+    "min_execution_time": 0.0
+  },
+  "gsm8k": {
+    "total": 20,
+    "successful": 12,
+    "failed": 8,
+    "scores": [
+      0.0,
+      0.94,
+      0.94,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.88,
+      0.0,
+      0.0,
+      0.98
+    ],
+    "execution_times": [
+      0.03,
+      92.13,
+      75.24,
+      0.27,
+      0.03,
+      0.01,
+      0.01,
+      0.02,
+      0.02,
+      0.02,
+      0.03,
+      25.2,
+      25.2,
+      8.73,
+      25.2,
+      1.52,
+      56.75,
+      66.9,
+      1.56,
+      83.3
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 5,
+        "successful": 5,
+        "scores": [
+          0.0,
+          0.94,
+          0.94,
+          0.0,
+          0.0
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.376
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 5,
+        "successful": 2,
+        "scores": [
+          0.0,
+          0.0
+        ],
+        "success_rate": 0.4,
+        "average_score": 0.0
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 5,
+        "successful": 5,
+        "scores": [
+          0.0,
+          0.88,
+          0.0,
+          0.0,
+          0.98
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.372
+      }
+    },
+    "success_rate": 0.6,
+    "average_score": 0.31166666666666665,
+    "score_std": 0.46086545726162825,
+    "max_score": 0.98,
+    "min_score": 0.0,
+    "avg_execution_time": 23.1085,
+    "max_execution_time": 92.13,
+    "min_execution_time": 0.01
+  },
+  "mbpp": {
+    "total": 20,
+    "successful": 0,
+    "failed": 20,
+    "scores": [],
+    "execution_times": [
+      0.01,
+      0.01,
+      0.0,
+      0.0,
+      0.01,
+      0.0,
+      0.01,
+      0.01,
+      0.0,
+      0.01,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.01,
+      0.0,
+      0.01,
+      0.0,
+      0.01,
+      0.01
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      }
+    },
+    "success_rate": 0.0,
+    "average_score": 0,
+    "score_std": 0,
+    "max_score": 0,
+    "min_score": 0,
+    "avg_execution_time": 0.005,
+    "max_execution_time": 0.01,
+    "min_execution_time": 0.0
+  },
+  "drop": {
+    "total": 20,
+    "successful": 0,
+    "failed": 20,
+    "scores": [],
+    "execution_times": [
+      0.0,
+      0.0,
+      0.01,
+      0.0,
+      0.01,
+      0.0,
+      0.0,
+      0.0,
+      0.01,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.01,
+      0.01,
+      0.0,
+      0.01,
+      0.0,
+      0.01
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 5,
+        "successful": 0,
+        "scores": [],
+        "success_rate": 0.0,
+        "average_score": 0
+      }
+    },
+    "success_rate": 0.0,
+    "average_score": 0,
+    "score_std": 0,
+    "max_score": 0,
+    "min_score": 0,
+    "avg_execution_time": 0.0035,
+    "max_execution_time": 0.01,
+    "min_execution_time": 0.0
+  }
+}

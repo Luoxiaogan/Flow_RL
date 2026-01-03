@@ -1,0 +1,25 @@
+# Configuration for CoT vs Self-Consistency workflow evaluation
+
+# Reward Server配置
+reward_server:
+  url: "http://localhost:7788"
+  timeout: 1200  # 5分钟超时
+
+# 测试配置
+test:
+  samples_per_benchmark: 50  # 每个benchmark测试样本数
+  benchmarks:
+
+    - aime2024
+    - aime2025
+
+
+
+# 数据路径配置
+data:
+  base_path: "../Processed_dataset"  # benchmark数据集路径
+
+# 输出配置
+output:
+  results_dir: "./resuall_gpt4o-mini2"  # 结果保存目录
+  save_intermediate: true    # 是否保存中间结果

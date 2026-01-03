@@ -1,0 +1,14 @@
+# Unique data_source values and their data_path mappings
+# From file: /Users/luogan/Code/workflow_generation/Flow_RL/New_evaluation_and_RL/generate_parquet_and_jsonl/train_scoreflow_data_all/train_sampled_10_to_5.jsonl
+# Total unique values: 8
+
+# Format: data_source	count	data_path(s)
+--------------------------------------------------------------------------------
+workflow_drop	150	/nas/ganluo/Flow_RL/Processed_dataset/drop/train_select_1000.jsonl
+workflow_gsm8k	150	/nas/ganluo/Flow_RL/Processed_dataset/gsm8k/1000_train.jsonl
+workflow_hotpotqa	150	/nas/ganluo/Flow_RL/Processed_dataset/hotpotqa/train_select_1000.jsonl
+workflow_humaneval	150	/nas/ganluo/Flow_RL/Processed_dataset/human_eval/test.jsonl
+workflow_humanevalplus	131	/nas/ganluo/Flow_RL/Processed_dataset/humanevalplus/humanevalplus_train.jsonl
+workflow_limr	150	/nas/ganluo/Flow_RL/Processed_dataset/high_level_math/limr/train.jsonl
+workflow_mbpp	150	/nas/ganluo/Flow_RL/Processed_dataset/mbpp/train.jsonl
+workflow_mbppplus	150	/nas/ganluo/Flow_RL/Processed_dataset/mbppplus/mbppplus_train.jsonl

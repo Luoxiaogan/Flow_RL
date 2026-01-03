@@ -1,0 +1,5 @@
+{"line_number": 1, "test_id": "d590427a6b39", "data_source": "hotpotqa", "operators_group": "ensemble_generate_revise_summarize_vectorsearch", "success": true, "score": 0.0}
+{"line_number": 2, "test_id": "c68b0563a2f6", "data_source": "hotpotqa", "operators_group": "ensemble_generate_revise_summarize_vectorsearch", "success": true, "score": 0.0}
+{"line_number": 3, "test_id": "884fde6b1df8", "data_source": "hotpotqa", "operators_group": "ensemble_generate_revise_summarize_vectorsearch", "success": true, "score": 0.0}
+{"line_number": 4, "test_id": "3a2573f67756", "data_source": "hotpotqa", "operators_group": "ensemble_generate_revise_summarize_vectorsearch", "success": true, "score": 0.26}
+{"line_number": 5, "test_id": "16c6721ebc2f", "data_source": "hotpotqa", "operators_group": "ensemble_generate_revise_summarize_vectorsearch", "success": true, "score": 0.12}

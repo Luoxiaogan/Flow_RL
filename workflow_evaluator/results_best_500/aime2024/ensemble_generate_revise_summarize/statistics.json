@@ -1,0 +1,10 @@
+{
+  "data_source": "aime2024",
+  "operators_group": "ensemble_generate_revise_summarize",
+  "total": 1,
+  "successful": 1,
+  "failed": 0,
+  "success_rate": 1.0,
+  "average_score": 0.25,
+  "timestamp": "2025-09-24T05:08:54.625399"
+}

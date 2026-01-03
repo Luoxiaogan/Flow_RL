@@ -1,0 +1,5 @@
+{"line_number": 6, "test_id": "3ee5aa6e77e4", "source_file": "../baseline/QWEN3_MAX_test.filtered.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.5, "error": null}
+{"line_number": 25, "test_id": "e8d3f9b294f8", "source_file": "../baseline/QWEN3_MAX_test.filtered.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.86, "error": null}
+{"line_number": 57, "test_id": "330d70b56f18", "source_file": "../baseline/QWEN3_MAX_test.filtered.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.92, "error": null}
+{"line_number": 68, "test_id": "b2b8a7e724c7", "source_file": "../baseline/QWEN3_MAX_test.filtered.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.66, "error": null}
+{"line_number": 77, "test_id": "0f2bf4f7c74a", "source_file": "../baseline/QWEN3_MAX_test.filtered.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.88, "error": null}

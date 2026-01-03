@@ -1,0 +1,44 @@
+{
+  "benchmark": "aime2024",
+  "n_samples": 24,
+  "sample_indices": [
+    19,
+    6,
+    15,
+    18,
+    10,
+    0,
+    1,
+    4,
+    14,
+    12,
+    2,
+    13,
+    3,
+    11,
+    20,
+    17,
+    22,
+    16,
+    23,
+    9,
+    5,
+    8,
+    21,
+    7
+  ],
+  "timestamp": "2025-09-25T00:07:13.798780",
+  "cot": {
+    "score": 0.25,
+    "success": true,
+    "message": "Score computed successfully",
+    "error": null
+  },
+  "self_consistency": {
+    "score": 0.20833333333333334,
+    "success": true,
+    "message": "Score computed successfully",
+    "error": null
+  },
+  "improvement": -0.04166666666666666
+}

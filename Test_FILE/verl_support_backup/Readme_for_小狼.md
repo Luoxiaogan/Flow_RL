@@ -1,0 +1,1 @@
+Test_FILE\verl_support\generate_verl_data.py是数据集生成脚本,说明参考Test_FILE\verl_support\README.md;Test_FILE\verl_support\workflow_reward.py是reward_function,已经被导入verl;test.sh可以启动verl训练,里面有一些说明

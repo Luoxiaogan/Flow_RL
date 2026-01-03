@@ -1,0 +1,5 @@
+{"line_number": 1, "test_id": "9c45243886ec", "source_file": "../baseline/test_QWEN3_8BBBBB_with_responses_rollout=1.filtered.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 2, "test_id": "7f992e2af3e8", "source_file": "../baseline/test_QWEN3_8BBBBB_with_responses_rollout=1.filtered.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.76, "error": null}
+{"line_number": 31, "test_id": "d89b28d2e3ca", "source_file": "../baseline/test_QWEN3_8BBBBB_with_responses_rollout=1.filtered.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 38, "test_id": "9e25b5d0b7d5", "source_file": "../baseline/test_QWEN3_8BBBBB_with_responses_rollout=1.filtered.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.0, "error": null}
+{"line_number": 58, "test_id": "a97118841e4c", "source_file": "../baseline/test_QWEN3_8BBBBB_with_responses_rollout=1.filtered.jsonl", "workflow_code_snippet": "...", "success": true, "score": 0.98, "error": null}

@@ -1,0 +1,5 @@
+{"line_number": 1, "test_id": "12f36abe84a8", "data_source": "gsm8k", "operators_group": "decompose_ensemble_generate_programmer_revise_summarize", "success": true, "score": 0.84}
+{"line_number": 2, "test_id": "cc32d696c2f3", "data_source": "gsm8k", "operators_group": "decompose_ensemble_generate_programmer_revise_summarize", "success": true, "score": 0.58}
+{"line_number": 3, "test_id": "ef03bc3e2793", "data_source": "math500", "operators_group": "ensemble_generate_revise_summarize", "success": true, "score": 0.8}
+{"line_number": 4, "test_id": "39790416e779", "data_source": "mbpp", "operators_group": "ensemble_generate_revise_summarize", "success": true, "score": 0.86}
+{"line_number": 5, "test_id": "160295ed139a", "data_source": "mbpp", "operators_group": "decompose_ensemble_generate_programmer_revise_summarize", "success": true, "score": 0.68}

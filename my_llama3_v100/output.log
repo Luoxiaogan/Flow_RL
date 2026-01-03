@@ -1,0 +1,564 @@
+nohup: ignoring input
+Starting training on 6 V100 GPUs...
+ipex flag is deprecated, will be removed in Accelerate v1.10. From 2.7.0, PyTorch has all needed optimizations for Intel CPU and XPU.
+[2025-07-19 21:28:44,082] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 21:28:46,414] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+W0719 21:28:46.992000 78162 site-packages/torch/distributed/run.py:793] 
+W0719 21:28:46.992000 78162 site-packages/torch/distributed/run.py:793] *****************************************
+W0719 21:28:46.992000 78162 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0719 21:28:46.992000 78162 site-packages/torch/distributed/run.py:793] *****************************************
+[2025-07-19 21:28:52,061] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 21:28:52,067] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 21:28:52,082] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 21:28:52,143] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 21:28:52,146] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 21:28:52,151] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-07-19 21:28:53,547] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 21:28:53,554] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 21:28:53,555] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-19 21:28:53,562] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-19 21:28:53,581] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 21:28:53,588] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-19 21:28:53,617] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 21:28:53,618] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 21:28:53,624] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-19 21:28:53,624] [INFO] [comm.py:707:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+[2025-07-19 21:28:53,625] [INFO] [comm.py:676:init_distributed] cdb=None
+[2025-07-19 21:28:53,639] [INFO] [logging.py:107:log_dist] [Rank -1] [TorchCheckpointEngine] Initialized with serialization = False
+[2025-07-19 21:28:53,646] [INFO] [comm.py:676:init_distributed] cdb=None
+Loading model from /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa...
+Data type for model loading set to: torch.float16 (FP16)
+Flash Attention 2 is disabled.
+[2025-07-19 21:28:54,795] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 6
+Loading model from /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa...
+Data type for model loading set to: torch.float16 (FP16)
+Flash Attention 2 is disabled.
+Loading model from /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa...
+Data type for model loading set to: torch.float16 (FP16)
+Flash Attention 2 is disabled.
+Loading model from /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa...
+Data type for model loading set to: torch.float16 (FP16)
+Flash Attention 2 is disabled.
+[2025-07-19 21:28:55,067] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 6
+Loading model from /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa...
+Data type for model loading set to: torch.float16 (FP16)
+Flash Attention 2 is disabled.
+Loading model from /mnt/mydisk/haoyu/hf_models/hub/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e1945c40cd546c78e41f1151f4db032b271faeaa...
+Data type for model loading set to: torch.float16 (FP16)
+Flash Attention 2 is disabled.
+[2025-07-19 21:28:55,093] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 6
+[2025-07-19 21:28:55,097] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 6
+[2025-07-19 21:28:55,105] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 6
+[2025-07-19 21:28:55,112] [INFO] [config.py:684:__init__] Config mesh_device None world_size = 6
+[2025-07-19 21:28:56,755] [INFO] [partition_parameters.py:366:__exit__] finished initializing model - num_params = 291, num_elems = 8.03B
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:02<00:07,  2.47s/it]Loading checkpoint shards:  25%|██▌       | 1/4 [00:02<00:07,  2.52s/it]Loading checkpoint shards:  25%|██▌       | 1/4 [00:02<00:07,  2.50s/it]Loading checkpoint shards:  25%|██▌       | 1/4 [00:02<00:07,  2.49s/it]Loading checkpoint shards:  25%|██▌       | 1/4 [00:02<00:07,  2.50s/it]Loading checkpoint shards:  25%|██▌       | 1/4 [00:07<00:22,  7.57s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:10<00:10,  5.46s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:10<00:10,  5.48s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:10<00:10,  5.47s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:10<00:10,  5.47s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:10<00:10,  5.48s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:15<00:15,  7.61s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:17<00:06,  6.41s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:17<00:06,  6.42s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:17<00:06,  6.41s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:17<00:06,  6.42s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:17<00:06,  6.42s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:17<00:00,  3.99s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:17<00:00,  4.46s/it]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:17<00:00,  4.00s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:17<00:00,  4.47s/it]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:17<00:00,  4.00s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:17<00:00,  4.47s/it]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:17<00:00,  4.00s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:17<00:00,  4.48s/it]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:17<00:00,  4.00s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:17<00:00,  4.48s/it]
+Map:   0%|          | 0/1755 [00:00<?, ? examples/s]Map:   0%|          | 0/1755 [00:00<?, ? examples/s]Map:   0%|          | 0/1755 [00:00<?, ? examples/s]Map:   0%|          | 0/1755 [00:00<?, ? examples/s]Map:   0%|          | 0/1755 [00:00<?, ? examples/s]Map:  57%|█████▋    | 1000/1755 [00:00<00:00, 2218.10 examples/s]Map:  57%|█████▋    | 1000/1755 [00:00<00:00, 2180.64 examples/s]Map:  57%|█████▋    | 1000/1755 [00:00<00:00, 1980.44 examples/s]Map:  57%|█████▋    | 1000/1755 [00:00<00:00, 1954.22 examples/s]Map:  57%|█████▋    | 1000/1755 [00:00<00:00, 1929.00 examples/s]Map: 100%|██████████| 1755/1755 [00:00<00:00, 2217.11 examples/s]Map: 100%|██████████| 1755/1755 [00:00<00:00, 2177.34 examples/s]
+/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py:118: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+Map: 100%|██████████| 1755/1755 [00:00<00:00, 2100.39 examples/s]Map: 100%|██████████| 1755/1755 [00:00<00:00, 2085.60 examples/s]
+/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py:118: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+Map: 100%|██████████| 1755/1755 [00:00<00:00, 2217.91 examples/s]Map: 100%|██████████| 1755/1755 [00:00<00:00, 2292.72 examples/s]Map: 100%|██████████| 1755/1755 [00:00<00:00, 2258.98 examples/s]Map: 100%|██████████| 1755/1755 [00:00<00:00, 2150.62 examples/s]
+/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py:118: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+Map: 100%|██████████| 1755/1755 [00:00<00:00, 2172.52 examples/s]
+/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py:118: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+Map: 100%|██████████| 1755/1755 [00:00<00:00, 2147.33 examples/s]
+/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py:118: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+Starting full SFT training...
+Starting full SFT training...
+Starting full SFT training...
+Starting full SFT training...
+Starting full SFT training...
+Loading checkpoint shards:  75%|███████▌  | 3/4 [00:22<00:07,  7.64s/it]Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
+/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/cpp_extension.py:1964: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.03255438804626465 seconds
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.1014869213104248 seconds
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.10126948356628418 seconds
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.10126137733459473 seconds
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.10149312019348145 seconds
+Loading checkpoint shards: 100%|██████████| 4/4 [00:24<00:00,  5.41s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:24<00:00,  6.22s/it]
+/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py:118: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+Starting full SFT training...
+Using /root/.cache/torch_extensions/py310_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /root/.cache/torch_extensions/py310_cu124/fused_adam/build.ninja...
+/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/cpp_extension.py:1964: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.0316157341003418 seconds
+Parameter Offload - Persistent parameters statistics: param_count = 65, numel = 266240
+[2025-07-19 21:29:30,620] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-19 21:29:30,620] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-19 21:29:30,620] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-19 21:29:30,620] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-19 21:29:30,620] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+[2025-07-19 21:29:30,954] [WARNING] [lr_schedules.py:686:get_lr] Attempting to get learning rate from scheduler before it has started
+wandb: WARNING The `run_name` is currently set to the same value as `TrainingArguments.output_dir`. If this was not intended, please specify a different run name by setting the `TrainingArguments.run_name` parameter.
+wandb: Currently logged in as: luogan_little_wolf (luogan_little_wolf-peking-university) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.21.0
+wandb: Run data is saved locally in /root/lg/Flow_RL_luogan/my_llama3_v100/wandb/run-20250719_212931-w1at8mjc
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run /mnt/mydisk/luogan/Llama-3-8B-Instruct-Workflow-Expert-Full-V100
+wandb: ⭐️ View project at https://wandb.ai/luogan_little_wolf-peking-university/llama3-8b-workflow-full-sft-v100
+wandb: 🚀 View run at https://wandb.ai/luogan_little_wolf-peking-university/llama3-8b-workflow-full-sft-v100/runs/w1at8mjc
+  0%|          | 0/144 [00:00<?, ?it/s]  1%|          | 1/144 [00:13<32:41, 13.71s/it]                                               {'loss': 2.2, 'grad_norm': 0.0, 'learning_rate': 0, 'epoch': 0.02}
+  1%|          | 1/144 [00:13<32:41, 13.71s/it]  1%|▏         | 2/144 [00:24<28:44, 12.15s/it]                                               {'loss': 2.1919, 'grad_norm': 0.0, 'learning_rate': 0, 'epoch': 0.04}
+  1%|▏         | 2/144 [00:24<28:44, 12.15s/it]  2%|▏         | 3/144 [00:35<27:24, 11.66s/it]                                               {'loss': 2.2039, 'grad_norm': 0.0, 'learning_rate': 0, 'epoch': 0.06}
+  2%|▏         | 3/144 [00:35<27:24, 11.66s/it][2025-07-19 21:30:19,626] [WARNING] [stage3.py:2164:step] 1 pytorch allocator cache flushes since last step. this happens when there is high memory pressure and is detrimental to performance. if this is happening frequently consider adjusting settings to reduce memory consumption. If you are unable to make the cache flushes go away consider adding get_accelerator().empty_cache() calls in your training loop to ensure that all ranks flush their caches at the same time
+  3%|▎         | 4/144 [00:47<27:18, 11.71s/it]                                               {'loss': 2.1937, 'grad_norm': 40.82022030320229, 'learning_rate': 0.0, 'epoch': 0.08}
+  3%|▎         | 4/144 [00:47<27:18, 11.71s/it]Traceback (most recent call last):
+  File "/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py", line 143, in <module>
+    train()
+  File "/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py", line 134, in train
+    trainer.train()
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 2122, in train
+    return inner_training_loop(
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 2474, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 3572, in training_step
+    loss = self.compute_loss(model, inputs, num_items_in_batch=num_items_in_batch)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 3625, in compute_loss
+    outputs = model(**inputs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+    ret_val = func(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/engine.py", line 2105, in forward
+    loss = self.module(*inputs, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+    return inner()
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+    result = forward_call(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 1190, in forward
+    outputs = self.model(
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+    return inner()
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py", line 143, in <module>
+[rank2]:     train()
+[rank2]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py", line 134, in train
+[rank2]:     trainer.train()
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 2122, in train
+[rank2]:     return inner_training_loop(
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 2474, in _inner_training_loop
+[rank2]:     tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 3572, in training_step
+[rank2]:     loss = self.compute_loss(model, inputs, num_items_in_batch=num_items_in_batch)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 3625, in compute_loss
+[rank2]:     outputs = model(**inputs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank2]:     ret_val = func(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/engine.py", line 2105, in forward
+[rank2]:     loss = self.module(*inputs, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank2]:     return inner()
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank2]:     result = forward_call(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 1190, in forward
+[rank2]:     outputs = self.model(
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank2]:     return inner()
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank2]:     result = forward_call(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 933, in forward
+[rank2]:     layer_outputs = self._gradient_checkpointing_func(
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_compile.py", line 32, in inner
+[rank2]:     return disable_fn(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+[rank2]:     return fn(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 489, in checkpoint
+[rank2]:     return CheckpointFunction.apply(function, preserve, *args)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+[rank2]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 264, in forward
+[rank2]:     outputs = run_function(*args)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank2]:     return inner()
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank2]:     result = forward_call(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 676, in forward
+[rank2]:     hidden_states, self_attn_weights, present_key_value = self.self_attn(
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank2]:     return inner()
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank2]:     result = forward_call(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 560, in forward
+[rank2]:     key_states = self.k_proj(hidden_states)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank2]:     return inner()
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1779, in inner
+[rank2]:     args_result = hook(self, args)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+[rank2]:     return fn(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/parameter_offload.py", line 298, in _pre_forward_module_hook
+[rank2]:     self.pre_sub_module_forward_function(module)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank2]:     return func(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/parameter_offload.py", line 473, in pre_sub_module_forward_function
+[rank2]:     param_coordinator.fetch_sub_module(sub_module, forward=True)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+[rank2]:     return fn(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank2]:     ret_val = func(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank2]:     return func(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partitioned_param_coordinator.py", line 415, in fetch_sub_module
+[rank2]:     self.__all_gather_params(params_to_prefetch, forward)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank2]:     ret_val = func(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partitioned_param_coordinator.py", line 475, in __all_gather_params
+[rank2]:     self.__all_gather_params_(nonquantized_params, forward, quantize=self.zero_quantized_weights)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partitioned_param_coordinator.py", line 504, in __all_gather_params_
+[rank2]:     handle = param_group[0].all_gather_coalesced(param_group, quantize=quantize)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank2]:     ret_val = func(*args, **kwargs)
+[rank2]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partition_parameters.py", line 1325, in all_gather_coalesced
+[rank2]:     param_buffer = torch.empty(
+[rank2]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1002.00 MiB. GPU 2 has a total capacity of 31.74 GiB of which 667.12 MiB is free. Including non-PyTorch memory, this process has 31.08 GiB memory in use. Of the allocated memory 22.94 GiB is allocated by PyTorch, and 7.21 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+    result = forward_call(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 933, in forward
+    layer_outputs = self._gradient_checkpointing_func(
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_compile.py", line 32, in inner
+    return disable_fn(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+    return fn(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 489, in checkpoint
+    return CheckpointFunction.apply(function, preserve, *args)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 264, in forward
+    outputs = run_function(*args)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+    return inner()
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+    result = forward_call(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 676, in forward
+    hidden_states, self_attn_weights, present_key_value = self.self_attn(
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+    return inner()
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+    result = forward_call(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 560, in forward
+    key_states = self.k_proj(hidden_states)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+    return inner()
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1779, in inner
+    args_result = hook(self, args)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+    return fn(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/parameter_offload.py", line 298, in _pre_forward_module_hook
+    self.pre_sub_module_forward_function(module)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/parameter_offload.py", line 473, in pre_sub_module_forward_function
+    param_coordinator.fetch_sub_module(sub_module, forward=True)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+    return fn(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+    ret_val = func(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partitioned_param_coordinator.py", line 415, in fetch_sub_module
+    self.__all_gather_params(params_to_prefetch, forward)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+    ret_val = func(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partitioned_param_coordinator.py", line 475, in __all_gather_params
+    self.__all_gather_params_(nonquantized_params, forward, quantize=self.zero_quantized_weights)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partitioned_param_coordinator.py", line 504, in __all_gather_params_
+    handle = param_group[0].all_gather_coalesced(param_group, quantize=quantize)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+    ret_val = func(*args, **kwargs)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partition_parameters.py", line 1325, in all_gather_coalesced
+    param_buffer = torch.empty(
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1002.00 MiB. GPU 0 has a total capacity of 31.74 GiB of which 833.12 MiB is free. Including non-PyTorch memory, this process has 30.92 GiB memory in use. Of the allocated memory 22.91 GiB is allocated by PyTorch, and 7.23 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py", line 143, in <module>
+[rank0]:     train()
+[rank0]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py", line 134, in train
+[rank0]:     trainer.train()
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 2122, in train
+[rank0]:     return inner_training_loop(
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 2474, in _inner_training_loop
+[rank0]:     tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 3572, in training_step
+[rank0]:     loss = self.compute_loss(model, inputs, num_items_in_batch=num_items_in_batch)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 3625, in compute_loss
+[rank0]:     outputs = model(**inputs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/engine.py", line 2105, in forward
+[rank0]:     loss = self.module(*inputs, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank0]:     return inner()
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank0]:     result = forward_call(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 1190, in forward
+[rank0]:     outputs = self.model(
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank0]:     return inner()
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank0]:     result = forward_call(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 933, in forward
+[rank0]:     layer_outputs = self._gradient_checkpointing_func(
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_compile.py", line 32, in inner
+[rank0]:     return disable_fn(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 489, in checkpoint
+[rank0]:     return CheckpointFunction.apply(function, preserve, *args)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+[rank0]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 264, in forward
+[rank0]:     outputs = run_function(*args)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank0]:     return inner()
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank0]:     result = forward_call(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 676, in forward
+[rank0]:     hidden_states, self_attn_weights, present_key_value = self.self_attn(
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank0]:     return inner()
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank0]:     result = forward_call(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 560, in forward
+[rank0]:     key_states = self.k_proj(hidden_states)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank0]:     return inner()
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1779, in inner
+[rank0]:     args_result = hook(self, args)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/parameter_offload.py", line 298, in _pre_forward_module_hook
+[rank0]:     self.pre_sub_module_forward_function(module)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/parameter_offload.py", line 473, in pre_sub_module_forward_function
+[rank0]:     param_coordinator.fetch_sub_module(sub_module, forward=True)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partitioned_param_coordinator.py", line 415, in fetch_sub_module
+[rank0]:     self.__all_gather_params(params_to_prefetch, forward)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partitioned_param_coordinator.py", line 475, in __all_gather_params
+[rank0]:     self.__all_gather_params_(nonquantized_params, forward, quantize=self.zero_quantized_weights)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partitioned_param_coordinator.py", line 504, in __all_gather_params_
+[rank0]:     handle = param_group[0].all_gather_coalesced(param_group, quantize=quantize)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partition_parameters.py", line 1325, in all_gather_coalesced
+[rank0]:     param_buffer = torch.empty(
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1002.00 MiB. GPU 0 has a total capacity of 31.74 GiB of which 833.12 MiB is free. Including non-PyTorch memory, this process has 30.92 GiB memory in use. Of the allocated memory 22.91 GiB is allocated by PyTorch, and 7.23 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py", line 143, in <module>
+[rank3]:     train()
+[rank3]:   File "/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py", line 134, in train
+[rank3]:     trainer.train()
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 2122, in train
+[rank3]:     return inner_training_loop(
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 2474, in _inner_training_loop
+[rank3]:     tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 3572, in training_step
+[rank3]:     loss = self.compute_loss(model, inputs, num_items_in_batch=num_items_in_batch)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/trainer.py", line 3625, in compute_loss
+[rank3]:     outputs = model(**inputs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank3]:     ret_val = func(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/engine.py", line 2105, in forward
+[rank3]:     loss = self.module(*inputs, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank3]:     return inner()
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank3]:     result = forward_call(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 1190, in forward
+[rank3]:     outputs = self.model(
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank3]:     return inner()
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank3]:     result = forward_call(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 933, in forward
+[rank3]:     layer_outputs = self._gradient_checkpointing_func(
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_compile.py", line 32, in inner
+[rank3]:     return disable_fn(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+[rank3]:     return fn(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 489, in checkpoint
+[rank3]:     return CheckpointFunction.apply(function, preserve, *args)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+[rank3]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 264, in forward
+[rank3]:     outputs = run_function(*args)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank3]:     return inner()
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank3]:     result = forward_call(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 676, in forward
+[rank3]:     hidden_states, self_attn_weights, present_key_value = self.self_attn(
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank3]:     return inner()
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank3]:     result = forward_call(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 560, in forward
+[rank3]:     key_states = self.k_proj(hidden_states)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank3]:     return inner()
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1779, in inner
+[rank3]:     args_result = hook(self, args)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+[rank3]:     return fn(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/parameter_offload.py", line 298, in _pre_forward_module_hook
+[rank3]:     self.pre_sub_module_forward_function(module)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank3]:     return func(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/parameter_offload.py", line 473, in pre_sub_module_forward_function
+[rank3]:     param_coordinator.fetch_sub_module(sub_module, forward=True)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+[rank3]:     return fn(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank3]:     ret_val = func(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank3]:     return func(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partitioned_param_coordinator.py", line 415, in fetch_sub_module
+[rank3]:     self.__all_gather_params(params_to_prefetch, forward)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank3]:     ret_val = func(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partitioned_param_coordinator.py", line 475, in __all_gather_params
+[rank3]:     self.__all_gather_params_(nonquantized_params, forward, quantize=self.zero_quantized_weights)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partitioned_param_coordinator.py", line 504, in __all_gather_params_
+[rank3]:     handle = param_group[0].all_gather_coalesced(param_group, quantize=quantize)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank3]:     ret_val = func(*args, **kwargs)
+[rank3]:   File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/deepspeed/runtime/zero/partition_parameters.py", line 1325, in all_gather_coalesced
+[rank3]:     param_buffer = torch.empty(
+[rank3]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1002.00 MiB. GPU 3 has a total capacity of 31.74 GiB of which 905.12 MiB is free. Including non-PyTorch memory, this process has 30.85 GiB memory in use. Of the allocated memory 22.90 GiB is allocated by PyTorch, and 6.98 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33m/mnt/mydisk/luogan/Llama-3-8B-Instruct-Workflow-Expert-Full-V100[0m at: [34mhttps://wandb.ai/luogan_little_wolf-peking-university/llama3-8b-workflow-full-sft-v100/runs/w1at8mjc[0m
+[1;34mwandb[0m: Find logs at: [1;35mwandb/run-20250719_212931-w1at8mjc/logs[0m
+W0719 21:30:30.000000 78162 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 78432 closing signal SIGTERM
+W0719 21:30:30.002000 78162 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 78433 closing signal SIGTERM
+W0719 21:30:30.006000 78162 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 78434 closing signal SIGTERM
+W0719 21:30:30.007000 78162 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 78436 closing signal SIGTERM
+W0719 21:30:30.011000 78162 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 78437 closing signal SIGTERM
+E0719 21:30:30.737000 78162 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 3 (pid: 78435) of binary: /mnt/mydisk/miniconda3/envs/lg_workflow/bin/python
+Traceback (most recent call last):
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1209, in <module>
+    main()
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1205, in main
+    launch_command(args)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1184, in launch_command
+    deepspeed_launcher(args)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/accelerate/commands/launch.py", line 868, in deepspeed_launcher
+    distrib_run.run(args)
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/mnt/mydisk/miniconda3/envs/lg_workflow/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/root/lg/Flow_RL_luogan/my_llama3_v100/src/train.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2025-07-19_21:30:30
+  host      : DingLisangV100-3
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 78435)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

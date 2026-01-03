@@ -1,0 +1,10 @@
+{
+    "id": "mbppplus_113_0",
+    "benchmark": "mbppplus",
+    "data_indices": [
+        6,
+        274
+    ],
+    "dataset_path": "../Processed_dataset/mbpp/train.jsonl",
+    "generation_timestamp": 1757428483.8925304
+}

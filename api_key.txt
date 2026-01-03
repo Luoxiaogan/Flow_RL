@@ -1,0 +1,223 @@
+alibaba内部的api key只有链接内网才能使用,
+
+ak: 956c41bd0f31beaf68b871d4987af4bb
+
+qwen_max and qwen-turbo
+
+```curl命令
+curl -X POST "https://idealab.alibaba-inc.com/api/openai/v1/chat/completions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer 956c41bd0f31beaf68b871d4987af4bb" \
+  -d '{
+    "model": "qwen-turbo",
+    "messages": [{"role": "user", "content": "please read the text, and think and show thinking test in <thik>...<\think>, and the revised text in <revised>...<\revised>. text: apple is an animal.  your answer: <thik>...<\think>\n<revised>...<\revised>"}],
+  }'
+```
+
+curl -X POST "https://idealab.alibaba-inc.com/api/openai/v1/chat/completions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer 956c41bd0f31beaf68b871d4987af4bb" \
+  -d '{
+    "model": "qwen-turbo",
+    "messages": [{"role": "user", "content": "Hello"}],
+    "max_tokens": 10
+  }'
+
+
+curl -X POST "https://idealab.alibaba-inc.com/api/openai/v1/chat/completions" \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer 956c41bd0f31beaf68b871d4987af4bb" \
+-d '{
+"model": "qwen-turbo",
+"messages": [{"content": "you speak chinese", "role": "system"},{"content": "Hello", "role": "user"}],
+"max_tokens": 10
+}'
+
+
+curl -X POST "http://11.166.4.163:8000/proxy/api/openai/v1/" \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer 8cf060f9e1f444858609730176542253" \
+-d '{
+"model": "qwen-turbo",
+"messages": [{"content": "you speak chinese", "role": "system"},{"content": "Hello", "role": "user"}],
+"max_tokens": 100,
+"temperature": 0.7
+}'
+
+{
+        "provider": "openai",
+        "model": "qwen-turbo",
+        "api_key": "8cf060f9e1f444858609730176542253",
+        "base_url": "http://11.166.4.163:8000/proxy/api/openai/v1/"
+    }
+
+
+curl -X POST "http://localhost:5009" \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer 956c41bd0f31beaf68b871d4987af4bb" \
+-d '{
+"model": "qwen-turbo",
+"messages": [{"role": "user", "content": "Hello"}],
+"max_tokens": 10
+}'
+
+
+curl -X POST https://idealab.alibaba-inc.com/api/openai/v1/chat/completions \
+-H "Authorization: Bearer 956c41bd0f31beaf68b871d4987af4bb" \
+-H "Content-Type: application/json" \
+-d '{
+    "model": "qwen-max-latest",
+    "messages": [
+        {
+            "role": "user", 
+            "content": "please read the text, and think and show thinking test in <thik>...<\think>, and the revised text in <revised>...<\revised>. text: apple is an animal.  your answer: <thik>...<\think>\n\n<revised>...<\revised>"
+        }
+    ],
+    "stream": false,
+    "stream_options": {
+        "include_usage": true
+    },
+    "enable_thinking": true,
+    "thinking_budget": 1000
+}'
+
+
+curl -X POST http://localhost:5009 \
+-H "Authorization: Bearer 956c41bd0f31beaf68b871d4987af4bb" \
+-H "Content-Type: application/json" \
+-d '{
+    "model": "qwen-max-latest",
+    "messages": [
+        {
+            "role": "user", 
+            "content": "please read the text, and think and show thinking test in <thik>...<\think>, and the revised text in <revised>...<\revised>. text: apple is an animal.  your answer: <thik>...<\think>\n\n<revised>...<\revised>"
+        }
+    ],
+    "stream": false,
+    "stream_options": {
+        "include_usage": true
+    },
+    "enable_thinking": true,
+    "thinking_budget": 1000
+}'
+
+curl -X POST https://idealab.alibaba-inc.com/api/openai/v1/chat/completions \
+-H "Authorization: Bearer 956c41bd0f31beaf68b871d4987af4bb" \
+-H "Content-Type: application/json" \
+-d '{
+    "model": "qwen-turbo",
+    "messages": [
+        {
+            "role": "user", 
+            "content": "please read the text, and think and show thinking test in <thik>...<\think>, and the revised text in <revised>...<\revised>. text: apple is an animal.  your answer: <thik>...<\think>\n\n<revised>...<\revised>"
+        }
+    ],
+}'
+
+
+qwen-max-latest
+
+{
+    "provider": "openai",
+    "model": "qwen-turbo", 
+    "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+    "base_url": "https://idealab.alibaba-inc.com/api/openai/v1"
+}
+
+alibaba
+{
+    "provider": "openai",
+    "model": "qwen-turbo",
+    "api_key": "sk-70e93be8280d4cd08526438db5441bae",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+}
+
+sk-0040331ac2d442b6b813304a807d88cd
+
+
+curl -X POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions \
+-H "Authorization: Bearer sk-0040331ac2d442b6b813304a807d88cd" \
+-H "Content-Type: application/json" \
+-d '{
+    "model": "qwen-turbo",
+    "messages": [
+        {
+            "role": "user", 
+            "content": "please read the text, and think and show thinking test in <thik>...<\think>, and the revised text in <revised>...<\revised>. text: apple is an animal.  your answer: <thik>...<\think>\n\n<revised>...<\revised>"
+        }
+    ],
+}'
+
+curl -X POST "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions" \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer sk-0040331ac2d442b6b813304a807d88cd" \
+-d '{
+"model": "qwen-turbo",
+"messages": [{"content": "you speak chinese", "role": "system"},{"content": "Hello", "role": "user"}],
+"max_tokens": 100,
+"temperature": 0.7
+}'
+
+
+本地的流量代理之后
+{
+    "provider": "openai",
+    "model": "qwen-turbo",
+    "api_key": "sk-70e93be8280d4cd08526438db5441bae",
+    "base_url": "http://localhost:5001"
+}
+
+
+// qzh的api: sk-2df74af0570a42059c10a3f24de1b9df
+
+{
+    "provider": "openai",
+    "model": "qwen-turbo",
+    "api_key": "sk-2df74af0570a42059c10a3f24de1b9df",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+}
+
+50r限额
+{
+    "provider": "openai",
+    "model": "gemini-2.5-pro",
+    "api_key": "sk-gTy3WuoxbM69TDB2jef0l8HTmO71R0lesdVvRFPOpisBW6pz",
+    "base_url": "https://api.openai-proxy.org/google"
+}
+
+350r限额
+{
+    "provider": "openai",
+    "model": "gemini-2.5-pro",
+    "api_key": "sk-D15YnLhTtgfvi4Ovzj583jkkJI1BtLqpOLXL3sZjptRl5m5x",
+    "base_url": "https://api.openai-proxy.org/google"
+}
+
+
+curl -X POST "https://api.openai-proxy.org/google/chat/completions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-D15YnLhTtgfvi4Ovzj583jkkJI1BtLqpOLXL3sZjptRl5m5x" \
+  -d '{
+    "model": "qwen-turbo",
+    "messages": [{"role": "user", "content": "Hello"}],
+    "max_tokens": 10
+  }'
+
+``````````````````````````````````````````````````````````````````````
+# API池配置 (JSON格式)
+API_POOL='[
+    {
+        "provider": "openai",
+        "model": "qwen-turbo",
+        "api_key": "sk-70e93be8280d4cd08526438db5441bae",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    }
+]'
+
+# 执行LLM配置 (JSON格式)
+EXEC_LLM='{
+        "provider": "openai",
+        "model": "qwen-turbo",
+        "api_key": "sk-70e93be8280d4cd08526438db5441bae",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+}'

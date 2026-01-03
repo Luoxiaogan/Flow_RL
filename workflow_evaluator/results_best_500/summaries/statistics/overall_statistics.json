@@ -1,0 +1,14 @@
+{
+  "total_tests": 11,
+  "total_successful": 11,
+  "total_failed": 0,
+  "unique_datasources": 11,
+  "unique_operators": 4,
+  "overall_success_rate": 1.0,
+  "overall_average_score": 0.6498743532889875,
+  "overall_score_std": 0.32550703238117695,
+  "overall_max_score": 0.94,
+  "overall_min_score": 0.1075,
+  "avg_execution_time": 203.66454545454545,
+  "total_execution_time": 2240.31
+}

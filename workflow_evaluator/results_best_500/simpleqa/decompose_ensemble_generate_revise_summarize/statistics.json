@@ -1,0 +1,10 @@
+{
+  "data_source": "simpleqa",
+  "operators_group": "decompose_ensemble_generate_revise_summarize",
+  "total": 1,
+  "successful": 1,
+  "failed": 0,
+  "success_rate": 1.0,
+  "average_score": 0.1075,
+  "timestamp": "2025-09-24T06:16:29.736010"
+}

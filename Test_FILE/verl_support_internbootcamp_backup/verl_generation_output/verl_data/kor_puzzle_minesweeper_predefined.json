@@ -1,0 +1,920 @@
+[
+  {
+    "data_source": "internbootcamp_kor_puzzle_minesweeper",
+    "prompt": [
+      {
+        "role": "system",
+        "content": "You are an expert at designing problem-solving workflows using predefined operators."
+      },
+      {
+        "role": "user",
+        "content": "Create a workflow to solve kor_puzzle_minesweeper problems. Task description: # 谜题训练场开发任务\n\n## 任务概述\n你是一位资深程序员，我需要你帮我实现一个特定谜题的训练场环境类。这个类继承自`Basebootcamp`，用于生成谜题实例并验证解答。\n\n## 背景说明\n我正在开发一系列谜题训练场，每个训练场对应一个特定类型的谜题。训练场类命名为`{PuzzleName}bootcamp`，其中`PuzzleName`是谜题的名称。\n\n每个训练场类主要提供两个核心功能：\n1. 生成该谜题类型的问题实例\n2. 验证用户对问题的回答是否正确\n\n## 技术接口规范\n\n### 类方法实现要求\n\n```python\nfrom bootcamp import Basebootcamp\n\nclass {PuzzleName}bootcamp(Basebootcamp):\n    def __init__(self, **params):\n        \\\"\\\"\\\"\n        请你自定义params，以保存该puzzle相关的参数，例如网格大小等，参数配有默认值\n        \\\"\\\"\\\"\n        pass\n    \n    def case_generator(self):\n        \\\"\\\"\\\"\n        生成谜题实例，提示：为保证谜题有解，可以先生成结果再对结果处理得到谜题\n        返回：一个可JSON序列化的字典（避免包含set等无法通过json.dumps处理的数据结构）\n        \\\"\\\"\\\"\n        pass\n    \n    @staticmethod\n    def prompt_func(question_case) -> str:\n        \\\"\\\"\\\"\n        将case_generator生成的谜题实例转换为文本形式的问题，问题中包含问题背景、对谜题规则的介绍、具体要解决的谜题实例、期望最终答案的格式，\n        例如：你是xxxx，请你解答yyyy，规则如下：yyyy，最终答案放置在：zzzzz\n        注意：请参照提供的谜题描述进行复述，规则应当描述详细，包括任务背景、具体任务操作规则、对题目格式和答案格式的含义介绍等，\n\n        参数:\n            question_case: 由case_generator生成的谜题实例\n            \n        返回:\n            str: 格式化的问题字符串\n            \n        注意:\n            1. 需考虑问题的格式，以便后续能正确提取\n            2. 问题描述中应包含期望的答案格式说明，以便后续能正确提取，为了避免抽取时匹配出干扰项，请要求模型将答案放在特定标签（如双括号）内，例如[[your answer here]]\n        \\\"\\\"\\\"\n        pass\n    \n    @staticmethod\n    def extract_output(output):\n        \\\"\\\"\\\"\n        从LLM的回复中提取符合格式要求的答案，如有多个，请抽取最后一个，避免使用re.search等只抽取第一个结果的方式。\n        \n        参数:\n            output: LLM的完整输出（包含原始问题和回答）\n            \n        返回:\n            提取的答案，若未找到符合格式的答案则返回None\n        \\\"\\\"\\\"\n        pass\n    \n    @classmethod\n    def _verify_correction(cls, solution, identity):\n        \\\"\\\"\\\"\n        验证提取的答案是否正确，注意一个问题可以能有多个解，按照谜题规则进行检验，不要直接匹配可能的答案。\n        \n        参数:\n            solution: extract_output提取的答案\n            identity: case_generator生成的谜题实例\n            \n        返回:\n            bool: 答案是否正确\n        \\\"\\\"\\\"\n        pass\n```\n\n### 验证评分方法（基类已实现）\n\n```python\n@classmethod\ndef verify_score(cls, model_output, identity:dict, format_score=0.1) -> float:\n    \\\"\\\"\\\"\n    验证输出结果并评分。\n    \n    参数:\n        model_output: 模型的完整输出\n        identity: 谜题实例（由case_generator生成）\n        format_score: 答案格式正确时的基础分数\n    \n    返回:\n        float: 评分结果（0-1之间）\n    \\\"\\\"\\\"\n    score = 0. \n    try:\n        extract_solution = cls.extract_output(model_output)\n        if extract_solution is None:\n            return score\n        else:\n            score = format_score # 格式正确时的基础分数\n        if cls._verify_correction(extract_solution, identity):\n            score = 1.  # 答案完全正确时的满分\n    except Exception as e:\n        # 处理异常情况\n        pass\n    return score\n```\n\n### 使用示例\n\n```python\n# 初始化谜题训练场\nbootcamp = Puzzlebootcamp()\n\n# 生成谜题实例\ncase = bootcamp.case_generator()\n\n# 将谜题转换为文本问题\nprompt = Puzzlebootcamp.prompt_func(case)\n\n# 获取LLM对问题的解答\nresponse = get_response(prompt, \\\"LLM\\\")\n\n# 从完整对话中提取答案\nextracted_output = Puzzlebootcamp.extract_output(prompt + response)\n\n# 验证答案并评分\nscore = Puzzlebootcamp.verify_score(extracted_output, case)\n```\n\n## 你的任务\n请根据以下谜题描述（谜题描述可能不完整，请先结合你的知识澄清规则），实现一个完整的谜题训练场类：\n\n### 谜题描述\n1.The game is played on an n*n grid, under each of which a mine may be hidden or empty.\n2.Some squares show a number indicating the number of mines around them (8 squares including the diagonal).\n3.Our puzzle uses X to fill the squares without numbers.\n4.The player needs to find all the squares where mines are located and replace X with A.Example questions are as follows:\n\n<example 0>\nX\t2\tX\t3\tX\nX\tX\t3\tX\tX\n1\t2\t3\t3\t2\nX\tX\tX\tX\t2\n1\tX\t2\tX\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 0>\n\n<example 1>\nX   X\tX\t1\tX\nX\t2\t2\tX\tX\n2\t3\tX\tX\t2\n1\tX\t2\tX\tX\nX\tX\tX\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 1>\n\n<example 2>\n1\tX\tX\tX\tX\nX\t2\tX\tX\t2\n2\t2\tX\t4\tX\nX\tX\t1\tX\tX\nX\t1\tX\tX\t2\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 2>\n\n<example 3>\n1\tX\tX\tX\t1\nX\t2\t2\tX\tX\nX\tX\tX\tX\t2\n3\tX\t3\t2\tX\nX\t2\t1\tX\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 3>\n\n<example 4>\n2\t3\t2\t2\t1\tX\t1\nX\tX\tX\t3\tX\t3\tX\n2\tX\tX\tX\tX\t3\t1\nX\tX\tX\t3\tX\t2\tX\nX\t2\t3\tX\t3\tX\t1\n2\tX\tX\tX\t3\tX\tX\nX\tX\t2\tX\tX\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 4>\n\n<example 5>\nX\tX\t3\tX\t3\tX\t1\n1\tX\tX\tX\tX\tX\tX\n2\tX\tX\t4\t5\t3\tX\nX\t1\t1\tX\t4\tX\tX\nX\tX\t2\t2\tX\tX\t3\nX\tX\t2\tX\tX\tX\tX\n1\tX\tX\tX\t2\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 5>\n\n<example 6>\n1\tX\t2\tX\tX\t1\t0\nX\tX\tX\tX\tX\t3\tX\n2\tX\tX\t1\tX\t2\tX\n1\tX\tX\tX\tX\tX\t1\nX\tX\t3\t1\tX\t1\tX\n1\tX\tX\tX\tX\tX\tX\nX\t2\t2\tX\t1\tX\t1\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 6>\n\n<example 7>\nX\t2\tX\t2\t1\tX\tX\nX\tX\tX\tX\tX\tX\t2\n1\tX\t3\tX\tX\tX\tX\nX\t1\tX\tX\t2\tX\t2\n1\tX\tX\t2\t3\t2\t2\n1\t2\t2\tX\tX\tX\tX\nX\tX\tX\tX\tX\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 7>\n\n<example 8>\nX\t1\tX\tX\t1\n1\tX\tX\tX\tX\n2\t2\tX\tX\t1\n1\tX\tX\tX\t1\nX\t2\tX\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 8>\n\n<example 9>\nX\t2\tX\tX\tX\nX\tX\tX\t3\t2\n3\tX\t3\tX\tX\n2\tX\tX\t4\tX\nX\t1\tX\t2\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 9>\n\n\n请完成上述谜题的训练场环境类实现，包括所有必要的方法。"
+      },
+      {
+        "role": "assistant",
+        "content": "\n# InternBootcamp Problem Solving Workflow with Predefined Operators\nimport asyncio\nfrom typing import Dict, Any, List, Optional\nfrom pydantic import BaseModel, Field\nfrom metagpt.workflow import Workflow\nfrom metagpt.actions import ActionNode\nfrom ScoreFlow.scripts.internbootcamp.operator import Custom, Review, Reflect, Programmer, ScEnsemble\n\n\nclass InternBootcampWorkflow(Workflow):\n    \"\"\"Workflow for kor_puzzle_minesweeper using predefined operators\"\"\"\n    \n    def __init__(self, llm):\n        super().__init__()\n        self.llm = llm\n        \n    async def run(self, problem: Dict[str, Any]) -> str:\n        # Initialize operators\n        custom = Custom(self.llm, problem)\n        review = Review(self.llm, problem)\n        programmer = Programmer(self.llm, problem)\n        ensemble = ScEnsemble(self.llm, problem)\n        \n        # Generate initial solution\n        solution1 = await custom(\"Analyze the problem and provide a step-by-step solution.\")\n        \n        # Review and improve\n        solution2 = await review(solution1)\n        \n        # Generate code solution if applicable\n        solution3 = await programmer(\"Write code to solve this problem\")\n        \n        # Select best solution\n        final_solution = await ensemble([solution1, solution2, solution3])\n        \n        return final_solution\n\n\n# The workflow is ready to solve InternBootcamp problems\n"
+      }
+    ],
+    "ability": "logic_reasoning",
+    "reward_model": {
+      "task_name": "kor_puzzle_minesweeper",
+      "test_cases": [
+        {
+          "grid": [
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "X",
+              "1",
+              "1",
+              "1"
+            ],
+            [
+              "2",
+              "X",
+              "X",
+              "X",
+              "1"
+            ],
+            [
+              "X",
+              "X",
+              "2",
+              "1",
+              "1"
+            ]
+          ],
+          "mines": [
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              3
+            ]
+          ],
+          "full_grid": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            [
+              "2",
+              "2",
+              "2",
+              "X",
+              "1"
+            ],
+            [
+              "X",
+              "X",
+              "2",
+              "1",
+              "1"
+            ]
+          ]
+        },
+        {
+          "grid": [
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "1",
+              "X",
+              "2",
+              "2",
+              "2"
+            ],
+            [
+              "X",
+              "X",
+              "1",
+              "X",
+              "1"
+            ],
+            [
+              "X",
+              "X",
+              "1",
+              "1",
+              "1"
+            ],
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ]
+          ],
+          "mines": [
+            [
+              2,
+              3
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "full_grid": [
+            [
+              "X",
+              "1",
+              "1",
+              "X",
+              "1"
+            ],
+            [
+              "1",
+              "1",
+              "2",
+              "2",
+              "2"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "X",
+              "1"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          ]
+        },
+        {
+          "grid": [
+            [
+              "X",
+              "2",
+              "1",
+              "1",
+              "X"
+            ],
+            [
+              "1",
+              "2",
+              "X",
+              "1",
+              "X"
+            ],
+            [
+              "X",
+              "1",
+              "1",
+              "1",
+              "X"
+            ],
+            [
+              "X",
+              "1",
+              "1",
+              "1",
+              "X"
+            ],
+            [
+              "X",
+              "1",
+              "X",
+              "1",
+              "X"
+            ]
+          ],
+          "mines": [
+            [
+              1,
+              2
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "full_grid": [
+            [
+              "X",
+              "2",
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "1",
+              "2",
+              "X",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "X",
+              "1",
+              "0"
+            ]
+          ]
+        }
+      ],
+      "average_reward": 0.0,
+      "successful_examples": 0,
+      "total_examples": 3
+    },
+    "extra_info": {
+      "entry_id": 18,
+      "task_type": "puzzle",
+      "workflow_type": "predefined",
+      "num_examples": 3,
+      "timestamp": "2025-07-23T21:33:58.444489",
+      "generation_time": 0.0026102066040039062,
+      "workflow_file": "verl_generation_output\\workflows\\kor_puzzle_minesweeper_predefined_18.py",
+      "execution_file": "verl_generation_output\\execution_results\\kor_puzzle_minesweeper_predefined_18_result.json"
+    }
+  },
+  {
+    "data_source": "internbootcamp_kor_puzzle_minesweeper",
+    "prompt": [
+      {
+        "role": "system",
+        "content": "You are an expert at designing problem-solving workflows using predefined operators."
+      },
+      {
+        "role": "user",
+        "content": "Create a workflow to solve kor_puzzle_minesweeper problems. Task description: # 谜题训练场开发任务\n\n## 任务概述\n你是一位资深程序员，我需要你帮我实现一个特定谜题的训练场环境类。这个类继承自`Basebootcamp`，用于生成谜题实例并验证解答。\n\n## 背景说明\n我正在开发一系列谜题训练场，每个训练场对应一个特定类型的谜题。训练场类命名为`{PuzzleName}bootcamp`，其中`PuzzleName`是谜题的名称。\n\n每个训练场类主要提供两个核心功能：\n1. 生成该谜题类型的问题实例\n2. 验证用户对问题的回答是否正确\n\n## 技术接口规范\n\n### 类方法实现要求\n\n```python\nfrom bootcamp import Basebootcamp\n\nclass {PuzzleName}bootcamp(Basebootcamp):\n    def __init__(self, **params):\n        \\\"\\\"\\\"\n        请你自定义params，以保存该puzzle相关的参数，例如网格大小等，参数配有默认值\n        \\\"\\\"\\\"\n        pass\n    \n    def case_generator(self):\n        \\\"\\\"\\\"\n        生成谜题实例，提示：为保证谜题有解，可以先生成结果再对结果处理得到谜题\n        返回：一个可JSON序列化的字典（避免包含set等无法通过json.dumps处理的数据结构）\n        \\\"\\\"\\\"\n        pass\n    \n    @staticmethod\n    def prompt_func(question_case) -> str:\n        \\\"\\\"\\\"\n        将case_generator生成的谜题实例转换为文本形式的问题，问题中包含问题背景、对谜题规则的介绍、具体要解决的谜题实例、期望最终答案的格式，\n        例如：你是xxxx，请你解答yyyy，规则如下：yyyy，最终答案放置在：zzzzz\n        注意：请参照提供的谜题描述进行复述，规则应当描述详细，包括任务背景、具体任务操作规则、对题目格式和答案格式的含义介绍等，\n\n        参数:\n            question_case: 由case_generator生成的谜题实例\n            \n        返回:\n            str: 格式化的问题字符串\n            \n        注意:\n            1. 需考虑问题的格式，以便后续能正确提取\n            2. 问题描述中应包含期望的答案格式说明，以便后续能正确提取，为了避免抽取时匹配出干扰项，请要求模型将答案放在特定标签（如双括号）内，例如[[your answer here]]\n        \\\"\\\"\\\"\n        pass\n    \n    @staticmethod\n    def extract_output(output):\n        \\\"\\\"\\\"\n        从LLM的回复中提取符合格式要求的答案，如有多个，请抽取最后一个，避免使用re.search等只抽取第一个结果的方式。\n        \n        参数:\n            output: LLM的完整输出（包含原始问题和回答）\n            \n        返回:\n            提取的答案，若未找到符合格式的答案则返回None\n        \\\"\\\"\\\"\n        pass\n    \n    @classmethod\n    def _verify_correction(cls, solution, identity):\n        \\\"\\\"\\\"\n        验证提取的答案是否正确，注意一个问题可以能有多个解，按照谜题规则进行检验，不要直接匹配可能的答案。\n        \n        参数:\n            solution: extract_output提取的答案\n            identity: case_generator生成的谜题实例\n            \n        返回:\n            bool: 答案是否正确\n        \\\"\\\"\\\"\n        pass\n```\n\n### 验证评分方法（基类已实现）\n\n```python\n@classmethod\ndef verify_score(cls, model_output, identity:dict, format_score=0.1) -> float:\n    \\\"\\\"\\\"\n    验证输出结果并评分。\n    \n    参数:\n        model_output: 模型的完整输出\n        identity: 谜题实例（由case_generator生成）\n        format_score: 答案格式正确时的基础分数\n    \n    返回:\n        float: 评分结果（0-1之间）\n    \\\"\\\"\\\"\n    score = 0. \n    try:\n        extract_solution = cls.extract_output(model_output)\n        if extract_solution is None:\n            return score\n        else:\n            score = format_score # 格式正确时的基础分数\n        if cls._verify_correction(extract_solution, identity):\n            score = 1.  # 答案完全正确时的满分\n    except Exception as e:\n        # 处理异常情况\n        pass\n    return score\n```\n\n### 使用示例\n\n```python\n# 初始化谜题训练场\nbootcamp = Puzzlebootcamp()\n\n# 生成谜题实例\ncase = bootcamp.case_generator()\n\n# 将谜题转换为文本问题\nprompt = Puzzlebootcamp.prompt_func(case)\n\n# 获取LLM对问题的解答\nresponse = get_response(prompt, \\\"LLM\\\")\n\n# 从完整对话中提取答案\nextracted_output = Puzzlebootcamp.extract_output(prompt + response)\n\n# 验证答案并评分\nscore = Puzzlebootcamp.verify_score(extracted_output, case)\n```\n\n## 你的任务\n请根据以下谜题描述（谜题描述可能不完整，请先结合你的知识澄清规则），实现一个完整的谜题训练场类：\n\n### 谜题描述\n1.The game is played on an n*n grid, under each of which a mine may be hidden or empty.\n2.Some squares show a number indicating the number of mines around them (8 squares including the diagonal).\n3.Our puzzle uses X to fill the squares without numbers.\n4.The player needs to find all the squares where mines are located and replace X with A.Example questions are as follows:\n\n<example 0>\nX\t2\tX\t3\tX\nX\tX\t3\tX\tX\n1\t2\t3\t3\t2\nX\tX\tX\tX\t2\n1\tX\t2\tX\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 0>\n\n<example 1>\nX   X\tX\t1\tX\nX\t2\t2\tX\tX\n2\t3\tX\tX\t2\n1\tX\t2\tX\tX\nX\tX\tX\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 1>\n\n<example 2>\n1\tX\tX\tX\tX\nX\t2\tX\tX\t2\n2\t2\tX\t4\tX\nX\tX\t1\tX\tX\nX\t1\tX\tX\t2\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 2>\n\n<example 3>\n1\tX\tX\tX\t1\nX\t2\t2\tX\tX\nX\tX\tX\tX\t2\n3\tX\t3\t2\tX\nX\t2\t1\tX\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 3>\n\n<example 4>\n2\t3\t2\t2\t1\tX\t1\nX\tX\tX\t3\tX\t3\tX\n2\tX\tX\tX\tX\t3\t1\nX\tX\tX\t3\tX\t2\tX\nX\t2\t3\tX\t3\tX\t1\n2\tX\tX\tX\t3\tX\tX\nX\tX\t2\tX\tX\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 4>\n\n<example 5>\nX\tX\t3\tX\t3\tX\t1\n1\tX\tX\tX\tX\tX\tX\n2\tX\tX\t4\t5\t3\tX\nX\t1\t1\tX\t4\tX\tX\nX\tX\t2\t2\tX\tX\t3\nX\tX\t2\tX\tX\tX\tX\n1\tX\tX\tX\t2\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 5>\n\n<example 6>\n1\tX\t2\tX\tX\t1\t0\nX\tX\tX\tX\tX\t3\tX\n2\tX\tX\t1\tX\t2\tX\n1\tX\tX\tX\tX\tX\t1\nX\tX\t3\t1\tX\t1\tX\n1\tX\tX\tX\tX\tX\tX\nX\t2\t2\tX\t1\tX\t1\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 6>\n\n<example 7>\nX\t2\tX\t2\t1\tX\tX\nX\tX\tX\tX\tX\tX\t2\n1\tX\t3\tX\tX\tX\tX\nX\t1\tX\tX\t2\tX\t2\n1\tX\tX\t2\t3\t2\t2\n1\t2\t2\tX\tX\tX\tX\nX\tX\tX\tX\tX\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 7>\n\n<example 8>\nX\t1\tX\tX\t1\n1\tX\tX\tX\tX\n2\t2\tX\tX\t1\n1\tX\tX\tX\t1\nX\t2\tX\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 8>\n\n<example 9>\nX\t2\tX\tX\tX\nX\tX\tX\t3\t2\n3\tX\t3\tX\tX\n2\tX\tX\t4\tX\nX\t1\tX\t2\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 9>\n\n\n请完成上述谜题的训练场环境类实现，包括所有必要的方法。"
+      },
+      {
+        "role": "assistant",
+        "content": "\n# InternBootcamp Problem Solving Workflow with Predefined Operators\nimport asyncio\nfrom typing import Dict, Any, List, Optional\nfrom pydantic import BaseModel, Field\nfrom metagpt.workflow import Workflow\nfrom metagpt.actions import ActionNode\nfrom ScoreFlow.scripts.internbootcamp.operator import Custom, Review, Reflect, Programmer, ScEnsemble\n\n\nclass InternBootcampWorkflow(Workflow):\n    \"\"\"Workflow for kor_puzzle_minesweeper using predefined operators\"\"\"\n    \n    def __init__(self, llm):\n        super().__init__()\n        self.llm = llm\n        \n    async def run(self, problem: Dict[str, Any]) -> str:\n        # Initialize operators\n        custom = Custom(self.llm, problem)\n        review = Review(self.llm, problem)\n        programmer = Programmer(self.llm, problem)\n        ensemble = ScEnsemble(self.llm, problem)\n        \n        # Generate initial solution\n        solution1 = await custom(\"Analyze the problem and provide a step-by-step solution.\")\n        \n        # Review and improve\n        solution2 = await review(solution1)\n        \n        # Generate code solution if applicable\n        solution3 = await programmer(\"Write code to solve this problem\")\n        \n        # Select best solution\n        final_solution = await ensemble([solution1, solution2, solution3])\n        \n        return final_solution\n\n\n# The workflow is ready to solve InternBootcamp problems\n"
+      }
+    ],
+    "ability": "logic_reasoning",
+    "reward_model": {
+      "task_name": "kor_puzzle_minesweeper",
+      "test_cases": [
+        {
+          "grid": [
+            [
+              "X",
+              "X",
+              "1",
+              "1",
+              "X"
+            ],
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "1"
+            ],
+            [
+              "X",
+              "1",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ]
+          ],
+          "mines": [
+            [
+              4,
+              0
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "full_grid": [
+            [
+              "X",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            [
+              "1",
+              "1",
+              "1",
+              "X",
+              "1"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            [
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "X",
+              "1",
+              "0",
+              "0",
+              "0"
+            ]
+          ]
+        },
+        {
+          "grid": [
+            [
+              "X",
+              "1",
+              "X",
+              "X",
+              "2"
+            ],
+            [
+              "1",
+              "X",
+              "X",
+              "X",
+              "2"
+            ],
+            [
+              "X",
+              "X",
+              "1",
+              "1",
+              "X"
+            ],
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ]
+          ],
+          "mines": [
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "full_grid": [
+            [
+              "X",
+              "1",
+              "2",
+              "X",
+              "2"
+            ],
+            [
+              "1",
+              "1",
+              "2",
+              "X",
+              "2"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          ]
+        },
+        {
+          "grid": [
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "1",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "1",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "2",
+              "2",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "1",
+              "X",
+              "X",
+              "X"
+            ]
+          ],
+          "mines": [
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          "full_grid": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "1",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "X",
+              "2",
+              "1",
+              "1"
+            ],
+            [
+              "2",
+              "2",
+              "2",
+              "X",
+              "1"
+            ],
+            [
+              "X",
+              "1",
+              "1",
+              "1",
+              "1"
+            ]
+          ]
+        }
+      ],
+      "average_reward": 0.0,
+      "successful_examples": 0,
+      "total_examples": 3
+    },
+    "extra_info": {
+      "entry_id": 19,
+      "task_type": "puzzle",
+      "workflow_type": "predefined",
+      "num_examples": 3,
+      "timestamp": "2025-07-23T21:33:58.445515",
+      "generation_time": 0.0010254383087158203,
+      "workflow_file": "verl_generation_output\\workflows\\kor_puzzle_minesweeper_predefined_19.py",
+      "execution_file": "verl_generation_output\\execution_results\\kor_puzzle_minesweeper_predefined_19_result.json"
+    }
+  },
+  {
+    "data_source": "internbootcamp_kor_puzzle_minesweeper",
+    "prompt": [
+      {
+        "role": "system",
+        "content": "You are an expert at designing problem-solving workflows using predefined operators."
+      },
+      {
+        "role": "user",
+        "content": "Create a workflow to solve kor_puzzle_minesweeper problems. Task description: # 谜题训练场开发任务\n\n## 任务概述\n你是一位资深程序员，我需要你帮我实现一个特定谜题的训练场环境类。这个类继承自`Basebootcamp`，用于生成谜题实例并验证解答。\n\n## 背景说明\n我正在开发一系列谜题训练场，每个训练场对应一个特定类型的谜题。训练场类命名为`{PuzzleName}bootcamp`，其中`PuzzleName`是谜题的名称。\n\n每个训练场类主要提供两个核心功能：\n1. 生成该谜题类型的问题实例\n2. 验证用户对问题的回答是否正确\n\n## 技术接口规范\n\n### 类方法实现要求\n\n```python\nfrom bootcamp import Basebootcamp\n\nclass {PuzzleName}bootcamp(Basebootcamp):\n    def __init__(self, **params):\n        \\\"\\\"\\\"\n        请你自定义params，以保存该puzzle相关的参数，例如网格大小等，参数配有默认值\n        \\\"\\\"\\\"\n        pass\n    \n    def case_generator(self):\n        \\\"\\\"\\\"\n        生成谜题实例，提示：为保证谜题有解，可以先生成结果再对结果处理得到谜题\n        返回：一个可JSON序列化的字典（避免包含set等无法通过json.dumps处理的数据结构）\n        \\\"\\\"\\\"\n        pass\n    \n    @staticmethod\n    def prompt_func(question_case) -> str:\n        \\\"\\\"\\\"\n        将case_generator生成的谜题实例转换为文本形式的问题，问题中包含问题背景、对谜题规则的介绍、具体要解决的谜题实例、期望最终答案的格式，\n        例如：你是xxxx，请你解答yyyy，规则如下：yyyy，最终答案放置在：zzzzz\n        注意：请参照提供的谜题描述进行复述，规则应当描述详细，包括任务背景、具体任务操作规则、对题目格式和答案格式的含义介绍等，\n\n        参数:\n            question_case: 由case_generator生成的谜题实例\n            \n        返回:\n            str: 格式化的问题字符串\n            \n        注意:\n            1. 需考虑问题的格式，以便后续能正确提取\n            2. 问题描述中应包含期望的答案格式说明，以便后续能正确提取，为了避免抽取时匹配出干扰项，请要求模型将答案放在特定标签（如双括号）内，例如[[your answer here]]\n        \\\"\\\"\\\"\n        pass\n    \n    @staticmethod\n    def extract_output(output):\n        \\\"\\\"\\\"\n        从LLM的回复中提取符合格式要求的答案，如有多个，请抽取最后一个，避免使用re.search等只抽取第一个结果的方式。\n        \n        参数:\n            output: LLM的完整输出（包含原始问题和回答）\n            \n        返回:\n            提取的答案，若未找到符合格式的答案则返回None\n        \\\"\\\"\\\"\n        pass\n    \n    @classmethod\n    def _verify_correction(cls, solution, identity):\n        \\\"\\\"\\\"\n        验证提取的答案是否正确，注意一个问题可以能有多个解，按照谜题规则进行检验，不要直接匹配可能的答案。\n        \n        参数:\n            solution: extract_output提取的答案\n            identity: case_generator生成的谜题实例\n            \n        返回:\n            bool: 答案是否正确\n        \\\"\\\"\\\"\n        pass\n```\n\n### 验证评分方法（基类已实现）\n\n```python\n@classmethod\ndef verify_score(cls, model_output, identity:dict, format_score=0.1) -> float:\n    \\\"\\\"\\\"\n    验证输出结果并评分。\n    \n    参数:\n        model_output: 模型的完整输出\n        identity: 谜题实例（由case_generator生成）\n        format_score: 答案格式正确时的基础分数\n    \n    返回:\n        float: 评分结果（0-1之间）\n    \\\"\\\"\\\"\n    score = 0. \n    try:\n        extract_solution = cls.extract_output(model_output)\n        if extract_solution is None:\n            return score\n        else:\n            score = format_score # 格式正确时的基础分数\n        if cls._verify_correction(extract_solution, identity):\n            score = 1.  # 答案完全正确时的满分\n    except Exception as e:\n        # 处理异常情况\n        pass\n    return score\n```\n\n### 使用示例\n\n```python\n# 初始化谜题训练场\nbootcamp = Puzzlebootcamp()\n\n# 生成谜题实例\ncase = bootcamp.case_generator()\n\n# 将谜题转换为文本问题\nprompt = Puzzlebootcamp.prompt_func(case)\n\n# 获取LLM对问题的解答\nresponse = get_response(prompt, \\\"LLM\\\")\n\n# 从完整对话中提取答案\nextracted_output = Puzzlebootcamp.extract_output(prompt + response)\n\n# 验证答案并评分\nscore = Puzzlebootcamp.verify_score(extracted_output, case)\n```\n\n## 你的任务\n请根据以下谜题描述（谜题描述可能不完整，请先结合你的知识澄清规则），实现一个完整的谜题训练场类：\n\n### 谜题描述\n1.The game is played on an n*n grid, under each of which a mine may be hidden or empty.\n2.Some squares show a number indicating the number of mines around them (8 squares including the diagonal).\n3.Our puzzle uses X to fill the squares without numbers.\n4.The player needs to find all the squares where mines are located and replace X with A.Example questions are as follows:\n\n<example 0>\nX\t2\tX\t3\tX\nX\tX\t3\tX\tX\n1\t2\t3\t3\t2\nX\tX\tX\tX\t2\n1\tX\t2\tX\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 0>\n\n<example 1>\nX   X\tX\t1\tX\nX\t2\t2\tX\tX\n2\t3\tX\tX\t2\n1\tX\t2\tX\tX\nX\tX\tX\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 1>\n\n<example 2>\n1\tX\tX\tX\tX\nX\t2\tX\tX\t2\n2\t2\tX\t4\tX\nX\tX\t1\tX\tX\nX\t1\tX\tX\t2\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 2>\n\n<example 3>\n1\tX\tX\tX\t1\nX\t2\t2\tX\tX\nX\tX\tX\tX\t2\n3\tX\t3\t2\tX\nX\t2\t1\tX\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 3>\n\n<example 4>\n2\t3\t2\t2\t1\tX\t1\nX\tX\tX\t3\tX\t3\tX\n2\tX\tX\tX\tX\t3\t1\nX\tX\tX\t3\tX\t2\tX\nX\t2\t3\tX\t3\tX\t1\n2\tX\tX\tX\t3\tX\tX\nX\tX\t2\tX\tX\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 4>\n\n<example 5>\nX\tX\t3\tX\t3\tX\t1\n1\tX\tX\tX\tX\tX\tX\n2\tX\tX\t4\t5\t3\tX\nX\t1\t1\tX\t4\tX\tX\nX\tX\t2\t2\tX\tX\t3\nX\tX\t2\tX\tX\tX\tX\n1\tX\tX\tX\t2\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 5>\n\n<example 6>\n1\tX\t2\tX\tX\t1\t0\nX\tX\tX\tX\tX\t3\tX\n2\tX\tX\t1\tX\t2\tX\n1\tX\tX\tX\tX\tX\t1\nX\tX\t3\t1\tX\t1\tX\n1\tX\tX\tX\tX\tX\tX\nX\t2\t2\tX\t1\tX\t1\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 6>\n\n<example 7>\nX\t2\tX\t2\t1\tX\tX\nX\tX\tX\tX\tX\tX\t2\n1\tX\t3\tX\tX\tX\tX\nX\t1\tX\tX\t2\tX\t2\n1\tX\tX\t2\t3\t2\t2\n1\t2\t2\tX\tX\tX\tX\nX\tX\tX\tX\tX\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 7>\n\n<example 8>\nX\t1\tX\tX\t1\n1\tX\tX\tX\tX\n2\t2\tX\tX\t1\n1\tX\tX\tX\t1\nX\t2\tX\t1\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 8>\n\n<example 9>\nX\t2\tX\tX\tX\nX\tX\tX\t3\t2\n3\tX\t3\tX\tX\n2\tX\tX\t4\tX\nX\t1\tX\t2\tX\nEnsure that your final answer is wrapped in double square brackets, like this: [[X X X,A 2 2,2 3 A]].\n</example 9>\n\n\n请完成上述谜题的训练场环境类实现，包括所有必要的方法。"
+      },
+      {
+        "role": "assistant",
+        "content": "\n# InternBootcamp Problem Solving Workflow with Predefined Operators\nimport asyncio\nfrom typing import Dict, Any, List, Optional\nfrom pydantic import BaseModel, Field\nfrom metagpt.workflow import Workflow\nfrom metagpt.actions import ActionNode\nfrom ScoreFlow.scripts.internbootcamp.operator import Custom, Review, Reflect, Programmer, ScEnsemble\n\n\nclass InternBootcampWorkflow(Workflow):\n    \"\"\"Workflow for kor_puzzle_minesweeper using predefined operators\"\"\"\n    \n    def __init__(self, llm):\n        super().__init__()\n        self.llm = llm\n        \n    async def run(self, problem: Dict[str, Any]) -> str:\n        # Initialize operators\n        custom = Custom(self.llm, problem)\n        review = Review(self.llm, problem)\n        programmer = Programmer(self.llm, problem)\n        ensemble = ScEnsemble(self.llm, problem)\n        \n        # Generate initial solution\n        solution1 = await custom(\"Analyze the problem and provide a step-by-step solution.\")\n        \n        # Review and improve\n        solution2 = await review(solution1)\n        \n        # Generate code solution if applicable\n        solution3 = await programmer(\"Write code to solve this problem\")\n        \n        # Select best solution\n        final_solution = await ensemble([solution1, solution2, solution3])\n        \n        return final_solution\n\n\n# The workflow is ready to solve InternBootcamp problems\n"
+      }
+    ],
+    "ability": "logic_reasoning",
+    "reward_model": {
+      "task_name": "kor_puzzle_minesweeper",
+      "test_cases": [
+        {
+          "grid": [
+            [
+              "2",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "3",
+              "1",
+              "X",
+              "X"
+            ],
+            [
+              "1",
+              "1",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ]
+          ],
+          "mines": [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "full_grid": [
+            [
+              "2",
+              "2",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "X",
+              "X",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "X",
+              "3",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          ]
+        },
+        {
+          "grid": [
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "1",
+              "X",
+              "1",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "2",
+              "X",
+              "X",
+              "1"
+            ],
+            [
+              "X",
+              "2",
+              "X",
+              "X",
+              "X"
+            ]
+          ],
+          "mines": [
+            [
+              4,
+              3
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "full_grid": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "2",
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "X",
+              "2",
+              "X",
+              "2",
+              "1"
+            ],
+            [
+              "1",
+              "2",
+              "2",
+              "X",
+              "1"
+            ]
+          ]
+        },
+        {
+          "grid": [
+            [
+              "X",
+              "X",
+              "1",
+              "X",
+              "1"
+            ],
+            [
+              "1",
+              "X",
+              "1",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "2",
+              "X",
+              "X",
+              "X",
+              "X"
+            ],
+            [
+              "X",
+              "1",
+              "X",
+              "X",
+              "X"
+            ]
+          ],
+          "mines": [
+            [
+              2,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          "full_grid": [
+            [
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            [
+              "1",
+              "1",
+              "1",
+              "X",
+              "1"
+            ],
+            [
+              "X",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            [
+              "2",
+              "2",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "X",
+              "1",
+              "0",
+              "0",
+              "0"
+            ]
+          ]
+        }
+      ],
+      "average_reward": 0.0,
+      "successful_examples": 0,
+      "total_examples": 3
+    },
+    "extra_info": {
+      "entry_id": 20,
+      "task_type": "puzzle",
+      "workflow_type": "predefined",
+      "num_examples": 3,
+      "timestamp": "2025-07-23T21:33:58.448129",
+      "generation_time": 0.001146078109741211,
+      "workflow_file": "verl_generation_output\\workflows\\kor_puzzle_minesweeper_predefined_20.py",
+      "execution_file": "verl_generation_output\\execution_results\\kor_puzzle_minesweeper_predefined_20_result.json"
+    }
+  }
+]

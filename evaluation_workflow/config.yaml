@@ -1,0 +1,97 @@
+# ============================================
+# 评测系统统一配置文件
+# ============================================
+# 所有服务和脚本共享此配置
+
+# 服务配置
+services:
+  metagpt_api_proxy:    # MetaGPT operator执行时使用的API代理
+    enabled: true
+    host: "localhost"
+    port: 5009
+    target_url: "https://idealab.alibaba-inc.com/api/openai/v1"
+    # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    target_api_key: "956c41bd0f31beaf68b871d4987af4bb"  # 目标API的密钥
+    rate_per_second: 3      # 每秒分发请求数
+    max_concurrency: 6       # 最大并发数
+    queue_type: "default"    # 队列类型: default | random
+    
+  evaluation_api_proxy:  # 评估模型使用的API代理（新增）
+    enabled: true
+    host: "localhost"
+    port: 5010            # 使用不同的端口
+    target_url: "https://idealab.alibaba-inc.com/api/openai/v1"
+    # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    target_api_key: "956c41bd0f31beaf68b871d4987af4bb"  # 评估专用API密钥（可以与metagpt相同或不同）
+    rate_per_second: 3      # 更高的速率限制
+    max_concurrency: 6     # 更高的并发数
+    queue_type: "default"    # 队列类型: default | random
+    
+  scoreflow_reward:
+    enabled: true
+    host: "0.0.0.0"
+    port: 8899
+    timeout: 300            # 超时时间（秒）
+    debug: false
+
+# 模型配置
+model:
+  # 模式选择: local | api | evaluation_api
+  # local: 使用本地SGLang服务器
+  # api: 使用metagpt_api_proxy（端口5009）
+  # evaluation_api: 使用evaluation_api_proxy（端口5010）
+  mode: "evaluation_api"  # 默认使用评估API模式
+  
+  # 本地模型配置（mode=local时使用）
+  local:
+    model_path: "/nas/models/Qwen2.5-7B-Instruct"
+    port: 30009
+    tensor_parallel: 1
+    data_parallel: 1
+    mem_fraction_static: 0.85
+    startup_timeout: 180    # SGLang启动超时（秒）
+    debug_mode: false       # 是否显示SGLang详细输出（修正拼写错误）
+    
+  # API模型配置（mode=api或evaluation_api时使用）
+  api:
+    # 当mode=evaluation_api时，使用evaluation_api_proxy
+    url: "http://localhost:5010/chat/completions"  # 评估API代理（去掉v1，因为代理会添加）
+    # 当mode=api时，使用metagpt_api_proxy
+    # url: "http://localhost:5009/v1/chat/completions"  # MetaGPT API代理
+    key: "sk-evaluation-placeholder"  # 占位符，实际密钥由代理处理
+    model: "qwen-turbo"  # 使用的模型
+    # model: "qwen-max-latest"
+
+# 评测参数
+evaluation:
+  # 数据配置
+  test_data: "/Users/luogan/Code/workflow_generation/Flow_RL/Test_FILE/verl_support/data/gsm8k/test.parquet"
+  output_dir: "/Users/luogan/Code/workflow_generation/Flow_RL/evaluation_workflow/results"
+  
+  # 推理参数
+  batch_size: 50               # 批处理大小
+  temperature: 0.7             # 生成温度
+  max_tokens: 8192             # 最大生成token数
+  
+  # 可选参数
+  limit: null                  # 样本限制（null表示全部）
+  skip_scoring: false          # 是否跳过评分
+  save_intermediate: true      # 是否保存中间结果
+  
+# 日志配置
+logging:
+  level: "INFO"                # 日志级别: DEBUG | INFO | WARNING | ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "/Users/luogan/Code/workflow_generation/Flow_RL/evaluation_workflow/logs/evaluation.log"
+  
+# 路径配置
+paths:
+  # 必需的外部组件（绝对路径，需要根据服务器环境修改）
+  scoreflow_handlers: "/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/scripts"
+  benchmark_mapping: "/Users/luogan/Code/workflow_generation/Flow_RL/ScoreFlow/benchmark_mapping.jsonl"
+  processed_dataset: "/Users/luogan/Code/workflow_generation/Flow_RL/Processed_dataset"  # 数据集根目录
+  metagpt_config: "/Users/luogan/Code/workflow_generation/Flow_RL/metagpt_root/config/config2.yaml"
+  
+  # 本地工作目录（相对路径）
+  workspace: "/Users/luogan/Code/workflow_generation/Flow_RL/metagpt_root/workspace"
+  data_dir: "./data"  # 本地数据目录（如需要）

@@ -1,0 +1,134 @@
+# Token Tracking and Cost Management Configuration
+# Token追踪与费用管理配置文件
+
+token_tracking:
+  enabled: true                    # 是否启用token追踪
+  
+  # API价格配置（每百万token的价格，美元）
+  pricing:
+    models:
+      # Alibaba Qwen系列
+      qwen-turbo:
+        input_price: 0.5          # $0.5/1M tokens
+        output_price: 1.5         # $1.5/1M tokens
+        description: "Qwen Turbo - 快速经济型"
+      
+      qwen-plus:
+        input_price: 2.0          # $2.0/1M tokens
+        output_price: 6.0         # $6.0/1M tokens
+        description: "Qwen Plus - 增强型"
+      
+      qwen-max:
+        input_price: 20.0         # $20.0/1M tokens
+        output_price: 60.0        # $60.0/1M tokens
+        description: "Qwen Max - 最强型"
+      
+      # OpenAI系列
+      gpt-3.5-turbo:
+        input_price: 0.5          # $0.5/1M tokens
+        output_price: 1.5         # $1.5/1M tokens
+        description: "GPT-3.5 Turbo"
+      
+      gpt-4:
+        input_price: 30.0         # $30.0/1M tokens
+        output_price: 60.0        # $60.0/1M tokens
+        description: "GPT-4"
+      
+      gpt-4-turbo:
+        input_price: 10.0         # $10.0/1M tokens
+        output_price: 30.0        # $30.0/1M tokens
+        description: "GPT-4 Turbo"
+    
+    # 默认模型（当无法识别模型时使用）
+    default_model: "qwen-turbo"
+  
+  # 费用惩罚策略
+  penalty:
+    enabled: true                 # 是否启用费用惩罚
+    
+    # 惩罚模式
+    # - linear: 线性惩罚 (penalty = cost * rate)
+    # - square: 平方惩罚 (penalty = cost^2 * rate)
+    # - exponential: 指数惩罚 (penalty = (e^cost - 1) * rate)
+    mode: "linear"
+    
+    # 惩罚参数
+    rate: 0.1                     # 惩罚率（每$1费用的惩罚比例）
+    max_penalty: 0.3              # 最大惩罚上限（30%）
+    
+    # 费用阈值
+    thresholds:
+      warning: 0.5                # 警告阈值（$0.5）
+      critical: 1.0               # 严重阈值（$1.0）
+  
+  # 统计报告设置
+  reporting:
+    print_stats: true             # 是否打印统计信息到控制台
+    save_to_file: true            # 是否保存统计到文件
+    report_dir: "token_reports"   # 报告保存目录
+    report_interval: 100          # 每N个workflow生成一次报告
+    
+    # 报告格式
+    formats:
+      - json                      # JSON格式
+      - csv                       # CSV格式
+      - markdown                  # Markdown格式
+    
+    # 统计维度
+    dimensions:
+      - per_workflow              # 按workflow统计
+      - per_model                 # 按模型统计
+      - per_benchmark             # 按benchmark统计
+      - per_hour                  # 按小时统计
+      - per_day                   # 按天统计
+  
+  # 缓存设置
+  cache:
+    enabled: true                 # 是否启用统计缓存
+    ttl: 3600                     # 缓存时间（秒）
+    max_entries: 10000            # 最大缓存条目数
+  
+  # 警报设置
+  alerts:
+    enabled: true                 # 是否启用费用警报
+    
+    # 警报阈值
+    thresholds:
+      workflow_cost: 2.0          # 单个workflow费用超过$2.0时警报
+      hourly_cost: 10.0           # 每小时费用超过$10.0时警报
+      daily_cost: 100.0           # 每日费用超过$100.0时警报
+    
+    # 警报方式
+    methods:
+      console: true               # 控制台输出
+      file: true                  # 写入日志文件
+      webhook: false              # Webhook通知（需配置URL）
+    
+    webhook_url: ""               # Webhook URL（可选）
+
+# 服务器配置
+server:
+  # 统计API端点设置
+  stats_endpoints:
+    enabled: true                 # 是否启用统计端点
+    auth_required: false          # 是否需要认证
+    
+    # 可用端点
+    endpoints:
+      - /token_stats              # 获取token统计
+      - /cost_report              # 获取费用报告
+      - /model_usage              # 获取模型使用情况
+      - /reset_stats              # 重置统计（需要管理权限）
+  
+  # 响应格式设置
+  response:
+    include_token_stats: true     # 是否在响应中包含token统计
+    include_cost_details: true    # 是否包含费用详情
+    include_penalty_info: true    # 是否包含惩罚信息
+
+# 调试设置
+debug:
+  enabled: false                  # 是否启用调试模式
+  log_level: "INFO"               # 日志级别
+  save_debug_logs: true           # 是否保存调试日志
+  debug_log_dir: "debug_logs"     # 调试日志目录

@@ -1,0 +1,97 @@
+# Realtime Collection Example Configuration
+# 实时数据采集示例配置文件
+
+# ================================
+# TEST DATA CONFIGURATION / 测试数据配置
+# ================================
+test_data:
+  # Path to test data JSONL file
+  path: "../../generate_parquet_and_jsonl/test_scoreflow_data_all/test.jsonl"
+
+  # Maximum number of samples to evaluate (null for all)
+  max_samples: 100  # 示例：限制100个样本用于测试
+
+# ================================
+# REWARD SERVER CONFIGURATION / Reward服务器配置
+# ================================
+reward_server:
+  url: "http://localhost:7788"
+
+# ================================
+# EVALUATION SETTINGS / 评估设置
+# ================================
+evaluation:
+  # Batch size for processing
+  batch_size: 2  # 较小的批次大小，便于观察实时记录
+
+  # Output directory for reports
+  output_dir: "./evaluation_reports_realtime"
+
+  # Save intermediate results after each model
+  save_intermediate: true
+
+  # ================================
+  # REALTIME DATA COLLECTION / 实时数据采集
+  # ================================
+  # Enable realtime data collection with checkpoint recovery
+  # 启用实时数据采集和断点续测功能
+  enable_realtime_collection: true  # ⚡ 已启用实时采集
+
+  # Directory for realtime collection data files
+  # 实时采集数据文件的存储目录
+  collection_output_dir: "./realtime_evaluation_data"
+
+  # Save checkpoint every N records (for recovery)
+  # 每N条记录保存一次检查点（用于恢复）
+  checkpoint_interval: 5  # 更频繁的检查点，适合测试
+
+  # Skip already processed samples when resuming
+  # 恢复时跳过已处理的样本
+  skip_processed: true
+
+# ================================
+# MODELS TO EVALUATE / 待评估的模型列表
+# ================================
+models:
+  # 示例：仅评估一个模型用于测试实时采集
+  - name: "qwen-turbo-realtime-test"
+    type: "api"
+    api_endpoints:
+      - "http://localhost:5059"
+    api_keys:
+      - ""
+    model: "qwen-turbo"
+    api_type: "openai"
+    max_retries: 1
+    timeout: 300  # 较短的超时时间
+    max_concurrency: 2  # 较低的并发数，便于观察
+    generation_params:
+      max_new_tokens: 2048  # 较少的token，加快处理
+      temperature: 0.7
+      top_p: 0.9
+
+# ================================
+# USAGE NOTES / 使用说明
+# ================================
+#
+# 1. 启动评测:
+#    python scripts/run_unified_evaluation.py --config configs/models_config_realtime.yaml
+#
+# 2. 监控实时数据:
+#    - 数据文件: ./realtime_evaluation_data/evaluation_data_*.jsonl
+#    - 检查点: ./realtime_evaluation_data/checkpoint_*.json
+#    - 恢复信息: ./realtime_evaluation_data/resume_info.json
+#
+# 3. 模拟中断和恢复:
+#    - Ctrl+C 中断评测
+#    - 再次运行相同命令，将自动从断点恢复
+#
+# 4. 查看采集的数据:
+#    import json
+#    with open('./realtime_evaluation_data/evaluation_data_*.jsonl', 'r') as f:
+#        for line in f:
+#            record = json.loads(line)
+#            print(record['model_name'], record['evaluation']['score'])
+#
+# 5. 导出汇总统计:
+#    评测完成后会自动在 evaluation_reports_realtime/ 生成汇总文件

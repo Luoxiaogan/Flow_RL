@@ -1,0 +1,53 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8899,
+    "debug": false,
+    "timeout": 300,
+    "max_workers": 4,
+    "cors_enabled": true
+  },
+  
+  "llm_config": {
+    "upstream": {
+      "provider": "openai",
+      "model": "qwen-turbo",
+      "api_key": "YOUR_API_KEY",
+      "base_url": "YOUR_BASE_URL",
+      "temperature": 0.7
+    }
+  },
+  
+  "reward_config": {
+    "timeout": 180,
+    "max_concurrent": 5,
+    "retry_on_failure": false,
+    "save_debug_logs": true
+  },
+  
+  "data_paths": {
+    "gsm8k": "Processed_dataset/gsm8k/test.jsonl",
+    "mbpp": "Processed_dataset/mbpp/test.jsonl",
+    "humaneval": "Processed_dataset/humaneval/test.jsonl",
+    "high_level_math_aime2024": "Processed_dataset/high_level_math_aime2024/test.jsonl",
+    "high_level_math_amc2023": "Processed_dataset/high_level_math_amc2023/test.jsonl"
+  },
+  
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(levelname)s - %(message)s",
+    "file": "scoreflow_server.log",
+    "max_size": "100MB",
+    "backup_count": 5
+  },
+  
+  "security": {
+    "auth_enabled": false,
+    "api_keys": [],
+    "allowed_ips": [],
+    "rate_limit": {
+      "enabled": false,
+      "requests_per_minute": 60
+    }
+  }
+}

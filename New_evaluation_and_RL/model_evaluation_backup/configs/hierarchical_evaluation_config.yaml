@@ -1,0 +1,153 @@
+# ================================
+# 分层评估配置文件
+# ================================
+
+# 测试数据配置
+test_data:
+  # 测试数据路径 - 包含多个benchmark和operator组的数据
+  path: "../../generate_parquet_and_jsonl/test_scoreflow_data_all/test.jsonl"
+  # 最大样本数限制（用于快速测试，设为null表示使用全部）
+  max_samples: 100  # 测试时可以先用较少样本
+
+# Reward服务器配置
+reward_server:
+  url: "http://localhost:7788"
+
+# ================================
+# 分层评估设置
+# ================================
+evaluation:
+  # 基本设置
+  batch_size: 8  # 并发评估的批次大小
+  output_dir: "./hierarchical_reports"  # 输出目录
+  
+  # 分层评估模式
+  hierarchical_mode: false  # 启用分层评估
+  incremental_reporting: false  # 启用增量报告
+  save_sample_scores: true  # 保存每个样本的详细分数
+  save_intermediate: true  # 保存中间结果
+  
+  # 报告级别 - 在哪些级别生成报告
+  report_levels:
+    - operator    # Operator组级别报告
+    - benchmark   # Benchmark级别报告
+    - model      # 模型级别报告
+  
+  # 输出结构设置
+  output_structure:
+    by_model: true      # 按模型组织输出
+    by_benchmark: true  # 按benchmark组织输出
+    by_operator: true   # 按operator组组织输出
+  
+  # 生成设置
+  generation_params:
+    max_new_tokens: 4096
+    temperature: 0.7
+    top_p: 0.9
+
+# ================================
+# 待评估的模型列表
+# ================================
+models:
+  # 示例1：API模型
+  - name: "QwenTurbo-API"
+    type: "api"
+    api_endpoints: 
+      - "http://localhost:5059"
+    api_keys:
+      - ""
+    model: "qwen-turbo"
+    api_type: "openai"
+    max_retries: 3
+    timeout: 600
+    max_concurrency: 40  # API并发限制
+    generation_params:
+      max_new_tokens: 8192
+      temperature: 0.7
+      top_p: 0.9
+
+# models:
+#   # 示例1：API模型
+#   - name: "QwenMax-API"
+#     type: "api"
+#     api_endpoints: 
+#       - "http://localhost:5059"
+#     api_keys:
+#       - ""
+#     model: "qwen-max"
+#     api_type: "openai"
+#     max_retries: 3
+#     timeout: 600
+#     max_concurrency: 40  # API并发限制
+#     generation_params:
+#       max_new_tokens: 8192
+#       temperature: 0.7
+#       top_p: 0.9
+  
+  # # 示例2：本地HuggingFace模型
+  # - name: "Qwen2.5-7B-Instruct"
+  #   type: "huggingface"
+  #   path: "Qwen/Qwen2.5-7B-Instruct"
+  #   device: "cuda"
+  #   torch_dtype: "float16"
+  #   max_concurrency: 2  # 本地模型并发较低
+  #   generation_params:
+  #     max_new_tokens: 4096
+  #     temperature: 0.7
+  #     top_p: 0.9
+  #     do_sample: true
+  
+  # # 示例3：JSONL日志模型（用于对比已有结果）
+  # - name: "Previous-Evaluation-Results"
+  #   type: "jsonl"
+  #   jsonl_path: "../val_logs/20241215_100000/evaluation.jsonl"
+  #   # JSONL模型直接读取已有结果，不需要生成参数
+
+# ================================
+# 可视化和报告设置
+# ================================
+report:
+  # 图表生成
+  generate_charts: true
+  chart_formats:
+    - png
+    - svg
+  
+  # CSV导出
+  save_detailed_csv: true
+  csv_include_solutions: false  # 是否在CSV中包含完整解决方案
+  
+  # 实时监控
+  enable_dashboard: false  # 启用HTML仪表板
+  dashboard_refresh_interval: 10  # 仪表板刷新间隔（秒）
+  
+  # 报告格式
+  formats:
+    - json    # JSON格式报告
+    - markdown  # Markdown格式报告
+    - html    # HTML格式报告（如果启用）
+
+# ================================
+# 高级设置
+# ================================
+advanced:
+  # 错误处理
+  continue_on_error: false  # 单个样本失败时继续
+  retry_failed_samples: false  # 是否重试失败的样本
+  
+  # 资源管理
+  cleanup_after_model: true  # 评估完一个模型后清理资源
+  max_memory_usage: "80%"  # 最大内存使用限制
+  
+  # 日志
+  log_level: "INFO"
+  save_logs: true
+  log_file_prefix: "hierarchical_eval"
+  
+  # 数据组织
+  group_by_operator: true  # 是否按operator组组织数据
+  operator_field: "extra_info.operator_group"  # operator组字段路径
+  
+  # 并行处理
+  parallel_models: false  # 是否并行评估多个模型（需要更多资源）
+  parallel_benchmarks: false  # 是否并行评估多个benchmark

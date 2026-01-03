@@ -1,0 +1,90 @@
+[
+  {
+    "benchmark": "aime2024",
+    "n_samples": 24,
+    "sample_indices": [
+      19,
+      6,
+      15,
+      18,
+      10,
+      0,
+      1,
+      4,
+      14,
+      12,
+      2,
+      13,
+      3,
+      11,
+      20,
+      17,
+      22,
+      16,
+      23,
+      9,
+      5,
+      8,
+      21,
+      7
+    ],
+    "timestamp": "2025-09-25T00:07:13.798780",
+    "cot": {
+      "score": 0.25,
+      "success": true,
+      "message": "Score computed successfully",
+      "error": null
+    },
+    "self_consistency": {
+      "score": 0.20833333333333334,
+      "success": true,
+      "message": "Score computed successfully",
+      "error": null
+    },
+    "improvement": -0.04166666666666666
+  },
+  {
+    "benchmark": "aime2025",
+    "n_samples": 24,
+    "sample_indices": [
+      12,
+      1,
+      13,
+      19,
+      14,
+      10,
+      16,
+      11,
+      5,
+      21,
+      6,
+      3,
+      15,
+      18,
+      17,
+      0,
+      9,
+      22,
+      4,
+      8,
+      7,
+      20,
+      2,
+      23
+    ],
+    "timestamp": "2025-09-25T00:10:26.445394",
+    "cot": {
+      "score": 0.4166666666666667,
+      "success": true,
+      "message": "Score computed successfully",
+      "error": null
+    },
+    "self_consistency": {
+      "score": 0.3333333333333333,
+      "success": true,
+      "message": "Score computed successfully",
+      "error": null
+    },
+    "improvement": -0.08333333333333337
+  }
+]

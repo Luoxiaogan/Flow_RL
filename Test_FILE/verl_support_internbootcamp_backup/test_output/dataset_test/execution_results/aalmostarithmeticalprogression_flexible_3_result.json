@@ -1,0 +1,75 @@
+{
+  "task_name": "aalmostarithmeticalprogression",
+  "total_examples": 2,
+  "successful_examples": 0,
+  "average_reward": 0.0,
+  "total_reward": 0.0,
+  "results": [
+    {
+      "example_id": {
+        "n": 1,
+        "b": [
+          537543
+        ],
+        "ans": 1
+      },
+      "input": "",
+      "expected_output": "",
+      "workflow_output": "mock_solution",
+      "reward": 0.0,
+      "success": false
+    },
+    {
+      "example_id": {
+        "n": 38,
+        "b": [
+          982228,
+          392500,
+          616355,
+          616355,
+          392500,
+          392500,
+          392500,
+          392500,
+          392500,
+          616355,
+          616355,
+          392500,
+          392500,
+          616355,
+          392500,
+          616355,
+          392500,
+          392500,
+          616355,
+          392500,
+          616355,
+          616355,
+          392500,
+          616355,
+          616355,
+          392500,
+          616355,
+          392500,
+          616355,
+          616355,
+          278367,
+          392500,
+          616355,
+          392500,
+          616355,
+          616355,
+          392500,
+          616355
+        ],
+        "ans": 18
+      },
+      "input": "",
+      "expected_output": "",
+      "workflow_output": "mock_solution",
+      "reward": 0.0,
+      "success": false
+    }
+  ],
+  "execution_time": "2025-07-23T21:31:54.445352"
+}

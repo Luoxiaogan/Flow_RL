@@ -1,0 +1,10 @@
+{
+  "data_source": "humaneval",
+  "operators_group": "ensemble_generate_programmer_revise_summarize",
+  "total": 5,
+  "successful": 5,
+  "failed": 0,
+  "success_rate": 1.0,
+  "average_score": 0.43200000000000005,
+  "timestamp": "2025-09-24T18:28:44.340424"
+}

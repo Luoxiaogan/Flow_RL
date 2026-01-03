@@ -1,0 +1,10 @@
+{
+  "data_source": "hotpotqa",
+  "operators_group": "ensemble_generate_revise_summarize_vectorsearch",
+  "total": 5,
+  "successful": 5,
+  "failed": 0,
+  "success_rate": 1.0,
+  "average_score": 0.076,
+  "timestamp": "2025-11-24T23:29:32.753127"
+}

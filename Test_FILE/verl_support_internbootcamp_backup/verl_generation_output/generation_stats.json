@@ -1,0 +1,57 @@
+{
+  "stats": {
+    "total_entries": 36,
+    "successful_entries": 0,
+    "success_rate": 0.0,
+    "average_reward": 0.0,
+    "max_reward": 0.0,
+    "min_reward": 0.0,
+    "by_task": {
+      "jigsaw_sudoku": {
+        "count": 6,
+        "average_reward": 0.0,
+        "success_rate": 0.0
+      },
+      "kakuro": {
+        "count": 6,
+        "average_reward": 0.0,
+        "success_rate": 0.0
+      },
+      "killer_sudoku": {
+        "count": 6,
+        "average_reward": 0.0,
+        "success_rate": 0.0
+      },
+      "kor_puzzle_minesweeper": {
+        "count": 6,
+        "average_reward": 0.0,
+        "success_rate": 0.0
+      },
+      "minesweeper": {
+        "count": 6,
+        "average_reward": 0.0,
+        "success_rate": 0.0
+      },
+      "sudoku": {
+        "count": 6,
+        "average_reward": 0.0,
+        "success_rate": 0.0
+      }
+    },
+    "by_workflow_type": {
+      "predefined": {
+        "count": 18,
+        "average_reward": 0.0,
+        "success_rate": 0.0
+      },
+      "flexible": {
+        "count": 18,
+        "average_reward": 0.0,
+        "success_rate": 0.0
+      }
+    }
+  },
+  "train_size": 28,
+  "test_size": 8,
+  "generation_time": "2025-07-23T21:33:58.885213"
+}

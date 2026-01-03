@@ -1,0 +1,117 @@
+# 原地模型评估配置文件
+# 此文件集中管理所有评估相关设置
+
+# 测试数据配置
+test_data:
+  # 测试数据路径（相对于项目根目录）
+  # 格式：{"data_source": "...", "prompt": [...], "extra_info": {...}}
+  path: "New_evaluation_and_RL/parquet_and_jsonl_data/test.jsonl"
+  
+  # 不同基准测试的备选路径（相对于项目根目录）
+  # benchmark_paths是一个未实现的功能配置
+  benchmark_paths:
+    gsm8k: "New_evaluation_and_RL/parquet_and_jsonl_data/single/gsm8k_test.jsonl"
+    mbpp: "New_evaluation_and_RL/parquet_and_jsonl_data/single/mbpp_test.jsonl"
+    drop: "New_evaluation_and_RL/parquet_and_jsonl_data/single/drop_test.jsonl"
+    humaneval: "New_evaluation_and_RL/parquet_and_jsonl_data/single/humaneval_test.jsonl"
+
+# 评估调度 (7卡训练+1卡推理优化)
+schedule:
+  # 每N个训练步评估一次 (增加间隔减少推理频率)
+  interval: 20
+  
+  # 评估的最大样本数（None表示全部）
+  max_samples: 1  # 测试时减少，生产环境设为null
+  
+  # 评估批次大小 (单卡推理保持较小batch)
+  batch_size: 1
+
+# 生成参数（评估时使用，优化单卡推理）
+generation:
+  # 这些参数会覆盖模型的generation_config.json以保证一致性
+  max_new_tokens: 1024  # 从2048减少到1024，减轻推理负担
+  temperature: 0.6  # 固定值以保证可重复性
+  top_p: 0.95
+  top_k: 20
+  do_sample: true
+  
+  # 可选：使用模型的generation_config.json作为基础
+  use_model_config: true  # 如果为true，从模型加载并用上述参数覆盖
+  
+  # 重复惩罚
+  repetition_penalty: 1.0
+  
+  # 早停
+  early_stopping: false
+  
+  # Beam数量（1 = 贪婪/采样，>1 = beam搜索）
+  num_beams: 1
+
+# Reward服务器配置
+reward_server:
+  # 配置路径（相对于项目根目录）
+  config_path: "New_evaluation_and_RL/config.yaml"
+  
+  # 配置文件未找到时的备用设置
+  fallback:
+    host: "localhost"
+    port: 8897
+    timeout: 300  # 秒
+  
+  # 请求设置
+  max_retries: 3
+  retry_delay: 5  # 秒
+
+# 输出配置
+output:
+  # 评估报告的基础目录
+  base_dir: "${OUTPUT_DIR}/evaluation_reports"
+  
+  # 报告格式
+  formats:
+    - json  # 机器可读
+    - markdown  # 人类可读
+  
+  # 保存中间结果
+  save_intermediate: true
+  
+  # 保存生成的workflow以便调试
+  save_generations: true
+  generations_dir: "${OUTPUT_DIR}/evaluation_generations"
+
+# 日志
+logging:
+  # 评估日志级别
+  level: INFO  # DEBUG、INFO、WARNING、ERROR
+  
+  # 将评估指标输出到控制台
+  console_metrics: true
+  
+  # 输出到文件
+  file: "${OUTPUT_DIR}/evaluation.log"
+
+# 性能优化
+optimization:
+  # 评估后清空GPU缓存
+  clear_cache: true
+  
+  # 评估时使用混合精度
+  use_fp16: false  # 在H100上使用bf16代替
+  use_bf16: true
+  
+  # 编译模型以加快推理速度（PyTorch 2.0+）
+  compile_model: false  # 实验性功能
+
+# 检查点选择（未来功能）
+checkpoint_selection:
+  # 基于评估分数保存最佳检查点
+  save_best: true
+  
+  # 跟踪的指标
+  metric: "overall_score"
+  
+  # 模式："max"或"min"
+  mode: "max"
+  
+  # 早停的耐心值
+  patience: 5

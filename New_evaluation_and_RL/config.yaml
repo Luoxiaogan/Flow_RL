@@ -1,0 +1,304 @@
+# ============================================
+# 评测系统统一配置文件
+# ============================================
+# 所有服务和脚本共享此配置
+
+# 项目根目录配置（本地和服务器切换只需修改这里）
+# 本地: /Users/luogan/Code/workflow_generation/Flow_RL
+# 服务器: /nas/ganluo/Flow_RL
+# project_root: "/Users/luogan/Code/workflow_generation/Flow_RL"
+# project_root: "/nas/ganluo/Flow_RL"
+project_root: "/home/lg/workflow_tooluse/Flow_RL_luogan"
+# project_root: "/nas/ganluo/Flow_RL"
+# project_root: "/nas/ganluo/Flow_RL"
+# /nas/ganluo/Flow_RL/Processed_dataset
+# /Users/luogan/Code/workflow_generation/Flow_RL_RIGHT
+
+api_metagpt:
+  temperature: 0.9
+
+# 服务配置
+services:
+  metagpt_api_proxy:    # MetaGPT operator执行时使用的API代理
+    enabled: true
+    host: "localhost"
+    port: 5059
+    target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1" # ali内网
+    target_api_key: "sk-2df74af0570a42059c10a3f24de1b9df"  # sk-qzh
+    # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1" # ali-lg
+    # target_api_key: "sk-0040331ac2d442b6b813304a807d88cd"  # ali-lg
+    # target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"  # ali-qzh
+    # target_api_key: "sk-2df74af0570a42059c10a3f24de1b9df"  # ali-qzh
+    rate_per_second: 4      # 每秒分发请求数（支持小数，如0.2表示5秒一个请求）
+    max_concurrency: 70     # 最大并发请求数（同时处理的请求数量限制）
+    debug: false            # true: 显示所有请求详情, false: 仅显示进度条和错误
+    
+  evaluation_api_proxy:  # 评估模型使用的API代理（新增）
+    enabled: true
+    host: "localhost"
+    port: 5010            # 使用不同的端口
+    # target_url: "http://11.166.4.163:8000/proxy/api/openai/v1/chat/completions"
+    target_url: "https://dashscope.aliyuncs.com/compatible-mode/v1" # ali内网
+    target_api_key: "sk-2df74af0570a42059c10a3f24de1b9df"  # sk-qzh
+    rate_per_second: 3      # 更高的速率限制
+    # max_concurrency: 20     # 最大并发请求数（同时处理的请求数量限制）
+    debug: true
+
+    
+  scoreflow_reward:
+    enabled: true
+    host: "0.0.0.0"
+    port: 7788
+    timeout: 6000           # workflow执行超时：80分钟（4800秒）
+    max_concurrent_requests: 24     # 最大并发请求数（同时处理的请求数量限制）
+    request_queue_timeout: 6000     # 请求排队超时时间：80分钟（4800秒）
+    client_http_timeout: 420        # 客户端HTTP连接超时：80分钟（4800秒）
+    debug: false            # 控制是否保存debug日志文件到debug_logs/目录
+    silent: true           # 控制终端输出详细程度：true=静默模式(只显示关键信息)，false=详细输出
+    flask_debug: false      # false: 生产模式（单进程），true: 调试模式（双进程+自动重载）
+    workspace: "New_evaluation_and_RL/workspace"  # workflow执行日志保存目录 (相对于project_root)
+    
+    # Token费用惩罚配置
+    token_penalty:
+      enabled: false
+      
+      # API价格配置（每百万token的价格，美元）
+      pricing:
+        input_price_per_million: 0.5    # 输入token价格 $0.5/M (Qwen-turbo参考价)
+        output_price_per_million: 1.5   # 输出token价格 $1.5/M (Qwen-turbo参考价)
+      
+      # 惩罚策略
+      penalty_strategy:
+        mode: "linear"           # 惩罚模式: linear | square | exponential
+        penalty_rate: 0.1        # 每1美元费用扣0.1分（即10%）
+        max_penalty: 0.3         # 最大惩罚不超过30%原始分数
+  
+  internbootcamp_reward:
+    enabled: true
+    host: "0.0.0.0"
+    port: 8900
+    timeout: 300            # 超时时间（秒）
+    debug: true
+    workspace: "New_evaluation_and_RL/workspace/internbootcamp"  # workflow执行日志保存目录 (相对于project_root)
+    
+    # Token费用惩罚配置（与scoreflow保持一致）
+    token_penalty:
+      enabled: true
+      
+      # API价格配置（每百万token的价格，美元）
+      pricing:
+        input_price_per_million: 0.5    # 输入token价格 $0.5/M (Qwen-turbo参考价)
+        output_price_per_million: 1.5   # 输出token价格 $1.5/M (Qwen-turbo参考价)
+      
+      # 惩罚策略
+      penalty_strategy:
+        mode: "linear"           # 惩罚模式: linear | square | exponential
+        penalty_rate: 0.1        # 每1美元费用扣0.1分（即10%）
+        max_penalty: 0.3         # 最大惩罚不超过30%原始分数
+
+# 模型配置 
+model:
+  # 模式选择: local | evaluation_api
+  # local: 使用本地SGLang服务器（OpenAI兼容的/v1/chat/completions端点）
+  # evaluation_api: 使用evaluation_api_proxy（端口5010）
+  mode: "local"  # 默认使用评估API模式
+  
+  # 本地模型配置（mode=local时使用）
+  local:
+    model_path: "/nas/models/Qwen2.5-7B-Instruct"
+    port: 30009
+    host: "0.0.0.0"
+    mem_fraction_static: 0.85
+    base_gpu_id: 0          # 基础GPU ID，从这个GPU开始分配
+    startup_timeout: 180    # SGLang启动超时（秒）
+    debug_mode: false       # 是否显示SGLang详细输出
+
+# 评测参数
+evaluation:
+  # 数据配置
+  # 必须要是parquet data
+  test_data: "New_evaluation_and_RL/parquet_and_jsonl_data/single/test.parquet"  # 相对于project_root
+  output_dir: "evaluation_workflow/results"  # 相对于project_root
+  
+  # 推理参数
+  batch_size: 50               # 批处理大小
+  temperature: 0.7             # 生成温度
+  max_tokens: 8192             # 最大生成token数
+  
+  # 可选参数
+  limit: null                  # 样本限制（null表示全部）
+  skip_scoring: false          # 是否跳过评分
+  save_intermediate: true      # 是否保存中间结果
+  
+# 日志配置
+logging:
+  level: "INFO"                # 日志级别: DEBUG | INFO | WARNING | ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "evaluation_workflow/logs/evaluation.log"  # 相对于project_root
+  
+# 路径配置
+paths:
+  # 必需的外部组件（相对于project_root的路径）
+  scoreflow_handlers: "."  # ScoreFlow根目录 (即project_root本身)
+  benchmark_mapping: "ScoreFlow/benchmark_mapping_lessop.jsonl"  # 相对于project_root
+  processed_dataset: "Processed_dataset"  # 数据集根目录 (相对于project_root)
+  metagpt_config: "metagpt_root/config/config2.yaml"  # MetaGPT配置文件 (相对于project_root)
+  
+  # 共享的MetaGPT工作目录（所有程序共用）
+  metagpt_workspace: "metagpt_root/workspace"  # 相对于project_root
+  data_dir: "./data"  # 本地数据目录（如需要）
+
+# 数据生成配置
+data_generation:
+  # 默认输出目录
+  output_dir: "New_evaluation_and_RL/parquet_and_jsonl_data"  # 相对于project_root
+  
+  # 默认生成参数
+  default_test_cases_per_entry: 5
+  default_train_proportion: 0.8
+  default_test_proportion: 0.2
+  
+  # 支持的基准测试
+  supported_benchmarks:
+    - gsm8k
+    - mbpp
+    - drop
+    - hotpotqa
+    - humaneval
+    - high_level_math
+
+# ============================================
+# RL训练配置
+# ============================================
+rl_training:
+  # 数据配置（基于project_root的相对路径）
+  data:
+    train_files: "New_evaluation_and_RL/parquet_and_jsonl_data/RL/train.parquet"  # 相对于project_root
+    test_files: "New_evaluation_and_RL/parquet_and_jsonl_data/RL/test.parquet"    # 相对于project_root
+    train_batch_size: 16
+    max_prompt_length: 8192
+    max_response_length: 8192
+    filter_overlong_prompts: true
+    truncation: "error"
+  
+  # 模型配置
+  model:
+    # 基础模型路径 - 使用稳定的Qwen2.5-7B-Instruct
+    base_model_path: "/nas/models/Qwen2.5-7B-Instruct"
+    # 检查点保存目录（相对于project_root）
+    checkpoint_dir: "rl_out/checkpoints"
+    torch_dtype: "bfloat16"
+    enable_gradient_checkpointing: true
+    gpu_memory_utilization: 0.5
+    trust_remote_code: false
+  
+  # Actor配置
+  actor:
+    learning_rate: 5e-7
+    ppo_mini_batch_size: 8
+    ppo_micro_batch_size_per_gpu: 2
+    use_kl_loss: true
+    kl_loss_coef: 0.001
+    kl_loss_type: "low_var_kl"
+    entropy_coeff: 0
+    use_torch_compile: false
+    
+    # Checkpoint配置
+    checkpoint:
+      # 保存内容：'model'(只保存权重), 'optimizer'(包含优化器状态), 'extra'(其他元数据)
+      # 如果不需要optimizer state，只保留 ['model', 'extra']
+      save_contents: ['model', 'extra']  # 不保存optimizer state以节省空间
+      # save_contents: ['model', 'optimizer', 'extra']  # 完整保存（如需继续训练）
+      # extra_state包含训练的 "上下文信息"，让你知道模型训练到哪里了。这些元数据很小（通常几KB），但对于恢复训练或追踪训练历史非常重要
+      
+      # 加载内容（通常与save_contents一致）
+      load_contents: ['model', 'extra']
+  
+  # Rollout配置
+  rollout:
+    tensor_model_parallel_size: 2
+    log_prob_micro_batch_size_per_gpu: 2
+    n: 2  # 生成的响应数量
+    name: "sglang"
+    hybrid_engine: true
+    
+    # 标准generation参数
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 20
+    # 注意：min_p, custom_chat_template, reasoning_parser, enable_thinking 
+    # 这些参数不是VERL标准参数，已移除避免配置错误
+  
+  # Reference模型配置
+  ref:
+    log_prob_micro_batch_size_per_gpu: 2
+    use_torch_compile: false
+  
+  # Critic配置（如果使用）
+  critic:
+    # Critic的checkpoint配置（通常与Actor相同）
+    checkpoint:
+      save_contents: ['model', 'extra']  # 不保存optimizer state
+      load_contents: ['model', 'extra']
+  
+  # 训练器配置
+  trainer:
+    total_epochs: 3
+    n_gpus_per_node: 8
+    nnodes: 1
+    save_freq: 10  # 保存频率（每N个step保存一次checkpoint）
+    test_freq: 2   # 测试频率（每N个step在验证集上评估）
+    critic_warmup: 0
+    project_name: "verl_grpo_h100_test"
+    experiment_name: "qwen2.5_7b_h100_8gpu_test"
+    logger: ["console", "wandb"]  # 日志输出方式（控制台 + WandB）
+    default_local_dir: "rl_out/checkpoints"  # checkpoint保存根目录（相对于project_root）
+    
+    # Checkpoint管理
+    max_ckpt_num: 3  # 最多保留的checkpoint数量（null表示保留所有）
+    save_on_each_node: false  # 是否在每个节点都保存（通常只在rank 0保存）
+    
+    # 日志和监控配置
+    log_freq: 1  # 日志记录频率（每N个step记录一次，默认每步都记录）
+    log_to_wandb_every_n_steps: 1  # WandB日志上传频率（设置>1可减少网络开销）
+    wandb_config:
+      entity: null  # WandB团队/用户名（null使用默认）
+      tags: ["rl", "ppo", "qwen2.5"]  # 实验标签
+      notes: "PPO training with ScoreFlow rewards"  # 实验备注
+      save_code: true  # 是否保存代码到WandB
+      log_model: false  # 是否上传模型到WandB（通常false，因为模型很大）
+  
+  # 算法配置
+  algorithm:
+    adv_estimator: "grpo"  # Advantage估计器类型
+    use_kl_in_reward: false
+    gamma: 1.0  # 折扣因子
+    lam: 1.0    # GAE lambda参数
+  
+  # 奖励配置
+  reward:
+    # 使用prime奖励管理器（支持并行计算）
+    reward_manager: "prime"
+    
+    # 自定义奖励函数配置（连接到scoreflow_reward_server）
+    custom_reward_function:
+      enabled: true
+      # 统一客户端路径（相对于project_root）
+      path: "New_evaluation_and_RL/RL_part/scoreflow_reward_client.py"
+      name: "compute_score"
+      # 额外的奖励函数参数
+      reward_kwargs: {}
+  
+  # Ray配置
+  ray_init:
+    num_cpus: null  # Ray可用的CPU数量（null表示使用所有）
+    timeline_json_file: null  # 性能分析文件路径
+  
+  # 环境变量配置
+  environment:
+    USE_SGLANG: "1"
+    NCCL_DEBUG: "INFO"
+    NCCL_P2P_DISABLE: "1"
+    CUDA_LAUNCH_BLOCKING: "1"
+    TORCH_CUDA_ARCH_LIST: "8.0"
+    HYDRA_FULL_ERROR: "1"

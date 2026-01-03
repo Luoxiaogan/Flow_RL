@@ -1,0 +1,45 @@
+2025-09-14 22:36:41,163 - __main__ - INFO - 开始统一模型评估
+2025-09-14 22:36:41,163 - __main__ - INFO - 配置文件: ..\configs\models_config.yaml
+2025-09-14 22:36:41,163 - __main__ - INFO - 测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 22:36:41,163 - __main__ - INFO - 输出目录: ..\result_test
+2025-09-14 22:36:41,165 - __main__ - INFO - 模型数量: 1
+2025-09-14 22:36:41,166 - core.utils.report_generator - INFO - 报告输出目录: ..\result_test
+2025-09-14 22:36:41,166 - core.evaluators.unified_batch_evaluator - INFO - UnifiedBatchEvaluator 初始化完成
+2025-09-14 22:36:41,167 - core.evaluators.unified_batch_evaluator - INFO -   测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 22:36:41,167 - core.evaluators.unified_batch_evaluator - INFO -   输出目录: ..\result_test
+2025-09-14 22:36:41,167 - core.evaluators.unified_batch_evaluator - INFO -   批次大小: 1
+2025-09-14 22:36:41,167 - core.evaluators.unified_batch_evaluator - INFO -   最大样本: 10000
+2025-09-14 22:36:41,167 - core.evaluators.unified_batch_evaluator - INFO - 开始评估 1 个模型
+2025-09-14 22:36:41,168 - core.evaluators.unified_batch_evaluator - INFO - 验证模型配置...
+2025-09-14 22:36:41,175 - core.utils.config_validator - WARNING - Configuration validation found 1 error(s)
+2025-09-14 22:36:41,177 - core.utils.config_validator - WARNING -   - Schema validation error: 1200 is greater than the maximum of 600 at models.0.timeout
+2025-09-14 22:36:41,177 - core.evaluators.unified_batch_evaluator - WARNING - 配置验证发现 1 个警告
+2025-09-14 22:36:41,177 - core.evaluators.unified_batch_evaluator - WARNING -   - Schema validation error: 1200 is greater than the maximum of 600 at models.0.timeout
+2025-09-14 22:36:41,177 - core.evaluators.unified_batch_evaluator - INFO - 检查 Reward Server...
+2025-09-14 22:36:41,177 - core.utils.reward_server_checker - INFO - 检查 Reward Server: http://localhost:7788/health
+2025-09-14 22:36:41,451 - core.utils.reward_server_checker - INFO - ✓ Reward Server 正常运行: {'service': 'scoreflow_reward_server', 'status': 'healthy', 'version': '1.0.0'}
+2025-09-14 22:36:41,452 - core.evaluators.unified_batch_evaluator - INFO - 加载测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 22:36:41,492 - core.evaluators.unified_batch_evaluator - INFO - 限制评估样本数: 10000
+2025-09-14 22:36:41,493 - core.evaluators.unified_batch_evaluator - INFO - 加载了 280 个测试样本
+2025-09-14 22:36:41,493 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-14 22:36:41,493 - core.evaluators.unified_batch_evaluator - INFO - 评估模型 1/1: qwen-turbo
+2025-09-14 22:36:41,493 - core.evaluators.unified_batch_evaluator - INFO - 模型类型: api
+2025-09-14 22:36:41,493 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-14 22:36:41,495 - core.utils.model_factory - INFO - 创建模型接口: qwen-turbo (类型: api)
+2025-09-14 22:36:41,496 - core.interfaces.api_model_interface - INFO - [qwen-turbo] 初始化API模型
+2025-09-14 22:36:41,496 - core.interfaces.api_model_interface - INFO -   模型: qwen-turbo
+2025-09-14 22:36:41,496 - core.interfaces.api_model_interface - INFO -   API类型: openai
+2025-09-14 22:36:41,496 - core.interfaces.api_model_interface - INFO -   端点数量: 1
+2025-09-14 22:36:41,497 - core.utils.api_connection_pool - INFO - Created new API session: openai
+2025-09-14 22:36:44,484 - core.interfaces.api_model_interface - INFO - ✓ [qwen-turbo] API连接成功
+2025-09-14 22:36:44,484 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo] 生成解决方案...
+2025-09-14 22:36:44,484 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo] 使用并发数: 15
+2025-09-14 22:38:52,329 - core.interfaces.api_model_interface - WARNING - [qwen-turbo] API请求失败 (尝试 1/1): API error 502: {"error": {"message": "连接错误: - HTTPSConnectionPool(host='dashscope.aliyuncs.com', port=443): Max retries exceeded with url: /compatible-mode/v1/chat/completions (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))", "type": "ConnectionError", "details": "请检查API密钥和网络连接"}}
+2025-09-14 22:38:52,330 - core.evaluators.unified_batch_evaluator - WARNING - [qwen-turbo] 样本 9 生成失败: [qwen-turbo] API请求失败: API error 502: {"error": {"message": "连接错误: - HTTPSConnectionPool(host='dashscope.aliyuncs.com', port=443): Max retries exceeded with url: /compatible-mode/v1/chat/completions (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))", "type": "ConnectionError", "details": "请检查API密钥和网络连接"}}
+2025-09-14 22:39:46,588 - core.utils.resource_manager - WARNING - Exiting context with exception: CancelledError: 
+2025-09-14 22:39:46,588 - core.interfaces.api_model_interface - INFO - [qwen-turbo] API统计:
+2025-09-14 22:39:46,588 - core.interfaces.api_model_interface - INFO -   总请求: 15
+2025-09-14 22:39:46,588 - core.interfaces.api_model_interface - INFO -   成功: 14
+2025-09-14 22:39:46,588 - core.interfaces.api_model_interface - INFO -   失败: 1
+2025-09-14 22:39:46,589 - core.interfaces.api_model_interface - INFO -   成功率: 93.3%

@@ -1,0 +1,10 @@
+{
+  "data_source": "hotpotqa",
+  "operators_group": "ensemble_generate_revise_summarize",
+  "total": 1,
+  "successful": 1,
+  "failed": 0,
+  "success_rate": 1.0,
+  "average_score": 0.93,
+  "timestamp": "2025-09-24T06:00:12.975707"
+}

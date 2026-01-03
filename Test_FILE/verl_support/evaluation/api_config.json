@@ -1,0 +1,5 @@
+{
+    "api_url": "http://localhost:5009/chat/completions",
+    "api_key": "956c41bd0f31beaf68b871d4987af4bb",
+    "api_model": "qwen-max-latest"
+}

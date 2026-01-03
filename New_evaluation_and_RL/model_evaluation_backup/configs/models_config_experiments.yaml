@@ -1,0 +1,114 @@
+# ================================
+# 批量对比实验配置示例
+# ================================
+
+# 测试数据配置
+test_data:
+  path: "../../generate_parquet_and_jsonl/test_scoreflow_data_all/train.jsonl"
+  max_samples: 100  # 对比实验可以用较少样本快速测试
+
+# Reward服务器配置
+reward_server:
+  url: "http://localhost:7788"
+
+# 评估设置
+evaluation:
+  batch_size: 8
+  output_dir: "./evaluation_reports/experiments"
+  save_intermediate: true
+
+# ================================
+# 待评估的模型列表 - 多实验对比
+# ================================
+models:
+  
+  # -----------------------------------------------------------------------------
+  # 实验组1: 基础训练运行 (2024-12-12 15:00)
+  # -----------------------------------------------------------------------------
+  - name: "Exp1-BaseRun-Step100"
+    type: "jsonl"
+    jsonl_path: "../val_logs/20241212_150000/100.jsonl"
+  
+  - name: "Exp1-BaseRun-Step500"
+    type: "jsonl"
+    jsonl_path: "../val_logs/20241212_150000/500.jsonl"
+  
+  - name: "Exp1-BaseRun-Step1000"
+    type: "jsonl"
+    jsonl_path: "../val_logs/20241212_150000/1000.jsonl"
+  
+  # -----------------------------------------------------------------------------
+  # 实验组2: 调整学习率后的运行 (2024-12-13 09:30)
+  # -----------------------------------------------------------------------------
+  - name: "Exp2-HighLR-Step100"
+    type: "jsonl"
+    jsonl_path: "../val_logs/20241213_093000/100.jsonl"
+  
+  - name: "Exp2-HighLR-Step500"
+    type: "jsonl"
+    jsonl_path: "../val_logs/20241213_093000/500.jsonl"
+  
+  - name: "Exp2-HighLR-Step1000"
+    type: "jsonl"
+    jsonl_path: "../val_logs/20241213_093000/1000.jsonl"
+  
+  # -----------------------------------------------------------------------------
+  # 实验组3: 使用不同reward设置 (2024-12-14 14:20)
+  # -----------------------------------------------------------------------------
+  - name: "Exp3-NewReward-Step100"
+    type: "jsonl"
+    jsonl_path: "../val_logs/20241214_142000/100.jsonl"
+  
+  - name: "Exp3-NewReward-Step500"
+    type: "jsonl"
+    jsonl_path: "../val_logs/20241214_142000/500.jsonl"
+  
+  - name: "Exp3-NewReward-Step1000"
+    type: "jsonl"
+    jsonl_path: "../val_logs/20241214_142000/1000.jsonl"
+  
+  # -----------------------------------------------------------------------------
+  # 实验组4: Main实验分支 (来自train_qwen3_simplified_with_logger.sh的main_exp)
+  # -----------------------------------------------------------------------------
+  - name: "MainExp-Step100"
+    type: "jsonl"
+    jsonl_path: "../val_logs/main_exp/20241215_100000/100.jsonl"
+  
+  - name: "MainExp-Step500"
+    type: "jsonl"
+    jsonl_path: "../val_logs/main_exp/20241215_100000/500.jsonl"
+  
+  - name: "MainExp-Step1000"
+    type: "jsonl"
+    jsonl_path: "../val_logs/main_exp/20241215_100000/1000.jsonl"
+  
+  # -----------------------------------------------------------------------------
+  # 对照组: API模型基线
+  # -----------------------------------------------------------------------------
+  - name: "Baseline-QwenTurbo"
+    type: "api"
+    api_endpoints: 
+      - "http://localhost:5059"
+    api_keys:
+      - ""
+    model: "qwen-turbo"
+    api_type: "openai"
+    max_retries: 1
+    timeout: 600
+    max_concurrency: 15
+    generation_params:
+      max_new_tokens: 4096
+      temperature: 1.0
+      top_p: 0.9
+  
+  # -----------------------------------------------------------------------------
+  # 合并多个步数的数据 (用于综合评估)
+  # -----------------------------------------------------------------------------
+  - name: "Exp1-Combined-AllSteps"
+    type: "jsonl"
+    jsonl_path:
+      - "../val_logs/20241212_150000/100.jsonl"
+      - "../val_logs/20241212_150000/500.jsonl"
+      - "../val_logs/20241212_150000/1000.jsonl"
+      - "../val_logs/20241212_150000/1500.jsonl"
+      - "../val_logs/20241212_150000/2000.jsonl"

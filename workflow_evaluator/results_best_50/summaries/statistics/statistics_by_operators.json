@@ -1,0 +1,557 @@
+{
+  "decompose_ensemble_generate_revise_summarize": {
+    "total": 11,
+    "successful": 11,
+    "failed": 0,
+    "scores": [
+      0.16,
+      0.125,
+      0.5,
+      0.2916666666666667,
+      0.88,
+      0.2,
+      0.88,
+      0.98,
+      0.9,
+      0.66,
+      0.86
+    ],
+    "execution_times": [
+      119.52,
+      79.1,
+      660.0,
+      147.04,
+      39.43,
+      666.48,
+      36.01,
+      84.12,
+      424.55,
+      524.08,
+      36.2
+    ],
+    "datasource_breakdown": {
+      "simpleqa": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.16
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.16
+      },
+      "aime2024": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.125
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.125
+      },
+      "math500": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.5
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.5
+      },
+      "aime2025": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.2916666666666667
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.2916666666666667
+      },
+      "humaneval": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.88
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.88
+      },
+      "mgsmde": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.2
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.2
+      },
+      "hotpotqa": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.88
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.88
+      },
+      "gsm8k": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.98
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.98
+      },
+      "mgsmbn": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.9
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.9
+      },
+      "mbpp": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.66
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.66
+      },
+      "drop": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.86
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.86
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.5851515151515152,
+    "score_std": 0.3382704822947447,
+    "avg_execution_time": 256.04818181818183
+  },
+  "ensemble_generate_revise_summarize": {
+    "total": 11,
+    "successful": 11,
+    "failed": 0,
+    "scores": [
+      0.12,
+      0.16666666666666666,
+      0.44,
+      0.25,
+      0.76,
+      0.9,
+      0.92,
+      0.88,
+      0.86,
+      0.5,
+      0.8
+    ],
+    "execution_times": [
+      128.37,
+      121.66,
+      385.01,
+      108.91,
+      71.94,
+      274.45,
+      37.76,
+      64.65,
+      285.87,
+      323.51,
+      27.45
+    ],
+    "datasource_breakdown": {
+      "simpleqa": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.12
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.12
+      },
+      "aime2024": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.16666666666666666
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.16666666666666666
+      },
+      "math500": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.44
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.44
+      },
+      "aime2025": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.25
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.25
+      },
+      "humaneval": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.76
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.76
+      },
+      "mgsmde": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.9
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.9
+      },
+      "hotpotqa": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.92
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.92
+      },
+      "gsm8k": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.88
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.88
+      },
+      "mgsmbn": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.86
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.86
+      },
+      "mbpp": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.5
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.5
+      },
+      "drop": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.8
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.8
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.5996969696969697,
+    "score_std": 0.31309371882501374,
+    "avg_execution_time": 166.32545454545453
+  },
+  "ensemble_generate_programmer_revise_summarize": {
+    "total": 11,
+    "successful": 11,
+    "failed": 0,
+    "scores": [
+      0.06,
+      0.16666666666666666,
+      0.56,
+      0.20833333333333334,
+      0.92,
+      0.9,
+      0.88,
+      0.88,
+      0.88,
+      0.4,
+      0.8
+    ],
+    "execution_times": [
+      188.94,
+      103.58,
+      628.53,
+      105.01,
+      56.3,
+      372.19,
+      43.77,
+      41.16,
+      278.92,
+      372.53,
+      29.47
+    ],
+    "datasource_breakdown": {
+      "simpleqa": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.06
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.06
+      },
+      "aime2024": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.16666666666666666
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.16666666666666666
+      },
+      "math500": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.56
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.56
+      },
+      "aime2025": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.20833333333333334
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.20833333333333334
+      },
+      "humaneval": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.92
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.92
+      },
+      "mgsmde": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.9
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.9
+      },
+      "hotpotqa": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.88
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.88
+      },
+      "gsm8k": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.88
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.88
+      },
+      "mgsmbn": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.88
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.88
+      },
+      "mbpp": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.4
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.4
+      },
+      "drop": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.8
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.8
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.605,
+    "score_std": 0.3378913369051588,
+    "avg_execution_time": 201.85454545454544
+  },
+  "decompose_ensemble_generate_programmer_revise_summarize": {
+    "total": 12,
+    "successful": 12,
+    "failed": 0,
+    "scores": [
+      0.1,
+      0.16666666666666666,
+      0.7272727272727273,
+      0.62,
+      0.16666666666666666,
+      0.74,
+      0.86,
+      0.9,
+      0.94,
+      0.82,
+      0.64,
+      0.84
+    ],
+    "execution_times": [
+      141.86,
+      116.76,
+      234.17,
+      478.57,
+      109.67,
+      92.38,
+      449.41,
+      35.42,
+      32.48,
+      388.51,
+      572.73,
+      30.13
+    ],
+    "datasource_breakdown": {
+      "simpleqa": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.1
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.1
+      },
+      "aime2024": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.16666666666666666
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.16666666666666666
+      },
+      "humanevalplus": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.7272727272727273
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.7272727272727273
+      },
+      "math500": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.62
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.62
+      },
+      "aime2025": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.16666666666666666
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.16666666666666666
+      },
+      "humaneval": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.74
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.74
+      },
+      "mgsmde": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.86
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.86
+      },
+      "hotpotqa": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.9
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.9
+      },
+      "gsm8k": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.94
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.94
+      },
+      "mgsmbn": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.82
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.82
+      },
+      "mbpp": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.64
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.64
+      },
+      "drop": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.84
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.84
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.6267171717171717,
+    "score_std": 0.3065924472010797,
+    "avg_execution_time": 223.5075
+  }
+}

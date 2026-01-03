@@ -1,0 +1,118 @@
+# Workflow Evaluator Configuration
+# 工作流评估器配置文件
+
+# Reward Server Configuration
+reward_server:
+  url: 'http://localhost:7788'
+  timeout: 3000  # seconds
+  max_retries: 2
+  retry_delay: 50  # seconds
+
+# Test Configuration
+test:
+  # 并发执行配置
+  concurrency: 20  # 并发执行的workflow数量
+  save_intermediate: true  # 是否保存中间结果（每组完成后立即保存）
+  continue_on_error: true  # 遇到错误时是否继续
+
+  # 超时设置
+  execution_timeout: 30000  # 单个workflow执行超时（秒）
+
+  # 数据源配置
+  data_sources:
+    - hotpotqa
+    - gsm8k
+    - mbpp
+    - humaneval
+    - drop
+    - mbppplus
+    - humanevalplus
+    - simpleqa
+    - mgsmbn
+    - aime2024
+    - aime2025
+    - mgsmde
+
+  # 测试用例配置
+  num_test_cases: 50  # 每个workflow测试的样本数量
+  random_seed: 42  # 随机种子，确保可重复性
+  benchmark_mapping_file: '../ScoreFlow/benchmark_mapping_vdb.jsonl'  # benchmark映射文件路径
+
+# Input/Output Configuration
+io:
+  # 输入文件配置
+  input_dir: '/home/lg/workflow_tooluse/Flow_RL_luogan/New_evaluation_and_RL'
+  default_input_file: 'test_vdb_with_responses_rollout=2.jsonl'
+
+  # 输出目录配置
+  output_dir: './results_vdb_rollout=2'
+
+  # 文件格式
+  save_format: 'jsonl'  # jsonl or json
+  compress_results: false  # 是否压缩结果文件
+
+# Analysis Configuration
+analysis:
+  # 统计配置
+  calculate_statistics: true
+  generate_charts: true
+
+  # 报告配置
+  report_format: 'markdown'  # markdown, html, or pdf
+  include_failed_details: true
+  max_failed_examples: 10
+
+  # 分类维度
+  classification_keys:
+    primary: 'data_source'  # 主要分类维度
+    secondary: 'operators_group'  # 次要分类维度
+
+# Logging Configuration
+logging:
+  level: 'INFO'  # DEBUG, INFO, WARNING, ERROR
+  file: 'workflow_evaluator.log'
+  console: true
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+# Performance Configuration
+performance:
+  # 资源限制
+  max_workers: 10  # 最大并发工作线程
+  memory_limit: '4GB'  # 内存限制
+
+  # 缓存配置
+  enable_cache: true
+  cache_dir: '.cache'
+  cache_ttl: 3600  # seconds
+
+# Filter Configuration (用于选择性测试)
+filters:
+  # 可以根据这些条件过滤要测试的workflow
+  data_sources: []  # 空列表表示测试所有，否则只测试指定的
+  operators_groups: []  # 空列表表示测试所有
+  skip_tested: false  # 是否跳过已测试的workflow
+
+# Report Configuration
+report:
+  # 摘要报告设置
+  summary_metrics:
+    - 'total_tested'
+    - 'success_rate'
+    - 'average_score'
+    - 'execution_time'
+    - 'error_rate'
+
+  # 分组报告设置
+  group_by:
+    - 'data_source'
+    - 'operators_group'
+
+  # 可视化设置
+  visualization:
+    enable: true
+    chart_types:
+      - 'bar'  # 柱状图
+      - 'pie'  # 饼图
+      - 'heatmap'  # 热力图
+    save_plots: true
+    plot_format: 'png'  # png, pdf, svg

@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-09-04T00:54:12.479247",
+  "config_file": "..\\configs\\models_config.yaml",
+  "num_models": 1,
+  "successful_models": [
+    "Qwen-Plus"
+  ],
+  "failed_models": [],
+  "total_time": 977.028537,
+  "output_dir": "evaluation_reports",
+  "summary": {
+    "best_model": "Qwen-Plus",
+    "worst_model": "Qwen-Plus"
+  }
+}

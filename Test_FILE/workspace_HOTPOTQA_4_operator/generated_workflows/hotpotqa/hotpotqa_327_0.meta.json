@@ -1,0 +1,10 @@
+{
+    "id": "hotpotqa_327_0",
+    "benchmark": "hotpotqa",
+    "data_indices": [
+        481,
+        71
+    ],
+    "dataset_path": "../Processed_dataset/hotpotqa/train_select_1000.jsonl",
+    "generation_timestamp": 1757470757.9940708
+}

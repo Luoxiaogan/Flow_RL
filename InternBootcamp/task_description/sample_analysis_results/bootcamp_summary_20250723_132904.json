@@ -1,0 +1,32 @@
+{
+  "statistics": {
+    "total_tasks": 10,
+    "average_quality_score": 4.25,
+    "quality_score_distribution": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 6,
+      "5": 2
+    },
+    "correctness_distribution": {
+      "correct": 8,
+      "incorrect": 0,
+      "unclear": 2
+    },
+    "timestamp": "2025-07-23T13:29:04.971726"
+  },
+  "task_count": 10,
+  "tasks_analyzed": [
+    "fteodorisnotaliar",
+    "dnewpassengertrams",
+    "ccandiesdistribution",
+    "cereaderdisplay",
+    "futoshiki",
+    "cshaassandlights",
+    "cnezzarandnicebeatmap",
+    "crussianroulette",
+    "csanatorium",
+    "dmichaelandchargingstations"
+  ]
+}

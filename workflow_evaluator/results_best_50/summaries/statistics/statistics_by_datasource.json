@@ -1,0 +1,725 @@
+{
+  "simpleqa": {
+    "total": 4,
+    "successful": 4,
+    "failed": 0,
+    "scores": [
+      0.16,
+      0.12,
+      0.06,
+      0.1
+    ],
+    "execution_times": [
+      119.52,
+      128.37,
+      188.94,
+      141.86
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.16
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.16
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.12
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.12
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.06
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.06
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.1
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.1
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.11,
+    "score_std": 0.041633319989322654,
+    "max_score": 0.16,
+    "min_score": 0.06,
+    "avg_execution_time": 144.6725,
+    "max_execution_time": 188.94,
+    "min_execution_time": 119.52
+  },
+  "aime2024": {
+    "total": 4,
+    "successful": 4,
+    "failed": 0,
+    "scores": [
+      0.125,
+      0.16666666666666666,
+      0.16666666666666666,
+      0.16666666666666666
+    ],
+    "execution_times": [
+      79.1,
+      121.66,
+      103.58,
+      116.76
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.125
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.125
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.16666666666666666
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.16666666666666666
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.16666666666666666
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.16666666666666666
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.16666666666666666
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.16666666666666666
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.15625,
+    "score_std": 0.02083333333333333,
+    "max_score": 0.16666666666666666,
+    "min_score": 0.125,
+    "avg_execution_time": 105.275,
+    "max_execution_time": 121.66,
+    "min_execution_time": 79.1
+  },
+  "humanevalplus": {
+    "total": 1,
+    "successful": 1,
+    "failed": 0,
+    "scores": [
+      0.7272727272727273
+    ],
+    "execution_times": [
+      234.17
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.7272727272727273
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.7272727272727273
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.7272727272727273,
+    "score_std": 0,
+    "max_score": 0.7272727272727273,
+    "min_score": 0.7272727272727273,
+    "avg_execution_time": 234.17,
+    "max_execution_time": 234.17,
+    "min_execution_time": 234.17
+  },
+  "math500": {
+    "total": 4,
+    "successful": 4,
+    "failed": 0,
+    "scores": [
+      0.5,
+      0.44,
+      0.56,
+      0.62
+    ],
+    "execution_times": [
+      660.0,
+      385.01,
+      628.53,
+      478.57
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.5
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.5
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.44
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.44
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.56
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.56
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.62
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.62
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.53,
+    "score_std": 0.07745966692414834,
+    "max_score": 0.62,
+    "min_score": 0.44,
+    "avg_execution_time": 538.0275,
+    "max_execution_time": 660.0,
+    "min_execution_time": 385.01
+  },
+  "aime2025": {
+    "total": 4,
+    "successful": 4,
+    "failed": 0,
+    "scores": [
+      0.2916666666666667,
+      0.25,
+      0.20833333333333334,
+      0.16666666666666666
+    ],
+    "execution_times": [
+      147.04,
+      108.91,
+      105.01,
+      109.67
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.2916666666666667
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.2916666666666667
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.25
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.25
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.20833333333333334
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.20833333333333334
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.16666666666666666
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.16666666666666666
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.22916666666666669,
+    "score_std": 0.05379143536399191,
+    "max_score": 0.2916666666666667,
+    "min_score": 0.16666666666666666,
+    "avg_execution_time": 117.6575,
+    "max_execution_time": 147.04,
+    "min_execution_time": 105.01
+  },
+  "humaneval": {
+    "total": 4,
+    "successful": 4,
+    "failed": 0,
+    "scores": [
+      0.88,
+      0.76,
+      0.92,
+      0.74
+    ],
+    "execution_times": [
+      39.43,
+      71.94,
+      56.3,
+      92.38
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.88
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.88
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.76
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.76
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.92
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.92
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.74
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.74
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.825,
+    "score_std": 0.08850612031567838,
+    "max_score": 0.92,
+    "min_score": 0.74,
+    "avg_execution_time": 65.0125,
+    "max_execution_time": 92.38,
+    "min_execution_time": 39.43
+  },
+  "mgsmde": {
+    "total": 4,
+    "successful": 4,
+    "failed": 0,
+    "scores": [
+      0.2,
+      0.9,
+      0.9,
+      0.86
+    ],
+    "execution_times": [
+      666.48,
+      274.45,
+      372.19,
+      449.41
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.2
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.2
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.9
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.9
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.9
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.9
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.86
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.86
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.715,
+    "score_std": 0.34385074281340927,
+    "max_score": 0.9,
+    "min_score": 0.2,
+    "avg_execution_time": 440.6325,
+    "max_execution_time": 666.48,
+    "min_execution_time": 274.45
+  },
+  "hotpotqa": {
+    "total": 4,
+    "successful": 4,
+    "failed": 0,
+    "scores": [
+      0.88,
+      0.92,
+      0.88,
+      0.9
+    ],
+    "execution_times": [
+      36.01,
+      37.76,
+      43.77,
+      35.42
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.88
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.88
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.92
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.92
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.88
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.88
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.9
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.9
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.895,
+    "score_std": 0.01914854215512678,
+    "max_score": 0.92,
+    "min_score": 0.88,
+    "avg_execution_time": 38.24,
+    "max_execution_time": 43.77,
+    "min_execution_time": 35.42
+  },
+  "gsm8k": {
+    "total": 4,
+    "successful": 4,
+    "failed": 0,
+    "scores": [
+      0.98,
+      0.88,
+      0.88,
+      0.94
+    ],
+    "execution_times": [
+      84.12,
+      64.65,
+      41.16,
+      32.48
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.98
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.98
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.88
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.88
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.88
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.88
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.94
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.94
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.9199999999999999,
+    "score_std": 0.04898979485566354,
+    "max_score": 0.98,
+    "min_score": 0.88,
+    "avg_execution_time": 55.6025,
+    "max_execution_time": 84.12,
+    "min_execution_time": 32.48
+  },
+  "mgsmbn": {
+    "total": 4,
+    "successful": 4,
+    "failed": 0,
+    "scores": [
+      0.9,
+      0.86,
+      0.88,
+      0.82
+    ],
+    "execution_times": [
+      424.55,
+      285.87,
+      278.92,
+      388.51
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.9
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.9
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.86
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.86
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.88
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.88
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.82
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.82
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.865,
+    "score_std": 0.034156502553198693,
+    "max_score": 0.9,
+    "min_score": 0.82,
+    "avg_execution_time": 344.4625,
+    "max_execution_time": 424.55,
+    "min_execution_time": 278.92
+  },
+  "mbpp": {
+    "total": 4,
+    "successful": 4,
+    "failed": 0,
+    "scores": [
+      0.66,
+      0.5,
+      0.4,
+      0.64
+    ],
+    "execution_times": [
+      524.08,
+      323.51,
+      372.53,
+      572.73
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.66
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.66
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.5
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.5
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.4
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.4
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.64
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.64
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.55,
+    "score_std": 0.12274635093014646,
+    "max_score": 0.66,
+    "min_score": 0.4,
+    "avg_execution_time": 448.2125,
+    "max_execution_time": 572.73,
+    "min_execution_time": 323.51
+  },
+  "drop": {
+    "total": 4,
+    "successful": 4,
+    "failed": 0,
+    "scores": [
+      0.86,
+      0.8,
+      0.8,
+      0.84
+    ],
+    "execution_times": [
+      36.2,
+      27.45,
+      29.47,
+      30.13
+    ],
+    "operators_breakdown": {
+      "decompose_ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.86
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.86
+      },
+      "ensemble_generate_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.8
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.8
+      },
+      "ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.8
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.8
+      },
+      "decompose_ensemble_generate_programmer_revise_summarize": {
+        "total": 1,
+        "successful": 1,
+        "scores": [
+          0.84
+        ],
+        "success_rate": 1.0,
+        "average_score": 0.84
+      }
+    },
+    "success_rate": 1.0,
+    "average_score": 0.825,
+    "score_std": 0.029999999999999964,
+    "max_score": 0.86,
+    "min_score": 0.8,
+    "avg_execution_time": 30.8125,
+    "max_execution_time": 36.2,
+    "min_execution_time": 27.45
+  }
+}

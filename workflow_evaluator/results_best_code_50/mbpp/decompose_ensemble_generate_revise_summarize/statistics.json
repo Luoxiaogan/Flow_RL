@@ -1,0 +1,10 @@
+{
+  "data_source": "mbpp",
+  "operators_group": "decompose_ensemble_generate_revise_summarize",
+  "total": 5,
+  "successful": 5,
+  "failed": 0,
+  "success_rate": 1.0,
+  "average_score": 0.42000000000000004,
+  "timestamp": "2025-09-24T18:20:35.734837"
+}

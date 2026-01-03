@@ -1,0 +1,10 @@
+# 项目根路径配置
+# 用于统一管理本地和服务器的路径差异
+# 
+# 本地开发环境: /Users/luogan/Code/workflow_generation/Flow_RL
+# 服务器部署环境: /nas/ganluo/Flow_RL
+#
+# 在服务器上部署时，只需修改此处的root值即可
+# 所有其他配置文件和脚本将自动使用正确的路径
+
+root: "/nas/ganluo/Flow_RL"

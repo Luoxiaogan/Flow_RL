@@ -1,0 +1,10 @@
+{
+    "id": "mgsmbn_50_0",
+    "benchmark": "mgsmbn",
+    "data_indices": [
+        194,
+        145
+    ],
+    "dataset_path": "../Processed_dataset/mgsmbn/mgsm_bn_train.jsonl",
+    "generation_timestamp": 1757426603.153867
+}

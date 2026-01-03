@@ -1,0 +1,10 @@
+{
+    "id": "gsm8k_106_0",
+    "benchmark": "gsm8k",
+    "data_indices": [
+        75,
+        132
+    ],
+    "dataset_path": "../Processed_dataset/gsm8k/1000_train.jsonl",
+    "generation_timestamp": 1757433006.6550515
+}

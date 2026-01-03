@@ -1,0 +1,10 @@
+{
+    "id": "limr_117_0",
+    "benchmark": "limr",
+    "data_indices": [
+        177,
+        41
+    ],
+    "dataset_path": "../Processed_dataset/high_level_math/limr_1000.jsonl",
+    "generation_timestamp": 1757473577.5786543
+}

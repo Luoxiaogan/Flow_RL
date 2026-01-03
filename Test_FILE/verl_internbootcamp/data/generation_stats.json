@@ -1,0 +1,5206 @@
+{
+  "generation_stats": {
+    "total_generated": 2595,
+    "successful": 2589,
+    "failed": 6,
+    "by_task": {
+      "aalmostarithmeticalprogression": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "adidyoumean": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "adimaandstaircase": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "adnaalignment": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "aexams": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "afoxandnames": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "aglasscarving": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "amessy": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "amrkitayutathetreasurehunter": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "apbinary": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "aperformeasily": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "apetyaandcatacombs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "aquarium": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "aquiz": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "aremovingcolumns": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "asavethenature": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "asearchingforgraph": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "atavasandkarafs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "atennischampionship": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "athechildandtoy": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "aunusualproduct": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "avasyaandtriangle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "b2palindromegamehardversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bandreyandproblem": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bandsequences": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bazamonwebservices": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bbeh_buggy_tables": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bbeh_dyck": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bbeh_geometric_shapes": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bbeh_multistep_arithmetic": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bbeh_object_counting": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bbeh_object_properties": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bbornthisway": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bcandyboxes": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bchat": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bchemicaltable": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bcountpairs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bdistinctpaths": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bdzylovesmodification": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bformingteams": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "binairo": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "binterestingarray": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bintersectingsubtrees": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "binvarianceoftree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bjohnnyandgrandmaster": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bkarenandtest": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "blcm": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "blongtailhedgehog": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bminimization": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bminimumdiametertree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bmodulosum": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bmorningjogging": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bmultithreading": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bnewyearandascentsequence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bonceagain": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bonlinemeeting": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "boracandmedians": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bourtanyaiscryingoutloud": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bpiet": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bpincodes": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bpipeline": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bplanetlapituletti": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bplusandmultiply": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bridges": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bsashaandonemorename": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bsequentialnim": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bsetofpoints": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bshifting": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bshowerline": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bsifidandstrangesubsequences": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bstring": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bstrip": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "btaxes": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bthechildandset": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bthequeue": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bthreereligions": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "btreearray": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "btwoheaps": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "byaroslavandtwostrings": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "byetanotherarraypartitioningtask": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bzgukistringz": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "bzuma": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "c1convergingarrayeasyversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "caandbandteamtraining": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cacolourfulprospect": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cacookieforyou": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "caddone": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cairconditioner": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "caliceboborangesandapples": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "calyonaandspreadsheet": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "camistofflorescence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "campsite": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "canagramsearch": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "candreachability": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "candryushaandcoloredballoons": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "canimpassionedcirculationofaffection": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cannasvyatoslavandmaps": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "canniversary": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "canotherproblemonstrings": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cantonandfairytale": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "canyaandghosts": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "canyaandsmartphone": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "capplemanandasheetofpaper": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "caquamoonandpermutations": {
+        "total": 3,
+        "successful": 0,
+        "failed": 3,
+        "timeout": 0
+      },
+      "carpaandagamewithmojtaba": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "carpasovernightpartyandmehrdadssilententering": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "carrangement": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "carraydestruction": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "carrayproduct": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "carthurandtable": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cataleoftwolands": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "caupontrouge": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cayoubsfunction": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbabyehabpartitionsagain": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbamboopartition": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbanhmi": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbarcode": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbasketballexercise": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbearanddrawing": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbearandprimenumbers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbeautifulipaddresses": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbeautifulsetsofpoints": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbeautypageant": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbeaver": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cberlandsquare": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbinarysearch": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbirthday": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cblackwidow": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cboboniuandstring": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cboredom": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbrackets": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbracketsubsequence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbugincode": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbuildingpermutation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbullsandcows": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbuns": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cbus": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccandies": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccandiesdistribution": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccaptainmarmot": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccapturevalerian": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccardiogram": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccelexupdate": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccentroids": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cchessboardbilliard": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cchickenorfish": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cchocolatebunny": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cchoosingballs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccielthecommander": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccirclingroundtreasures": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccircularrmq": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccivilization": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccleverfatrat": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccoffeebreak": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccointroubles": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccoloredrooks": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccoloringtrees": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccolorstripe": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccompartments": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccompressionandexpansion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccompressstring": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cconnect": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cconstanzesmachine": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cconstellation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cconstructatree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccontinuouscity": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cconvenientforeverybody": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccorporationmail": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccounttriangles": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccowandmessage": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccowboys": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccrazydiamond": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccreativesnap": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccrossword": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccubeproblem": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccupboardandballoons": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccuttingrectangle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccycle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccycleinmaze": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccyclicalquest": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ccycliccoloring": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdashaandpassword": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdevelopingskills": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdigittree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdijkstra": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdilucandkaeya": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdimaandsalad": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdimaandstaircase": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdiscreteacceleration": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdisposition": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdiversesubstrings": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdividingthenumbers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdivisionintoteams": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdnaalignment": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdnaevolution": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdoegraphs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdoublehappiness": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdoubleprofiles": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdrazillikesheap": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdreamoonandsums": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdungeonsandcandies": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cdzylovesfibonaccinumbers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cedgytrees": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cedoandmagnets": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cehabanda2operationtask": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cehabandpatheticmexs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cehabandprefixmexs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "celections": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "celementextermination": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cengineerartem": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cereaderdisplay": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ceugeneandanarray": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cevenpicture": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ceverhungrykrakozyabra": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cexams": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfadiandlcm": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfamildoorandbrackets": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfancynumber": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfencepainting": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfetchthetreasure": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfifaandfafa": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfindacar": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfindpair": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfireagain": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfixedpointremoval": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfixingtypos": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cflag": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cflawedflow": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cflea": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfloorandmod": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfootball": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfoxandcardgame": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfoxandnames": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfractaldetector": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cfragilebridges": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgambling": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgameonleaves": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgameontree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgameswithrectangle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgamewithstrings": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgardenofthesun": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgargariandbishops": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgarland": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgeometricprogression": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgeorgeandnumber": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgeraldandgiantchess": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgivenlengthandsumofdigits": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cglasscarving": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgottagofast": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgreedyarkady": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgreedyshopping": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgregandfriends": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cguessyourwayout": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cgukizhatesboxes": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "chackerpackyourbags": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "chackit": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "chamburgers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "chappyfarm5": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "chardproblem": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "charmonyanalysis": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "chelgahufflepuffscup": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "chelpcaretaker": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "chiddenword": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "chills": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "chistory": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "chongcowbuysadeckofcards": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cicecave": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cicecreamcoloring": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cilyaandmatrix": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cilyaandthetree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cinnaandcandyboxes": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cinnaanddima": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cinstantnoodles": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cinterestinggame": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cipher": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "civanandpowersoftwo": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cjeopardy": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cjeremybearimy": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cjohnnyandanotherratingdrop": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cjonsnowandhisfavouritenumber": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cjzzhuandapples": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ckaaviandmagicspell": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ckalilaanddimnaintheloggingindustry": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ckbeautifulstrings": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ckcompleteword": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ckingspath": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ckintegers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ckleofášandthenthlon": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cknights": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cktree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ckuroandwalkingroute": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ckuroniandimpossiblecalculation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cladder": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "clatinsquare": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cleagueofleesins": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cleavingthebar": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "clevkoandstrings": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "clinkcutcentroids": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "clittlealawnspuzzle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "clittleelephantandfurikandrubik": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "clittleelephantandlcm": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "clittleelephantandshifts": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "clittlefrog": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "clittlegirlandmaximumsum": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "clogoturtle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "clru": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cluckydays": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cluckypermutation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cluckysubsequence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cluckytree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "clunarnewyearandnumberdivision": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmachineprogramming": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmagicfive": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmagicformulas": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmagicgrid": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmahmoudandamessage": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmahmoudandehabandthexor": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmainsequence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmakegood": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmarbles": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmarinaandvasya": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmashaandtwofriends": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmashmokhandreverseoperation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmatrixsorting": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmaximandmatrix": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmaximummedian": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmaximumsplitting": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmaximumsubrectangle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmaximumwidth": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmaxmex": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmeaninglessoperations": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmemoryanddeevolution": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmessy": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmiceproblem": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmikeandfoam": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmikeandgcdproblem": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cminimumsum": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmishaandforest": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmittens": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmodifiedgcd": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmonsterinvaders": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmorsecode": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmoviecritics": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmrkitayutathetreasurehunter": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmultiplicity": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmuseumstour": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cmushroomstrife": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnamequest": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnamingcompany": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnastiaandahiddenpermutation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnastyaandawardrobe": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnastyaandunexpectedguest": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnastyaistransposingmatrices": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cneedforpinkslips": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnekodoesmaths": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnetworkmask": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnetworksafety": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnewlanguage": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnewyearanddomino": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnewyearandpermutation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnewyearandthespheretransmission": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnewyearratingschange": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnewyearsnowmen": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnezzarandnicebeatmap": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnezzarandsymmetricarray": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnikitaandstack": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnumbergame": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnumberofways": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cnumbertransformation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "codecontests_172_cbus": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "coldberlandlanguage": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "comkarandbaseball": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "conebasedarithmetic": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "conlinecoursesinbsu": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "coptimalpolygonperimeter": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "coracandgameoflife": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpackagedelivery": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpagenumbers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpainttree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpalindrometransformation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpalindromicpaths": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cparquet": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpartialsums": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cparty": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpattern": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpbinary": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cperfecttriples": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cperformeasily": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpermutationgame": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpermutationrecovery": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cperunult": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpetyaandcatacombs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpetyaandexam": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpetyaandspiders": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cphoenixanddistribution": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cphoenixandtowers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cphonenumbers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cphotographer": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpickheroes": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpieordie": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cplayingpiano": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cplayingwithsuperglue": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cplumber": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpocketbook": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpointordering": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpolandballandforest": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpolycarpattheradio": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpolycarpusdice": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cposterized": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpredictoutcomeofthegame": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cprefixenlightenment": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cprefixproductsequence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpresent": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cprimenumber": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cprimesoninterval": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cprimitiveprimes": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cproblemfornazar": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cproduct1modulon": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpythagoreantriples": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cpythonindentation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cquantifierquestion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cqueueinthetrain": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cquiz": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cramessesandcornerinversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "crandomevents": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "crangeincrements": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "crationallee": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "craytracing": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "crectangles": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "creducingfractions": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cregionseparation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "crelayrace": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cremoveadjacent": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cremoveextraone": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cremovingcolumns": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "creplacement": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "creport": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "crestoregraph": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "crestoringpermutation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "criversidecurio": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "croadtocinema": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "crotationmatching": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "croundtableknights": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "crunningtrack": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "crussianroulette": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cryoukosmemorynote": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csafecracking": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csagheerandnubianmarket": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csanatorium": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csantaclausandrobot": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csashaandapatientfriend": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csashaandarray": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cschedule": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csearchingforgraph": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csecret": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csequencepairweight": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csequencetransformation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cserejaandbrackets": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cserejaandsubsequences": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cserejaandthearrangementofnumbers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cserejaandtwosequences": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csergeanddiningroom": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csergeysproblem": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cservalandparenthesissequence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cservers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cshaassandlights": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cshawarmatent": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cshootinggallery": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cskier": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cslavaandtanks": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csmallestword": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csocks": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csoldierandcards": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csonyaandrobots": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cspysyndrome2": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cstablegroups": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cstl": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cstrangefunction": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cstrangeradiation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cstringmanipulation10": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cstripe2": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csubsequencecounting": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csubsequences": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csubsetsums": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csubstitutesinnumber": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csubstringgameinthelesson": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csuperiorperiodicsubarrays": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cswapletters": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cswaps": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csweetseating": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "csystemtesting": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctabledecorations": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctanyaandcoloredcandies": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctavasandkarafs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cteam": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cteambuilding": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cteodorisnotaliar": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctexteditor": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cthanosnim": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cthebigrace": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cthechildandtoy": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cthedeliverydilemma": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cthefairnutandstring": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cthefootballseason": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cthesportsfestival": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctheworldisatheatre": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cthreebags": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cthreebasestations": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cthreedisplays": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cthreestates": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctillicollapse": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctimofeyandremoduling": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctitle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctoaddornottoadd": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctokitsukazeandduel": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctouristsnotes": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctournament": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctrack": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctrailinglovesorloeufs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctram": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctravellingsalesmanandspecialnumbers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctravellingsalesmanproblem": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctreegenerator": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctrees": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctreesoftranquillity": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctryandcatch": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ctwopermutations": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cu2": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cunclebogdanandcountryhappiness": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cunfairpoll": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cunorderedsubsequence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cunusualproduct": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cupgradingtree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cvaleraandelections": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cvaleraandtubes": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cvalhallasiege": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cvanyaandexams": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cvanyaandscales": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cvasilythebearandsequence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cvasyaandbeautifularrays": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cvladikandfractions": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cvladikandmemorabletrip": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cvulnerablekerbals": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cvusthecossackandstrings": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cwatchingfireworksisfun": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cwaterbalance": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cwateringflowers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cwetsharkandflowers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cwilburandpoints": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cwizardsandnumbers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cwonderfulrandomizedsum": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cwoodcutters": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cworldeaterbrothers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cworldofdarkraftbattleforazathoth": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cxenonsattackonthegangs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cxorinverse": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cxortree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cyaroslavandalgorithm": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "cyuhaoandaparenthesis": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "czeroone": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "d1frequencyproblemeasyversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "d1kirkandabinarystringeasyversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "d2optimalsubsequenceshardversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "d2rpdandrapsheethardversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dabilitytoconvert": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "daliceandthedoll": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dandorandsquaresum": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dandreyandproblem": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dbearandcontribution": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dbeautifulpairsofnumbers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dbookshelves": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dbouncingboomerangs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dbuildingbridge": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dchallengesinschool41": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dchangingarray": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dchaoticv": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dchemicaltable": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dcolorfulpoints": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dcompletetripartite": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dcowandsnacks": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dcuptrick": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dcurfew": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ddensesubsequence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "deels": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dehabthexorcist": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dfafaandancientalphabet": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dfibonacciish": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dflipthecards": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dfreediv": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dgame": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dgamewithpowers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dgeneratingsets": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dgenius": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dgottagofast": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dhamiltonianspanningtree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dharmoniousgraph": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dhugestrings": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dicesculptures": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dinterestingarray": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dinvarianceoftree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dirrigation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "djerrysprotest": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "djonandorbs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dkarenandtest": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dkonradandcompanyevaluation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dkuroandgcdandxorandsum": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dkuroniandthecelebration": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dlcc": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dletsplaythewords": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dlosttree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dlunarnewyearandawander": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dmahmoudandehabandanotherarrayconstructiontask": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dmahmoudandehabandthebinarystring": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dmarsrover": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dmashmokhandwatertanks": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dmaxmedian": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dmichaelandchargingstations": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dminimumdiametertree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dmissionimpassable": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dmisspunyverse": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dmultiplesandpowerdifferences": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dnashmatrix": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dnauuoandportals": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dnewpassengertrams": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dnewyearsantanetwork": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dnudistbeach": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dolyaandmagicalsquare": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dominosa": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "domkarandbedwars": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "domnomandnecklace": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dpackagedelivery": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dpaintthetree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dpalindromiccharacteristics": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dpickingstrings": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dpiet": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dpolyline": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dportals": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dpowerfulksenia": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dpricefixed": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dprogramminglanguage": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dqueue": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "drarityandnewdress": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dratingcompression": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "drearrange": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "drecoveringbst": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "drectanglepainting1": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dreplacebymex": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "drestorecube": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dreturninghome": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "drobotvacuumcleaner": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dromandigits": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "drussianroulette": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "drésuméreview": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dsashaandinterestingfactfromgraphtheory": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dsashaandonemorename": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dseabattle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dsecretpasswords": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dservalandrootedtree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dsetofpoints": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dshichikujiandpowergrid": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "dshortestandlongestlis": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eblackwhiteandgreytree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eblackwidow": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eboredom": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ebrackets": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecarrotsforrabbits": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "echoosingballs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecielthecommander": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecipher": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecirclingroundtreasures": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecivilization": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecleverfatrat": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecnf2": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecointroubles": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecoloradopotatobeetle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecompartments": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "econveyor": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecountpairs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecubeproblem": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecuptrick": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecuttingrectangle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ecyclicalquest": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "edatacentermaintenance": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "edigittree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ednaevolution": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "edoegraphs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "edoublehappiness": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "edoubleprofiles": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "edrazillikesheap": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "edzylovesfibonaccinumbers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eelectriccharges": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eereaderdisplay": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eeverhungrykrakozyabra": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "efetchthetreasure": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "efibtree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "efixedpointremoval": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eflawedflow": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "efragilebridges": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "efreelancersdreams": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "egameontree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "egameswithrectangle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "egamewithstrings": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "egeraldandgiantchess": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "egoodbyesouvenir": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "egraphreconstruction": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "egreedyshopping": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eguessthetree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eheightallthesame": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ehelpgregthedwarf": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ehelpingpeople": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ehills": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ehongcowbuysadeckofcards": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eicecreamcoloring": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "einstantnoodles": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ejeffandbrackets": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ejeremybearimy": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ejohnnyandgrandmaster": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ekalilaanddimnaintheloggingindustry": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ekarenandsupermarket": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eleavingthebar": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "elevkoandstrings": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "elittleelephantandfurikandrubik": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "elittleelephantandlcm": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "elittleelephantandshifts": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "elittleponyandsummersuncelebration": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "elogicalexpression": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "elogoturtle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "elru": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eluckypermutation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eluckysubsequence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eluckytree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "emashmokhandreverseoperation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ematchingvsindependentset": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "emiddleout": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "emikeandfoam": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "emonsterinvaders": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "emorrowindows": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "emuseumstour": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "enastyaandunexpectedguest": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "enecklace": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "enewlanguage": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "enewyearandentityenumeration": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "enikitaandstack": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "enumbertransformation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "enumbertransformationii": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eonchangingtree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eoracandgameoflife": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "epackagedelivery": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "epainttree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eparty": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "epermutationrecovery": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "epetyaandspiders": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eplayingwithsuperglue": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eplease": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eplumber": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "epointsonplane": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "epolothepenguinandxoroperation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eprairiepartition": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eprefixenlightenment": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eprefixproductsequence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "equantifierquestion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "equeueinthetrain": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ereadtime": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "erectanglepainting2": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eregionseparation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "erelayrace": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "erememberingstrings": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "erooksandrectangles": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "erustystring": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "esashaandapatientfriend": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "esashaandarray": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eserejaandbrackets": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eserejaandsubsequences": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eserejaandthearrangementofnumbers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "esergeanddiningroom": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "esergeyandsubway": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "esergeysproblem": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eskibase": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "esubsetsums": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "esubstitutesinnumber": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "esumbalance": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "esuperiorperiodicsubarrays": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eteambuilding": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ethanosnim": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ethegreatmixing": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "etournament": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "evasyaandbeautifularrays": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "evectors": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ewatchingfireworksisfun": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ewaterbalance": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eweakmemory": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ewizardsandnumbers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ewoodenfence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eworldeaterbrothers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eworldofdarkraftbattleforazathoth": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "exenonsattackonthegangs": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "exorinverse": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "exortree": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eyaroslavandalgorithm": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "eyetanothernumbersequence": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "f1chessstrikesbackeasyversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "f1fallingsandeasyversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "f1frequencyproblemeasyversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "f1shortcolorfulstrip": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "f2longcolorfulstrip": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "f2thehiddenpairhardversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "farraybeauty": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "faupontrouge": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fbamboopartition": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fboboniuandstring": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fbreakup": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fcandiesforchildren": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fchaoticv": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fcomputepower": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fcurfew": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fencoding": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "feuclidsnightmare": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ffruitsequences": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fgame": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fhighcry": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fknights": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fkonradandcompanyevaluation": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fmaxmex": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fmisspunyverse": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fnastyaandtimemachine": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fnauuoandportals": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "frearrange": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "frectanglepainting1": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "frésuméreview": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fsashaandinterestingfactfromgraphtheory": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fslimeandsequenceseasyversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fteodorisnotaliar": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ftokitsukazeandstrangerectangle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fu2": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "fwindingpolygonalline": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "g1intoblockseasyversion": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "galaxies": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "game24": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "ghappyline": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "GO": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "heyawake": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "instruction_following": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "kakurasu": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "kakuro": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "kor_operation_unicode25c6": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "kor_puzzle_word_ladder": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "maze": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "med_calculator": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "minesweeper": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "nonograms": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "norinori": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "pipes": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "shingoki": {
+        "total": 3,
+        "successful": 0,
+        "failed": 3,
+        "timeout": 0
+      },
+      "skyscrapers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "slitherlink": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "starbattle": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "stitches": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "sudoku": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "symbolic_regression": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "tapa": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "temporal_sequences": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "tents": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "thermometers": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "web_of_lies": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      },
+      "word_sorting": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "timeout": 0
+      }
+    }
+  },
+  "dataset_info": {
+    "total_entries": 2589,
+    "train_entries": 2071,
+    "test_entries": 518,
+    "train_ratio": 0.8
+  },
+  "timestamp": "2025-08-12T11:17:21.939192"
+}

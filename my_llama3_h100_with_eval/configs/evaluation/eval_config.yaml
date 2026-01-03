@@ -1,0 +1,29 @@
+# Evaluation Configuration
+evaluation:
+  # Test data
+  test_data_path: "New_evaluation_and_RL/generate_parquet_and_jsonl/test_scoreflow_data/train.jsonl"
+  
+  # Reward server
+  reward_server:
+    url: "http://localhost:8897"
+    timeout: 300
+    max_retries: 3
+  
+  # Evaluation parameters
+  batch_size: 8
+  async_eval: true
+  eval_interval: 1  # Evaluate every N checkpoints
+  max_samples: null  # null for all samples
+  
+  # Output
+  output_dir: "outputs/reports"
+  save_json: true
+  save_markdown: true
+  save_csv: true
+  
+  # Generation parameters
+  generation:
+    temperature: 0.7
+    top_p: 0.9
+    max_length: 4096
+    do_sample: true

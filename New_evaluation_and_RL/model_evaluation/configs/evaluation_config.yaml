@@ -1,0 +1,78 @@
+# Model Evaluation Configuration
+
+# Test data configuration
+test_data:
+  # Path to test data JSONL file (can use veRL test data)
+  path: "../generate_parquet_and_jsonl/test_data.jsonl"
+  # Alternative: Use specific benchmark test data
+  # path: "../../Test_FILE/verl_support/data/test_gsm8k.jsonl"
+  
+  # Maximum number of samples to evaluate (null for all)
+  max_samples: null  # Set to smaller number for quick testing, e.g., 10
+
+# Reward server configuration
+reward_server:
+  url: "http://localhost:8899"
+  # Alternative for remote server
+  # url: "http://192.168.1.100:8899"
+
+# Evaluation settings
+evaluation:
+  # Batch size for model generation and scoring
+  batch_size: 8
+  
+  # Output directory for reports
+  output_dir: "./evaluation_reports"
+  
+  # Generation parameters (can be overridden per model)
+  generation_params:
+    max_new_tokens: 4096
+    temperature: 0.7
+    top_p: 0.9
+    # do_sample: true  # Uncommented if needed
+
+# Models to evaluate
+models:
+  # Example 1: HuggingFace model
+  - name: "Qwen2.5-7B-Instruct"
+    path: "Qwen/Qwen2.5-7B-Instruct"
+    type: "huggingface"
+    
+  # Example 2: Local checkpoint
+  - name: "Fine-tuned-GSM8K-v1"
+    path: "/nas/models/fine-tuned/checkpoint-5000"
+    type: "checkpoint"
+    # Override generation params for this model
+    generation_params:
+      temperature: 0.8
+      top_p: 0.95
+  
+  # Example 3: Another HuggingFace model
+  - name: "Llama-3.1-8B-Instruct"
+    path: "meta-llama/Llama-3.1-8B-Instruct"
+    type: "huggingface"
+  
+  # Example 4: Local model
+  - name: "Qwen-Math-7B"
+    path: "/nas/models/Qwen2.5-Math-7B-Instruct"
+    type: "local"
+    generation_params:
+      temperature: 0.6  # Lower temperature for math
+
+# Uncomment to add more models for comparison
+# - name: "Model-Name"
+#   path: "path/to/model"
+#   type: "checkpoint"
+
+# Report settings
+report:
+  # Generate comparison charts
+  generate_charts: true
+  
+  # Save detailed CSV results
+  save_detailed_csv: true
+  
+  # Chart settings
+  charts:
+    dpi: 100
+    figsize: [12, 8]

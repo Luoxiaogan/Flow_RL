@@ -1,0 +1,70 @@
+2025-09-14 12:50:42,340 - __main__ - INFO - 开始统一模型评估
+2025-09-14 12:50:42,340 - __main__ - INFO - 配置文件: ..\configs\models_config.yaml
+2025-09-14 12:50:42,340 - __main__ - INFO - 测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 12:50:42,342 - __main__ - INFO - 输出目录: ..\result_test
+2025-09-14 12:50:42,342 - __main__ - INFO - 模型数量: 1
+2025-09-14 12:50:42,344 - core.utils.report_generator - INFO - 报告输出目录: ..\result_test
+2025-09-14 12:50:42,344 - core.evaluators.unified_batch_evaluator - INFO - UnifiedBatchEvaluator 初始化完成
+2025-09-14 12:50:42,345 - core.evaluators.unified_batch_evaluator - INFO -   测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 12:50:42,345 - core.evaluators.unified_batch_evaluator - INFO -   输出目录: ..\result_test
+2025-09-14 12:50:42,345 - core.evaluators.unified_batch_evaluator - INFO -   批次大小: 8
+2025-09-14 12:50:42,346 - core.evaluators.unified_batch_evaluator - INFO -   最大样本: 5
+2025-09-14 12:50:42,347 - core.evaluators.unified_batch_evaluator - INFO - 开始评估 1 个模型
+2025-09-14 12:50:42,347 - core.evaluators.unified_batch_evaluator - INFO - 验证模型配置...
+2025-09-14 12:50:42,356 - core.utils.config_validator - INFO - Configuration passed schema validation
+2025-09-14 12:50:42,357 - core.evaluators.unified_batch_evaluator - INFO - 检查 Reward Server...
+2025-09-14 12:50:42,357 - core.utils.reward_server_checker - INFO - 检查 Reward Server: http://localhost:7788/health
+2025-09-14 12:50:42,608 - core.utils.reward_server_checker - INFO - ✓ Reward Server 正常运行: {'service': 'scoreflow_reward_server', 'status': 'healthy', 'version': '1.0.0'}
+2025-09-14 12:50:42,610 - core.evaluators.unified_batch_evaluator - INFO - 加载测试数据: D:\temp\Flow_RL\New_evaluation_and_RL\model_evaluation\scripts\..\..\generate_parquet_and_jsonl\test_scoreflow_data_all\test.jsonl
+2025-09-14 12:50:42,648 - core.evaluators.unified_batch_evaluator - INFO - 限制评估样本数: 5
+2025-09-14 12:50:42,649 - core.evaluators.unified_batch_evaluator - INFO - 加载了 5 个测试样本
+2025-09-14 12:50:42,649 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-14 12:50:42,649 - core.evaluators.unified_batch_evaluator - INFO - 评估模型 1/1: qwen-turbo 
+2025-09-14 12:50:42,649 - core.evaluators.unified_batch_evaluator - INFO - 模型类型: api
+2025-09-14 12:50:42,650 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-14 12:50:42,650 - core.utils.model_factory - INFO - 创建模型接口: qwen-turbo  (类型: api)
+2025-09-14 12:50:42,651 - core.interfaces.api_model_interface - INFO - [qwen-turbo ] 初始化API模型
+2025-09-14 12:50:42,651 - core.interfaces.api_model_interface - INFO -   模型: qwen-turbo
+2025-09-14 12:50:42,651 - core.interfaces.api_model_interface - INFO -   API类型: openai
+2025-09-14 12:50:42,651 - core.interfaces.api_model_interface - INFO -   端点数量: 1
+2025-09-14 12:50:42,652 - core.utils.api_connection_pool - INFO - Created new API session: openai
+2025-09-14 12:57:12,943 - core.interfaces.api_model_interface - WARNING - [qwen-turbo ] API请求失败 (尝试 1/1): [WinError 64] 指定的网络名不再可用。
+2025-09-14 12:57:12,943 - core.interfaces.api_model_interface - WARNING - [qwen-turbo ] 连接测试失败: [qwen-turbo ] API请求失败: [WinError 64] 指定的网络名不再可用。
+2025-09-14 12:57:12,943 - core.interfaces.api_model_interface - WARNING - ⚠ [qwen-turbo ] API连接测试失败，但仍可继续
+2025-09-14 12:57:12,944 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo ] 生成解决方案...
+2025-09-14 12:57:12,944 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo ] 使用并发数: 15
+2025-09-14 12:57:15,242 - core.interfaces.api_model_interface - WARNING - [qwen-turbo ] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [远程计算机拒绝网络连接。]
+2025-09-14 12:57:15,243 - core.evaluators.unified_batch_evaluator - WARNING - [qwen-turbo ] 样本 0 生成失败: [qwen-turbo ] API请求失败: Cannot connect to host localhost:5059 ssl:default [远程计算机拒绝网络连接。]
+2025-09-14 12:57:15,243 - core.interfaces.api_model_interface - WARNING - [qwen-turbo ] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [远程计算机拒绝网络连接。]
+2025-09-14 12:57:15,243 - core.evaluators.unified_batch_evaluator - WARNING - [qwen-turbo ] 样本 4 生成失败: [qwen-turbo ] API请求失败: Cannot connect to host localhost:5059 ssl:default [远程计算机拒绝网络连接。]
+2025-09-14 12:57:15,243 - core.interfaces.api_model_interface - WARNING - [qwen-turbo ] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [远程计算机拒绝网络连接。]
+2025-09-14 12:57:15,244 - core.evaluators.unified_batch_evaluator - WARNING - [qwen-turbo ] 样本 2 生成失败: [qwen-turbo ] API请求失败: Cannot connect to host localhost:5059 ssl:default [远程计算机拒绝网络连接。]
+2025-09-14 12:57:15,244 - core.interfaces.api_model_interface - WARNING - [qwen-turbo ] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [远程计算机拒绝网络连接。]
+2025-09-14 12:57:15,244 - core.evaluators.unified_batch_evaluator - WARNING - [qwen-turbo ] 样本 3 生成失败: [qwen-turbo ] API请求失败: Cannot connect to host localhost:5059 ssl:default [远程计算机拒绝网络连接。]
+2025-09-14 12:57:15,244 - core.interfaces.api_model_interface - WARNING - [qwen-turbo ] API请求失败 (尝试 1/1): Cannot connect to host localhost:5059 ssl:default [远程计算机拒绝网络连接。]
+2025-09-14 12:57:15,245 - core.evaluators.unified_batch_evaluator - WARNING - [qwen-turbo ] 样本 1 生成失败: [qwen-turbo ] API请求失败: Cannot connect to host localhost:5059 ssl:default [远程计算机拒绝网络连接。]
+2025-09-14 12:57:15,245 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo ] 计算评估分数...
+2025-09-14 12:57:15,247 - core.utils.score_collector - INFO - [qwen-turbo ] 开始批量评估 5 个样本 (并发数: 8)
+2025-09-14 12:57:15,248 - core.utils.score_collector - INFO - [qwen-turbo ] 评估统计:
+2025-09-14 12:57:15,248 - core.utils.score_collector - INFO -   总数: 5
+2025-09-14 12:57:15,248 - core.utils.score_collector - INFO -   成功: 0 (0.0%)
+2025-09-14 12:57:15,248 - core.utils.score_collector - INFO -   失败: 5 (100.0%)
+2025-09-14 12:57:15,248 - core.utils.score_collector - INFO -   平均分数: 0.000
+2025-09-14 12:57:15,248 - core.evaluators.unified_batch_evaluator - INFO - [qwen-turbo ] 生成评估报告...
+2025-09-14 12:57:15,249 - core.utils.report_generator - INFO - 生成模型评估报告: qwen-turbo 
+2025-09-14 12:57:15,251 - core.interfaces.api_model_interface - INFO - [qwen-turbo ] API统计:
+2025-09-14 12:57:15,252 - core.interfaces.api_model_interface - INFO -   总请求: 6
+2025-09-14 12:57:15,252 - core.interfaces.api_model_interface - INFO -   成功: 0
+2025-09-14 12:57:15,252 - core.interfaces.api_model_interface - INFO -   失败: 6
+2025-09-14 12:57:15,252 - core.interfaces.api_model_interface - INFO -   成功率: 0.0%
+2025-09-14 12:57:15,253 - core.evaluators.unified_batch_evaluator - INFO - ✓ 模型 qwen-turbo  评估完成
+2025-09-14 12:57:15,253 - core.evaluators.unified_batch_evaluator - INFO -   总体分数: 0.00%
+2025-09-14 12:57:15,253 - core.evaluators.unified_batch_evaluator - INFO -   成功率: 0.00%
+2025-09-14 12:57:15,255 - core.evaluators.unified_batch_evaluator - INFO - 
+============================================================
+2025-09-14 12:57:15,255 - core.evaluators.unified_batch_evaluator - INFO - 生成对比报告...
+2025-09-14 12:57:15,255 - core.evaluators.unified_batch_evaluator - INFO - ============================================================
+2025-09-14 12:57:15,255 - core.utils.report_generator - INFO - 生成 1 个模型的对比报告
+2025-09-14 12:57:15,257 - core.utils.report_generator - INFO - 对比报告 JSON 已保存: ..\result_test\model_comparison.json
+2025-09-14 12:57:15,259 - core.utils.report_generator - INFO - 对比报告 Markdown 已保存: ..\result_test\model_comparison.md
