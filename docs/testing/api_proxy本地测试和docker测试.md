@@ -55,6 +55,15 @@ curl http://localhost:5059/v1/chat/completions \
 ### 2.4 常用命令
 
 ```bash
+docker system df
+
+docker-compose -f docker/docker-compose.yml start # 重新启动所有当前的容器
+
+docker-compose -f docker/docker-compose.yml stop # 停止所有的容器
+```
+
+
+```bash
 # 构建
 docker-compose build proxy          # 构建 proxy 镜像
 docker-compose build                # 构建所有服务镜像

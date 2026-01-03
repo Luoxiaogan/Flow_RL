@@ -19,6 +19,14 @@ from services.reward_server.reward_calculator import (
     RewardResult,
     create_reward_calculator
 )
+from services.reward_server.execution_manager import (
+    ExecutionManager,
+    get_execution_manager
+)
+from services.reward_server.workflow_executor import (
+    WorkflowExecutionResult,
+    ProblemResult
+)
 from src.core.logger import setup_logger, get_logger
 from src.core.config_manager import ConfigManager
 
@@ -75,11 +83,55 @@ class HealthResponse(BaseModel):
 
 
 # =============================================================================
+# Workflow Execution Models (Multi-turn Support)
+# =============================================================================
+
+class WorkflowExecuteRequest(BaseModel):
+    """Workflow 执行请求"""
+    workflow_code: str = Field(..., description="Workflow Python 代码")
+    test_problems: List[Dict[str, Any]] = Field(..., description="测试问题列表")
+    benchmark: str = Field(default="gsm8k", description="Benchmark 名称")
+    timeout: int = Field(default=60, description="超时时间（秒）")
+
+
+class ProblemResultResponse(BaseModel):
+    """单个问题执行结果"""
+    problem_id: str = Field(..., description="问题ID")
+    success: bool = Field(..., description="执行是否成功")
+    correct: bool = Field(..., description="答案是否正确")
+    model_answer: Optional[str] = Field(None, description="模型答案")
+    expected_answer: Optional[str] = Field(None, description="期望答案")
+    error: Optional[str] = Field(None, description="错误信息")
+    execution_time: float = Field(default=0.0, description="执行时间")
+
+
+class WorkflowExecuteResponse(BaseModel):
+    """Workflow 执行响应（支持 Multi-turn 修复）"""
+    success: bool = Field(..., description="执行是否成功（无致命错误）")
+    score: float = Field(..., description="准确率 (correct / total)")
+    error: Optional[str] = Field(None, description="错误信息（用于 Multi-turn 修复）")
+    traceback: Optional[str] = Field(None, description="详细 traceback（用于修复 prompt）")
+    details: Dict[str, Any] = Field(
+        default_factory=lambda: {
+            "total": 0,
+            "correct": 0,
+            "failed": []
+        },
+        description="执行详情"
+    )
+    problem_results: List[ProblemResultResponse] = Field(
+        default_factory=list,
+        description="各问题执行结果"
+    )
+
+
+# =============================================================================
 # Server Setup
 # =============================================================================
 
-# 全局计算器实例
+# 全局实例
 _calculator: Optional[RewardCalculator] = None
+_execution_manager: Optional[ExecutionManager] = None
 
 
 def get_calculator() -> RewardCalculator:
@@ -91,16 +143,39 @@ def get_calculator() -> RewardCalculator:
     return _calculator
 
 
+def get_exec_manager() -> ExecutionManager:
+    """获取全局执行管理器实例"""
+    global _execution_manager
+    if _execution_manager is None:
+        problem_timeout = int(os.getenv("PROBLEM_TIMEOUT", "60"))
+        workflow_timeout = int(os.getenv("WORKFLOW_TIMEOUT", "300"))
+        max_concurrency = int(os.getenv("MAX_CONCURRENCY", "10"))
+        _execution_manager = get_execution_manager(
+            problem_timeout=problem_timeout,
+            workflow_timeout=workflow_timeout,
+            max_concurrency=max_concurrency
+        )
+    return _execution_manager
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期管理"""
     # Startup
     logger.info("Starting Reward Server...")
-    global _calculator
+    global _calculator, _execution_manager
+
+    # Initialize reward calculator
     mode = os.getenv("REWARD_MODE", "simple")
     _calculator = create_reward_calculator(mode=mode)
     logger.info(f"Reward Calculator initialized (mode={mode})")
+
+    # Initialize execution manager
+    _execution_manager = get_exec_manager()
+    logger.info("Execution Manager initialized")
+
     yield
+
     # Shutdown
     logger.info("Shutting down Reward Server...")
 
@@ -231,6 +306,90 @@ async def get_config():
         "weights": calculator.weights,
         "supported_benchmarks": ["gsm8k", "mbpp", "hotpotqa"]
     }
+
+
+# =============================================================================
+# Workflow Execution Endpoints (Multi-turn Support)
+# =============================================================================
+
+@app.post("/execute_workflow", response_model=WorkflowExecuteResponse)
+async def execute_workflow(request: WorkflowExecuteRequest):
+    """
+    执行 Workflow 并返回详细结果。
+
+    支持 Multi-turn 修复：
+    - 如果执行失败，返回详细的 error 和 traceback
+    - 客户端可以使用这些信息构建修复 prompt
+
+    Args:
+        request: WorkflowExecuteRequest
+
+    Returns:
+        WorkflowExecuteResponse with detailed results
+    """
+    exec_manager = get_exec_manager()
+
+    try:
+        # Execute workflow on all test problems
+        result = await exec_manager.execute_workflow_parallel(
+            workflow_code=request.workflow_code,
+            problems=request.test_problems,
+            benchmark=request.benchmark,
+            timeout=request.timeout
+        )
+
+        # Convert problem results to response format
+        problem_results = []
+        failed_problems = []
+
+        for pr in result.problem_results:
+            problem_results.append(ProblemResultResponse(
+                problem_id=pr.problem_id,
+                success=pr.success,
+                correct=pr.correct,
+                model_answer=pr.model_answer,
+                expected_answer=pr.expected_answer,
+                error=pr.error,
+                execution_time=pr.execution_time
+            ))
+
+            if not pr.success or not pr.correct:
+                failed_problems.append({
+                    "id": pr.problem_id,
+                    "error": pr.error or "Incorrect answer",
+                    "expected": pr.expected_answer,
+                    "got": pr.model_answer
+                })
+
+        return WorkflowExecuteResponse(
+            success=result.success,
+            score=result.score,
+            error=result.error,
+            traceback=result.traceback,
+            details={
+                "total": result.total_problems,
+                "correct": result.correct_count,
+                "failed": failed_problems
+            },
+            problem_results=problem_results
+        )
+
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        logger.error(f"Workflow execution failed: {e}")
+        return WorkflowExecuteResponse(
+            success=False,
+            score=0.0,
+            error=str(e),
+            traceback=tb,
+            details={
+                "total": len(request.test_problems),
+                "correct": 0,
+                "failed": []
+            },
+            problem_results=[]
+        )
 
 
 # =============================================================================

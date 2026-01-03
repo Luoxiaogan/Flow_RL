@@ -1,4 +1,5 @@
 # Dockerfile for Reward Service
+# 支持 Multi-turn Workflow 执行
 
 FROM python:3.10-slim
 
@@ -10,6 +11,8 @@ ENV PIP_NO_CACHE_DIR=1
 # 安装系统依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    gcc \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # 设置工作目录
@@ -19,19 +22,42 @@ WORKDIR /app
 COPY requirements.txt /app/
 
 # 安装 Python 依赖
+# - fastapi, uvicorn: HTTP 服务
+# - pydantic: 数据验证
+# - httpx, aiohttp: HTTP 客户端
+# - numpy: 数值计算
 RUN pip install --upgrade pip && \
-    pip install fastapi uvicorn pydantic openai pyyaml httpx
+    pip install \
+    fastapi \
+    uvicorn \
+    pydantic \
+    openai \
+    pyyaml \
+    httpx \
+    aiohttp \
+    numpy
 
 # 复制项目代码
 COPY src/ /app/src/
 COPY services/reward_server/ /app/services/reward_server/
+COPY services/__init__.py /app/services/
 COPY config/ /app/config/
 
 # 设置 PYTHONPATH
 ENV PYTHONPATH=/app
 
+# 环境变量 (可在 docker-compose 中覆盖)
+ENV REWARD_MODE=simple
+ENV PROBLEM_TIMEOUT=60
+ENV WORKFLOW_TIMEOUT=300
+ENV MAX_CONCURRENCY=10
+
 # 暴露端口
 EXPOSE 7788
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+    CMD curl -f http://localhost:7788/health || exit 1
 
 # 启动命令
 CMD ["python", "-m", "services.reward_server.server", "--host", "0.0.0.0", "--port", "7788"]
