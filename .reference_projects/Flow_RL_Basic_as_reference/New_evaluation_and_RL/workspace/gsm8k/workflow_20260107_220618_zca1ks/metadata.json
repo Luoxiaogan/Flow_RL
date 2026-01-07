@@ -1,0 +1,14 @@
+{
+  "workflow_id": "workflow_20260107_220618_zca1ks",
+  "data_source": "gsm8k",
+  "test_cases": [
+    15
+  ],
+  "timestamp": "2026-01-07T22:06:18.114413",
+  "extra_info": {
+    "test_cases": [
+      15
+    ],
+    "data_path": "/Users/luogan/Code/workflow_generation/Flow_RL_作为基本/Processed_dataset/gsm8k/1000_train.jsonl"
+  }
+}

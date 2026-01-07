@@ -1,0 +1,25 @@
+{
+  "workflow_id": "workflow_20260107_220749_psdztw",
+  "data_source": "gsm8k",
+  "execution_summary": {
+    "total_test_cases": 1,
+    "successful_cases": 1,
+    "failed_cases": 0,
+    "success_rate": 1.0,
+    "average_score": 1.0,
+    "total_duration_seconds": 34.79681587219238,
+    "average_duration_per_case": 34.79657602310181
+  },
+  "score_statistics": {
+    "min_score": 1.0,
+    "max_score": 1.0,
+    "scores_distribution": [
+      1.0
+    ]
+  },
+  "execution_mode": "parallel_safe",
+  "timestamp": "2026-01-07T22:08:23.943389",
+  "test_cases_executed": [
+    15
+  ]
+}

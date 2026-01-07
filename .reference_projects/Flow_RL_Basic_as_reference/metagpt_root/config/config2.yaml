@@ -1,0 +1,16 @@
+# MetaGPT Configuration File
+# This file is used by MetaGPT to configure LLM access
+# It points to the local API proxy that handles actual API calls
+
+llm:
+  api_type: "openai"
+  base_url: "http://localhost:5009"  # Points to metagpt_api_proxy
+  api_key: "sk-placeholder-will-be-replaced-by-proxy"
+  model: "qwen-turbo"
+  temperature: 0.3
+  max_tokens: 8192
+
+# Optional: Additional MetaGPT settings
+log_level: "INFO"
+workspace_path: "/Users/luogan/Code/workflow_generation/Flow_RL/metagpt_root/workspace"
+data_path: "/Users/luogan/Code/workflow_generation/Flow_RL/metagpt_root/data"

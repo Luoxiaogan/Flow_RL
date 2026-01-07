@@ -1,11 +1,7 @@
-__pycache__/
+
+*.DS_Store
 *.pyc
-*.pyo
-.env
-*.egg-info/
-.pytest_cache/
-.mypy_cache/
-.venv/
-venv/
-*.log
-.DS_Store
+__pycache__/
+**/*.pyc
+**/*.log
+.reference_projects/Flow_RL_Basic_as_reference/metagpt_root/logs

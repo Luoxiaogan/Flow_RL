@@ -1,0 +1,2 @@
+test_case,success,score,duration,error,timestamp,workflow_result
+15,True,0.0,0.747730016708374,,2026-01-07T22:00:20.173395,"""Error: 1 validation error for Config\nllm\n  Field required [type=missing, input_value={'METAGPT_PROJECT_ROOT': ..._INIT_AT_FORK': 'FALSE'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.9/v/missing"""

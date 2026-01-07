@@ -1,0 +1,2 @@
+test_case,success,score,duration,error,timestamp,workflow_result
+15,True,1.0,42.19426083564758,,2026-01-07T22:07:00.309037,"""The charity initially packed 400 boxes, each costing $245 ($80 for food + $165 for supplies), resulting in a total cost of $98,000. An anonymous donor contributed 4 times this amount, or $392,000. Using the full donation, the organization could pack an additional $392,000 ÷ $245 = 1,600 boxes. Adding these to the original 400 boxes gives a total of **2,000 boxes** packed.\n\n✅ **Final Answer: 2,000 boxes**"""
